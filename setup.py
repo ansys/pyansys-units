@@ -3,7 +3,7 @@
 from setuptools import find_namespace_packages, setup
 
 setup(
-    name="ansys-units-pyunits",
+    name="ansys-pyunits",
     version="0.1.dev0",
     url="https://github.com/ansys/pyunits",
     author="ANSYS, Inc.",

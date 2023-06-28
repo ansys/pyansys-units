@@ -1,4 +1,4 @@
-from ansys.units.pyunits import __version__
+from ansys.pyunits import __version__
 
 
 def test_pkg_version():

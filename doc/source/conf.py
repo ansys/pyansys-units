@@ -5,10 +5,10 @@ import os
 from ansys_sphinx_theme import get_version_match
 from ansys_sphinx_theme import pyansys_logo_black as logo
 
-from ansys.units.pyunits import __version__
+from ansys.pyunits import __version__
 
 # Project information
-project = "ansys-units-pyunits"
+project = "ansys-pyunits"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = __version__
@@ -17,7 +17,7 @@ cname = os.getenv("DOCUMENTATION_CNAME", "docs.pyansys.com")
 # Select desired logo, theme, and declare the html title
 html_logo = logo
 html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "pyunits-pyunits"
+html_short_title = html_title = "pyunits"
 
 # specify the location of your github repo
 html_theme_options = {

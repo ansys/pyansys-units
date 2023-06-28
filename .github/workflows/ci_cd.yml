@@ -10,8 +10,8 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.10'
   DOCUMENTATION_CNAME: 'units.docs.pyansys.com'
-  LIBRARY_NAME: 'ansys-units-pyunits'
-  LIBRARY_NAMESPACE: 'ansys.units.pyunits'
+  LIBRARY_NAME: 'ansys-pyunits'
+  LIBRARY_NAMESPACE: 'ansys.pyunits'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
