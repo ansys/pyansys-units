@@ -18,7 +18,7 @@ setup(
     ],
     license="MIT",
     license_file="LICENSE",
-    description="A python library for handling units, unit systems, and unit converions.",
+    description="A python library for handling units, unit systems, and unit conversions.",
     long_description=open("README.rst").read(),
     install_requires=["importlib-metadata >=4.0"],
     python_requires=">=3.10",
