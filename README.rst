@@ -10,7 +10,7 @@ PyUnits
    :target: https://pypi.org/project/pyunits/
    :alt: Python
 
-.. |pypi| image:: https://img.shields.io/pypi/v/pyunits.svg?logo=python&logoColor=white
+.. |pypi| image:: https://img.shields.io/pypi/v/ansys-pyunits.svg?logo=python&logoColor=white
    :target: https://pypi.org/project/pyunits
    :alt: PyPI
 
@@ -32,7 +32,7 @@ PyUnits
 
 Overview
 --------
-PyUnits provides a pythonic interface for units, unit systems, and unit conversions. Its 
+PyUnits provides a pythonic interface for units, unit systems, and unit conversions. Its
 features enable seamless setup and usage of physical quantities, including the ability to:
 
 - Instantiate physical quantities from a unit string, list of dimensions, or quantity map.
@@ -78,33 +78,29 @@ Basic Usage
 
 Import the pyunits library:
 
-.. code:: python 
+.. code:: python
 
    import ansys.pyuntis as q
 
-Quantities can be instantiated with 1 of 3 methods: 
-
-*units*
+Quantities can be instantiated with 1 of 3 methods:
 
 .. code:: python
+
+   # unit string
 
    volume = q.Quantity(value=1, units="m^3")
 
    volume.value >>> 1
    volume.units >>> "m^3"
 
-*dimensions*
-
-.. code:: python
+   # dimensions
 
    acceleration = q.Quantity(value=3, dimensions=[0, 1, -2])
 
    acceleration.value >>> 3
    acceleration.units >>> "m s^-2"
 
-*quantity map*
-
-.. code:: python
+   # quantity map
 
    torque = q.Quantity(5, quantity_map={"Torque": 1})
 
@@ -113,25 +109,24 @@ Quantities can be instantiated with 1 of 3 methods:
 
 Unit systems can be instantiated with 1 of 2 methods:
 
-*custom unit system*
-
 .. code:: python
 
+   # custom unit systems
+
    sys = q.UnitSystem(
-      name="sys", 
+      name="sys",
       base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"]
    )
 
-*pre-defined unit system*
-
-.. code:: python
+   # pre-defined unit systems
 
    si = q.UnitSystem(unit_sys="SI")
 
 Examples
-~~~~~~~~
+--------
 
-*Arithmetic*
+Arithmetic
+~~~~~~~~~~
 
 .. code:: python
 
@@ -142,7 +137,7 @@ Examples
 
    v1 = q.Quantity(10.0, "m s^-1")
    v2 = q.Quantity(5.0, "m s^-1")
-   
+
    v3 = v1 - v2
    v3.value >>> 5
 
@@ -150,7 +145,8 @@ Examples
    vpow.value >>> 100
    vpow.units >>> "m^2 s^-2"
 
-*Conversions*
+Conversions
+~~~~~~~~~~~
 
 .. code:: python
 
@@ -163,7 +159,8 @@ Examples
    pas.value >>> 1.488164
 
 
-*Unit Systems*
+Unit Systems
+~~~~~~~~~~~~
 
 .. code:: python
 
