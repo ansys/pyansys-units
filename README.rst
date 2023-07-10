@@ -123,10 +123,9 @@ Unit systems can be instantiated with 1 of 2 methods:
    si = q.UnitSystem(unit_sys="SI")
 
 Examples
---------
+~~~~~~~~~~~
 
 Arithmetic
-~~~~~~~~~~
 
 .. code:: python
 
@@ -146,7 +145,6 @@ Arithmetic
    vpow.units >>> "m^2 s^-2"
 
 Conversions
-~~~~~~~~~~~
 
 .. code:: python
 
@@ -160,7 +158,6 @@ Conversions
 
 
 Unit Systems
-~~~~~~~~~~~~
 
 .. code:: python
 
