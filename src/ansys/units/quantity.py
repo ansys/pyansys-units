@@ -28,11 +28,7 @@ class Quantity(float):
     """
 
     def __new__(cls, value, units=None, quantity_map=None, dimensions=None):
-        if (
-            (units and quantity_map)
-            or (units and dimensions)
-            or (quantity_map and dimensions)
-        ):
+        if (units and quantity_map) or (units and dimensions) or (quantity_map and dimensions):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
         _units_table = q.UnitsTable()
@@ -55,11 +51,7 @@ class Quantity(float):
         return float.__new__(cls, _si_value)
 
     def __init__(self, value, units=None, quantity_map=None, dimensions=None):
-        if (
-            (units and quantity_map)
-            or (units and dimensions)
-            or (quantity_map and dimensions)
-        ):
+        if (units and quantity_map) or (units and dimensions) or (quantity_map and dimensions):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
         self._units_table = q.UnitsTable()
@@ -112,9 +104,7 @@ class Quantity(float):
             raise QuantityError.INCOMPATIBLE_VALUE(__value)
 
         return (
-            "delta_K"
-            if self.type in ["Temperature", "Temperature Difference"]
-            else self.si_units
+            "delta_K" if self.type in ["Temperature", "Temperature Difference"] else self.si_units
         )
 
     @property

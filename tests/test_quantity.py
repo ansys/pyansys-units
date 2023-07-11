@@ -33,6 +33,7 @@ def test_properties_3():
     assert v.si_units == "kg^-1 m^-2 s^4 A^2"
     assert v.type == "Derived"
 
+
 def test_value():
     v = q.Quantity(1, "m")
     v.value = 20
@@ -785,9 +786,7 @@ def test_quantity_map_2():
     }
 
     with pytest.raises(ValueError):
-        api_test = q.Quantity(
-            10.5, units="kg m s^-1", quantity_map=quantity_map_from_settings_API
-        )
+        api_test = q.Quantity(10.5, units="kg m s^-1", quantity_map=quantity_map_from_settings_API)
 
 
 def test_quantity_map_3():
@@ -920,12 +919,7 @@ def testing_arithmetic_operators():
 
 def test_errors():
     with pytest.raises(q.QuantityError):
-        e1 = q.Quantity(
-            value=10, 
-            units="farad", 
-            dimensions=[0, 1], 
-            quantity_map={"Velocity": 3}
-        )
+        e1 = q.Quantity(value=10, units="farad", dimensions=[0, 1], quantity_map={"Velocity": 3})
 
 
 def test_error_messages():
