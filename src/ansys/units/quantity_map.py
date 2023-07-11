@@ -37,8 +37,7 @@ class QuantityMap(object):
             Unit string representation of quantity map.
         """
         unit_dict = {
-            self._units_table.api_quantity_map[term]: power
-            for term, power in quantity_map.items()
+            self._units_table.api_quantity_map[term]: power for term, power in quantity_map.items()
         }
 
         units = ""

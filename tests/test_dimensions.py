@@ -33,8 +33,8 @@ def test_dimensions():
 
 def test_unit_sys():
     d1 = q.Dimensions(
-        dimensions=[1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
-        unit_sys=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"]
+        dimensions=[1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        unit_sys=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
     )
     assert d1.units == "slug ft^-1 s^-2"
     assert d1.dimensions == [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -48,6 +48,8 @@ def test_max_dim_len():
 def test_errors():
     with pytest.raises(q.DimensionsError) as e_info:
         d1 = q.Dimensions(units="m s", dimensions=[0.0, 1.0, 1.0])
+
+    with pytest.raises(q.DimensionsError) as e_info:
         d2 = q.Dimensions(dimensions=[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 
 

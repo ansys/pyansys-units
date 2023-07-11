@@ -53,9 +53,7 @@ class UnitsTable(object):
             Boolean of multiplier within unit_term.
         """
         # Check if the unit term is not an existing fundamental or derived unit.
-        return not (
-            (unit_term in self._fundamental_units) or (unit_term in self._derived_units)
-        )
+        return not ((unit_term in self._fundamental_units) or (unit_term in self._derived_units))
 
     def _si_map(self, unit_term: str) -> str:
         """Maps unit to SI unit equivalent.
@@ -177,9 +175,7 @@ class UnitsTable(object):
         si_units = si_units or ""
         si_multiplier = si_multiplier or 1.0
         si_offset = (
-            self._fundamental_units[units]["offset"]
-            if units in self._fundamental_units
-            else 0.0
+            self._fundamental_units[units]["offset"] if units in self._fundamental_units else 0.0
         )
 
         # Split unit string into terms and parse data associated with individual terms
@@ -189,9 +185,7 @@ class UnitsTable(object):
             unit_term_power *= power
 
             si_multiplier *= (
-                self._multipliers[unit_multiplier] ** unit_term_power
-                if unit_multiplier
-                else 1.0
+                self._multipliers[unit_multiplier] ** unit_term_power if unit_multiplier else 1.0
             )
 
             # Retrieve data associated with fundamental unit
@@ -201,15 +195,11 @@ class UnitsTable(object):
                 elif unit_term_power != 0.0:
                     si_units += f"{self._si_map(unit_term)}^{unit_term_power} "
 
-                si_multiplier *= (
-                    self._fundamental_units[unit_term]["factor"] ** unit_term_power
-                )
+                si_multiplier *= self._fundamental_units[unit_term]["factor"] ** unit_term_power
 
             # Retrieve derived unit composition unit string and factor.
             if unit_term in self._derived_units:
-                si_multiplier *= (
-                    self._derived_units[unit_term]["factor"] ** unit_term_power
-                )
+                si_multiplier *= self._derived_units[unit_term]["factor"] ** unit_term_power
 
                 # Recursively parse composition unit string
                 si_units, si_multiplier, si_offset = self.si_data(

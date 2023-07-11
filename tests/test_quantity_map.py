@@ -24,12 +24,7 @@ def test_quantity_map():
 
 
 def test_errors():
-    qm_map = {
-        "Bread": 2,
-        "Chicken": 1,
-        "Eggs": 7,
-        "Milk": -4
-    }
+    qm_map = {"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
     with pytest.raises(q.QuantityMapError) as e_info:
         qm = q.QuantityMap(quantity_map=qm_map)
 

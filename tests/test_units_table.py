@@ -1,5 +1,3 @@
-import pytest
-
 import ansys.units as q
 
 
