@@ -7,18 +7,14 @@ from setuptools import find_namespace_packages, setup
 # Get version from version info
 __version__ = None
 _THIS_FILE = os.path.dirname(__file__)
-_VERSION_FILE = os.path.join(
-    _THIS_FILE, "src", "ansys", "units", "_version.py"
-)
+_VERSION_FILE = os.path.join(_THIS_FILE, "src", "ansys", "units", "_version.py")
 with open(_VERSION_FILE, mode="r", encoding="utf8") as fd:
     # execute file from raw string
     exec(fd.read())
 
 # Copy README.rst file to docs folder in ansys.units
 _README_FILE = os.path.join(_THIS_FILE, "README.rst")
-_DOCS_FILE = os.path.join(
-    _THIS_FILE, "src", "ansys", "units", "docs", "README.rst"
-)
+_DOCS_FILE = os.path.join(_THIS_FILE, "src", "ansys", "units", "docs", "README.rst")
 shutil.copy2(_README_FILE, _DOCS_FILE)
 
 
