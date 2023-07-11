@@ -13,7 +13,7 @@ pyunits
 
 
 from ansys.units.dimensions import Dimensions, DimensionsError  # noqa: F401
+from ansys.units.map import QuantityMap, QuantityMapError  # noqa: F401
 from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
-from ansys.units.quantity_map import QuantityMap, QuantityMapError  # noqa: F401
-from ansys.units.unit_system import UnitSystem, UnitSystemError  # noqa: F401
-from ansys.units.units_table import UnitsTable  # noqa: F401
+from ansys.units.systems import UnitSystem, UnitSystemError  # noqa: F401
+from ansys.units.tables import UnitsTable  # noqa: F401

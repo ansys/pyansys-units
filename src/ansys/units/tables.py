@@ -27,7 +27,7 @@ class UnitsTable(object):
     def __init__(self):
         file_path = os.path.relpath(__file__)
         file_dir = os.path.dirname(file_path)
-        qc_path = os.path.join(file_dir, "quantity_config.yaml")
+        qc_path = os.path.join(file_dir, "cfg.yaml")
 
         with open(qc_path, "r") as qc_yaml:
             qc_data = yaml.safe_load(qc_yaml)
@@ -146,7 +146,6 @@ class UnitsTable(object):
         power: float = None,
         si_units: str = None,
         si_multiplier: float = None,
-        si_offset: float = None,
     ) -> tuple:
         """Compute the SI unit string, SI multiplier, and SI offset.
 
@@ -202,12 +201,11 @@ class UnitsTable(object):
                 si_multiplier *= self._derived_units[unit_term]["factor"] ** unit_term_power
 
                 # Recursively parse composition unit string
-                si_units, si_multiplier, si_offset = self.si_data(
+                si_units, si_multiplier, _ = self.si_data(
                     units=self._derived_units[unit_term]["composition"],
                     power=unit_term_power,
                     si_units=si_units,
                     si_multiplier=si_multiplier,
-                    si_offset=si_offset,
                 )
 
         return self.condense(si_units), si_multiplier, si_offset
