@@ -17,6 +17,14 @@ repos:
     additional_dependencies: [
       'flake8-annotations==2.9.0'
     ]
+    args: [
+      --count,
+      --statistics,
+      --max-complexity, "10",
+      --max-line-length, "88",
+      --extend-ignore, E203 E501,
+      ansys, codegen, doc, examples, tests
+    ]
 
 - repo: https://github.com/codespell-project/codespell
   rev: v2.2.2
