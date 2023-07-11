@@ -5,7 +5,7 @@ import os
 from ansys_sphinx_theme import get_version_match
 from ansys_sphinx_theme import pyansys_logo_black as logo
 
-from ansys.pyunits import __version__
+from ansys.units import __version__
 
 # Project information
 project = "ansys-pyunits"
