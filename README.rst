@@ -148,7 +148,7 @@ Conversions
 
 .. code:: python
 
-   import ansys.pyunits as q
+   import ansys.units as q
 
    fps = q.Quantity(1, "lb ft^-1 s^-1")
    fps.value >>> 1
@@ -161,7 +161,7 @@ Unit Systems
 
 .. code:: python
 
-   import ansys.pyunits as q
+   import ansys.units as q
 
    sys = q.UnitSystem(
       name="sys",
