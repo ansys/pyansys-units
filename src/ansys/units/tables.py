@@ -252,6 +252,8 @@ class UnitsTable(object):
 
         # Concatenate unit string
         for term, power in terms_and_powers.items():
+            if not (power):
+                continue
             if power == 1.0:
                 units += f"{term} "
             else:
