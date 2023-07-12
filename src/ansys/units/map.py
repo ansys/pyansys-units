@@ -37,7 +37,8 @@ class QuantityMap(object):
             Unit string representation of quantity map.
         """
         unit_dict = {
-            self._units_table.api_quantity_map[term]: power for term, power in quantity_map.items()
+            self._units_table.api_quantity_map[term]: power
+            for term, power in quantity_map.items()
         }
 
         units = ""
@@ -50,11 +51,11 @@ class QuantityMap(object):
                 unit_term_power *= unit_dict[terms]
 
                 if unit_term_power == 1.0:
-                    units += f"{unit_term} "
+                    units += f" {unit_term}"
                 elif unit_term_power != 0.0:
-                    units += f"{unit_term}^{unit_term_power} "
+                    units += f" {unit_term}^{unit_term_power}"
 
-        return self._units_table.condense(units=units)[:-1]
+        return self._units_table.condense(units=units)
 
     @property
     def units(self):

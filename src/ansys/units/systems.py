@@ -2,7 +2,8 @@ import ansys.units as q
 
 
 class UnitSystem:
-    """Initializes a unit system based on user-defined units or a pre-definned unit system.
+    """Initializes a unit system based on user-defined units or a pre-definned unit
+    system.
 
     Parameters
     ----------
@@ -73,7 +74,9 @@ class UnitSystem:
             Quantity object containing desired unit system conversion.
         """
 
-        new_dim = q.Dimensions(dimensions=quantity.dimensions, unit_sys=self._base_units)
+        new_dim = q.Dimensions(
+            dimensions=quantity.dimensions, unit_sys=self._base_units
+        )
 
         return q.Quantity(value=quantity.value, units=new_dim.units)
 
@@ -102,7 +105,9 @@ class UnitSystemError(ValueError):
 
     @classmethod
     def BASE_UNITS_LENGTH(cls, len):
-        return cls(f"The `base_units` argument must contain 9 units, currently there are {len}.")
+        return cls(
+            f"The `base_units` argument must contain 9 units, currently there are {len}."
+        )
 
     @classmethod
     def UNIT_UNDEFINED(cls, unit):
