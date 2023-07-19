@@ -36,7 +36,7 @@ for package in find_namespace_packages(where="src", include="ansys*"):
         packages.append(package)
 
 setup(
-    name="ansys-pyunits",
+    name="ansys-units",
     version=__version__,
     url="https://github.com/ansys/pyunits",
     author="ANSYS, Inc.",

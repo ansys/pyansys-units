@@ -8,7 +8,7 @@ from ansys_sphinx_theme import pyansys_logo_black as logo
 from ansys.units import __version__
 
 # Project information
-project = "ansys-pyunits"
+project = "ansys-units"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = __version__
