@@ -15,7 +15,6 @@ The following examples cover:
 - Performing unit conversions
 - Creating unit systems (custom, pre-defined)
 - Applying unit systems to quantities
-- Setting up custom units
 """
 
 # sphyinx_gallery_thumbnail_path = ''
@@ -94,7 +93,7 @@ capacitance.type  # >>> "Derived"
 ###############################################################################
 # Performing arithmetic operations
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Quantity objects support all types of mathematical operations.
+# Quantity objects support all mathematical operations.
 
 import math
 
@@ -149,7 +148,7 @@ math.cos(q.Quantity(math.pi, "radian"))  # >>> -1.0
 ###############################################################################
 # Performing unit conversions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
+# Conversions can be performed between Quantities with compatible units.
 
 slug = q.Quantity(value=5, units="slug")
 kg = slug.to("kg")
@@ -194,7 +193,7 @@ cgs.base_units  # >>> ["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "
 ###############################################################################
 # Applying unit systems to quantities
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
+# Unit Systems can be created independently and applied to desired Quantities.
 
 si = q.UnitSystem(unit_sys="SI")
 fps = q.Quantity(value=11.2, units="ft s^-1")
@@ -203,8 +202,3 @@ mps = si.convert(fps)
 
 mps.value  # >>> 3.4137599999999995
 mps.units  # >>> "m s^-1"
-
-###############################################################################
-# Setting up custom units
-# ~~~~~~~~~~~~~~~~~~~~~~~
-#
