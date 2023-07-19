@@ -18,7 +18,9 @@ class Dimensions(object):
     Dimensions instance.
     """
 
-    def __init__(self, units: str = None, dimensions: list = None, unit_sys: str = None):
+    def __init__(
+        self, units: str = None, dimensions: list = None, unit_sys: str = None
+    ):
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
@@ -55,21 +57,24 @@ class Dimensions(object):
         """
         # Ensure dimensions list contains 9 terms
         dimensions = [
-            float(dim) for dim in dimensions + ((self.max_dim_len() - len(dimensions)) * [0])
+            float(dim)
+            for dim in dimensions + ((self.max_dim_len() - len(dimensions)) * [0])
         ]
         units = ""
 
         # Define unit term and associated value from dimension with dimensions list
         for idx, dim in enumerate(dimensions):
             if dim == 1.0:
-                units += f"{unit_sys[idx]} "
+                units += f" {unit_sys[idx]}"
             elif dim != 0.0:
                 dim = int(dim) if dim % 1 == 0 else dim
-                units += f"{unit_sys[idx]}^{dim} "
+                units += f" {unit_sys[idx]}^{dim}"
 
-        return dimensions, units[:-1]
+        return dimensions, self._units_table.condense(units=units)
 
-    def _units_to_dim(self, units: str, power: float = None, dimensions: list = None) -> list:
+    def _units_to_dim(
+        self, units: str, power: float = None, dimensions: list = None
+    ) -> list:
         """Convert a unit string into a dimensions list.
 
         Parameters

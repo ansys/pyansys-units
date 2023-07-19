@@ -2,8 +2,8 @@ import ansys.units as q
 
 
 class Quantity(float):
-    """Quantity instantiates physical quantities using their real values and
-    units. All the instances of this class are converted to base SI units system to have
+    """Quantity instantiates physical quantities using their real values and units. All
+    the instances of this class are converted to base SI units system to have
     consistency in arithmetic operations.
 
     Parameters
@@ -28,7 +28,11 @@ class Quantity(float):
     """
 
     def __new__(cls, value, units=None, quantity_map=None, dimensions=None):
-        if (units and quantity_map) or (units and dimensions) or (quantity_map and dimensions):
+        if (
+            (units and quantity_map)
+            or (units and dimensions)
+            or (quantity_map and dimensions)
+        ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
         _units_table = q.UnitsTable()
@@ -51,7 +55,11 @@ class Quantity(float):
         return float.__new__(cls, _si_value)
 
     def __init__(self, value, units=None, quantity_map=None, dimensions=None):
-        if (units and quantity_map) or (units and dimensions) or (quantity_map and dimensions):
+        if (
+            (units and quantity_map)
+            or (units and dimensions)
+            or (quantity_map and dimensions)
+        ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
         self._units_table = q.UnitsTable()
@@ -74,7 +82,7 @@ class Quantity(float):
 
         si_units, si_multiplier, si_offset = self._units_table.si_data(units=self._unit)
 
-        self._si_units = si_units[:-1]
+        self._si_units = si_units
         self._si_value = (self.value + si_offset) * si_multiplier
 
     def _arithmetic_precheck(self, __value, caller=None) -> str:
@@ -104,7 +112,9 @@ class Quantity(float):
             raise QuantityError.INCOMPATIBLE_VALUE(__value)
 
         return (
-            "delta_K" if self.type in ["Temperature", "Temperature Difference"] else self.si_units
+            "delta_K"
+            if self.type in ["Temperature", "Temperature Difference"]
+            else self.si_units
         )
 
     @property

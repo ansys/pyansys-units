@@ -4,7 +4,8 @@ import yaml
 
 
 class UnitsTable(object):
-    """Initializes a UnitsTable object with all table values and unit string manipulation methods.
+    """Initializes a UnitsTable object with all table values and unit string
+    manipulation methods.
 
     Methods
     -------
@@ -53,7 +54,9 @@ class UnitsTable(object):
             Boolean of multiplier within unit_term.
         """
         # Check if the unit term is not an existing fundamental or derived unit.
-        return not ((unit_term in self._fundamental_units) or (unit_term in self._derived_units))
+        return not (
+            (unit_term in self._fundamental_units) or (unit_term in self._derived_units)
+        )
 
     def _si_map(self, unit_term: str) -> str:
         """Maps unit to SI unit equivalent.
@@ -83,7 +86,9 @@ class UnitsTable(object):
 
     @property
     def fundamental_units(self):
-        """Fundamental units and properties representing Mass, Length, Time, Current, Chemical Amount, Light, Solid Angle, Angle, Temperature and Temperature Difference."""
+        """Fundamental units and properties representing Mass, Length, Time, Current,
+        Chemical Amount, Light, Solid Angle, Angle, Temperature and Temperature
+        Difference."""
         return self._fundamental_units
 
     @property
@@ -174,7 +179,9 @@ class UnitsTable(object):
         si_units = si_units or ""
         si_multiplier = si_multiplier or 1.0
         si_offset = (
-            self._fundamental_units[units]["offset"] if units in self._fundamental_units else 0.0
+            self._fundamental_units[units]["offset"]
+            if units in self._fundamental_units
+            else 0.0
         )
 
         # Split unit string into terms and parse data associated with individual terms
@@ -184,21 +191,27 @@ class UnitsTable(object):
             unit_term_power *= power
 
             si_multiplier *= (
-                self._multipliers[unit_multiplier] ** unit_term_power if unit_multiplier else 1.0
+                self._multipliers[unit_multiplier] ** unit_term_power
+                if unit_multiplier
+                else 1.0
             )
 
             # Retrieve data associated with fundamental unit
             if unit_term in self._fundamental_units:
                 if unit_term_power == 1.0:
-                    si_units += f"{self._si_map(unit_term)} "
+                    si_units += f" {self._si_map(unit_term)}"
                 elif unit_term_power != 0.0:
-                    si_units += f"{self._si_map(unit_term)}^{unit_term_power} "
+                    si_units += f" {self._si_map(unit_term)}^{unit_term_power}"
 
-                si_multiplier *= self._fundamental_units[unit_term]["factor"] ** unit_term_power
+                si_multiplier *= (
+                    self._fundamental_units[unit_term]["factor"] ** unit_term_power
+                )
 
             # Retrieve derived unit composition unit string and factor.
             if unit_term in self._derived_units:
-                si_multiplier *= self._derived_units[unit_term]["factor"] ** unit_term_power
+                si_multiplier *= (
+                    self._derived_units[unit_term]["factor"] ** unit_term_power
+                )
 
                 # Recursively parse composition unit string
                 si_units, si_multiplier, _ = self.si_data(
@@ -224,9 +237,10 @@ class UnitsTable(object):
             Simplified unit string.
         """
         terms_and_powers = {}
+        units = units.strip()
 
         # Split unit string into terms and parse data associated with individual terms
-        for term in units[:-1].split(" "):
+        for term in units.split(" "):
             _, unit_term, unit_term_power = self.filter_unit_term(term)
 
             if unit_term in terms_and_powers:
@@ -238,13 +252,15 @@ class UnitsTable(object):
 
         # Concatenate unit string
         for term, power in terms_and_powers.items():
+            if not (power):
+                continue
             if power == 1.0:
                 units += f"{term} "
             else:
                 power = int(power) if power % 1 == 0 else power
                 units += f"{term}^{power} "
 
-        return units
+        return units.rstrip()
 
     def get_type(self, units: str) -> str:
         """Returns the type associated with a unit string.

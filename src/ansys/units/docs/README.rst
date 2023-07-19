@@ -79,7 +79,7 @@ Import the pyunits library:
 
 .. code:: python
 
-   import ansys.units as q
+   import ansys.untis as q
 
 Quantities can be instantiated with 1 of 3 methods:
 
