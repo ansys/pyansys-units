@@ -3,8 +3,8 @@ import ansys.units as q
 
 class Quantity(float):
     """Quantity instantiates physical quantities using their real values and units. All
-    the instances of this class are converted to base SI units system to have
-    consistency in arithmetic operations.
+    instances of this class are converted to base SI units to have consistency in
+    arithmetic operations.
 
     Parameters
     ----------
