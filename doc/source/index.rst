@@ -1,4 +1,4 @@
-PyUnits Documentation |version|
+PyUnits documentation |version|
 ===============================
 
 .. toctree::
@@ -19,7 +19,7 @@ features enable seamless setup and usage of physical quantities, including the a
 - Perform unit conversions and arithmetic operations between quantity objects or real values.
 - Create custom units and unit systems.
 
-Documentation and Issues
+Documentation and issues
 ------------------------
 For comprehensive information on PyUnits, see the latest release
 `documentation <https://pyunits.docs.pyansys.com>`_.
