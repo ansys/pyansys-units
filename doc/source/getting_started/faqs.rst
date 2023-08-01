@@ -13,6 +13,3 @@ libraries.
 .. image:: ../_static/PyAnsys_overview.png
   :width: 800
   :alt: PyAnsys overview
-
-What is PyUnits?
-----------------

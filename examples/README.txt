@@ -10,4 +10,4 @@ you can download these examples as Python files or Jupyter notebooks and run the
    :maxdepth: 1
    :hidden:
 
-.. 00-fluent/README.rst
+.. 00-fluent/README.txt
