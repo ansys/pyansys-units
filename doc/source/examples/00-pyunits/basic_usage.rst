@@ -307,7 +307,7 @@ Unit Systems can be instantiated with 1 of 2 methods:
     cgs = q.UnitSystem(unit_sys="CGS")
 
     cgs.name  # >>> "cgs"
-    cgs.base_units  # >>> ["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"]
+    cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
 
 
 
@@ -356,7 +356,7 @@ Unit Systems can be created independently and applied to desired Quantities.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  3.432 seconds)
+   **Total running time of the script:** ( 0 minutes  3.435 seconds)
 
 
 .. _sphx_glr_download_examples_00-pyunits_basic_usage.py:

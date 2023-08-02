@@ -5,8 +5,8 @@
 
 Computation times
 =================
-**00:03.432** total execution time for **examples_00-pyunits** files:
+**00:03.435** total execution time for **examples_00-pyunits** files:
 
 +-------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_examples_00-pyunits_basic_usage.py` (``basic_usage.py``) | 00:03.432 | 0.0 MB |
+| :ref:`sphx_glr_examples_00-pyunits_basic_usage.py` (``basic_usage.py``) | 00:03.435 | 0.0 MB |
 +-------------------------------------------------------------------------+-----------+--------+

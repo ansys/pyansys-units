@@ -188,7 +188,7 @@ sys.base_units  # >>> ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
 cgs = q.UnitSystem(unit_sys="CGS")
 
 cgs.name  # >>> "cgs"
-cgs.base_units  # >>> ["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"]
+cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
 
 ###############################################################################
 # Applying unit systems to quantities
