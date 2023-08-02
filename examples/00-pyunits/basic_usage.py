@@ -68,8 +68,8 @@ tor_map = {"Torque": 1}
 torque = q.Quantity(value=5, quantity_map=tor_map)
 
 ###############################################################################
-# Accessing different quantity properties
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Quantity properties
+# ~~~~~~~~~~~~~~~~~~~
 # Quantity objects have a total of 7 properties:
 #   1. value : float | int
 #   2. units : str
@@ -91,8 +91,8 @@ capacitance.is_dimensionless  # >>> False
 capacitance.type  # >>> "Derived"
 
 ###############################################################################
-# Performing arithmetic operations
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Arithmetic operations
+# ~~~~~~~~~~~~~~~~~~~~~
 # Quantity objects support all mathematical operations.
 
 import math
@@ -146,8 +146,8 @@ math.sin(q.Quantity(90, "degree"))  # >>> 1.0
 math.cos(q.Quantity(math.pi, "radian"))  # >>> -1.0
 
 ###############################################################################
-# Performing unit conversions
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Unit conversions
+# ~~~~~~~~~~~~~~~~
 # Conversions can be performed between Quantities with compatible units.
 
 slug = q.Quantity(value=5, units="slug")
@@ -169,8 +169,8 @@ pas.value  # >>> 1.4881639435695542
 pas.units  # >>> "Pa s"
 
 ###############################################################################
-# Creating unit systems
-# ~~~~~~~~~~~~~~~~~~~~~
+# Unit systems
+# ~~~~~~~~~~~~
 # Unit Systems can be instantiated with 1 of 2 methods:
 #   1. Custom Units
 #   2. Pre-defined Unit System
@@ -191,8 +191,8 @@ cgs.name  # >>> "cgs"
 cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
 
 ###############################################################################
-# Applying unit systems to quantities
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Unit systems and Quantities
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Unit Systems can be created independently and applied to desired Quantities.
 
 si = q.UnitSystem(unit_sys="SI")
