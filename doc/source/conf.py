@@ -18,7 +18,7 @@ cname = os.getenv("DOCUMENTATION_CNAME", "docs.pyansys.com")
 # Select desired logo, theme, and declare the html title
 html_logo = logo
 html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "pyunits"
+html_short_title = html_title = "PyUnits"
 
 # specify the location of your github repo
 html_theme_options = {
@@ -37,11 +37,20 @@ html_theme_options = {
 
 # Sphinx extensions
 extensions = [
+    "jupyter_sphinx",
+    "notfound.extension",
+    "numpydoc",
+    "autodocsumm",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
-    "numpydoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
+    "sphinx_autodoc_typehints",
     "sphinx_copybutton",
+    "sphinxemoji.sphinxemoji",
+    "sphinx_gallery.gen_gallery",
 ]
 
 # Intersphinx mapping
