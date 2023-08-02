@@ -1,7 +1,7 @@
-""".._ref_basic_usage:
+""".. _ref_basic_usage:
 
-Getting Started
----------------
+PyUnits Basics
+--------------
 PyUnits provides a pythonic interface for units, unit systems, and unit conversions.
 Its features enable seamless setup and usage of physical quantities.
 
@@ -17,7 +17,7 @@ The following examples cover:
 - Applying unit systems to quantities
 """
 
-# sphyinx_gallery_thumbnail_path = ''
+# sphinx_gallery_thumbnail_path = '_static/basic_usage.png'
 
 ###############################################################################
 # Basic Usage
@@ -147,7 +147,7 @@ math.cos(q.Quantity(math.pi, "radian"))  # >>> -1.0
 
 ###############################################################################
 # Performing unit conversions
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Conversions can be performed between Quantities with compatible units.
 
 slug = q.Quantity(value=5, units="slug")
@@ -188,7 +188,7 @@ sys.base_units  # >>> ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
 cgs = q.UnitSystem(unit_sys="CGS")
 
 cgs.name  # >>> "cgs"
-cgs.base_units  # >>> ["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"]
+cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
 
 ###############################################################################
 # Applying unit systems to quantities

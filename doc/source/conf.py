@@ -4,6 +4,7 @@ import os
 
 from ansys_sphinx_theme import get_version_match
 from ansys_sphinx_theme import pyansys_logo_black as logo
+from sphinx_gallery.sorting import FileNameSortKey
 
 from ansys.units import __version__
 
@@ -17,7 +18,7 @@ cname = os.getenv("DOCUMENTATION_CNAME", "docs.pyansys.com")
 # Select desired logo, theme, and declare the html title
 html_logo = logo
 html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "pyunits"
+html_short_title = html_title = "PyUnits"
 
 # specify the location of your github repo
 html_theme_options = {
@@ -41,6 +42,7 @@ extensions = [
     "numpydoc",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
+    "sphinx_gallery.gen_gallery",
 ]
 
 # Intersphinx mapping
@@ -75,6 +77,29 @@ numpydoc_validation_checks = {
     # "SS05", # Summary must start with infinitive verb, not third person
     "RT02",  # The first line of the Returns section should contain only the
     # type, unless multiple values are being returned"
+}
+
+# -- Sphinx Gallery Options ---------------------------------------------------
+sphinx_gallery_conf = {
+    # convert rst to md for ipynb
+    # "pypandoc": True,
+    # path to your examples scripts
+    "examples_dirs": ["../../examples/"],
+    # path where to save gallery generated examples
+    "gallery_dirs": ["examples"],
+    # Pattern to search for example files
+    "filename_pattern": r"\.py",
+    # Remove the "Download all examples" button from the top level gallery
+    "download_all_examples": False,
+    # Sort gallery example by file name instead of number of lines (default)
+    "within_subsection_order": FileNameSortKey,
+    # directory where function granular galleries are stored
+    "backreferences_dir": None,
+    # Modules for which function level galleries are created.  In
+    "doc_module": "ansys-units",
+    "ignore_pattern": "flycheck*",
+    "thumbnail_size": (350, 350),
+    "reset_modules_order": "after",
 }
 
 
