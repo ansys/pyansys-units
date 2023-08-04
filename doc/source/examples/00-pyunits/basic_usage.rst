@@ -125,8 +125,8 @@ Quantities can be instantiated with 1 of 3 methods:
 
 .. GENERATED FROM PYTHON SOURCE LINES 71-81
 
-Accessing different quantity properties
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Quantity properties
+~~~~~~~~~~~~~~~~~~~
 Quantity objects have a total of 7 properties:
   1. value : float | int
   2. units : str
@@ -167,8 +167,8 @@ Quantity objects have a total of 7 properties:
 
 .. GENERATED FROM PYTHON SOURCE LINES 94-97
 
-Performing arithmetic operations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Arithmetic operations
+~~~~~~~~~~~~~~~~~~~~~
 Quantity objects support all mathematical operations.
 
 .. GENERATED FROM PYTHON SOURCE LINES 97-148
@@ -241,8 +241,8 @@ Quantity objects support all mathematical operations.
 
 .. GENERATED FROM PYTHON SOURCE LINES 149-152
 
-Performing unit conversions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unit conversions
+~~~~~~~~~~~~~~~~
 Conversions can be performed between Quantities with compatible units.
 
 .. GENERATED FROM PYTHON SOURCE LINES 152-171
@@ -283,8 +283,8 @@ Conversions can be performed between Quantities with compatible units.
 
 .. GENERATED FROM PYTHON SOURCE LINES 172-177
 
-Creating unit systems
-~~~~~~~~~~~~~~~~~~~~~
+Unit systems
+~~~~~~~~~~~~
 Unit Systems can be instantiated with 1 of 2 methods:
   1. Custom Units
   2. Pre-defined Unit System
@@ -324,8 +324,8 @@ Unit Systems can be instantiated with 1 of 2 methods:
 
 .. GENERATED FROM PYTHON SOURCE LINES 194-197
 
-Applying unit systems to quantities
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unit systems and Quantities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Unit Systems can be created independently and applied to desired Quantities.
 
 .. GENERATED FROM PYTHON SOURCE LINES 197-205
@@ -356,7 +356,7 @@ Unit Systems can be created independently and applied to desired Quantities.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  3.435 seconds)
+   **Total running time of the script:** ( 0 minutes  3.446 seconds)
 
 
 .. _sphx_glr_download_examples_00-pyunits_basic_usage.py:
