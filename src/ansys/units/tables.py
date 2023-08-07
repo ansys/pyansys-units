@@ -1,8 +1,8 @@
-from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
-
 import os
 
 import yaml
+
+from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
 
 
 class UnitsTable(object):
@@ -145,7 +145,7 @@ class UnitsTable(object):
                         multiplier = mult
                         base = unit_term[len(mult) :]
                         break
-        
+
         # if we thought it had a multiplier, that's just because the string wasn't
         # a known unit on its own. So if we can't actually find its multiplier then
         # this string is an invlaid unit string
