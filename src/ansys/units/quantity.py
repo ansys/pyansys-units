@@ -293,3 +293,7 @@ class QuantityError(ValueError):
     @classmethod
     def INCOMPATIBLE_VALUE(cls, value):
         return cls(f"`{value}` is incompatible with the current quantity object.")
+    
+    @classmethod
+    def UNKNOWN_UNITS(cls, unit: str):
+        return cls(f"`{unit}` is an unknown or unconfigured unit.")

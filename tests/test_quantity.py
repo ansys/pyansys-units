@@ -938,3 +938,10 @@ def test_error_messages():
 
     e3 = q.QuantityError.INCOMPATIBLE_VALUE("radian")
     assert e3.__str__() == "`radian` is incompatible with the current quantity object."
+
+
+def test_instantiate_quantity_with_unrecognized_units_causes_exception():
+        with pytest.raises(Exception):
+            q.Quantity(
+              value=10, units="piggies"
+            )
