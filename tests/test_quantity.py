@@ -676,6 +676,14 @@ def test_temp_difference():
         t = tc1 + td1
 
 
+def test_temp_diff_combined():
+    k = q.Quantity(1.38e-23, "J K^-1")
+    t = q.Quantity(4.0, "K")
+    e = k * t
+    assert e.value == 5.52e-23
+    assert e.units == "kg m^2 s^-2"
+
+
 def test_core_temp():
     t1 = q.Quantity(1.0, "K")
     assert float(t1) == 1.0

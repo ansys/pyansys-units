@@ -201,7 +201,11 @@ class Quantity(float):
             ]
             new_si_value = self.si_value * __value.si_value
             new_dimensions = q.Dimensions(dimensions=temp_dimensions)
-            new_units = self._temp_precheck() or new_dimensions.units
+            new_units = (
+                # self._temp_precheck()
+                # or
+                new_dimensions.units
+            )
             return Quantity(value=new_si_value, units=new_units)
 
         if isinstance(__value, (float, int)):
