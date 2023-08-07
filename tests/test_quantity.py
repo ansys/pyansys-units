@@ -941,7 +941,15 @@ def test_error_messages():
 
 
 def test_instantiate_quantity_with_unrecognized_units_causes_exception():
-        with pytest.raises(Exception):
+        with pytest.raises(q.QuantityError):
             q.Quantity(
               value=10, units="piggies"
+            )
+        with pytest.raises(q.QuantityError):
+            q.Quantity(
+              value=10, units="piggies s^-1"
+            )
+        with pytest.raises(q.QuantityError):
+            q.Quantity(
+              value=10, units="piggies^2 m^-3"
             )
