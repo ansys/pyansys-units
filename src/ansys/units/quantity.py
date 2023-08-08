@@ -300,7 +300,7 @@ class Quantity(float):
 
     @staticmethod
     def _fix_these_temperature_units(
-        units: str, do_all: bool, units_to_search: Tuple[str]
+        units: str, ignore_exponent: bool, units_to_search: Tuple[str]
     ) -> str:
         new_units = []
         for term in units.split(" "):
@@ -309,22 +309,22 @@ class Quantity(float):
             exponent = term_parts[0] if len(term_parts) > 1 else "0"
             if (
                 label
-                and (exponent != "0" or do_all)
-                and not label.startswith("delta_")  # not already OK
+                and (exponent != "0" or ignore_exponent)
                 and label[-1] in units_to_search  # allow prefix
             ):
-                term = "delta_" + term  # prefix the whole term
+                if not label.startswith("delta_"):  # not already OK
+                    term = "delta_" + term  # prefix the whole term
             new_units.append(term)
         return " ".join(new_units)
 
     def _fix_temperature_units(self):
         # HACK
-        do_all = self.type == "Temperature Difference"
+        ignore_exponent = self.type == "Temperature Difference"
         self._unit = Quantity._fix_these_temperature_units(
-            self._unit, do_all, ("K", "C", "F", "R")
+            self._unit, ignore_exponent, ("K", "C", "F", "R")
         )
         self._si_units = Quantity._fix_these_temperature_units(
-            self._si_units, do_all, ("K",)
+            self._si_units, ignore_exponent, ("K",)
         )
 
 

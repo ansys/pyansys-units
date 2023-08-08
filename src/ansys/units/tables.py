@@ -294,12 +294,18 @@ class UnitsTable(object):
             return "Derived"
 
         # HACK
-        if any([temp in units for temp in ["K", "C", "F", "R"]]):
+        ignore_exponent = False
+        units_to_search = ("K", "C", "F", "R")
+        if any([temp in units for temp in units_to_search]):
             for term in units.split(" "):
                 term_parts = term.split("^")
                 label = term_parts[0]
                 exponent = term_parts[0] if len(term_parts) > 1 else "0"
-                if label and (exponent != "0") and label[-1] in ("K", "C", "F", "R"):
+                if (
+                    label
+                    and (exponent != "0" or ignore_exponent)
+                    and label[-1] in units_to_search
+                ):
                     return "Temperature Difference"
             return "Temperature"
 
