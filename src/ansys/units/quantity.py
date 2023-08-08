@@ -209,11 +209,7 @@ class Quantity(float):
             ]
             new_si_value = self.si_value * __value.si_value
             new_dimensions = q.Dimensions(dimensions=temp_dimensions)
-            new_units = (
-                # self._temp_precheck()
-                # or
-                new_dimensions.units
-            )
+            new_units = new_dimensions.units
             return Quantity(value=new_si_value, units=new_units)
 
         if isinstance(__value, (float, int)):
@@ -230,10 +226,7 @@ class Quantity(float):
             ]
             new_si_value = self.si_value / __value.si_value
             new_dimensions = q.Dimensions(dimensions=temp_dimensions)
-            new_units = (
-                # self._temp_precheck() or
-                new_dimensions.units
-            )
+            new_units = new_dimensions.units
             result = Quantity(value=new_si_value, units=new_units)
             # HACK
             convert_to_temp_difference = (
@@ -245,10 +238,7 @@ class Quantity(float):
             return result
 
         if isinstance(__value, (float, int)):
-            new_units = (
-                # self._temp_precheck() or
-                self.si_units
-            )
+            new_units = self.si_units
             return Quantity(value=self.si_value / __value, units=new_units)
 
     def __rtruediv__(self, __value):
@@ -301,7 +291,7 @@ class Quantity(float):
 
     @staticmethod
     def _fix_these_temperature_units(
-        units: str, ignore_exponent: bool, units_to_search: Tuple[str]
+        units: str, ignore_exponent: bool, units_to_search: Tuple[str] = None
     ) -> str:
         new_units = parse_temperature_units(units, ignore_exponent, units_to_search)
         return " ".join(
@@ -314,9 +304,7 @@ class Quantity(float):
     def _fix_temperature_units(self):
         # HACK
         ignore_exponent = self.type == "Temperature Difference"
-        self._unit = Quantity._fix_these_temperature_units(
-            self._unit, ignore_exponent, ("K", "C", "F", "R")
-        )
+        self._unit = Quantity._fix_these_temperature_units(self._unit, ignore_exponent)
         self._si_units = Quantity._fix_these_temperature_units(
             self._si_units, ignore_exponent, ("K",)
         )
