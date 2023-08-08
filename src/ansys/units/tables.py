@@ -3,6 +3,7 @@ import os
 import yaml
 
 from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
+from ansys.units.units import parse_temperature_units
 
 
 class UnitsTable(object):
@@ -293,7 +294,16 @@ class UnitsTable(object):
         if units in self.derived_units:
             return "Derived"
 
-        if any([temp in units for temp in ["K", "C", "F", "R"]]):
-            return "Temperature Difference"
+        # HACK
+        temperature_units_to_search = ("K", "C", "F", "R")
+        if any([temp in units for temp in temperature_units_to_search]):
+            terms = parse_temperature_units(
+                units,
+                ignore_exponent=False,
+                units_to_search=temperature_units_to_search,
+            )
+            if any(is_diff for (_, is_diff) in terms):
+                return "Temperature Difference"
+            return "Temperature"
 
         return "Composite"

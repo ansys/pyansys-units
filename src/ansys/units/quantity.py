@@ -1,4 +1,7 @@
+from typing import Tuple
+
 import ansys.units as q
+from ansys.units.units import parse_temperature_units
 
 
 class Quantity(float):
@@ -83,6 +86,11 @@ class Quantity(float):
         si_units, si_multiplier, si_offset = self._units_table.si_data(units=self._unit)
 
         self._si_units = si_units
+
+        # Well, this is going to have to be a hack, but we
+        # need to fix the wider design to do this properly
+        self._fix_temperature_units()
+
         self._si_value = (self.value + si_offset) * si_multiplier
 
     def _arithmetic_precheck(self, __value) -> str:
@@ -201,7 +209,7 @@ class Quantity(float):
             ]
             new_si_value = self.si_value * __value.si_value
             new_dimensions = q.Dimensions(dimensions=temp_dimensions)
-            new_units = self._temp_precheck() or new_dimensions.units
+            new_units = new_dimensions.units
             return Quantity(value=new_si_value, units=new_units)
 
         if isinstance(__value, (float, int)):
@@ -218,15 +226,23 @@ class Quantity(float):
             ]
             new_si_value = self.si_value / __value.si_value
             new_dimensions = q.Dimensions(dimensions=temp_dimensions)
-            new_units = self._temp_precheck() or new_dimensions.units
-            return Quantity(value=new_si_value, units=new_units)
+            new_units = new_dimensions.units
+            result = Quantity(value=new_si_value, units=new_units)
+            # HACK
+            convert_to_temp_difference = (
+                "Temperature" == result.type
+                and __value.type in ("Temperature", "Temperature Difference")
+            )
+            if convert_to_temp_difference:
+                result._type = "Temperature Difference"
+            return result
 
         if isinstance(__value, (float, int)):
-            new_units = self._temp_precheck() or self.si_units
+            new_units = self.si_units
             return Quantity(value=self.si_value / __value, units=new_units)
 
     def __rtruediv__(self, __value):
-        return self.__truediv__(__value)
+        return Quantity(__value, "") / self
 
     def __add__(self, __value):
         self._arithmetic_precheck(__value)
@@ -272,6 +288,26 @@ class Quantity(float):
     def __neq__(self, __value):
         self._arithmetic_precheck(__value)
         return float(self) != float(__value)
+
+    @staticmethod
+    def _fix_these_temperature_units(
+        units: str, ignore_exponent: bool, units_to_search: Tuple[str] = None
+    ) -> str:
+        new_units = parse_temperature_units(units, ignore_exponent, units_to_search)
+        return " ".join(
+            ("delta_" + term[0])
+            if (term[1] and not term[0].startswith("delta_"))
+            else term[0]
+            for term in new_units
+        )
+
+    def _fix_temperature_units(self):
+        # HACK
+        ignore_exponent = self.type == "Temperature Difference"
+        self._unit = Quantity._fix_these_temperature_units(self._unit, ignore_exponent)
+        self._si_units = Quantity._fix_these_temperature_units(
+            self._si_units, ignore_exponent, ("K",)
+        )
 
 
 class QuantityError(ValueError):
