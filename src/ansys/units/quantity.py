@@ -83,6 +83,11 @@ class Quantity(float):
         si_units, si_multiplier, si_offset = self._units_table.si_data(units=self._unit)
 
         self._si_units = si_units
+
+        # Well, this is going to have to be a hack, but we
+        # need to fix the wider design to do this properly
+        self._fix_temperature_units_and_type()
+
         self._si_value = (self.value + si_offset) * si_multiplier
 
     def _arithmetic_precheck(self, __value) -> str:
@@ -222,15 +227,29 @@ class Quantity(float):
             ]
             new_si_value = self.si_value / __value.si_value
             new_dimensions = q.Dimensions(dimensions=temp_dimensions)
-            new_units = self._temp_precheck() or new_dimensions.units
-            return Quantity(value=new_si_value, units=new_units)
+            new_units = (
+                # self._temp_precheck() or
+                new_dimensions.units
+            )
+            result = Quantity(value=new_si_value, units=new_units)
+            # HACK
+            convert_to_temp_difference = (
+                "Temperature" == result.type
+                and __value.type in ("Temperature", "Temperature Difference")
+            )
+            if convert_to_temp_difference:
+                result._type = "Temperature Difference"
+            return result
 
         if isinstance(__value, (float, int)):
-            new_units = self._temp_precheck() or self.si_units
+            new_units = (
+                # self._temp_precheck() or
+                self.si_units
+            )
             return Quantity(value=self.si_value / __value, units=new_units)
 
     def __rtruediv__(self, __value):
-        return self.__truediv__(__value)
+        return Quantity(__value, "") / self
 
     def __add__(self, __value):
         self._arithmetic_precheck(__value)
@@ -276,6 +295,40 @@ class Quantity(float):
     def __neq__(self, __value):
         self._arithmetic_precheck(__value)
         return float(self) != float(__value)
+
+    def _fix_temperature_units_and_type(self):
+        # HACK
+        do_all = self.type == "Temperature Difference"
+        units = self._unit
+        si_units = self._si_units
+        new_units = []
+        new_si_units = []
+        for term in units.split(" "):
+            term_parts = term.split("^")
+            label = term_parts[0]
+            exponent = term_parts[0] if len(term_parts) > 1 else "0"
+            if (
+                label
+                and (exponent != "0" or do_all)
+                and not label.startswith("delta_")  # not already OK
+                and label[-1] in ("K", "C", "F", "R")  # allow prefix
+            ):
+                term = "delta_" + term  # prefix the whole term
+            new_units.append(term)
+        for term in si_units.split(" "):
+            term_parts = term.split("^")
+            label = term_parts[0]
+            exponent = term_parts[0] if len(term_parts) > 1 else "0"
+            if (
+                label
+                and (exponent != "0" or do_all)
+                and not label.startswith("delta_")  # not already OK
+                and label[-1] == "K"  # allow prefix
+            ):
+                term = "delta_" + term  # prefix the whole term
+            new_si_units.append(term)
+        self._unit = " ".join(new_units)
+        self._si_units = " ".join(new_si_units)
 
 
 class QuantityError(ValueError):

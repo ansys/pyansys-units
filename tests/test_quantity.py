@@ -254,14 +254,14 @@ def test_to_29():
     v = q.Quantity(1.0, "BTU lb^-1 R^-1")
     to = v.to("J kg^-1 K^-1")
     assert to.value == pytest.approx(4186.8161854, DELTA)
-    assert to.units == "J kg^-1 K^-1"
+    assert to.units == "J kg^-1 delta_K^-1"
 
 
 def test_to_30():
     v = q.Quantity(1.0, "BTU lb^-1 F^-1")
     to = v.to("J kg^-1 K^-1")
     assert to.value == pytest.approx(4186.8161854, DELTA)
-    assert to.units == "J kg^-1 K^-1"
+    assert to.units == "J kg^-1 delta_K^-1"
 
 
 def test_to_31():
@@ -537,37 +537,37 @@ def test_temp_7():
     hcto1 = hc.to("kJ kg^-1 K^-1")
 
     assert hcto1.value == pytest.approx(1.0, DELTA)
-    assert hcto1.units == "kJ kg^-1 K^-1"
+    assert hcto1.units == "kJ kg^-1 delta_K^-1"
 
     hcto2 = hc.to("J kg^-1 C^-1")
 
     assert hcto2.value == pytest.approx(1000.0, DELTA)
-    assert hcto2.units == "J kg^-1 C^-1"
+    assert hcto2.units == "J kg^-1 delta_C^-1"
 
     hcto3 = hc.to("kJ kg^-1 C^-1")
 
     assert hcto3.value == pytest.approx(1.0, DELTA)
-    assert hcto3.units == "kJ kg^-1 C^-1"
+    assert hcto3.units == "kJ kg^-1 delta_C^-1"
 
     hcto4 = hc.to("cal g^-1 C^-1")
 
     assert hcto4.value == pytest.approx(0.2390057, DELTA)
-    assert hcto4.units == "cal g^-1 C^-1"
+    assert hcto4.units == "cal g^-1 delta_C^-1"
 
     hcto5 = hc.to("cal kg^-1 C^-1")
 
     assert hcto5.value == pytest.approx(239.0057, DELTA)
-    assert hcto5.units == "cal kg^-1 C^-1"
+    assert hcto5.units == "cal kg^-1 delta_C^-1"
 
     hcto6 = hc.to("kcal kg^-1 C^-1")
 
     assert hcto6.value == pytest.approx(0.2390057, DELTA)
-    assert hcto6.units == "kcal kg^-1 C^-1"
+    assert hcto6.units == "kcal kg^-1 delta_C^-1"
 
     hcto7 = hc.to("BTU lb^-1 F^-1")
 
     assert hcto7.value == pytest.approx(0.238845, DELTA)
-    assert hcto7.units == "BTU lb^-1 F^-1"
+    assert hcto7.units == "BTU lb^-1 delta_F^-1"
 
 
 def test_temp_8():
@@ -576,32 +576,32 @@ def test_temp_8():
     temp_varto1 = temp_var.to("g cm^-3 s^-1 K^2")
 
     assert temp_varto1.value == pytest.approx(0.001, DELTA)
-    assert temp_varto1.units == "g cm^-3 s^-1 K^2"
+    assert temp_varto1.units == "g cm^-3 s^-1 delta_K^2"
 
     temp_varto2 = temp_var.to("kg mm^-3 s^-1 K^2")
 
     assert temp_varto2.value == pytest.approx(1e-09, DELTA)
-    assert temp_varto2.units == "kg mm^-3 s^-1 K^2"
+    assert temp_varto2.units == "kg mm^-3 s^-1 delta_K^2"
 
     temp_varto3 = temp_var.to("kg um^-3 s^-1 K^2")
 
     assert temp_varto3.value == pytest.approx(9.999999999999999e-19, DELTA)
-    assert temp_varto3.units == "kg um^-3 s^-1 K^2"
+    assert temp_varto3.units == "kg um^-3 s^-1 delta_K^2"
 
-    temp_varto4 = temp_var.to("mg mm^-3 ms^-1 K^2")
+    temp_varto4 = temp_var.to("mg mm^-3 ms^-1 delta_K^2")
 
     assert temp_varto4.value == pytest.approx(1.0000000000000002e-06, DELTA)
-    assert temp_varto4.units == "mg mm^-3 ms^-1 K^2"
+    assert temp_varto4.units == "mg mm^-3 ms^-1 delta_K^2"
 
     temp_varto5 = temp_var.to("g cm^-3 us^-1 K^2")
 
     assert temp_varto5.value == pytest.approx(1e-09, DELTA)
-    assert temp_varto5.units == "g cm^-3 us^-1 K^2"
+    assert temp_varto5.units == "g cm^-3 us^-1 delta_K^2"
 
     temp_varto6 = temp_var.to("pg um^-3 ms^-1 K^2")
 
     assert temp_varto6.value == pytest.approx(9.999999999999997e-07, DELTA)
-    assert temp_varto6.units == "pg um^-3 ms^-1 K^2"
+    assert temp_varto6.units == "pg um^-3 ms^-1 delta_K^2"
 
 
 def test_temp_inverse_1():
@@ -682,6 +682,14 @@ def test_temp_diff_combined_multiply():
     e = k * t
     assert e.value == 5.52e-23
     assert e.units == "kg m^2 s^-2"
+
+
+def test_temp_diff_combined_multiply_2():
+    q1 = q.Quantity(2.0, "J K^-2")
+    q2 = q.Quantity(4.0, "K")
+    res = q1 * q2
+    assert res.value == 8.0
+    assert res.units == "kg m^2 s^-2 delta_K^-1"
 
 
 def test_temp_diff_combined_inverse():
