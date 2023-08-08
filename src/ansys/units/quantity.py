@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import ansys.units as q
+from ansys.units.units import parse_temperature_units
 
 
 class Quantity(float):
@@ -302,20 +303,13 @@ class Quantity(float):
     def _fix_these_temperature_units(
         units: str, ignore_exponent: bool, units_to_search: Tuple[str]
     ) -> str:
-        new_units = []
-        for term in units.split(" "):
-            term_parts = term.split("^")
-            label = term_parts[0]
-            exponent = term_parts[0] if len(term_parts) > 1 else "0"
-            if (
-                label
-                and (exponent != "0" or ignore_exponent)
-                and label[-1] in units_to_search  # allow prefix
-            ):
-                if not label.startswith("delta_"):  # not already OK
-                    term = "delta_" + term  # prefix the whole term
-            new_units.append(term)
-        return " ".join(new_units)
+        new_units = parse_temperature_units(units, ignore_exponent, units_to_search)
+        return " ".join(
+            ("delta_" + term[0])
+            if (term[1] and not term[0].startswith("delta_"))
+            else term[0]
+            for term in new_units
+        )
 
     def _fix_temperature_units(self):
         # HACK
