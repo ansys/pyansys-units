@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import ansys.units as q
 
 
@@ -86,7 +88,7 @@ class Quantity(float):
 
         # Well, this is going to have to be a hack, but we
         # need to fix the wider design to do this properly
-        self._fix_temperature_units_and_type()
+        self._fix_temperature_units()
 
         self._si_value = (self.value + si_offset) * si_multiplier
 
@@ -296,13 +298,11 @@ class Quantity(float):
         self._arithmetic_precheck(__value)
         return float(self) != float(__value)
 
-    def _fix_temperature_units_and_type(self):
-        # HACK
-        do_all = self.type == "Temperature Difference"
-        units = self._unit
-        si_units = self._si_units
+    @staticmethod
+    def _fix_these_temperature_units(
+        units: str, do_all: bool, units_to_search: Tuple[str]
+    ) -> str:
         new_units = []
-        new_si_units = []
         for term in units.split(" "):
             term_parts = term.split("^")
             label = term_parts[0]
@@ -311,24 +311,21 @@ class Quantity(float):
                 label
                 and (exponent != "0" or do_all)
                 and not label.startswith("delta_")  # not already OK
-                and label[-1] in ("K", "C", "F", "R")  # allow prefix
+                and label[-1] in units_to_search  # allow prefix
             ):
                 term = "delta_" + term  # prefix the whole term
             new_units.append(term)
-        for term in si_units.split(" "):
-            term_parts = term.split("^")
-            label = term_parts[0]
-            exponent = term_parts[0] if len(term_parts) > 1 else "0"
-            if (
-                label
-                and (exponent != "0" or do_all)
-                and not label.startswith("delta_")  # not already OK
-                and label[-1] == "K"  # allow prefix
-            ):
-                term = "delta_" + term  # prefix the whole term
-            new_si_units.append(term)
-        self._unit = " ".join(new_units)
-        self._si_units = " ".join(new_si_units)
+        return " ".join(new_units)
+
+    def _fix_temperature_units(self):
+        # HACK
+        do_all = self.type == "Temperature Difference"
+        self._unit = Quantity._fix_these_temperature_units(
+            self._unit, do_all, ("K", "C", "F", "R")
+        )
+        self._si_units = Quantity._fix_these_temperature_units(
+            self._si_units, do_all, ("K",)
+        )
 
 
 class QuantityError(ValueError):
