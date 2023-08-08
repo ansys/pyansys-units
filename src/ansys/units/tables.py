@@ -2,6 +2,8 @@ import os
 
 import yaml
 
+from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
+
 
 class UnitsTable(object):
     """Initializes a UnitsTable object with all table values and unit string
@@ -54,7 +56,7 @@ class UnitsTable(object):
             Boolean of multiplier within unit_term.
         """
         # Check if the unit term is not an existing fundamental or derived unit.
-        return not (
+        return unit_term and not (
             (unit_term in self._fundamental_units) or (unit_term in self._derived_units)
         )
 
@@ -135,7 +137,8 @@ class UnitsTable(object):
         base = unit_term
 
         # strip multiplier and base from unit term
-        if self._has_multiplier(unit_term):
+        has_multiplier = self._has_multiplier(unit_term)
+        if has_multiplier:
             for mult in self._multipliers:
                 if unit_term.startswith(mult):
                     if not self._has_multiplier(unit_term[len(mult) :]):
@@ -143,6 +146,11 @@ class UnitsTable(object):
                         base = unit_term[len(mult) :]
                         break
 
+        # if we thought it had a multiplier, that's just because the string wasn't
+        # a known unit on its own. So if we can't actually find its multiplier then
+        # this string is an invalid unit string
+        if has_multiplier and not multiplier:
+            raise QuantityError.UNKNOWN_UNITS(unit_term)
         return multiplier, base, power
 
     def si_data(
