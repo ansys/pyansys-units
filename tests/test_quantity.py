@@ -322,6 +322,21 @@ def test_temperature_difference_to_with_implicit_delta():
     assert td2C.units == "delta_C"
 
 
+def test_complex_temperature_difference_to():
+    t1 = q.Quantity(1.0, "K")
+    t2 = q.Quantity(2.0, "K")
+    m = q.Quantity(1.0, "kg")
+    result = m * (t2 - t1)
+    resultC1 = result.to("kg C")
+    assert resultC1.type == "Temperature Difference"
+    assert resultC1.value == 1.0
+    assert resultC1.units == "kg delta_C"
+    resultC2 = result.to("kg delta_C")
+    assert resultC2.type == "Temperature Difference"
+    assert resultC2.value == 1.0
+    assert resultC2.units == "kg delta_C"
+
+
 def test_repr():
     v = q.Quantity(1.0, "m")
     assert v.__repr__() == 'Quantity (1.0, "m")'

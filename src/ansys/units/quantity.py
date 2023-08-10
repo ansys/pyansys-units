@@ -30,7 +30,7 @@ class Quantity(float):
     Quantity instance.
     """
 
-    def __new__(cls, value, units=None, quantity_map=None, dimensions=None):
+    def __new__(cls, value, units=None, quantity_map=None, dimensions=None, _type=None):
         if (
             (units and quantity_map)
             or (units and dimensions)
@@ -57,7 +57,9 @@ class Quantity(float):
 
         return float.__new__(cls, _si_value)
 
-    def __init__(self, value, units=None, quantity_map=None, dimensions=None):
+    def __init__(
+        self, value, units=None, quantity_map=None, dimensions=None, _type=None
+    ):
         if (
             (units and quantity_map)
             or (units and dimensions)
@@ -81,7 +83,7 @@ class Quantity(float):
             self._dimensions = q.Dimensions(dimensions=dimensions)
             self._unit = self._dimensions.units
 
-        self._type = self._units_table.get_type(self._unit)
+        self._type = _type or self._units_table.get_type(self._unit)
 
         si_units, si_multiplier, si_offset = self._units_table.si_data(units=self._unit)
 
@@ -179,7 +181,10 @@ class Quantity(float):
         if not isinstance(to_units, str):
             raise TypeError("`to_units` should be a `str` type.")
 
+        new_type = None
+
         if self.type == "Temperature Difference":
+            new_type = "Temperature Difference"
             to_units = Quantity._fix_these_temperature_units(
                 to_units, ignore_exponent=True
             )
@@ -188,7 +193,7 @@ class Quantity(float):
         _, si_multiplier, si_offset = self._units_table.si_data(to_units)
         new_value = (self.si_value / si_multiplier) - si_offset
 
-        new_obj = Quantity(value=new_value, units=to_units)
+        new_obj = Quantity(value=new_value, units=to_units, _type=new_type)
 
         # Confirm conversion compatibility
         self._arithmetic_precheck(new_obj)
@@ -215,7 +220,11 @@ class Quantity(float):
             new_si_value = self.si_value * __value.si_value
             new_dimensions = q.Dimensions(dimensions=temp_dimensions)
             new_units = new_dimensions.units
-            return Quantity(value=new_si_value, units=new_units)
+            return Quantity(
+                value=new_si_value,
+                units=new_units,
+                _type=self._determine_new_type(__value),
+            )
 
         if isinstance(__value, (float, int)):
             new_units = self._temp_precheck() or self.si_units
@@ -313,6 +322,15 @@ class Quantity(float):
         self._si_units = Quantity._fix_these_temperature_units(
             self._si_units, ignore_exponent, ("K",)
         )
+
+    def _determine_new_type(self, other=None):
+        # HACK the only concern here is to fix the loss of
+        # Temperature Difference information. Return
+        # Temperature Difference if it's involved else None
+        # such that the caller figures it out in the usual way
+        temperature_difference = "Temperature Difference"
+        if "Temperature Difference" in (self.type, other.type):
+            return "Temperature Difference"
 
 
 class QuantityError(ValueError):
