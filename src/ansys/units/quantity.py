@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import ansys.units as q
+from ansys.units._constants import _QuantityType
 from ansys.units.units import parse_temperature_units
 
 
@@ -122,7 +123,10 @@ class Quantity(float):
         str | None
             Units of temperature difference.
         """
-        if self.type in ["Temperature", "Temperature Difference"]:
+        if self.type in [
+            _QuantityType.temperature,
+            _QuantityType.temperature_difference,
+        ]:
             return "delta_K"
 
     @property
@@ -183,8 +187,8 @@ class Quantity(float):
 
         new_type = None
 
-        if self.type == "Temperature Difference":
-            new_type = "Temperature Difference"
+        if self.type == _QuantityType.temperature_difference:
+            new_type = _QuantityType.temperature_difference
             to_units = Quantity._fix_these_temperature_units(
                 to_units, ignore_exponent=True
             )
@@ -244,11 +248,12 @@ class Quantity(float):
             result = Quantity(value=new_si_value, units=new_units)
             # HACK
             convert_to_temp_difference = (
-                "Temperature" == result.type
-                and __value.type in ("Temperature", "Temperature Difference")
+                _QuantityType.temperature == result.type
+                and __value.type
+                in (_QuantityType.temperature, _QuantityType.temperature_difference)
             )
             if convert_to_temp_difference:
-                result._type = "Temperature Difference"
+                result._type = _QuantityType.temperature_difference
             return result
 
         if isinstance(__value, (float, int)):
@@ -317,7 +322,7 @@ class Quantity(float):
 
     def _fix_temperature_units(self):
         # HACK
-        ignore_exponent = self.type == "Temperature Difference"
+        ignore_exponent = self.type == _QuantityType.temperature_difference
         self._unit = Quantity._fix_these_temperature_units(self._unit, ignore_exponent)
         self._si_units = Quantity._fix_these_temperature_units(
             self._si_units, ignore_exponent, ("K",)
@@ -328,9 +333,8 @@ class Quantity(float):
         # Temperature Difference information. Return
         # Temperature Difference if it's involved else None
         # such that the caller figures it out in the usual way
-        temperature_difference = "Temperature Difference"
-        if "Temperature Difference" in (self.type, other.type):
-            return "Temperature Difference"
+        if _QuantityType.temperature_difference in (self.type, other.type):
+            return _QuantityType.temperature_difference
 
 
 class QuantityError(ValueError):
