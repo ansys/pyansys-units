@@ -179,6 +179,11 @@ class Quantity(float):
         if not isinstance(to_units, str):
             raise TypeError("`to_units` should be a `str` type.")
 
+        if self.type == "Temperature Difference":
+            to_units = Quantity._fix_these_temperature_units(
+                to_units, ignore_exponent=True
+            )
+
         # Retrieve all SI required SI data and perform conversion
         _, si_multiplier, si_offset = self._units_table.si_data(to_units)
         new_value = (self.si_value / si_multiplier) - si_offset
