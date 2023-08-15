@@ -46,7 +46,7 @@ multipliers:
 # Unit Systems
 # ------------
 #
-# Predefined unit system refix : Unit system units
+# Predefined unit system prefix : Unit system units
 
 unit_systems:
   SI: 
