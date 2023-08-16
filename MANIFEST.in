@@ -1,1 +1,2 @@
 include src/ansys/units/cfg.yaml
+include src/ansys/units/docs/README.rst
