@@ -10,7 +10,7 @@ dimension_order:
   Time: 3
   Temperature: 4
   Temperature Difference: 4
-  Angle: 5 
+  Angle: 5
   Chemical Amount: 6
   Light: 7
   Current: 8
@@ -57,8 +57,8 @@ multipliers:
 # Unit systems must provide the unit for each fundamental unit.
 
 unit_systems:
-  SI: 
-    - kg 
+  SI:
+    - kg
     - m
     - s
     - K
@@ -92,8 +92,8 @@ unit_systems:
 # -----------------
 #
 # Custom units -> Add new units and their associated properties to the list
-# below to use them within a quantity. 
-# 
+# below to use them within a quantity.
+#
 # <unit name>:        Primitive unit composed of `type`, `factor` and `offset`
 #   type: <name>      Must be one of the dimension types
 #   factor: <factor>  SI conversion factor
