@@ -76,7 +76,6 @@ instance/
 # Sphinx documentation
 doc/_build/
 _autosummary
-doc/source/examples/
 doc/build_errors.txt
 
 # PyBuilder
@@ -166,6 +165,3 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/python
-
-# VS Code
-.vscode
