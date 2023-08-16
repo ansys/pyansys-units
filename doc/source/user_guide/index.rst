@@ -6,7 +6,7 @@ User Guide
 
 .. toctree::
     :maxdepth: 1
-    :hidden: 
+    :hidden:
 
     quantity
     systems
@@ -29,7 +29,7 @@ To initialize a physical quantity, import the ``pyunits`` library and create a n
 
 All ``Quantity`` objects work intuitively with arithmetic operators, simply insert them within an equation to perform mathematical operations.
 
-.. code:: python 
+.. code:: python
 
 
     import ansys.units as q
@@ -41,8 +41,8 @@ All ``Quantity`` objects work intuitively with arithmetic operators, simply inse
     m_ml = meter * 2    # >>> 2
     m_dv = meter / 2    # >>> 0.5
     m_sq = meter**2     # >>> 1
-    
-The default unit system used when performing quantity operations is ``SI``. This ensures consistency between ``Quantity`` objects using different unit systems (ie. CGS, BT, etc.).  
+
+The default unit system used when performing quantity operations is ``SI``. This ensures consistency between ``Quantity`` objects using different unit systems (ie. CGS, BT, etc.).
 
 To define a new unit system or create custom quantities, manually update the ``cfg.yaml`` file with your desired data. These changes will be reflected throughout the PyUnits module once saved.
 
