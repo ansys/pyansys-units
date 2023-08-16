@@ -23,7 +23,7 @@ Overview
 To initialize a physical quantity, import the ``pyunits`` library and create a
 new ``Quantity`` object.
 
-.. code:: pycon
+.. code:: python
 
     import ansys.units as q
 

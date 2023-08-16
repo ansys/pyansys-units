@@ -89,7 +89,7 @@ Import the pyunits library:
 
 Quantities can be instantiated with 1 of 3 methods:
 
-.. code:: pycon
+.. code:: python
 
    # unit string
 
@@ -132,7 +132,7 @@ Examples
 
 Arithmetic
 
-.. code:: pycon
+.. code:: python
 
    import ansys.units as q
 
@@ -151,7 +151,7 @@ Arithmetic
 
 Conversions
 
-.. code:: pycon
+.. code:: python
 
    import ansys.units as q
 
@@ -164,7 +164,7 @@ Conversions
 
 Unit Systems
 
-.. code:: pycon
+.. code:: python
 
    import ansys.units as q
 
