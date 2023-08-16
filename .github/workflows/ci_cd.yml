@@ -119,4 +119,13 @@ jobs:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-
+  release-pypi-public:
+    name: "Release to public PyPI"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    steps:
+      - uses: ansys/actions/release-pypi-public@v4
+        with:
+          library-name: "ansys-units"
+          twine-username: "__token__"
+          twine-token: ${{ secrets.PYUNITS_PYPI_TOKEN }}
