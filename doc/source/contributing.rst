@@ -4,18 +4,17 @@
 Contribute
 ==========
 Overall guidance on contributing to a PyAnsys library appears in the
-`Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic
-in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar with
+`Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic in
+the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar with
 this guide, paying particular attention to the `Coding Style
-<https://dev.docs.pyansys.com/coding-style/index.html#coding-style>`_ topic, before
-attempting to contribute to PyUnits.
+<https://dev.docs.pyansys.com/coding-style/index.html#coding-style>`_ topic,
+before attempting to contribute to PyUnits.
 
 The following contribution information is specific to PyUnits.
 
 Clone the repository
 --------------------
-To clone and install the latest PyUnits release in development
-mode, run:
+To clone and install the latest PyUnits release in development mode, run:
 
 .. code::
 
@@ -36,8 +35,8 @@ repository, run:
     make html
 
 After the build completes, the HTML documentation is located in the
-``_builds/html`` directory. You can load the ``index.html`` file in
-this directory into a web browser.
+``_builds/html`` directory. You can load the ``index.html`` file in this
+directory into a web browser.
 
 You can clear all HTML files from the ``_builds/html`` directory with:
 
@@ -55,21 +54,15 @@ Adhere to code style
 --------------------
 PyUnits is compliant with the `PyAnsys code style
 <https://dev.docs.pyansys.com/coding-style/index.html>`_. It uses the tool
-`pre-commit <https://pre-commit.com/>`_ to check the code style. You can
-install and activate this tool with:
+`pre-commit <https://pre-commit.com/>`_ to check the code style. You can install
+and activate this tool with:
 
 .. code:: bash
 
    python -m pip install pre-commit
    pre-commit install
 
-You can then use the ``style`` rule defined in ``Makefile`` with:
-
-.. code:: bash
-
-   make style
-
-Or, you can directly execute `pre-commit <https://pre-commit.com/>`_ with:
+then you can directly execute `pre-commit <https://pre-commit.com/>`_ with:
 
 .. code:: bash
 
