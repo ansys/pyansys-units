@@ -1,6 +1,6 @@
 """Sphinx documentation configuration file."""
-import os
 from datetime import datetime
+import os
 
 from ansys_sphinx_theme import get_version_match, pyansys_logo_black
 from sphinx_gallery.sorting import FileNameSortKey

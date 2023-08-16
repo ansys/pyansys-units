@@ -103,7 +103,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def EXCESSIVE_PARAMETERS(cls):
         return cls(
-            "UnitSystem only accepts 1 of the following parameters: (name, base_units) or (unit_sys)."
+            "UnitSystem only accepts 1 of the following parameters: (name, base_units) or (unit_sys)."  # noqa : E501
         )
 
     @classmethod
@@ -115,13 +115,13 @@ class UnitSystemError(ValueError):
     @classmethod
     def UNIT_UNDEFINED(cls, unit):
         return cls(
-            f"`{unit}` is an undefined unit. To use `{unit}` add it to the `fundamental_units` table within cfg.yaml."
+            f"`{unit}` is an undefined unit. To use `{unit}` add it to the `fundamental_units` table within cfg.yaml."  # noqa : E501
         )
 
     @classmethod
     def UNIT_ORDER(cls, t1, o1, t2, o2):
         return cls(
-            f"Expected unit of type: `{t1}` (order: {o1}), received unit of type: `{t2}` (order: {o2})."
+            f"Expected unit of type: `{t1}` (order: {o1}), received unit of type: `{t2}` (order: {o2})."  # noqa : E501
         )
 
     @classmethod
