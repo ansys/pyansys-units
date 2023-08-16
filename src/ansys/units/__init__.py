@@ -1,7 +1,4 @@
-"""units.
-
-pyunits
-"""
+"""Pyunits is a pythonic interface for units, unit systems, and unit conversions."""
 import os
 
 try:

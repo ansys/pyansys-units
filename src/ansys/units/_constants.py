@@ -1,4 +1,6 @@
-# quantity "types"
+"""Provides quantity "types" constants."""
+
+
 class _QuantityType:
     composite = "Composite"
     derived = "Derived"
