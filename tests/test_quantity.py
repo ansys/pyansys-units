@@ -1013,7 +1013,8 @@ def test_error_messages():
     e1 = q.QuantityError.EXCESSIVE_PARAMETERS()
     assert (
         e1.__str__()
-        == "Quantity only accepts 1 of the following parameters: (units) or (quantity_map) or (dimensions)."
+        == "Quantity only accepts 1 of the following parameters: \
+            (units) or (quantity_map) or (dimensions)."
     )
 
     e2 = q.QuantityError.INCOMPATIBLE_DIMENSIONS("mm", "K")
