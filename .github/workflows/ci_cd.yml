@@ -32,8 +32,12 @@ jobs:
     name: Documentation Style Check
     runs-on: ubuntu-latest
     steps:
-      - name: "Running documentation style checks"
-        uses: ansys/actions/doc-style@v4
+      - uses: actions/checkout@v3
+
+      - name: Running Vale
+        uses: errata-ai/vale-action@reviewdog
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 

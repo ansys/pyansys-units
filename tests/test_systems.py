@@ -91,28 +91,31 @@ def test_errors():
 
 def test_error_messages():
     e1 = q.UnitSystemError.EXCESSIVE_PARAMETERS()
-    assert (
-        e1.__str__()
-        == "UnitSystem only accepts 1 of the following parameters: (name, base_units) or (unit_sys)."  # noqa : E501
+    expected_str = (
+        "UnitSystem only accepts 1 of the following parameters: "
+        "(name, base_units) or (unit_sys)."
     )
+    assert str(e1) == expected_str
 
     e2 = q.UnitSystemError.BASE_UNITS_LENGTH(10)
-    assert (
-        e2.__str__()
-        == "The `base_units` argument must contain 9 units, currently there are 10."
+    expected_str = (
+        "The `base_units` argument must contain 9 units, currently there are 10."
     )
+    assert str(e2) == expected_str
 
     e3 = q.UnitSystemError.UNIT_UNDEFINED("pizza")
-    assert (
-        e3.__str__()
-        == "`pizza` is an undefined unit. To use `pizza` add it to the `fundamental_units` table within cfg.yaml."  # noqa : E501
+    expected_str = (
+        "`pizza` is an undefined unit. To use `pizza` add it to the "
+        "`fundamental_units` table within cfg.yaml."
     )
+    assert str(e3) == expected_str
 
     e4 = q.UnitSystemError.UNIT_ORDER("Mass", 1, "Light", 7)
-    assert (
-        e4.__str__()
-        == "Expected unit of type: `Mass` (order: 1), received unit of type: `Light` (order: 7)."
+    expected_str = (
+        "Expected unit of type: `Mass` (order: 1), received unit of type: "
+        "`Light` (order: 7)."
     )
+    assert str(e4) == expected_str
 
     e5 = q.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
-    assert e5.__str__() == "`ham sandwich` is not a supported unit system."
+    assert str(e5) == "`ham sandwich` is not a supported unit system."
