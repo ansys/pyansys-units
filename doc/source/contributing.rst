@@ -9,7 +9,7 @@ in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar with
 this guide, paying particular attention to the `Coding Style
 <https://dev.docs.pyansys.com/coding-style/index.html#coding-style>`_ topic, before
 attempting to contribute to PyUnits.
- 
+
 The following contribution information is specific to PyUnits.
 
 Clone the repository
@@ -29,7 +29,7 @@ Build documentation
 To build the PyUnits documentation locally, in the root directory of the
 repository, run:
 
-.. code:: 
+.. code::
 
     pip install -r requirements/requirements_doc.txt
     cd doc

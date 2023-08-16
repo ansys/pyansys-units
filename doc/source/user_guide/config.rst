@@ -4,9 +4,9 @@
 Config YAML
 ===========
 
-The ``cfg.yaml`` file contains pre-defined tables consisting of quantity data. 
+The ``cfg.yaml`` file contains pre-defined tables consisting of quantity data.
 
-These tables include: 
+These tables include:
 
 - dimension_order
 - multipliers
