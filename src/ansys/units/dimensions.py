@@ -24,8 +24,8 @@ class Dimensions(object):
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
-        self._units_table = q.UnitsTable()
-        unit_sys = unit_sys or self._units_table.unit_systems["SI"]
+        self._units = q.Units()
+        unit_sys = unit_sys or q._unit_systems["SI"]
 
         if units is not None:
             self._unit = units
@@ -70,7 +70,7 @@ class Dimensions(object):
                 dim = int(dim) if dim % 1 == 0 else dim
                 units += f" {unit_sys[idx]}^{dim}"
 
-        return dimensions, self._units_table.condense(units=units)
+        return dimensions, self._units.condense(units=units)
 
     def _units_to_dim(
         self, units: str, power: float = None, dimensions: list = None
@@ -95,25 +95,20 @@ class Dimensions(object):
 
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
-            _, unit_term, unit_term_power = self._units_table.filter_unit_term(term)
+            _, unit_term, unit_term_power = self._units.filter_unit_term(term)
 
             unit_term_power *= power
 
             # retrieve data associated with fundamental unit
-            if unit_term in self._units_table.fundamental_units:
-                idx = (
-                    self._units_table.dimension_order[
-                        self._units_table.fundamental_units[unit_term]["type"]
-                    ]
-                    - 1
-                )
+            if unit_term in q._fundamental_units:
+                idx = q._dimension_order[q._fundamental_units[unit_term]["type"]] - 1
                 dimensions[idx] += unit_term_power
 
             # Retrieve derived unit composition unit string and factor.
-            if unit_term in self._units_table.derived_units:
+            if unit_term in q._derived_units:
                 # Recursively parse composition unit string
                 dimensions = self._units_to_dim(
-                    units=self._units_table.derived_units[unit_term]["composition"],
+                    units=q._derived_units[unit_term]["composition"],
                     power=unit_term_power,
                     dimensions=dimensions,
                 )
