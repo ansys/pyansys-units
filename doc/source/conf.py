@@ -2,8 +2,7 @@
 from datetime import datetime
 import os
 
-from ansys_sphinx_theme import get_version_match
-from ansys_sphinx_theme import pyansys_logo_black as logo
+from ansys_sphinx_theme import get_version_match, pyansys_logo_black
 from sphinx_gallery.sorting import FileNameSortKey
 
 from ansys.units import __version__
@@ -16,7 +15,7 @@ release = version = __version__
 cname = os.getenv("DOCUMENTATION_CNAME", "docs.pyansys.com")
 
 # Select desired logo, theme, and declare the html title
-html_logo = logo
+html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyUnits"
 
