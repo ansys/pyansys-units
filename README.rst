@@ -175,3 +175,4 @@ Unit Systems
 
 License and acknowledgments
 ---------------------------
+PyUnits is licensed under the MIT license.

@@ -5,8 +5,6 @@
 # For contributions made under a Corporate CLA, the organization is
 # added to this file.
 #
-# If you have contributed to the repository and wish to be added to this file
-# please submit a request.
 #
 #
 ANSYS, Inc.
