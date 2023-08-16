@@ -12,6 +12,7 @@ except ModuleNotFoundError:
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 
 
+from ansys.units._constants import _QuantityType  # noqa: F401
 from ansys.units.dimensions import Dimensions, DimensionsError  # noqa: F401
 from ansys.units.map import QuantityMap, QuantityMapError  # noqa: F401
 from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
