@@ -5,6 +5,12 @@ repos:
   hooks:
   - id: black
 
+- repo: https://github.com/adamchainz/blacken-docs
+  rev: 1.16.0
+  hooks:
+  - id: blacken-docs
+    additional_dependencies: [black==23.7.0]
+
 - repo: https://github.com/pycqa/isort
   rev: 5.12.0
   hooks:
@@ -17,16 +23,6 @@ repos:
     additional_dependencies: [
       'flake8-annotations==2.9.0'
     ]
-    args: [
-      --exclude, venv __init__.py doc/_build .venv,
-      --select, W191 W291 W293 W391 E115 E117 E122 E124 E125 E225 E231 E301 E303 E501 F401 F403,
-      --count,
-      --statistics,
-      --max-complexity, "10",
-      --max-line-length, "88",
-      --extend-ignore, E203 E501,
-      ansys, codegen, doc, examples, tests
-  ]
 
 - repo: https://github.com/codespell-project/codespell
   rev: v2.2.5
@@ -45,4 +41,13 @@ repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
-    -   id: check-yaml
+    - id: check-merge-conflict
+    - id: debug-statements
+    - id: check-yaml
+    - id: trailing-whitespace
+
+# this validates our github workflow files
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.24.1
+  hooks:
+    - id: check-github-workflows

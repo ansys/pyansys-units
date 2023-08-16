@@ -5,8 +5,9 @@
 ========
 Examples
 ========
-End-to-end examples show how you can use PyUnits. If the PyFluent ``ansys-units`` package is installed on your machine,
-you can download these examples as Python files or Jupyter notebooks and run them locally.
+End-to-end examples show how you can use PyUnits. If the PyFluent
+``ansys-units`` package is installed on your machine, you can download these
+examples as Python files or Jupyter notebooks and run them locally.
 
 .. toctree::
    :maxdepth: 1
@@ -26,9 +27,9 @@ you can download these examples as Python files or Jupyter notebooks and run the
 
 PyUnits Examples
 ================
-PyUnits includes many features, these include: creating quantities, accessing different 
-quantity properties, performing arithmetic operations, performing unit conversions, creating 
-unit systems, and applying unit systems to quantities.
+PyUnits includes many features, these include: creating quantities, accessing
+different quantity properties, performing arithmetic operations, performing unit
+conversions, creating unit systems, and applying unit systems to quantities.
 
 
 .. raw:: html
