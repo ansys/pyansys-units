@@ -21,7 +21,7 @@ Overview
 --------
 To initialize a physical quantity, import the ``pyunits`` library and create a new ``Quantity`` object.
 
-.. code:: python
+.. code:: pycon
 
     import ansys.units as q
 
@@ -29,18 +29,17 @@ To initialize a physical quantity, import the ``pyunits`` library and create a n
 
 All ``Quantity`` objects work intuitively with arithmetic operators, simply insert them within an equation to perform mathematical operations.
 
-.. code:: python
-
+.. code:: pycon
 
     import ansys.units as q
 
     meter = q.Quantity(value=1, units="m")
 
-    m_ad = meter + 2    # >>> 3
-    m_sb = meter - 2    # >>> -1
-    m_ml = meter * 2    # >>> 2
-    m_dv = meter / 2    # >>> 0.5
-    m_sq = meter**2     # >>> 1
+    m_ad = meter + 2  # >>> 3
+    m_sb = meter - 2  # >>> -1
+    m_ml = meter * 2  # >>> 2
+    m_dv = meter / 2  # >>> 0.5
+    m_sq = meter**2  # >>> 1
 
 The default unit system used when performing quantity operations is ``SI``. This ensures consistency between ``Quantity`` objects using different unit systems (ie. CGS, BT, etc.).
 

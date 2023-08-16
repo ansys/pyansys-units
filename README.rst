@@ -83,7 +83,7 @@ Import the pyunits library:
 
 Quantities can be instantiated with 1 of 3 methods:
 
-.. code:: python
+.. code:: pycon
 
    # unit string
 
@@ -113,8 +113,8 @@ Unit systems can be instantiated with 1 of 2 methods:
    # custom unit systems
 
    sys = q.UnitSystem(
-      name="sys",
-      base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"]
+       name="sys",
+       base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
    )
 
    # pre-defined unit systems
@@ -126,7 +126,7 @@ Examples
 
 Arithmetic
 
-.. code:: python
+.. code:: pycon
 
    import ansys.units as q
 
@@ -145,7 +145,7 @@ Arithmetic
 
 Conversions
 
-.. code:: python
+.. code:: pycon
 
    import ansys.units as q
 
@@ -158,7 +158,7 @@ Conversions
 
 Unit Systems
 
-.. code:: python
+.. code:: pycon
 
    import ansys.units as q
 
