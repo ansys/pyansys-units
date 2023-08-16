@@ -20,8 +20,24 @@ dimension_order:
 # -----------
 #
 # Multiplier prefix : Multiplier prefix value
+#
+# Standard multipliers are as documented here:
+#
+# https://en.wikipedia.org/wiki/International_System_of_Units
+#
+# For micro, u is used instead of the Greek letter mu.
 
 multipliers:
+  Y: 1.0e+24
+  Z: 1.0e+21
+  E: 1.0e+18
+  P: 1.0e+15
+  T: 1.0e+12
+  G: 1.0e+09
+  M: 1.0e+06
+  k: 1000
+  h: 100
+  da: 10
   d: 0.1
   c: 0.01
   m: 0.001
@@ -32,21 +48,13 @@ multipliers:
   a: 1.0e-18
   z: 1.0e-21
   y: 1.0e-24
-  da: 10
-  h: 100
-  k: 1000
-  M: 1.0e+06
-  G: 1.0e+09
-  T: 1.0e+12
-  P: 1.0e+15
-  E: 1.0e+18
-  Z: 1.0e+21
-  Y: 1.0e+24
 
 # Unit Systems
 # ------------
 #
 # Predefined unit system prefix : Unit system units
+#
+# Unit systems must provide the unit for each fundamental unit.
 
 unit_systems:
   SI: 
@@ -83,12 +91,13 @@ unit_systems:
 # Fundamental Units
 # -----------------
 #
-# Custom units -> Add new units and their associated properties to the list below to use them within quantity. 
+# Custom units -> Add new units and their associated properties to the list
+# below to use them within a quantity. 
 # 
-# kg:                           (Primitive unit composed of `type`, `factor` and `offset`)
-#   type: Mass                  (Type associated with unit)
-#   factor: 1                   (SI conversion factor)
-#   offset: 0                   (SI conversion offset)
+# <unit name>:        Primitive unit composed of `type`, `factor` and `offset`
+#   type: <name>      Must be one of the dimension types
+#   factor: <factor>  SI conversion factor
+#   offset: <offset>  SI conversion offset
 
 fundamental_units:
   kg:
@@ -194,10 +203,16 @@ fundamental_units:
 
 # Derived Units
 # -------------
-# 
-# N:                           (Unit string derived from fundamental units `composition` and a onversion factor `factor`)
-#   composition: kg m s^-2     (Composition of fundamental units and values that the parent unit string are derived from)
-#   factor: 1                  (SI conversion factor from the parent unit string to the derived unit string contained within composition)
+# Derived units are composed from the fundamental units.  Each derived unit must
+# provide a `composition` and `factor`. The `composition` specifies  the
+# fundamental units and their exponents.  The `factor` provides the conversion
+# from the composed unit string to the derived unit.
+#
+# Specification format:
+#
+# <unit string>:
+#   composition: <units>
+#   factor: <value>
 
 derived_units:
   N:
