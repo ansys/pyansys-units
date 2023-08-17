@@ -10,7 +10,7 @@ User Guide
 
     quantity
     systems
-    tables
+    units
     dimensions
     map
     config
