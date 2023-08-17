@@ -4,17 +4,6 @@
 User Guide
 ==========
 
-.. toctree::
-    :maxdepth: 1
-    :hidden:
-
-    quantity
-    systems
-    tables
-    dimensions
-    map
-    config
-
 Anyone who wants to use PyUnits can import its Python modules and develop Python
 code to work with physical quantities.
 
