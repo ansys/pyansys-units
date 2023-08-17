@@ -1,4 +1,5 @@
-import ansys.units as q
+"""Provides ``QuantityMap`` class."""
+import ansys.units as pyunits
 
 
 class QuantityMap(object):
@@ -15,10 +16,10 @@ class QuantityMap(object):
     """
 
     def __init__(self, quantity_map):
-        self._units = q.Units()
+        self._units = pyunits.Units()
 
         for item in quantity_map:
-            if item not in q._api_quantity_map:
+            if item not in pyunits._api_quantity_map:
                 raise QuantityMapError.UNKNOWN_MAP_ITEM(item)
 
         self._units = self._map_to_units(quantity_map)
@@ -37,7 +38,8 @@ class QuantityMap(object):
             Unit string representation of quantity map.
         """
         unit_dict = {
-            q._api_quantity_map[term]: power for term, power in quantity_map.items()
+            pyunits._api_quantity_map[term]: power
+            for term, power in quantity_map.items()
         }
 
         units = ""

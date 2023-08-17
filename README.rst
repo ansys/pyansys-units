@@ -85,7 +85,7 @@ Import the pyunits library:
 
 .. code:: python
 
-   import ansys.units as q
+   import ansys.units as pyunits
 
 Quantities can be instantiated with one of three methods:
 
@@ -93,21 +93,21 @@ Quantities can be instantiated with one of three methods:
 
    # unit string
 
-   volume = q.Quantity(value=1, units="m^3")
+   volume = pyunits.Quantity(value=1, units="m^3")
 
    volume.value  # 1.0
    volume.units  # "m^3"
 
    # dimensions
 
-   acceleration = q.Quantity(value=3, dimensions=[0, 1, -2])
+   acceleration = pyunits.Quantity(value=3, dimensions=[0, 1, -2])
 
    acceleration.value  # 3.0
    acceleration.units  # "m s^-2"
 
    # quantity map
 
-   torque = q.Quantity(5, quantity_map={"Torque": 1})
+   torque = pyunits.Quantity(5, quantity_map={"Torque": 1})
 
    torque.value  # 5.0
    torque.units  # "N m"
@@ -118,14 +118,14 @@ Unit systems can be instantiated with one of two methods:
 
    # custom unit systems
 
-   sys = q.UnitSystem(
+   sys = pyunits.UnitSystem(
        name="sys",
        base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
    )
 
    # pre-defined unit systems
 
-   si = q.UnitSystem(unit_sys="SI")
+   si = pyunits.UnitSystem(unit_sys="SI")
 
 Examples
 ~~~~~~~~
@@ -134,13 +134,13 @@ Perform arithmetic operations:
 
 .. code:: python
 
-   import ansys.units as q
+   import ansys.units as pyunits
 
-   deg = q.Quantity(90, "degree")
+   deg = pyunits.Quantity(90, "degree")
    math.sin(deg)  # 1.0
 
-   v1 = q.Quantity(10.0, "m s^-1")
-   v2 = q.Quantity(5.0, "m s^-1")
+   v1 = pyunits.Quantity(10.0, "m s^-1")
+   v2 = pyunits.Quantity(5.0, "m s^-1")
 
    v3 = v1 - v2
    v3.value  # 5.0
@@ -153,9 +153,9 @@ Directly convert values to another set of units:
 
 .. code:: python
 
-   import ansys.units as q
+   import ansys.units as pyunits
 
-   fps = q.Quantity(1, "lb ft^-1 s^-1")
+   fps = pyunits.Quantity(1, "lb ft^-1 s^-1")
    fps.value  # 1
 
    pas = fps.to("Pa s")
@@ -166,14 +166,14 @@ Use a custom unit system to perform conversions:
 
 .. code:: python
 
-   import ansys.units as q
+   import ansys.units as pyunits
 
-   sys = q.UnitSystem(
+   sys = pyunits.UnitSystem(
        name="sys",
        base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
    )
 
-   v = q.Quantity(10, "kg m s^2")
+   v = pyunits.Quantity(10, "kg m s^2")
    v2 = sys.convert(v)
 
    v2.value  # 2.2480894309971045

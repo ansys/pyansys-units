@@ -1,17 +1,17 @@
-import ansys.units as q
+import ansys.units as pyunits
 
 
 def test_tables():
-    assert isinstance(q._api_quantity_map, dict)
-    assert isinstance(q._fundamental_units, dict)
-    assert isinstance(q._derived_units, dict)
-    assert isinstance(q._multipliers, dict)
-    assert isinstance(q._unit_systems, dict)
-    assert isinstance(q._dimension_order, dict)
+    assert isinstance(pyunits._api_quantity_map, dict)
+    assert isinstance(pyunits._fundamental_units, dict)
+    assert isinstance(pyunits._derived_units, dict)
+    assert isinstance(pyunits._multipliers, dict)
+    assert isinstance(pyunits._unit_systems, dict)
+    assert isinstance(pyunits._dimension_order, dict)
 
 
 def test_has_multiplier():
-    ut = q.Units()
+    ut = pyunits.Units()
 
     assert ut._has_multiplier("km")
     assert ut._has_multiplier("ms")
@@ -23,7 +23,7 @@ def test_has_multiplier():
 
 
 def test_si_map():
-    ut = q.Units()
+    ut = pyunits.Units()
 
     assert ut._si_map("g") == "kg"
     assert ut._si_map("lbm") == "kg"
@@ -33,7 +33,7 @@ def test_si_map():
 
 
 def test_filter_unit_term():
-    ut = q.Units()
+    ut = pyunits.Units()
 
     assert ut.filter_unit_term("cm^-2") == ("", "cm", -2)
     assert ut.filter_unit_term("m") == ("", "m", 1)
@@ -43,7 +43,7 @@ def test_filter_unit_term():
 
 
 def test_si_data():
-    ut = q.Units()
+    ut = pyunits.Units()
 
     u1, m1, o1 = ut.si_data(units="g")
     assert u1 == "kg"
@@ -72,7 +72,7 @@ def test_si_data():
 
 
 def test_condense():
-    ut = q.Units()
+    ut = pyunits.Units()
 
     assert ut.condense("m m m m") == "m^4"
     assert ut.condense("kg ft^3 kg^-2") == "kg^-1 ft^3"
@@ -80,7 +80,7 @@ def test_condense():
 
 
 def test_get_type():
-    ut = q.Units()
+    ut = pyunits.Units()
 
     assert ut.get_type(units="kg") == "Mass"
     assert ut.get_type(units="m") == "Length"

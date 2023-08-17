@@ -4,17 +4,6 @@
 User Guide
 ==========
 
-.. toctree::
-    :maxdepth: 1
-    :hidden:
-
-    quantity
-    systems
-    units
-    dimensions
-    map
-    config
-
 Anyone who wants to use PyUnits can import its Python modules and develop Python
 code to work with physical quantities.
 
@@ -25,9 +14,9 @@ new ``Quantity`` object.
 
 .. code:: python
 
-    import ansys.units as q
+    import ansys.units as pyunits
 
-    meter = q.Quantity(value=1, units="m")
+    meter = pyunits.Quantity(value=1, units="m")
 
 All ``Quantity`` objects work intuitively with arithmetic operators, simply
 insert them within an equation to perform mathematical operations.
@@ -35,9 +24,9 @@ insert them within an equation to perform mathematical operations.
 .. code:: python
 
 
-    import ansys.units as q
+    import ansys.units as pyunits
 
-    meter = q.Quantity(value=1, units="m")
+    meter = pyunits.Quantity(value=1, units="m")
 
     m_ad = meter + 2  # 3
     m_sb = meter - 2  # -1
