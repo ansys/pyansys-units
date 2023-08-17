@@ -26,7 +26,7 @@ class UnitSystem:
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
-        self._units_table = pyunits.UnitsTable()
+        self._units = pyunits.Units()
 
         if name and unit_sys or base_units and unit_sys:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()

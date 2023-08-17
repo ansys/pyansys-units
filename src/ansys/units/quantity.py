@@ -40,7 +40,7 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        _units_table = pyunits.UnitsTable()
+        _units_table = pyunits.Units()
         _value = float(value)
 
         if units is not None:
@@ -69,7 +69,7 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        self._units_table = pyunits.UnitsTable()
+        self._units = pyunits.Units()
         self._value = float(value)
 
         if units is not None:
