@@ -1,7 +1,7 @@
-.. _ref_tables:
+.. _ref_units:
 
 ======
-Tables
+Units
 ======
 
 .. automodule:: ansys.units.units
