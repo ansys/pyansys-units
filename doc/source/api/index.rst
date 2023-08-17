@@ -9,8 +9,7 @@ This page gives an overview of the API of several public PyUnits classes, functi
 
     quantity
     systems
-    tables
+    units
     dimensions
     map
     config
-    units
