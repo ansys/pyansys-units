@@ -1,5 +1,5 @@
 """Provides ``Dimension`` class."""
-from ansys.units import UnitsTable
+import ansys.units as pyunits
 
 
 class Dimensions(object):
@@ -25,7 +25,7 @@ class Dimensions(object):
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
-        self._units_table = UnitsTable()
+        self._units_table = pyunits.UnitsTable()
         unit_sys = unit_sys or self._units_table.unit_systems["SI"]
 
         if units is not None:

@@ -1,8 +1,8 @@
-import ansys.units as q
+import ansys.units as pyunits
 
 
 def test_tables():
-    ut = q.UnitsTable()
+    ut = pyunits.UnitsTable()
 
     assert isinstance(ut.api_quantity_map, dict)
     assert isinstance(ut.fundamental_units, dict)
@@ -13,7 +13,7 @@ def test_tables():
 
 
 def test_has_multiplier():
-    ut = q.UnitsTable()
+    ut = pyunits.UnitsTable()
 
     assert ut._has_multiplier("km")
     assert ut._has_multiplier("ms")
@@ -25,7 +25,7 @@ def test_has_multiplier():
 
 
 def test_si_map():
-    ut = q.UnitsTable()
+    ut = pyunits.UnitsTable()
 
     assert ut._si_map("g") == "kg"
     assert ut._si_map("lbm") == "kg"
@@ -35,7 +35,7 @@ def test_si_map():
 
 
 def test_filter_unit_term():
-    ut = q.UnitsTable()
+    ut = pyunits.UnitsTable()
 
     assert ut.filter_unit_term("cm^-2") == ("", "cm", -2)
     assert ut.filter_unit_term("m") == ("", "m", 1)
@@ -45,7 +45,7 @@ def test_filter_unit_term():
 
 
 def test_si_data():
-    ut = q.UnitsTable()
+    ut = pyunits.UnitsTable()
 
     u1, m1, o1 = ut.si_data(units="g")
     assert u1 == "kg"
@@ -74,7 +74,7 @@ def test_si_data():
 
 
 def test_condense():
-    ut = q.UnitsTable()
+    ut = pyunits.UnitsTable()
 
     assert ut.condense("m m m m") == "m^4"
     assert ut.condense("kg ft^3 kg^-2") == "kg^-1 ft^3"
@@ -82,7 +82,7 @@ def test_condense():
 
 
 def test_get_type():
-    ut = q.UnitsTable()
+    ut = pyunits.UnitsTable()
 
     assert ut.get_type(units="kg") == "Mass"
     assert ut.get_type(units="m") == "Length"

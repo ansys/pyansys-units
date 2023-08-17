@@ -1,6 +1,7 @@
+"""Provides ``Quantity`` class."""
 from typing import Optional, Tuple
 
-import ansys.units as q
+import ansys.units as pyunits
 from ansys.units._constants import _QuantityType
 from ansys.units.units import parse_temperature_units
 
@@ -41,18 +42,18 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        _units_table = q.UnitsTable()
+        _units_table = pyunits.UnitsTable()
         _value = float(value)
 
         if units is not None:
             _unit = units
 
         if quantity_map:
-            units = q.QuantityMap(quantity_map).units
+            units = pyunits.QuantityMap(quantity_map).units
             _unit = units
 
         if dimensions:
-            _dimensions = q.Dimensions(dimensions=dimensions)
+            _dimensions = pyunits.Dimensions(dimensions=dimensions)
             _unit = _dimensions.units
 
         _, si_multiplier, si_offset = _units_table.si_data(units=_unit)
@@ -70,20 +71,20 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        self._units_table = q.UnitsTable()
+        self._units_table = pyunits.UnitsTable()
         self._value = float(value)
 
         if units is not None:
             self._unit = units
-            self._dimensions = q.Dimensions(units=units)
+            self._dimensions = pyunits.Dimensions(units=units)
 
         if quantity_map:
-            units = q.QuantityMap(quantity_map).units
+            units = pyunits.QuantityMap(quantity_map).units
             self._unit = units
-            self._dimensions = q.Dimensions(units=units)
+            self._dimensions = pyunits.Dimensions(units=units)
 
         if dimensions:
-            self._dimensions = q.Dimensions(dimensions=dimensions)
+            self._dimensions = pyunits.Dimensions(dimensions=dimensions)
             self._unit = self._dimensions.units
 
         self._type = self._units_table.get_type(self._unit)
@@ -220,7 +221,7 @@ class Quantity(float):
     def __pow__(self, __value):
         temp_dimensions = [dim * __value for dim in self.dimensions]
         new_si_value = self.si_value**__value
-        new_dimensions = q.Dimensions(dimensions=temp_dimensions)
+        new_dimensions = pyunits.Dimensions(dimensions=temp_dimensions)
         return Quantity(value=new_si_value, units=new_dimensions.units)
 
     def __mul__(self, __value):
@@ -229,7 +230,7 @@ class Quantity(float):
                 dim + __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
             ]
             new_si_value = self.si_value * __value.si_value
-            new_dimensions = q.Dimensions(dimensions=temp_dimensions)
+            new_dimensions = pyunits.Dimensions(dimensions=temp_dimensions)
             new_units = new_dimensions.units
             return Quantity(
                 value=new_si_value,
@@ -250,7 +251,7 @@ class Quantity(float):
                 dim - __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
             ]
             new_si_value = self.si_value / __value.si_value
-            new_dimensions = q.Dimensions(dimensions=temp_dimensions)
+            new_dimensions = pyunits.Dimensions(dimensions=temp_dimensions)
             new_units = new_dimensions.units
             result = Quantity(value=new_si_value, units=new_units)
             # HACK

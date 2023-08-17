@@ -1,4 +1,5 @@
-import ansys.units as q
+"""Provides ``UnitSystem`` class."""
+import ansys.units as pyunits
 
 
 class UnitSystem:
@@ -25,13 +26,13 @@ class UnitSystem:
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
-        self._units_table = q.UnitsTable()
+        self._units_table = pyunits.UnitsTable()
 
         if name and unit_sys or base_units and unit_sys:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 
         if base_units:
-            if len(base_units) != q.Dimensions.max_dim_len():
+            if len(base_units) != pyunits.Dimensions.max_dim_len():
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
             for idx, unit in enumerate(base_units):
@@ -60,7 +61,7 @@ class UnitSystem:
             self._name = unit_sys
             self._base_units = self._units_table.unit_systems[unit_sys]
 
-    def convert(self, quantity: q.Quantity) -> q.Quantity:
+    def convert(self, quantity: pyunits.Quantity) -> pyunits.Quantity:
         """Perform unit system conversions.
 
         Parameters
@@ -74,14 +75,14 @@ class UnitSystem:
             Quantity object containing desired unit system conversion.
         """
 
-        new_dim = q.Dimensions(
+        new_dim = pyunits.Dimensions(
             dimensions=quantity.dimensions, unit_sys=self._base_units
         )
 
         _, si_multiplier, si_offset = self._units_table.si_data(new_dim.units)
         new_value = (quantity.si_value / si_multiplier) - si_offset
 
-        return q.Quantity(value=new_value, units=new_dim.units)
+        return pyunits.Quantity(value=new_value, units=new_dim.units)
 
     @property
     def name(self):

@@ -1,9 +1,10 @@
+"""Provides ``UnitsTable`` class."""
 import os
 
 import yaml
 
+import ansys.units as pyunits
 from ansys.units._constants import _QuantityType
-from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
 from ansys.units.units import parse_temperature_units
 
 
@@ -152,7 +153,7 @@ class UnitsTable(object):
         # a known unit on its own. So if we can't actually find its multiplier then
         # this string is an invalid unit string
         if has_multiplier and not multiplier:
-            raise QuantityError.UNKNOWN_UNITS(unit_term)
+            raise pyunits.QuantityError.UNKNOWN_UNITS(unit_term)
         return multiplier, base, power
 
     def si_data(

@@ -1,4 +1,5 @@
-import ansys.units as q
+"""Provides ``QuantityMap`` class."""
+import ansys.units as pyunits
 
 
 class QuantityMap(object):
@@ -15,7 +16,7 @@ class QuantityMap(object):
     """
 
     def __init__(self, quantity_map):
-        self._units_table = q.UnitsTable()
+        self._units_table = pyunits.UnitsTable()
 
         for item in quantity_map:
             if item not in self._units_table.api_quantity_map:
