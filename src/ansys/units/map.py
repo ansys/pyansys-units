@@ -19,7 +19,7 @@ class QuantityMap(object):
         self._units_table = pyunits.UnitsTable()
 
         for item in quantity_map:
-            if item not in self._units_table.api_quantity_map:
+            if item not in q._api_quantity_map:
                 raise QuantityMapError.UNKNOWN_MAP_ITEM(item)
 
         self._units = self._map_to_units(quantity_map)
@@ -38,8 +38,7 @@ class QuantityMap(object):
             Unit string representation of quantity map.
         """
         unit_dict = {
-            self._units_table.api_quantity_map[term]: power
-            for term, power in quantity_map.items()
+            q._api_quantity_map[term]: power for term, power in quantity_map.items()
         }
 
         units = ""
@@ -47,7 +46,7 @@ class QuantityMap(object):
         # Split unit string into terms and parse data associated with individual terms
         for terms in unit_dict:
             for term in terms.split(" "):
-                _, unit_term, unit_term_power = self._units_table.filter_unit_term(term)
+                _, unit_term, unit_term_power = self._units.filter_unit_term(term)
 
                 unit_term_power *= unit_dict[terms]
 
@@ -56,7 +55,7 @@ class QuantityMap(object):
                 elif unit_term_power != 0.0:
                     units += f" {unit_term}^{unit_term_power}"
 
-        return self._units_table.condense(units=units)
+        return self._units.condense(units=units)
 
     @property
     def units(self):

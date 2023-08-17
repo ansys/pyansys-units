@@ -36,18 +36,18 @@ class UnitSystem:
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
             for idx, unit in enumerate(base_units):
-                if unit not in self._units_table.fundamental_units:
+                if unit not in pyunits._fundamental_units:
                     raise UnitSystemError.UNIT_UNDEFINED(unit)
 
-                if (idx + 1) != self._units_table.dimension_order[
-                    self._units_table.fundamental_units[unit]["type"]
+                if (idx + 1) != pyunits._dimension_order[
+                    pyunits._fundamental_units[unit]["type"]
                 ]:
                     raise UnitSystemError.UNIT_ORDER(
-                        t1=list(self._units_table.dimension_order.keys())[idx],
+                        t1=list(pyunits._dimension_order.keys())[idx],
                         o1=idx + 1,
-                        t2=self._units_table.fundamental_units[unit]["type"],
-                        o2=self._units_table.dimension_order[
-                            self._units_table.fundamental_units[unit]["type"]
+                        t2=pyunits._fundamental_units[unit]["type"],
+                        o2=pyunits._dimension_order[
+                            pyunits._fundamental_units[unit]["type"]
                         ],
                     )
 
@@ -55,11 +55,11 @@ class UnitSystem:
             self._base_units = base_units
 
         if unit_sys is not None:
-            if unit_sys not in self._units_table.unit_systems:
+            if unit_sys not in pyunits._unit_systems:
                 raise UnitSystemError.INVALID_UNIT_SYS(unit_sys)
 
             self._name = unit_sys
-            self._base_units = self._units_table.unit_systems[unit_sys]
+            self._base_units = pyunits._unit_systems[unit_sys]
 
     def convert(self, quantity: pyunits.Quantity) -> pyunits.Quantity:
         """Perform unit system conversions.
@@ -79,7 +79,7 @@ class UnitSystem:
             dimensions=quantity.dimensions, unit_sys=self._base_units
         )
 
-        _, si_multiplier, si_offset = self._units_table.si_data(new_dim.units)
+        _, si_multiplier, si_offset = self._units.si_data(new_dim.units)
         new_value = (quantity.si_value / si_multiplier) - si_offset
 
         return pyunits.Quantity(value=new_value, units=new_dim.units)

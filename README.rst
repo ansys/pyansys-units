@@ -87,7 +87,7 @@ Import the pyunits library:
 
    import ansys.units as pyunits
 
-Quantities can be instantiated with 1 of 3 methods:
+Quantities can be instantiated with one of three methods:
 
 .. code:: python
 
@@ -112,7 +112,7 @@ Quantities can be instantiated with 1 of 3 methods:
    torque.value  # 5.0
    torque.units  # "N m"
 
-Unit systems can be instantiated with 1 of 2 methods:
+Unit systems can be instantiated with one of two methods:
 
 .. code:: python
 
@@ -128,9 +128,9 @@ Unit systems can be instantiated with 1 of 2 methods:
    si = pyunits.UnitSystem(unit_sys="SI")
 
 Examples
-~~~~~~~~~~~
+~~~~~~~~
 
-Arithmetic
+Perform arithmetic operations:
 
 .. code:: python
 
@@ -149,7 +149,7 @@ Arithmetic
    vpow.value  # 100.0
    vpow.units  # "m^2 s^-2"
 
-Conversions
+Directly convert values to another set of units:
 
 .. code:: python
 
@@ -159,10 +159,10 @@ Conversions
    fps.value  # 1
 
    pas = fps.to("Pa s")
-   pas.value  # 1.488164
+   pas.value  # 1.4881639435695542
+   pas.units  # 'Pa s'
 
-
-Unit Systems
+Use a custom unit system to perform conversions:
 
 .. code:: python
 
@@ -176,8 +176,8 @@ Unit Systems
    v = pyunits.Quantity(10, "kg m s^2")
    v2 = sys.convert(v)
 
-   v2.value  # 10
-   v2.units  # "slug ft s^2"
+   v2.value  # 2.2480894309971045
+   v2.units  # 'slug ft s^2'
 
 License and acknowledgments
 ---------------------------
