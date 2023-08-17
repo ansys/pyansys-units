@@ -1,4 +1,5 @@
-import ansys.units as q
+"""Provides ``Dimension`` class."""
+from ansys.units import UnitsTable
 
 
 class Dimensions(object):
@@ -6,11 +7,11 @@ class Dimensions(object):
 
     Parameters
     ----------
-    units: str
+    units : str
         Unit string of quantity.
-    dimensions: list
+    dimensions : list
         List of dimensions.
-    unit_sys: str
+    unit_sys : str
         Unit system used for creating units.
 
     Returns
@@ -24,7 +25,7 @@ class Dimensions(object):
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
-        self._units_table = q.UnitsTable()
+        self._units_table = UnitsTable()
         unit_sys = unit_sys or self._units_table.unit_systems["SI"]
 
         if units is not None:
