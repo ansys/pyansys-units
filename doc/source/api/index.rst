@@ -13,3 +13,4 @@ This page gives an overview of the API of several public PyUnits classes, functi
     dimensions
     map
     config
+    units
