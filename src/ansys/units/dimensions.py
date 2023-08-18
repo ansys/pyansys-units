@@ -22,7 +22,7 @@ class Dimensions(object):
 
     def __init__(
         self, units: str = None, dimensions: list = None, unit_sys: str = None
-    ):  # noqa: D107
+    ):
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
@@ -142,7 +142,7 @@ class Dimensions(object):
 class DimensionsError(ValueError):
     """Custom dimensions errors."""
 
-    def __init__(self, err):  # noqa: D107
+    def __init__(self, err):
         super().__init__(err)
 
     @classmethod

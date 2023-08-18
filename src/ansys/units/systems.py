@@ -25,9 +25,7 @@ class UnitSystem:
     Quantity instance.
     """
 
-    def __init__(
-        self, name: str = None, base_units: list = None, unit_sys: str = None
-    ):  # noqa: D107
+    def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
         self._units = pyunits.Units()
 
         if name and unit_sys or base_units and unit_sys:
@@ -100,7 +98,7 @@ class UnitSystem:
 class UnitSystemError(ValueError):
     """Custom unit system errors."""
 
-    def __init__(self, err):  # noqa: D107
+    def __init__(self, err):
         super().__init__(err)
 
     @classmethod
