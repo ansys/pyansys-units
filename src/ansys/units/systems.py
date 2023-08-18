@@ -3,8 +3,8 @@ import ansys.units as pyunits
 
 
 class UnitSystem:
-    """Initializes a unit system based on user-defined units or a pre-definned unit
-    system.
+    """
+    Initializes a unit system based on user-defined units or a pre-defined unit system.
 
     Parameters
     ----------
@@ -62,7 +62,8 @@ class UnitSystem:
             self._base_units = pyunits._unit_systems[unit_sys]
 
     def convert(self, quantity: pyunits.Quantity) -> pyunits.Quantity:
-        """Perform unit system conversions.
+        """
+        Perform unit system conversions.
 
         Parameters
         ----------
@@ -74,7 +75,6 @@ class UnitSystem:
         Quantity
             Quantity object containing desired unit system conversion.
         """
-
         new_dim = pyunits.Dimensions(
             dimensions=quantity.dimensions, unit_sys=self._base_units
         )

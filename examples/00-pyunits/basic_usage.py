@@ -1,4 +1,5 @@
-""".. _ref_basic_usage:
+"""
+.. _ref_basic_usage:
 
 PyUnits Basics
 --------------

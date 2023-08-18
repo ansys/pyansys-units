@@ -5,9 +5,10 @@ import ansys.units as pyunits
 
 
 class Quantity(float):
-    """Quantity instantiates physical quantities using their real values and units. All
-    the instances of this class are converted to base SI units system to have
-    consistency in arithmetic operations.
+    """
+    Quantity instantiates physical quantities using their real values and units. All the
+    instances of this class are converted to base SI units system to have consistency in
+    arithmetic operations.
 
     Parameters
     ----------
@@ -103,7 +104,8 @@ class Quantity(float):
         self._si_value = (self.value + si_offset) * si_multiplier
 
     def _arithmetic_precheck(self, __value) -> str:
-        """Validate dimensions of quantities.
+        """
+        Validate dimensions of quantities.
 
         Parameters
         ----------
@@ -122,7 +124,8 @@ class Quantity(float):
             raise QuantityError.INCOMPATIBLE_VALUE(__value)
 
     def _temp_precheck(self) -> Optional[str]:
-        """Validate units for temperature differences.
+        """
+        Validate units for temperature differences.
 
         Returns
         -------
@@ -175,7 +178,8 @@ class Quantity(float):
         return self._type
 
     def to(self, to_units: str) -> "Quantity":
-        """Perform quantity conversions.
+        """
+        Perform quantity conversions.
 
         Parameters
         ----------

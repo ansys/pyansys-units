@@ -52,6 +52,12 @@ tests = [
     "pytest-mock==3.11.1",
 ]
 
+[project.urls]
+Source = "https://github.com/ansys/pyunits"
+Issues = "https://github.com/ansys/pyunits/issues"
+Documentation = "https://pyunits.docs.pyansys.com"
+Releases = "https://github.com/ansys/pyunits/releases"
+
 [tool.flit.module]
 name = "ansys.units"
 
@@ -76,6 +82,7 @@ in-place = true
 exclude = [
     "tests/"
 ]
+pre-summary-newline = true
 wrap-descriptions = 88
 wrap-summaries = 88
 

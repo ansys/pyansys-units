@@ -3,7 +3,8 @@ import ansys.units as pyunits
 
 
 class QuantityMap(object):
-    """Creates a Quantity Map object based on a given quantity map.
+    """
+    Creates a Quantity Map object based on a given quantity map.
 
     Parameters
     ----------
@@ -25,7 +26,8 @@ class QuantityMap(object):
         self._units = self._map_to_units(quantity_map)
 
     def _map_to_units(self, quantity_map: dict) -> str:
-        """Convert a quantity map into a unit string.
+        """
+        Convert a quantity map into a unit string.
 
         Parameters
         ----------
