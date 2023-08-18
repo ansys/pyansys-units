@@ -1,4 +1,5 @@
-"""Version of ansys-units module.
+"""
+Version of ansys-units module.
 
 On the ``main`` branch, use 'dev0' to denote a development version.
 For example:

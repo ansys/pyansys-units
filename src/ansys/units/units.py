@@ -7,7 +7,8 @@ from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
 
 
 class Units(object):
-    """Initializes a Units object with all unit string manipulation methods.
+    """
+    Initializes a Units object with all unit string manipulation methods.
 
     Methods
     -------
@@ -28,7 +29,8 @@ class Units(object):
     """
 
     def _has_multiplier(self, unit_term: str) -> bool:
-        """Check if a unit term contains a multiplier.
+        """
+        Check if a unit term contains a multiplier.
 
         Parameters
         ----------
@@ -46,7 +48,8 @@ class Units(object):
         )
 
     def _si_map(self, unit_term: str) -> str:
-        """Maps unit to SI unit equivalent.
+        """
+        Map unit to SI unit equivalent.
 
         Parameters
         ----------
@@ -67,7 +70,8 @@ class Units(object):
                 return term
 
     def filter_unit_term(self, unit_term: str) -> tuple:
-        """Separate multiplier, base, and power from a unit term.
+        """
+        Separate multiplier, base, and power from a unit term.
 
         Parameters
         ----------
@@ -113,7 +117,8 @@ class Units(object):
         si_units: str = None,
         si_multiplier: float = None,
     ) -> tuple:
-        """Compute the SI unit string, SI multiplier, and SI offset.
+        """
+        Compute the SI unit string, SI multiplier, and SI offset.
 
         Parameters
         ----------
@@ -133,7 +138,6 @@ class Units(object):
         tuple
             Tuple containing si_unitsing, si_multiplier and si_offset.
         """
-
         # Initialize default values
         units = units or " "
         power = power or 1.0
@@ -185,7 +189,8 @@ class Units(object):
         return self.condense(si_units), si_multiplier, si_offset
 
     def condense(self, units: str) -> str:
-        """Condenses a unit string by collecting like-terms.
+        """
+        Condenses a unit string by collecting like-terms.
 
         Parameters
         ----------
@@ -224,7 +229,8 @@ class Units(object):
         return units.rstrip()
 
     def get_type(self, units: str) -> str:
-        """Returns the type associated with a unit string.
+        """
+        Return the type associated with a unit string.
 
         Parameters
         ----------
@@ -236,7 +242,6 @@ class Units(object):
         str
             Type of quantity.
         """
-
         if units == "":
             return _QuantityType.no_type
 
@@ -264,6 +269,26 @@ class Units(object):
 def parse_temperature_units(
     units: str, ignore_exponent: bool, units_to_search: Optional[Tuple[str]] = None
 ) -> list:
+    """
+    Parse temperature units and their properties from a given input string.
+
+    Parameters
+    ----------
+    units : str
+        The input string containing temperature units and terms.
+    ignore_exponent : bool
+        Flag indicating whether to ignore the exponent in terms when determining if
+        they represent temperature differences.
+    units_to_search : Optional[Tuple[str]], optional
+        A tuple of temperature unit labels to search for. Defaults to ("K", "C", "F", "R").
+
+    Returns
+    -------
+    list
+        A list of tuples containing terms and their properties. Each tuple contains:
+            - The original term (str)
+            - A flag indicating if it represents a temperature difference (bool)
+    """
     if units_to_search is None:
         units_to_search = ("K", "C", "F", "R")
     units_out = []

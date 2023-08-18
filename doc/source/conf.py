@@ -2,7 +2,7 @@
 from datetime import datetime
 import os
 
-from ansys_sphinx_theme import get_version_match, pyansys_logo_black
+from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 from sphinx_gallery.sorting import FileNameSortKey
 
 from ansys.units import __version__
@@ -104,6 +104,7 @@ sphinx_gallery_conf = {
 
 # static path
 html_static_path = ["_static"]
+html_favicon = ansys_favicon
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

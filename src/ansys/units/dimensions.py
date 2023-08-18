@@ -3,7 +3,8 @@ import ansys.units as pyunits
 
 
 class Dimensions(object):
-    """Initialize a Dimensions object using a dimensions list or a unit string.
+    """
+    Initialize a Dimensions object using a dimensions list or a unit string.
 
     Parameters
     ----------
@@ -21,7 +22,7 @@ class Dimensions(object):
 
     def __init__(
         self, units: str = None, dimensions: list = None, unit_sys: str = None
-    ):
+    ):  # noqa: D107
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
@@ -41,7 +42,8 @@ class Dimensions(object):
             )
 
     def _dim_to_units(self, dimensions: list, unit_sys: list) -> str:
-        """Convert a dimensions list into a unit string.
+        """
+        Convert a dimensions list into a unit string.
 
         Parameters
         ----------
@@ -76,7 +78,8 @@ class Dimensions(object):
     def _units_to_dim(
         self, units: str, power: float = None, dimensions: list = None
     ) -> list:
-        """Convert a unit string into a dimensions list.
+        """
+        Convert a unit string into a dimensions list.
 
         Parameters
         ----------
@@ -90,7 +93,6 @@ class Dimensions(object):
         list
             Dimensions representation of unit string.
         """
-
         power = power or 1.0
         dimensions = dimensions or [0.0] * self.max_dim_len()
 
@@ -140,17 +142,19 @@ class Dimensions(object):
 class DimensionsError(ValueError):
     """Custom dimensions errors."""
 
-    def __init__(self, err):
+    def __init__(self, err):  # noqa: D107
         super().__init__(err)
 
     @classmethod
     def EXCESSIVE_PARAMETERS(cls):
+        """Return in case of excessive parameters."""
         return cls(
             "Dimensions only accepts 1 of the following parameters: (units) or (dimensions)."
         )
 
     @classmethod
     def EXCESSIVE_DIMENSIONS(cls, len):
+        """Return in case of excessive dimensions."""
         return cls(
             f"The `dimensions` argument must contain 9 values or less, currently there are {len}."
         )
