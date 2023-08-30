@@ -112,7 +112,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def BASE_UNITS_LENGTH(cls, len):
         return cls(
-            f"The `base_units` argument must contain nine units, currently there are {len}."
+            f"The `base_units` argument must contain 9 units, currently there are {len}."
         )
 
     @classmethod
