@@ -112,7 +112,7 @@ def test_error_messages():
 
     e4 = pyunits.UnitSystemError.UNIT_ORDER("Mass", 1, "Light", 7)
     expected_str = (
-        "Expected unit of type: `Mass` (order: 1), received unit of type: "
+        "Expected unit of type: `Mass` (order: 1). Received unit of type: "
         "`Light` (order: 7)."
     )
     assert str(e4) == expected_str
