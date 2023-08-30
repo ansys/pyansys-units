@@ -10,14 +10,14 @@ and Linux.
 Install the package
 -------------------
 Install the latest release from `PyPI <https://pypi.org/project/ansys-units>`_
-with:
+with this command:
 
 .. code:: console
 
    pip install ansys-units
 
 If you plan on doing local *development* of PyUnits with Git, install the latest
-release with:
+release with these commands:
 
 .. code:: console
 

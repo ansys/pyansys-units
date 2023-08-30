@@ -1,44 +1,39 @@
 """
 .. _ref_basic_usage:
 
-PyUnits Basics
+PyUnits basics
 --------------
-PyUnits provides a pythonic interface for units, unit systems, and unit conversions.
+PyUnits provides a Pythonic interface for units, unit systems, and unit conversions.
 Its features enable seamless setup and usage of physical quantities.
 
-**Getting Started**
+This example shows you how to perform these tasks:
 
-The following examples cover:
-
-- Creating quantities (unit strings, dimensions, quantity map)
-- Accessing different quantity properties
-- Performing arithmetic operations
-- Performing unit conversions
-- Creating unit systems (custom, pre-defined)
-- Applying unit systems to quantities
+- Create quantities (unit strings, dimensions, and quantity maps).
+- Access different quantity properties.
+- Perform arithmetic operations.
+- Perform unit conversions.
+- Create unit systems (custom and predefined).
+- Apply unit systems to quantities.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/basic_usage.png'
 
 ###############################################################################
-# Basic Usage
-# -----------
-#
-# Units Setup
-# ~~~~~~~~~~~
-# Importing the pyunits library
+# Perform required imports
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+# Import the ``ansys.units`` package.
 
 import ansys.units as pyunits
 
 ###############################################################################
-# Creating Quantities
-# ~~~~~~~~~~~~~~~~~~~
-# Quantities can be instantiated with 1 of 3 methods:
-#   1. Unit String : str
-#   2. Dimensions : list
-#   3. Quantity Map : dict
+# Create quantities
+# ~~~~~~~~~~~~~~~~~
+# You can instantiate quantities using one of three methods:
+# - Unit strings : str
+# - Dimensions : list
+# - Quantity maps : dict
 
-# Unit Strings
+# Unit strings
 
 volume = pyunits.Quantity(value=1, units="m^3")
 
@@ -57,7 +52,7 @@ acceleration = pyunits.Quantity(value=3, dimensions=acc_dims)
 tor_dims = [1, 2, -2]
 torque = pyunits.Quantity(value=5, dimensions=tor_dims)
 
-# Quantity Map
+# Quantity map
 
 vol_map = {"Volume": 1}
 volume = pyunits.Quantity(value=1, quantity_map=vol_map)
@@ -69,16 +64,17 @@ tor_map = {"Torque": 1}
 torque = pyunits.Quantity(value=5, quantity_map=tor_map)
 
 ###############################################################################
-# Quantity properties
-# ~~~~~~~~~~~~~~~~~~~
-# Quantity objects have a total of 7 properties:
-#   1. value : float | int
-#   2. units : str
-#   3. si_value : float | int
-#   4. si_units : str
-#   5. dimensions : list
-#   6. is_dimensionless : bool
-#   7. type : str
+# Specify quantity properties
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# For a quantity, you specify seven properties:
+
+# 1. value : float | int
+# 2. units : str
+# 3. si_value : float | int
+# 4. si_units : str
+# 5. dimensions : list
+# 6. is_dimensionless : bool
+# 7. type : str
 
 cap_map = {"Capacitance": 1}
 capacitance = pyunits.Quantity(value=50, quantity_map=cap_map)
@@ -92,9 +88,9 @@ capacitance.is_dimensionless  # >>> False
 capacitance.type  # >>> "Derived"
 
 ###############################################################################
-# Arithmetic operations
-# ~~~~~~~~~~~~~~~~~~~~~
-# Quantity objects support all mathematical operations.
+# Perform arithmetic operations
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# You can perform all mathematical operations on a quantity.
 
 import math
 
@@ -147,9 +143,9 @@ math.sin(pyunits.Quantity(90, "degree"))  # >>> 1.0
 math.cos(pyunits.Quantity(math.pi, "radian"))  # >>> -1.0
 
 ###############################################################################
-# Unit conversions
-# ~~~~~~~~~~~~~~~~
-# Conversions can be performed between Quantities with compatible units.
+# Perform conversions
+# ~~~~~~~~~~~~~~~~~~~
+# You can perform conversions on quantities with compatible units.
 
 slug = pyunits.Quantity(value=5, units="slug")
 kg = slug.to("kg")
@@ -170,13 +166,14 @@ pas.value  # >>> 1.4881639435695542
 pas.units  # >>> "Pa s"
 
 ###############################################################################
-# Unit systems
-# ~~~~~~~~~~~~
-# Unit Systems can be instantiated with 1 of 2 methods:
-#   1. Custom Units
-#   2. Pre-defined Unit System
+# Instantiate unit systems
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+# You can instantiate unit systems using one of two methods:
+#
+# - Custom units
+# - Predefined unit systems
 
-# Custom Units
+# Custom units
 
 sys_units = ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
 sys = pyunits.UnitSystem(name="sys", base_units=sys_units)
@@ -184,7 +181,7 @@ sys = pyunits.UnitSystem(name="sys", base_units=sys_units)
 sys.name  # >>> "sys"
 sys.base_units  # >>> ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
 
-# Pre-defined Unit Systems
+# Predefined unit systems
 
 cgs = pyunits.UnitSystem(unit_sys="CGS")
 
@@ -192,9 +189,9 @@ cgs.name  # >>> "cgs"
 cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
 
 ###############################################################################
-# Unit systems and Quantities
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Unit Systems can be created independently and applied to desired Quantities.
+# Create a unit system independently
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# You can create a unit system independently and apply it to quantities.
 
 si = pyunits.UnitSystem(unit_sys="SI")
 fps = pyunits.Quantity(value=11.2, units="ft s^-1")

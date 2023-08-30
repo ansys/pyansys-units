@@ -35,9 +35,9 @@ PyUnits
 
 Overview
 --------
-PyUnits provides a pythonic interface for units, unit systems, and unit
+PyUnits provides a Pythonic interface for units, unit systems, and unit
 conversions. Its features enable seamless setup and usage of physical
-quantities, including the ability to:
+quantities, enabling you to perform these tasks:
 
 - Instantiate physical quantities from a unit string, list of dimensions, or
   quantity map.
@@ -45,16 +45,23 @@ quantities, including the ability to:
   real values.
 - Create custom units and unit systems.
 
-Documentation and Issues
+Documentation and issues
 ------------------------
 
-For comprehensive information on PyUnits, see the latest release `documentation
+Documentation for the latest stable release of PyUnits is hosted at `PyUnits documentation
 <https://pyunits.docs.pyansys.com>`_.
 
+In the upper right corner of the documentation's title bar, there is an option for
+switching from viewing the documentation for the latest stable release to viewing
+the documentation for the development version or previously released versions.
+
 On the `PyUnits Issues <https://github.com/ansys/pyunits/issues>`_ page, you can
-create issues to submit questions, report bugs, and request new features. To
-reach the project support team, email `pyansys.core@ansys.com
-<pyansys.core@ansys.com>`_.
+create issues to report bugs, and request new features. On the `PyUnits Discussions
+<https://github.com/ansys/pyunits/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
+page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback.
+
+
+To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
 
 Installation
 ------------
@@ -64,13 +71,14 @@ and Linux.
 
 
 Install the latest release from `PyPI <https://pypi.org/project/ansys-units>`_
-with:
+with this command:
 
 .. code:: console
 
    pip install ansys-units
 
-If you plan on doing local *development* of PyUnits with Git, install the latest release with:
+If you plan on doing local *development* of PyUnits with Git, install the latest release with
+these commands:
 
 .. code:: console
 
@@ -79,19 +87,19 @@ If you plan on doing local *development* of PyUnits with Git, install the latest
    pip install pip -U
    pip install -e .
 
-Getting Started
+Getting started
 ---------------
 
-Basic Usage
+Basic usage
 ~~~~~~~~~~~
 
-Import the pyunits library:
+Import the `ansys.units`` package:
 
 .. code:: python
 
    import ansys.units as pyunits
 
-Quantities can be instantiated with one of three methods:
+You can instantiate quantities with one of three methods:
 
 .. code:: python
 
@@ -116,7 +124,7 @@ Quantities can be instantiated with one of three methods:
    torque.value  # 5.0
    torque.units  # "N m"
 
-Unit systems can be instantiated with one of two methods:
+You can instantiate unit systems with one of two methods:
 
 .. code:: python
 
@@ -183,6 +191,7 @@ Use a custom unit system to perform conversions:
    v2.value  # 2.2480894309971045
    v2.units  # 'slug ft s^2'
 
-License and acknowledgments
----------------------------
-PyUnits is licensed under the MIT license. You can see the full text of the license in the LICENSE file.
+License
+-------
+PyUnits is licensed under the MIT license. For more information, see the
+`LICENSE <https://github.com/ansys/pyunits/raw/main/LICENSE>`_ file.

@@ -1,10 +1,10 @@
-"""Provides ``QuantityMap`` class."""
+"""Provides the ``QuantityMap`` class."""
 import ansys.units as pyunits
 
 
 class QuantityMap(object):
     """
-    Creates a Quantity Map object based on a given quantity map.
+    Creates a ``QuantityMap`` object based on a given quantity map.
 
     Parameters
     ----------
@@ -13,7 +13,8 @@ class QuantityMap(object):
 
     Returns
     -------
-    QuantityMap instance.
+    QuantityMap
+        Quantity map instance.
     """
 
     def __init__(self, quantity_map):
@@ -32,12 +33,12 @@ class QuantityMap(object):
         Parameters
         ----------
         quantity_map : dict
-            Quantity map to be converted to unit string.
+            Quantity map to convert to a unit string.
 
         Returns
         -------
         str
-            Unit string representation of quantity map.
+            Unit string representation of the quantity map.
         """
         unit_dict = {
             pyunits._api_quantity_map[term]: power
@@ -62,12 +63,12 @@ class QuantityMap(object):
 
     @property
     def units(self):
-        """Unit string representation of quantity map."""
+        """Unit string representation of the quantity map."""
         return self._units
 
 
 class QuantityMapError(ValueError):
-    """Custom quantity map errors."""
+    """Provides custom quantity map errors."""
 
     def __init__(self, err):
         super().__init__(err)

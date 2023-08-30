@@ -1,19 +1,17 @@
 .. _ref_config:
 
-===========
-Config YAML
-===========
+==============================
+Configuration of quantity data
+==============================
 
-The ``cfg.yaml`` file contains pre-defined tables consisting of quantity data.
+The ``cfg.yaml`` file contains these tables predefining quantity data:
 
-These tables include:
+- ``dimension_order``
+- ``multipliers``
+- ``unit_systems``
+- ``fundamental_units``
+- ``derived_units``
+- ``api_quantity_map``
 
-- dimension_order
-- multipliers
-- unit_systems
-- fundamental_units
-- derived_units
-- api_quantity_map
-
-To use custom data (units, unit systems, multipliers, etc.) or update/add/remove
-any pre-defined quantity data, the ``cfg.yaml`` file must be modified manually.
+To use custom data, such as units, unit systems, and multipliers, or to update, add,
+or remove any predefined quantity data, you must manually modify the ``cfg.yaml`` file.

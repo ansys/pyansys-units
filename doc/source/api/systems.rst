@@ -1,7 +1,7 @@
 .. _ref_systems:
 
 ============
-Unit Systems
+Unit systems
 ============
 
 .. automodule:: ansys.units.systems

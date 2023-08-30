@@ -1,7 +1,7 @@
 API reference
 =============
 
-This page gives an overview of the API of several public PyUnits classes, functions, and attributes. You can find them on the left sidebar.
+This section describes the public classes, functions, and attributes in the PyUnits API.
 
 .. toctree::
     :maxdepth: 1
