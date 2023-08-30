@@ -1015,7 +1015,7 @@ def test_error_messages():
     e1 = pyunits.QuantityError.EXCESSIVE_PARAMETERS()
     assert (
         e1.__str__()
-        == "Quantity only accepts 1 of the following parameters: \
+        == "Quantity only accepts one of the following parameters: \
             (units) or (quantity_map) or (dimensions)."
     )
 

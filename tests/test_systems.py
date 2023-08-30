@@ -92,7 +92,7 @@ def test_errors():
 def test_error_messages():
     e1 = pyunits.UnitSystemError.EXCESSIVE_PARAMETERS()
     expected_str = (
-        "UnitSystem only accepts 1 of the following parameters: "
+        "UnitSystem only accepts one of the following parameters: "
         "(name, base_units) or (unit_sys)."
     )
     assert str(e1) == expected_str
