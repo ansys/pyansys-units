@@ -105,7 +105,7 @@ def test_error_messages():
 
     e3 = pyunits.UnitSystemError.UNIT_UNDEFINED("pizza")
     expected_str = (
-        "`pizza` is an undefined unit. To use `pizza` add it to the "
+        "`pizza` is an undefined unit. To use `pizza`, add it to the "
         "`fundamental_units` table within the cfg.yaml file."
     )
     assert str(e3) == expected_str
