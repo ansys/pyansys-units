@@ -1,8 +1,8 @@
 .. _ref_units:
 
-======
+=====
 Units
-======
+=====
 
 .. automodule:: ansys.units.units
    :members:

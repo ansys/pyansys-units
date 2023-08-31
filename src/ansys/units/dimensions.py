@@ -1,19 +1,19 @@
-"""Provides ``Dimension`` class."""
+"""Provides the ``Dimension`` class."""
 import ansys.units as pyunits
 
 
 class Dimensions(object):
     """
-    Initialize a Dimensions object using a dimensions list or a unit string.
+    Initializes a ``Dimensions`` object using a dimensions list or a unit string.
 
     Parameters
     ----------
-    units : str
-        Unit string of quantity.
-    dimensions : list
-        List of dimensions.
-    unit_sys : str
-        Unit system used for creating units.
+    units : str, None
+        Unit string of the quantity.
+    dimensions : list, None
+        List of the dimensions.
+    unit_sys : str, None
+        Unit system for creating units.
 
     Returns
     -------
@@ -51,12 +51,12 @@ class Dimensions(object):
             List of unit dimensions.
 
         unit_sys : list
-            Unit system of dimensions.
+            Unit system of the dimensions.
 
         Returns
         -------
         str
-            Unit string representation of dimensions.
+            Unit string representation of the dimensions.
         """
         # Ensure dimensions list contains 9 terms
         dimensions = [

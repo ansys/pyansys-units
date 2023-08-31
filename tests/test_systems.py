@@ -92,7 +92,7 @@ def test_errors():
 def test_error_messages():
     e1 = pyunits.UnitSystemError.EXCESSIVE_PARAMETERS()
     expected_str = (
-        "UnitSystem only accepts 1 of the following parameters: "
+        "UnitSystem only accepts one of the following parameters: "
         "(name, base_units) or (unit_sys)."
     )
     assert str(e1) == expected_str
@@ -105,14 +105,14 @@ def test_error_messages():
 
     e3 = pyunits.UnitSystemError.UNIT_UNDEFINED("pizza")
     expected_str = (
-        "`pizza` is an undefined unit. To use `pizza` add it to the "
-        "`fundamental_units` table within cfg.yaml."
+        "`pizza` is an undefined unit. To use `pizza`, add it to the "
+        "`fundamental_units` table within the cfg.yaml file."
     )
     assert str(e3) == expected_str
 
     e4 = pyunits.UnitSystemError.UNIT_ORDER("Mass", 1, "Light", 7)
     expected_str = (
-        "Expected unit of type: `Mass` (order: 1), received unit of type: "
+        "Expected unit of type: `Mass` (order: 1). Received unit of type: "
         "`Light` (order: 7)."
     )
     assert str(e4) == expected_str

@@ -13,9 +13,9 @@ PyUnits documentation |version|
 
 Overview
 --------
-PyUnits provides a pythonic interface for units, unit systems, and unit
+PyUnits provides a Pythonic interface for units, unit systems, and unit
 conversions. Its features enable seamless setup and usage of physical
-quantities, including the ability to:
+quantities, enabling you to perform these tasks:
 
 - Instantiate physical quantities from a unit string, list of dimensions, or
   quantity map.
@@ -25,17 +25,25 @@ quantities, including the ability to:
 
 Documentation and issues
 ------------------------
-For comprehensive information on PyUnits, see the latest release `documentation
+
+Documentation for the latest stable release of PyUnits is hosted at `PyUnits documentation
 <https://pyunits.docs.pyansys.com>`_.
 
+In the upper right corner of the documentation's title bar, there is an option for
+switching from viewing the documentation for the latest stable release to viewing
+the documentation for the development version or previously released versions.
+
 On the `PyUnits Issues <https://github.com/ansys/pyunits/issues>`_ page, you can
-create issues to submit questions, report bugs, and request new features. To
-reach the project support team, email `pyansys.core@ansys.com
-<pyansys.core@ansys.com>`_.
+create issues to report bugs, and request new features. On the `PyUnits Discussions
+<https://github.com/ansys/pyunits/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
+page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback.
+
+To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
 
 License
 -------
-PyUnits is Licensed under the MIT License.
+PyUnits is licensed under the MIT license. For more information, see the
+`LICENSE <https://github.com/ansys/pyunits/raw/main/LICENSE>`_ file.
 
 Project index
 -------------

@@ -6,15 +6,14 @@ Contribute
 Overall guidance on contributing to a PyAnsys library appears in the
 `Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic in
 the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar with
-this guide, paying particular attention to the `Coding Style
-<https://dev.docs.pyansys.com/coding-style/index.html#coding-style>`_ topic,
-before attempting to contribute to PyUnits.
+this guide before attempting to contribute to PyUnits.
 
 The following contribution information is specific to PyUnits.
 
-Clone the repository
---------------------
-To clone and install the latest PyUnits release in development mode, run:
+Clone and install
+-----------------
+Clone and install the latest PyUnits release in development mode with
+these commands:
 
 .. code::
 
@@ -25,8 +24,8 @@ To clone and install the latest PyUnits release in development mode, run:
 
 Build documentation
 -------------------
-To build the PyUnits documentation locally, in the root directory of the
-repository, run:
+Build the PyUnits documentation locally by running these commands in the
+root directory of the repository:
 
 .. code::
 
@@ -38,7 +37,8 @@ After the build completes, the HTML documentation is located in the
 ``_builds/html`` directory. You can load the ``index.html`` file in this
 directory into a web browser.
 
-You can clear all HTML files from the ``_builds/html`` directory with:
+You can clear all HTML files from the ``_builds/html`` directory with
+this command:
 
 .. code::
 
@@ -47,22 +47,22 @@ You can clear all HTML files from the ``_builds/html`` directory with:
 Post issues
 -----------
 Use the `PyUnits Issues <https://github.com/ansys/pyunits/issues>`_ page to
-submit questions, report bugs, and request new features.
+report bugs and request new features.
 
 
 Adhere to code style
 --------------------
-PyUnits is compliant with the `PyAnsys code style
-<https://dev.docs.pyansys.com/coding-style/index.html>`_. It uses the tool
+PyUnits is compliant with the `PyAnsys coding style
+<https://dev.docs.pyansys.com/coding-style/index.html>`_. It uses
 `pre-commit <https://pre-commit.com/>`_ to check the code style. You can install
-and activate this tool with:
+and activate this tool with these commands:
 
 .. code:: bash
 
    python -m pip install pre-commit
    pre-commit install
 
-then you can directly execute `pre-commit <https://pre-commit.com/>`_ with:
+You can then directly execute ``pre-commit`` with this command:
 
 .. code:: bash
 

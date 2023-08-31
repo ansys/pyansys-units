@@ -1,28 +1,29 @@
-"""Provides ``UnitSystem`` class."""
+"""Provides the ``UnitSystem`` class."""
 import ansys.units as pyunits
 
 
 class UnitSystem:
     """
-    Initializes a unit system based on user-defined units or a pre-defined unit system.
+    Initializes a unit system based on user-defined units or a predefined unit system.
 
     Parameters
     ----------
-    name: str
+    name: str, None
         Custom name associated with a user-defined unit system.
-    base_units: list
+    base_units: list, None
         Custom units associated with a user-defined unit system.
-    unit_sys: str
-        Pre-defined unit system.
+    unit_sys: str, None
+        Predefined unit system.
 
     Methods
     -------
     convert()
-        Converts from one unit system to to given unit system.
+        Convert from one unit system to a given unit system.
 
     Returns
     -------
-    Quantity instance.
+    Quantity
+        Quantity instance.
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
@@ -73,7 +74,7 @@ class UnitSystem:
         Returns
         -------
         Quantity
-            Quantity object containing desired unit system conversion.
+            Quantity object containing the desired unit system conversion.
         """
         new_dim = pyunits.Dimensions(
             dimensions=quantity.dimensions, unit_sys=self._base_units
@@ -86,17 +87,17 @@ class UnitSystem:
 
     @property
     def name(self):
-        """Name associated with unit system."""
+        """Name associated with the unit system."""
         return self._name
 
     @property
     def base_units(self):
-        """Units associated with unit system."""
+        """Units associated with the unit system."""
         return self._base_units
 
 
 class UnitSystemError(ValueError):
-    """Custom unit system errors."""
+    """Provides custom unit system errors."""
 
     def __init__(self, err):
         super().__init__(err)
@@ -104,7 +105,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def EXCESSIVE_PARAMETERS(cls):
         return cls(
-            "UnitSystem only accepts 1 of the following parameters: "
+            "UnitSystem only accepts one of the following parameters: "
             "(name, base_units) or (unit_sys)."
         )
 
@@ -117,14 +118,14 @@ class UnitSystemError(ValueError):
     @classmethod
     def UNIT_UNDEFINED(cls, unit):
         return cls(
-            f"`{unit}` is an undefined unit. To use `{unit}` add it to the "
-            "`fundamental_units` table within cfg.yaml."
+            f"`{unit}` is an undefined unit. To use `{unit}`, add it to the "
+            "`fundamental_units` table within the cfg.yaml file."
         )
 
     @classmethod
     def UNIT_ORDER(cls, t1, o1, t2, o2):
         return cls(
-            f"Expected unit of type: `{t1}` (order: {o1}), received unit of type: "
+            f"Expected unit of type: `{t1}` (order: {o1}). Received unit of type: "
             f"`{t2}` (order: {o2})."
         )
 

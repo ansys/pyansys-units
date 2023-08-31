@@ -1,7 +1,7 @@
 .. _ref_map:
 
 ============
-Quantity Map
+Quantity map
 ============
 
 .. automodule:: ansys.units.map

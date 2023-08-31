@@ -1,4 +1,4 @@
-"""Provides ``Quantity`` class."""
+"""Provides the ``Quantity`` class."""
 from typing import Optional, Tuple
 
 import ansys.units as pyunits
@@ -6,29 +6,32 @@ import ansys.units as pyunits
 
 class Quantity(float):
     """
-    Quantity instantiates physical quantities using their real values and units. All the
-    instances of this class are converted to base SI units system to have consistency in
-    arithmetic operations.
+    Instantiates a physical quantity using a real value and units.
+
+    All instances of this class are converted to the base SI unit system
+    to have consistency in arithmetic operations.
 
     Parameters
     ----------
     value : int | float
-        Real value of quantity.
-    units : str
-        Unit string representation of quantity.
-    quantity_map : dict
-        Quantity map representation of quantity.
-    dimensions : list
-        Dimensions representation of quantity.
+        Real value of the quantity.
+    units : str, None
+        Unit string representation of the quantity.
+    quantity_map : dict, None
+        Quantity map representation of the quantity.
+    dimensions : list, None
+        Dimensions representation of the quantity.
+    _type_hint :
 
     Methods
     -------
     to()
-        Converts to given unit string.
+        Convert to a given unit string.
 
     Returns
     -------
-    Quantity instance.
+    Quantity
+        Quantity instance.
     """
 
     def __new__(
@@ -105,16 +108,17 @@ class Quantity(float):
 
     def _arithmetic_precheck(self, __value) -> str:
         """
-        Validate dimensions of quantities.
+        Validate dimensions of the quantity.
 
         Parameters
         ----------
         __value : Quantity | int | float
-            Value modifying current quantity object.
+            Value for modifying the current ``Quantity`` object.
+
         Returns
         -------
         str
-            SI unit string of new quantity.
+            SI unit string of the new quantity.
         """
         # Cannot perform operations between quantities with incompatible dimensions
         if isinstance(__value, Quantity) and (self.dimensions != __value.dimensions):
@@ -169,7 +173,7 @@ class Quantity(float):
 
     @property
     def is_dimensionless(self) -> bool:
-        """Check if quantity is dimensionless."""
+        """Check if the quantity is dimensionless."""
         return all([dim == 0.0 for dim in self.dimensions])
 
     @property
@@ -184,12 +188,12 @@ class Quantity(float):
         Parameters
         ----------
         to_units : str
-            Desired unit to be converted to.
+            Desired unit to convert to.
 
         Returns
         -------
         Quantity
-            Quantity object containing desired quantity conversion.
+            Quantity object containing the desired quantity conversion.
         """
 
         if not isinstance(to_units, str):
@@ -361,7 +365,7 @@ class QuantityError(ValueError):
     @classmethod
     def EXCESSIVE_PARAMETERS(cls):
         return cls(
-            "Quantity only accepts 1 of the following parameters: \
+            "Quantity only accepts one of the following parameters: \
             (units) or (quantity_map) or (dimensions)."
         )
 
