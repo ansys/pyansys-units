@@ -131,8 +131,6 @@ class Units(object):
             SI unit string representation of the quantity.
         si_multiplier : float, None
             SI multiplier of the unit string.
-        si_offset : float
-            SI offset of the unit string.
 
         Returns
         -------
