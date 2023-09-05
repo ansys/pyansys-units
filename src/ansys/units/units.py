@@ -1,5 +1,5 @@
 """Provide the ``Units`` class."""
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 
 import ansys.units as q
 from ansys.units._constants import _QuantityType
@@ -28,6 +28,12 @@ class Units(object):
     Units
         Units instance.
     """
+    
+    def __getattr__(self, attr):
+        if attr in [*q._fundamental_units,*q._derived_units]:
+            return attr
+        else:
+            raise QuantityError.UNKNOWN_UNITS(attr)
 
     def _has_multiplier(self, unit_term: str) -> bool:
         """
@@ -110,7 +116,7 @@ class Units(object):
         if has_multiplier and not multiplier:
             raise QuantityError.UNKNOWN_UNITS(unit_term)
         return multiplier, base, power
-
+    
     def si_data(
         self,
         units: str,
