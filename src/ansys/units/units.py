@@ -1,5 +1,5 @@
 """Provide the ``Units`` class."""
-from typing import Any, Optional, Tuple
+from typing import Optional, Tuple
 
 import ansys.units as q
 from ansys.units._constants import _QuantityType
