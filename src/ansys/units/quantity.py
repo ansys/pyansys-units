@@ -21,7 +21,8 @@ class Quantity(float):
         Quantity map representation of the quantity.
     dimensions : list, None
         Dimensions representation of the quantity.
-    _type_hint :
+    _type_hint : _QuantityType.temperature_difference, None
+        Unit type override for temperature difference.
 
     Methods
     -------
