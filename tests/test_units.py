@@ -1,5 +1,6 @@
-import ansys.units as pyunits
 import pytest
+
+import ansys.units as pyunits
 
 
 def test_tables():
@@ -98,11 +99,12 @@ def test_get_type():
     assert ut.get_type(units="N m s") == "Composite"
     assert ut.get_type(units="C^2") == "Temperature Difference"
 
+
 def test_unit_as_attribute():
     ut = pyunits.Units()
 
     assert ut.kg == "kg"
-    assert ut.m == "m"
+    assert ut.psi == "psi"
     assert ut.A == "A"
 
     with pytest.raises(pyunits.QuantityError) as e_info:

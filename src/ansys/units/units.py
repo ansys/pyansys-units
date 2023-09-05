@@ -28,12 +28,15 @@ class Units(object):
     Units
         Units instance.
     """
-    
-    def __getattr__(self, attr):
-        if attr in [*q._fundamental_units,*q._derived_units]:
-            return attr
+
+    def __dir__(self):
+        return [*q._fundamental_units, *q._derived_units]
+
+    def __getattr__(self, name):
+        if name in dir(self):
+            return name
         else:
-            raise QuantityError.UNKNOWN_UNITS(attr)
+            raise QuantityError.UNKNOWN_UNITS(name)
 
     def _has_multiplier(self, unit_term: str) -> bool:
         """
@@ -116,7 +119,7 @@ class Units(object):
         if has_multiplier and not multiplier:
             raise QuantityError.UNKNOWN_UNITS(unit_term)
         return multiplier, base, power
-    
+
     def si_data(
         self,
         units: str,
