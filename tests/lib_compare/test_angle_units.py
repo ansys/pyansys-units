@@ -25,7 +25,7 @@ def test_pint_angles_are_dimensionless():
 def test_pyfluent_angles_have_angle_dimensions():
     from lib_compare.util.pyfluent import TestDimension
 
-    from ansys.fluent.core.quantity import Quantity
+    from ansys.units.quantity import Quantity
 
     radian = Quantity(1.0, "radian")
     assert radian.dimensions == TestDimension({TestDimension.ANGLE: 1})
@@ -57,7 +57,7 @@ def test_pint_angle_and_dimensionless_are_convertible():
 
 
 def test_pyfluent_angle_and_dimensionless_are_not_convertible():
-    from ansys.fluent.core.quantity import Quantity, QuantityError
+    from ansys.units.quantity import Quantity, QuantityError
 
     no_dim = Quantity(1.0, "")
     with pytest.raises(QuantityError):
@@ -84,7 +84,7 @@ def test_pint_angle_works_with_trigonometry():
 
 
 def test_pyfluent_angle_works_with_trigonometry():
-    from ansys.fluent.core.quantity import Quantity
+    from ansys.units.quantity import Quantity
 
     half_pi_rads = Quantity(0.5 * math.pi, "radian")
     sixty_degrees = Quantity(60.0, "degree")
@@ -145,7 +145,7 @@ def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
 
 
 def test_pyfluent_frequency_and_angular_frequency_are_not_convertible():
-    from ansys.fluent.core.quantity import Quantity, QuantityError
+    from ansys.units.quantity import Quantity, QuantityError
 
     # pyfluent avoids the pint complications by simply not allowing
     # those conversions

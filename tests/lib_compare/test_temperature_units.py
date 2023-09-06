@@ -31,7 +31,7 @@ def test_pint_distinguishes_temperature_from_difference():
 
 
 def test_pyfluent_distinguishes_temperature_from_difference():
-    from ansys.fluent.core.quantity import Quantity
+    from ansys.units.quantity import Quantity
 
     t1 = Quantity(150.0, "C")
     assert t1.type == "Temperature"
@@ -54,7 +54,7 @@ def test_pyfluent_distinguishes_temperature_from_difference():
 def test_pyfluent_automatically_creates_temperature_difference_from_negative_absolute_value():
     from util import assert_rightly_but_fail, assert_wrongly
 
-    from ansys.fluent.core.quantity import Quantity
+    from ansys.units.quantity import Quantity
 
     t = Quantity(-1.0, "K")
     assert_wrongly(
@@ -73,7 +73,7 @@ def test_pyfluent_automatically_creates_temperature_difference_from_negative_abs
 def test_pyfluent_temperature_difference_from_negative_absolute_value_to_relative_value():
     from util import assert_rightly_but_fail, assert_wrongly
 
-    from ansys.fluent.core.quantity import Quantity
+    from ansys.units.quantity import Quantity
 
     t = Quantity(-274.0, "C")
     assert_wrongly(
@@ -87,7 +87,7 @@ def test_pyfluent_temperature_difference_from_negative_absolute_value_to_relativ
 
 
 def test_pyfluent_converts_temperature_correctly():
-    from ansys.fluent.core.quantity import Quantity
+    from ansys.units.quantity import Quantity
 
     tC = Quantity(1.0, "K").to("C")
     assert tC.value == -272.15
@@ -100,7 +100,7 @@ def test_pyfluent_converts_temperature_correctly():
 def test_pyfluent_converts_temperature_difference_correctly():
     from util import assert_rightly_but_fail, assert_wrongly
 
-    from ansys.fluent.core.quantity import Quantity
+    from ansys.units.quantity import Quantity
 
     tC = (Quantity(1.0, "K") - Quantity(2.0, "K")).to("C")
     assert_rightly_but_fail(
