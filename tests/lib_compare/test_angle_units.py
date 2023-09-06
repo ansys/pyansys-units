@@ -10,6 +10,7 @@ import util
 # avoid some tricky business, as shown later.
 
 
+@pytest.mark.developer_only
 def test_pint_angles_are_dimensionless():
     from pint import UnitRegistry
 
@@ -37,6 +38,7 @@ def test_pyfluent_angles_have_angle_dimensions():
 # sees them as equivalent. PyFluent naturally doesn't allow it.
 
 
+@pytest.mark.developer_only
 def test_pint_angle_and_dimensionless_are_convertible():
     from pint import UnitRegistry
 
@@ -73,6 +75,7 @@ def test_pyfluent_angle_and_dimensionless_are_not_convertible():
 # with mathematical functions
 
 
+@pytest.mark.developer_only
 def test_pint_angle_works_with_trigonometry():
     from pint import UnitRegistry
 
@@ -93,6 +96,7 @@ def test_pyfluent_angle_works_with_trigonometry():
     assert math.cos(float(sixty_degrees)) == pytest.approx(0.5)
 
 
+@pytest.mark.developer_only
 def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
     from pint import UnitRegistry
     from util import assert_rightly_but_fail, assert_wrongly

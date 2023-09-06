@@ -1,6 +1,7 @@
 import pytest
 
 
+@pytest.mark.developer_only
 def test_pint_raises_exception_for_multiplying_relative_temperature():
     from pint import UnitRegistry
     from pint.errors import OffsetUnitCalculusError
@@ -13,6 +14,7 @@ def test_pint_raises_exception_for_multiplying_relative_temperature():
     tk = 50.0 * ur.kelvin
 
 
+@pytest.mark.developer_only
 def test_pint_distinguishes_temperature_from_difference():
     from pint import Quantity, UnitRegistry
     from util import assert_wrongly
