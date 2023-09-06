@@ -21,20 +21,20 @@ class Unit:
 
     def __init__(self, name: str):
         if name in [*pyunits._fundamental_units]:
-            self._name = name
+            self.name = name
             dic = pyunits._fundamental_units[name]
             for key in dic:
-                setattr(self, f"_{key}", dic[key])
+                setattr(self, f"{key}", dic[key])
 
         elif name in [*pyunits._derived_units]:
-            self._name = name
+            self.name = name
             dic = pyunits._derived_units[name]
             for key in dic:
-                setattr(self, f"_{key}", dic[key])
+                setattr(self, f"{key}", dic[key])
 
     def __str__(self):
-        return f"""
-                Unit: {self._name}
-                Type: {self._type}
-                Factor: {self._factor}
-                Offset: {self._offset}"""
+        returned_string = ""
+        attrs = self.__dict__
+        for key in attrs:
+            returned_string += f"{key}: {attrs[key]}\n"
+        return returned_string
