@@ -1,5 +1,5 @@
-PyUnits
-========
+PyAnsys Units
+=============
 |pyansys| |pypi| |python| |GH-CI| |codecov| |MIT| |black| |pre-commit|
 
 .. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
@@ -35,7 +35,7 @@ PyUnits
 
 Overview
 --------
-PyUnits provides a Pythonic interface for units, unit systems, and unit
+PyAnsys Units provides a Pythonic interface for units, unit systems, and unit
 conversions. Its features enable seamless setup and usage of physical
 quantities, enabling you to perform these tasks:
 
@@ -48,16 +48,16 @@ quantities, enabling you to perform these tasks:
 Documentation and issues
 ------------------------
 
-Documentation for the latest stable release of PyUnits is hosted at `PyUnits documentation
-<https://pyunits.docs.pyansys.com>`_.
+Documentation for the latest stable release of PyAnsys Units is hosted at `PyAnsys Units documentation
+<https://units.docs.pyansys.com>`_.
 
 In the upper right corner of the documentation's title bar, there is an option for
 switching from viewing the documentation for the latest stable release to viewing
 the documentation for the development version or previously released versions.
 
-On the `PyUnits Issues <https://github.com/ansys/pyunits/issues>`_ page, you can
-create issues to report bugs, and request new features. On the `PyUnits Discussions
-<https://github.com/ansys/pyunits/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
+On the `PyAnsys Units Issues <https://github.com/ansys/pyansys-units/issues>`_ page, you can
+create issues to report bugs, and request new features. On the `PyAnsys Units Discussions
+<https://github.com/ansys/pyansys-units/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
 page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback.
 
 
@@ -77,12 +77,12 @@ with this command:
 
    pip install ansys-units
 
-If you plan on doing local *development* of PyUnits with Git, install the latest release with
+If you plan on doing local *development* of PyAnsys Units with Git, install the latest release with
 these commands:
 
 .. code:: console
 
-   git clone https://github.com/ansys/pyunits.git
+   git clone https://github.com/ansys/pyansys-units.git
    cd pyunits
    pip install pip -U
    pip install -e .
@@ -193,5 +193,5 @@ Use a custom unit system to perform conversions:
 
 License
 -------
-PyUnits is licensed under the MIT license. For more information, see the
-`LICENSE <https://github.com/ansys/pyunits/raw/main/LICENSE>`_ file.
+PyAnsys Units is licensed under the MIT license. For more information, see the
+`LICENSE <https://github.com/ansys/pyansys-units/raw/main/LICENSE>`_ file.

@@ -1,9 +1,9 @@
 """
 .. _ref_basic_usage:
 
-PyUnits basics
+PyAnsys Units basics
 --------------
-PyUnits provides a Pythonic interface for units, unit systems, and unit conversions.
+PyAnsys Units provides a Pythonic interface for units, unit systems, and unit conversions.
 Its features enable seamless setup and usage of physical quantities.
 
 This example shows you how to perform these tasks:

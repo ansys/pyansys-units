@@ -4,7 +4,7 @@
 User guide
 ==========
 
-Anyone who wants to use PyUnits can import its Python modules and develop Python
+Anyone who wants to use PyAnsys Units can import its Python modules and develop Python
 code to work with physical quantities.
 
 Overview
@@ -40,5 +40,5 @@ as CGS or BT.
 
 To define a new unit system or create custom quantities, manually update the
 ``cfg.yaml`` file with your desired data. Once saved, these changes are reflected
-throughout PyUnits.
+throughout PyAnsys Units.
 
