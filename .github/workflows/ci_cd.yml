@@ -67,7 +67,7 @@ jobs:
     steps:
       - uses: ansys/actions/tests-pytest@v4
         with:
-          pytest-markers: 'not developer_only'
+          pytest-markers: '-m "not developer_only"'
 
   doc-build:
     name: "Build documentation"
