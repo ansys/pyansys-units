@@ -100,23 +100,22 @@ def test_pyfluent_converts_temperature_correctly():
 # We will need to do some extra work such that when type is a difference
 # then the offset is zero in conversions.
 def test_pyfluent_converts_temperature_difference_correctly():
-    from util import assert_rightly_but_fail, assert_wrongly
-
     from ansys.units.quantity import Quantity
 
-    tC = (Quantity(1.0, "K") - Quantity(2.0, "K")).to("C")
-    assert_rightly_but_fail(
-        tC.value == -1.0, "test_pyfluent_converts_temperature_difference_correctly"
-    )
+    dK = Quantity(1.0, "K") - Quantity(2.0, "K")
+    assert dK.value == -1.0
+    assert dK.units == "delta_K"
+
+    tC = dK.to("C")
+    assert tC.value == -1.0
+    assert tC.units == "delta_C"
     assert float(tC) == -1.0
-    assert_wrongly(
-        tC.value == -274.15, "test_pyfluent_converts_temperature_difference_correctly"
-    )
-    tC = (Quantity(2.0, "K") - Quantity(1.0, "K")).to("C")
-    assert_rightly_but_fail(
-        tC.value == 1.0, "test_pyfluent_converts_temperature_difference_correctly"
-    )
+
+    dK = Quantity(2.0, "K") - Quantity(1.0, "K")
+    assert dK.value == 1.0
+    assert dK.units == "delta_K"
+
+    tC = dK.to("C")
+    assert tC.value == 1.0
+    assert tC.units == "delta_C"
     assert float(tC) == 1.0
-    assert_wrongly(
-        tC.value == -272.15, "test_pyfluent_converts_temperature_difference_correctly"
-    )
