@@ -2,6 +2,7 @@ name: Github Actions
 
 on:
   pull_request:
+  workflow_dispatch:
   push:
     tags:
       - "*"
