@@ -35,33 +35,33 @@ import ansys.units as ansunits
 
 # Unit strings
 
-volume = pyunits.Quantity(value=1, units="m^3")
+volume = ansunits.Quantity(value=1, units="m^3")
 
-acceleration = pyunits.Quantity(value=3, units="m s^-2")
+acceleration = ansunits.Quantity(value=3, units="m s^-2")
 
-torque = pyunits.Quantity(value=5, units="N m")
+torque = ansunits.Quantity(value=5, units="N m")
 
 # Dimensions
 
 vol_dims = [0, 3]
-volume = pyunits.Quantity(value=1, dimensions=vol_dims)
+volume = ansunits.Quantity(value=1, dimensions=vol_dims)
 
 acc_dims = [0, 1, -2]
-acceleration = pyunits.Quantity(value=3, dimensions=acc_dims)
+acceleration = ansunits.Quantity(value=3, dimensions=acc_dims)
 
 tor_dims = [1, 2, -2]
-torque = pyunits.Quantity(value=5, dimensions=tor_dims)
+torque = ansunits.Quantity(value=5, dimensions=tor_dims)
 
 # Quantity map
 
 vol_map = {"Volume": 1}
-volume = pyunits.Quantity(value=1, quantity_map=vol_map)
+volume = ansunits.Quantity(value=1, quantity_map=vol_map)
 
 acc_map = {"Acceleration": 1}
-acceleration = pyunits.Quantity(value=3, quantity_map=acc_map)
+acceleration = ansunits.Quantity(value=3, quantity_map=acc_map)
 
 tor_map = {"Torque": 1}
-torque = pyunits.Quantity(value=5, quantity_map=tor_map)
+torque = ansunits.Quantity(value=5, quantity_map=tor_map)
 
 ###############################################################################
 # Specify quantity properties
@@ -77,7 +77,7 @@ torque = pyunits.Quantity(value=5, quantity_map=tor_map)
 # 7. type : str
 
 cap_map = {"Capacitance": 1}
-capacitance = pyunits.Quantity(value=50, quantity_map=cap_map)
+capacitance = ansunits.Quantity(value=50, quantity_map=cap_map)
 
 capacitance.value  # >>> 50.0
 capacitance.units  # >>> "farad"
@@ -94,8 +94,8 @@ capacitance.type  # >>> "Derived"
 
 import math
 
-q1 = pyunits.Quantity(10.0, "m s^-1")
-q2 = pyunits.Quantity(5.0, "m s^-1")
+q1 = ansunits.Quantity(10.0, "m s^-1")
+q2 = ansunits.Quantity(5.0, "m s^-1")
 
 # Subtraction
 
@@ -139,27 +139,27 @@ math.sqrt(q2)  # >>> 2.2360679775
 
 # Trigonometry
 
-math.sin(pyunits.Quantity(90, "degree"))  # >>> 1.0
-math.cos(pyunits.Quantity(math.pi, "radian"))  # >>> -1.0
+math.sin(ansunits.Quantity(90, "degree"))  # >>> 1.0
+math.cos(ansunits.Quantity(math.pi, "radian"))  # >>> -1.0
 
 ###############################################################################
 # Perform conversions
 # ~~~~~~~~~~~~~~~~~~~
 # You can perform conversions on quantities with compatible units.
 
-slug = pyunits.Quantity(value=5, units="slug")
+slug = ansunits.Quantity(value=5, units="slug")
 kg = slug.to("kg")
 
 kg.value  # >>> 72.96951468603184
 kg.units  # >>> "kg"
 
-m = pyunits.Quantity(value=25, units="m")
+m = ansunits.Quantity(value=25, units="m")
 cm = m.to("cm")
 
 cm.value  # >>> 2500
 cm.units  # >>> "cm"
 
-dvis = pyunits.Quantity(1.0, "lb ft^-1 s^-1")
+dvis = ansunits.Quantity(1.0, "lb ft^-1 s^-1")
 pas = dvis.to("Pa s")
 
 pas.value  # >>> 1.4881639435695542
@@ -176,14 +176,14 @@ pas.units  # >>> "Pa s"
 # Custom units
 
 sys_units = ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
-sys = pyunits.UnitSystem(name="sys", base_units=sys_units)
+sys = ansunits.UnitSystem(name="sys", base_units=sys_units)
 
 sys.name  # >>> "sys"
 sys.base_units  # >>> ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
 
 # Predefined unit systems
 
-cgs = pyunits.UnitSystem(unit_sys="CGS")
+cgs = ansunits.UnitSystem(unit_sys="CGS")
 
 cgs.name  # >>> "cgs"
 cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
@@ -193,8 +193,8 @@ cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # You can create a unit system independently and apply it to quantities.
 
-si = pyunits.UnitSystem(unit_sys="SI")
-fps = pyunits.Quantity(value=11.2, units="ft s^-1")
+si = ansunits.UnitSystem(unit_sys="SI")
+fps = ansunits.Quantity(value=11.2, units="ft s^-1")
 
 mps = si.convert(fps)
 

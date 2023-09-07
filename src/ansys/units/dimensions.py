@@ -26,8 +26,8 @@ class Dimensions(object):
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
-        self._units = pyunits.Units()
-        unit_sys = unit_sys or pyunits._unit_systems["SI"]
+        self._units = ansunits.Units()
+        unit_sys = unit_sys or ansunits._unit_systems["SI"]
 
         if units is not None:
             self._unit = units
@@ -103,20 +103,20 @@ class Dimensions(object):
             unit_term_power *= power
 
             # retrieve data associated with fundamental unit
-            if unit_term in pyunits._fundamental_units:
+            if unit_term in ansunits._fundamental_units:
                 idx = (
-                    pyunits._dimension_order[
-                        pyunits._fundamental_units[unit_term]["type"]
+                    ansunits._dimension_order[
+                        ansunits._fundamental_units[unit_term]["type"]
                     ]
                     - 1
                 )
                 dimensions[idx] += unit_term_power
 
             # Retrieve derived unit composition unit string and factor.
-            if unit_term in pyunits._derived_units:
+            if unit_term in ansunits._derived_units:
                 # Recursively parse composition unit string
                 dimensions = self._units_to_dim(
-                    units=pyunits._derived_units[unit_term]["composition"],
+                    units=ansunits._derived_units[unit_term]["composition"],
                     power=unit_term_power,
                     dimensions=dimensions,
                 )

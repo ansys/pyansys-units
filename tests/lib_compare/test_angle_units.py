@@ -148,10 +148,10 @@ def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
     # mean is "This is the inevitable outcome of the way we do things."
 
 
-def test_pyunits_frequency_and_angular_frequency_are_not_convertible():
+def test_ansunits_frequency_and_angular_frequency_are_not_convertible():
     from ansys.units.quantity import Quantity, QuantityError
 
-    # pyunits avoids the pint complications by simply not allowing
+    # ansunits avoids the pint complications by simply not allowing
     # those conversions
     hz = Quantity(1.0, "Hz")
     with pytest.raises(QuantityError):

@@ -9,14 +9,14 @@ code to work with physical quantities.
 
 Overview
 --------
-To initialize a physical quantity, import the ``pyunits`` library and create a
+To initialize a physical quantity, import the ``ansunits`` library and create a
 new ``Quantity`` object:
 
 .. code:: python
 
     import ansys.units as ansunits
 
-    meter = pyunits.Quantity(value=1, units="m")
+    meter = ansunits.Quantity(value=1, units="m")
 
 All ``Quantity`` objects work intuitively with arithmetic operators. Simply
 insert them within an equation to perform mathematical operations.
@@ -26,7 +26,7 @@ insert them within an equation to perform mathematical operations.
 
     import ansys.units as ansunits
 
-    meter = pyunits.Quantity(value=1, units="m")
+    meter = ansunits.Quantity(value=1, units="m")
 
     m_ad = meter + 2  # 3
     m_sb = meter - 2  # -1

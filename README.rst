@@ -105,21 +105,21 @@ You can instantiate quantities with one of three methods:
 
    # unit string
 
-   volume = pyunits.Quantity(value=1, units="m^3")
+   volume = ansunits.Quantity(value=1, units="m^3")
 
    volume.value  # 1.0
    volume.units  # "m^3"
 
    # dimensions
 
-   acceleration = pyunits.Quantity(value=3, dimensions=[0, 1, -2])
+   acceleration = ansunits.Quantity(value=3, dimensions=[0, 1, -2])
 
    acceleration.value  # 3.0
    acceleration.units  # "m s^-2"
 
    # quantity map
 
-   torque = pyunits.Quantity(5, quantity_map={"Torque": 1})
+   torque = ansunits.Quantity(5, quantity_map={"Torque": 1})
 
    torque.value  # 5.0
    torque.units  # "N m"
@@ -130,14 +130,14 @@ You can instantiate unit systems with one of two methods:
 
    # custom unit systems
 
-   sys = pyunits.UnitSystem(
+   sys = ansunits.UnitSystem(
        name="sys",
        base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
    )
 
    # pre-defined unit systems
 
-   si = pyunits.UnitSystem(unit_sys="SI")
+   si = ansunits.UnitSystem(unit_sys="SI")
 
 Examples
 ~~~~~~~~
@@ -148,11 +148,11 @@ Perform arithmetic operations:
 
    import ansys.units as ansunits
 
-   deg = pyunits.Quantity(90, "degree")
+   deg = ansunits.Quantity(90, "degree")
    math.sin(deg)  # 1.0
 
-   v1 = pyunits.Quantity(10.0, "m s^-1")
-   v2 = pyunits.Quantity(5.0, "m s^-1")
+   v1 = ansunits.Quantity(10.0, "m s^-1")
+   v2 = ansunits.Quantity(5.0, "m s^-1")
 
    v3 = v1 - v2
    v3.value  # 5.0
@@ -167,7 +167,7 @@ Directly convert values to another set of units:
 
    import ansys.units as ansunits
 
-   fps = pyunits.Quantity(1, "lb ft^-1 s^-1")
+   fps = ansunits.Quantity(1, "lb ft^-1 s^-1")
    fps.value  # 1
 
    pas = fps.to("Pa s")
@@ -180,12 +180,12 @@ Use a custom unit system to perform conversions:
 
    import ansys.units as ansunits
 
-   sys = pyunits.UnitSystem(
+   sys = ansunits.UnitSystem(
        name="sys",
        base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
    )
 
-   v = pyunits.Quantity(10, "kg m s^2")
+   v = ansunits.Quantity(10, "kg m s^2")
    v2 = sys.convert(v)
 
    v2.value  # 2.2480894309971045

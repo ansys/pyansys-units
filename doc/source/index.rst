@@ -27,7 +27,7 @@ Documentation and issues
 ------------------------
 
 Documentation for the latest stable release of PyAnsys Units is hosted at `PyAnsys Units documentation
-<https://pyunits.docs.pyansys.com>`_.
+<https://ansunits.docs.pyansys.com>`_.
 
 In the upper right corner of the documentation's title bar, there is an option for
 switching from viewing the documentation for the latest stable release to viewing

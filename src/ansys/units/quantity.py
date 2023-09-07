@@ -45,18 +45,18 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        _units_table = pyunits.Units()
+        _units_table = ansunits.Units()
         _value = float(value)
 
         if units is not None:
             _unit = units
 
         if quantity_map:
-            units = pyunits.QuantityMap(quantity_map).units
+            units = ansunits.QuantityMap(quantity_map).units
             _unit = units
 
         if dimensions:
-            _dimensions = pyunits.Dimensions(dimensions=dimensions)
+            _dimensions = ansunits.Dimensions(dimensions=dimensions)
             _unit = _dimensions.units
 
         _, si_multiplier, si_offset = _units_table.si_data(units=_unit)
@@ -74,28 +74,28 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        self._units = pyunits.Units()
+        self._units = ansunits.Units()
         self._value = float(value)
 
         if units is not None:
             self._unit = units
-            self._dimensions = pyunits.Dimensions(units=units)
+            self._dimensions = ansunits.Dimensions(units=units)
 
         if quantity_map:
-            units = pyunits.QuantityMap(quantity_map).units
+            units = ansunits.QuantityMap(quantity_map).units
             self._unit = units
-            self._dimensions = pyunits.Dimensions(units=units)
+            self._dimensions = ansunits.Dimensions(units=units)
 
         if dimensions:
-            self._dimensions = pyunits.Dimensions(dimensions=dimensions)
+            self._dimensions = ansunits.Dimensions(dimensions=dimensions)
             self._unit = self._dimensions.units
 
         self._type = self._units.get_type(self._unit)
         if (
-            self._type == pyunits._QuantityType.temperature
-            and _type_hint == pyunits._QuantityType.temperature_difference
+            self._type == ansunits._QuantityType.temperature
+            and _type_hint == ansunits._QuantityType.temperature_difference
         ):
-            self._type = pyunits._QuantityType.temperature_difference
+            self._type = ansunits._QuantityType.temperature_difference
 
         si_units, si_multiplier, si_offset = self._units.si_data(units=self._unit)
 
@@ -138,8 +138,8 @@ class Quantity(float):
             Units of temperature difference.
         """
         if self.type in [
-            pyunits._QuantityType.temperature,
-            pyunits._QuantityType.temperature_difference,
+            ansunits._QuantityType.temperature,
+            ansunits._QuantityType.temperature_difference,
         ]:
             return "delta_K"
 
@@ -202,8 +202,8 @@ class Quantity(float):
 
         new_type = None
 
-        if self.type == pyunits._QuantityType.temperature_difference:
-            new_type = pyunits._QuantityType.temperature_difference
+        if self.type == ansunits._QuantityType.temperature_difference:
+            new_type = ansunits._QuantityType.temperature_difference
             to_units = Quantity._fix_these_temperature_units(
                 to_units, ignore_exponent=True
             )
@@ -228,7 +228,7 @@ class Quantity(float):
     def __pow__(self, __value):
         temp_dimensions = [dim * __value for dim in self.dimensions]
         new_si_value = self.si_value**__value
-        new_dimensions = pyunits.Dimensions(dimensions=temp_dimensions)
+        new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
         return Quantity(value=new_si_value, units=new_dimensions.units)
 
     def __mul__(self, __value):
@@ -237,7 +237,7 @@ class Quantity(float):
                 dim + __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
             ]
             new_si_value = self.si_value * __value.si_value
-            new_dimensions = pyunits.Dimensions(dimensions=temp_dimensions)
+            new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
             new_units = new_dimensions.units
             return Quantity(
                 value=new_si_value,
@@ -258,20 +258,20 @@ class Quantity(float):
                 dim - __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
             ]
             new_si_value = self.si_value / __value.si_value
-            new_dimensions = pyunits.Dimensions(dimensions=temp_dimensions)
+            new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
             new_units = new_dimensions.units
             result = Quantity(value=new_si_value, units=new_units)
             # HACK
             convert_to_temp_difference = (
-                pyunits._QuantityType.temperature == result.type
+                ansunits._QuantityType.temperature == result.type
                 and __value.type
                 in (
-                    pyunits._QuantityType.temperature,
-                    pyunits._QuantityType.temperature_difference,
+                    ansunits._QuantityType.temperature,
+                    ansunits._QuantityType.temperature_difference,
                 )
             )
             if convert_to_temp_difference:
-                result._type = pyunits._QuantityType.temperature_difference
+                result._type = ansunits._QuantityType.temperature_difference
             return result
 
         if isinstance(__value, (float, int)):
@@ -330,7 +330,7 @@ class Quantity(float):
     def _fix_these_temperature_units(
         units: str, ignore_exponent: bool, units_to_search: Tuple[str] = None
     ) -> str:
-        new_units = pyunits.parse_temperature_units(
+        new_units = ansunits.parse_temperature_units(
             units, ignore_exponent, units_to_search
         )
         return " ".join(
@@ -342,7 +342,7 @@ class Quantity(float):
 
     def _fix_temperature_units(self):
         # HACK
-        ignore_exponent = self.type == pyunits._QuantityType.temperature_difference
+        ignore_exponent = self.type == ansunits._QuantityType.temperature_difference
         self._unit = Quantity._fix_these_temperature_units(self._unit, ignore_exponent)
         self._si_units = Quantity._fix_these_temperature_units(
             self._si_units, ignore_exponent, ("K",)
@@ -353,8 +353,8 @@ class Quantity(float):
         # Temperature Difference information. Return
         # Temperature Difference if it's involved else None
         # such that the caller figures it out in the usual way
-        if pyunits._QuantityType.temperature_difference in (self.type, other.type):
-            return pyunits._QuantityType.temperature_difference
+        if ansunits._QuantityType.temperature_difference in (self.type, other.type):
+            return ansunits._QuantityType.temperature_difference
 
 
 class QuantityError(ValueError):

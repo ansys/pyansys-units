@@ -27,28 +27,28 @@ class UnitSystem:
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
-        self._units = pyunits.Units()
+        self._units = ansunits.Units()
 
         if name and unit_sys or base_units and unit_sys:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 
         if base_units:
-            if len(base_units) != pyunits.Dimensions.max_dim_len():
+            if len(base_units) != ansunits.Dimensions.max_dim_len():
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
             for idx, unit in enumerate(base_units):
-                if unit not in pyunits._fundamental_units:
+                if unit not in ansunits._fundamental_units:
                     raise UnitSystemError.UNIT_UNDEFINED(unit)
 
-                if (idx + 1) != pyunits._dimension_order[
-                    pyunits._fundamental_units[unit]["type"]
+                if (idx + 1) != ansunits._dimension_order[
+                    ansunits._fundamental_units[unit]["type"]
                 ]:
                     raise UnitSystemError.UNIT_ORDER(
-                        t1=list(pyunits._dimension_order.keys())[idx],
+                        t1=list(ansunits._dimension_order.keys())[idx],
                         o1=idx + 1,
-                        t2=pyunits._fundamental_units[unit]["type"],
-                        o2=pyunits._dimension_order[
-                            pyunits._fundamental_units[unit]["type"]
+                        t2=ansunits._fundamental_units[unit]["type"],
+                        o2=ansunits._dimension_order[
+                            ansunits._fundamental_units[unit]["type"]
                         ],
                     )
 
@@ -56,13 +56,13 @@ class UnitSystem:
             self._base_units = base_units
 
         if unit_sys is not None:
-            if unit_sys not in pyunits._unit_systems:
+            if unit_sys not in ansunits._unit_systems:
                 raise UnitSystemError.INVALID_UNIT_SYS(unit_sys)
 
             self._name = unit_sys
-            self._base_units = pyunits._unit_systems[unit_sys]
+            self._base_units = ansunits._unit_systems[unit_sys]
 
-    def convert(self, quantity: pyunits.Quantity) -> pyunits.Quantity:
+    def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
         Perform unit system conversions.
 
@@ -76,14 +76,14 @@ class UnitSystem:
         Quantity
             Quantity object containing the desired unit system conversion.
         """
-        new_dim = pyunits.Dimensions(
+        new_dim = ansunits.Dimensions(
             dimensions=quantity.dimensions, unit_sys=self._base_units
         )
 
         _, si_multiplier, si_offset = self._units.si_data(new_dim.units)
         new_value = (quantity.si_value / si_multiplier) - si_offset
 
-        return pyunits.Quantity(value=new_value, units=new_dim.units)
+        return ansunits.Quantity(value=new_value, units=new_dim.units)
 
     @property
     def name(self):

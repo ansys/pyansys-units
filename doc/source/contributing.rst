@@ -18,7 +18,7 @@ these commands:
 .. code::
 
     git clone https://github.com/ansys/pyansys-units.git
-    cd pyunits
+    cd ansunits
     pip install pip -U
     pip install -e .
 

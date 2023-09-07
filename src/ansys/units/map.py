@@ -18,10 +18,10 @@ class QuantityMap(object):
     """
 
     def __init__(self, quantity_map):
-        self._units = pyunits.Units()
+        self._units = ansunits.Units()
 
         for item in quantity_map:
-            if item not in pyunits._api_quantity_map:
+            if item not in ansunits._api_quantity_map:
                 raise QuantityMapError.UNKNOWN_MAP_ITEM(item)
 
         self._units = self._map_to_units(quantity_map)
@@ -41,7 +41,7 @@ class QuantityMap(object):
             Unit string representation of the quantity map.
         """
         unit_dict = {
-            pyunits._api_quantity_map[term]: power
+            ansunits._api_quantity_map[term]: power
             for term, power in quantity_map.items()
         }
 

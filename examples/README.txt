@@ -11,4 +11,4 @@ examples as Python files or Jupyter notebooks and run them locally.
    :maxdepth: 1
    :hidden:
 
-.. 00-pyunits/README.txt
+.. 00-ansunits/README.txt

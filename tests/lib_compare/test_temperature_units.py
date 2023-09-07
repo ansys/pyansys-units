@@ -32,7 +32,7 @@ def test_pint_distinguishes_temperature_from_difference():
     assert t3 == 1.0 * ur.delta_degree_Celsius
 
 
-def test_pyunits_distinguishes_temperature_from_difference():
+def test_ansunits_distinguishes_temperature_from_difference():
     from ansys.units.quantity import Quantity
 
     t1 = Quantity(150.0, "C")
@@ -53,7 +53,7 @@ def test_pyunits_distinguishes_temperature_from_difference():
 # However, -1 K is *only* meaningful as a difference rather than an absolute value
 # OTOH if you start asserting that -1 K has to be a temperature difference, you
 # can run into a bunch of other issues.
-def test_pyunits_automatically_creates_temperature_difference_from_negative_absolute_value():
+def test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value():
     from util import assert_rightly_but_fail, assert_wrongly
 
     from ansys.units.quantity import Quantity
@@ -61,18 +61,18 @@ def test_pyunits_automatically_creates_temperature_difference_from_negative_abso
     t = Quantity(-1.0, "K")
     assert_wrongly(
         t.type == "Temperature",
-        "test_pyunits_automatically_creates_temperature_difference_from_negative_absolute_value",
+        "test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value",
     )
     assert_rightly_but_fail(
         t.type == "Temperature Difference",
-        "test_pyunits_automatically_creates_temperature_difference_from_negative_absolute_value",
+        "test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value",
     )
 
 
-# shortened from test_pyunits_automatically_creates_temperature_
+# shortened from test_ansunits_automatically_creates_temperature_
 # difference_from_negative_absolute_value_based_on_relative_value
-# to test_pyunits_temperature_difference_from_negative_absolute_value_to_relative_value
-def test_pyunits_temperature_difference_from_negative_absolute_value_to_relative_value():
+# to test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value
+def test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value():
     from util import assert_rightly_but_fail, assert_wrongly
 
     from ansys.units.quantity import Quantity
@@ -80,15 +80,15 @@ def test_pyunits_temperature_difference_from_negative_absolute_value_to_relative
     t = Quantity(-274.0, "C")
     assert_wrongly(
         t.type == "Temperature",
-        "test_pyunits_temperature_difference_from_negative_absolute_value_to_relative_value",
+        "test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value",
     )
     assert_rightly_but_fail(
         t.type == "Temperature Difference",
-        "test_pyunits_temperature_difference_from_negative_absolute_value_to_relative_value",
+        "test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value",
     )
 
 
-def test_pyunits_converts_temperature_correctly():
+def test_ansunits_converts_temperature_correctly():
     from ansys.units.quantity import Quantity
 
     tC = Quantity(1.0, "K").to("C")
@@ -96,10 +96,10 @@ def test_pyunits_converts_temperature_correctly():
     assert float(tC) == 1.0
 
 
-# This one is not debatable. This is a pure bug in pyunits code.
+# This one is not debatable. This is a pure bug in ansunits code.
 # We will need to do some extra work such that when type is a difference
 # then the offset is zero in conversions.
-def test_pyunits_converts_temperature_difference_correctly():
+def test_ansunits_converts_temperature_difference_correctly():
     from ansys.units.quantity import Quantity
 
     dK = Quantity(1.0, "K") - Quantity(2.0, "K")
