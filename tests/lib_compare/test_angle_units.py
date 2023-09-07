@@ -24,7 +24,7 @@ def test_pint_angles_are_dimensionless():
 
 
 def test_pyfluent_angles_have_angle_dimensions():
-    from lib_compare.util.pyfluent import TestDimension
+    from lib_compare.util.pyunit import TestDimension
 
     from ansys.units.quantity import Quantity
 
@@ -148,10 +148,10 @@ def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
     # mean is "This is the inevitable outcome of the way we do things."
 
 
-def test_pyfluent_frequency_and_angular_frequency_are_not_convertible():
+def test_pyunits_frequency_and_angular_frequency_are_not_convertible():
     from ansys.units.quantity import Quantity, QuantityError
 
-    # pyfluent avoids the pint complications by simply not allowing
+    # pyunits avoids the pint complications by simply not allowing
     # those conversions
     hz = Quantity(1.0, "Hz")
     with pytest.raises(QuantityError):
