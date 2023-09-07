@@ -1,14 +1,13 @@
-import ansys.units as pyunits
-
-
 class Unit:
     """
     Initializes a unit.
 
     Parameters
     ----------
-    name: str
+    Name: str
         Unit name.
+    Config: dict
+        dictionary of unit properties
 
     Methods
     -------
@@ -19,18 +18,10 @@ class Unit:
         Unit instance.
     """
 
-    def __init__(self, name: str):
-        if name in [*pyunits._fundamental_units]:
-            self.name = name
-            dic = pyunits._fundamental_units[name]
-            for key in dic:
-                setattr(self, f"{key}", dic[key])
-
-        elif name in [*pyunits._derived_units]:
-            self.name = name
-            dic = pyunits._derived_units[name]
-            for key in dic:
-                setattr(self, f"{key}", dic[key])
+    def __init__(self, _name: str, config: dict):
+        self.name = _name
+        for key in config:
+            setattr(self, f"{key}", config[key])
 
     def __str__(self):
         returned_string = ""
