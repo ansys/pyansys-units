@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-import ansys.units as pyunits
+import ansys.units as ansunits
 
 DELTA = 1.0e-5
 

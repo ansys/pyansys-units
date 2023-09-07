@@ -23,7 +23,7 @@ This example shows you how to perform these tasks:
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 # Import the ``ansys.units`` package.
 
-import ansys.units as pyunits
+import ansys.units as ansunits
 
 ###############################################################################
 # Create quantities

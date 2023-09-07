@@ -1,5 +1,5 @@
 """Provides the ``Dimension`` class."""
-import ansys.units as pyunits
+import ansys.units as ansunits
 
 
 class Dimensions(object):

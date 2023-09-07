@@ -1,5 +1,5 @@
 """Provides the ``UnitSystem`` class."""
-import ansys.units as pyunits
+import ansys.units as ansunits
 
 
 class UnitSystem:

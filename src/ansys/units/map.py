@@ -1,5 +1,5 @@
 """Provides the ``QuantityMap`` class."""
-import ansys.units as pyunits
+import ansys.units as ansunits
 
 
 class QuantityMap(object):

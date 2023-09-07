@@ -1,6 +1,6 @@
 import pytest
 
-import ansys.units as pyunits
+import ansys.units as ansunits
 
 
 def test_units():

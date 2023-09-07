@@ -14,7 +14,7 @@ new ``Quantity`` object:
 
 .. code:: python
 
-    import ansys.units as pyunits
+    import ansys.units as ansunits
 
     meter = pyunits.Quantity(value=1, units="m")
 
@@ -24,7 +24,7 @@ insert them within an equation to perform mathematical operations.
 .. code:: python
 
 
-    import ansys.units as pyunits
+    import ansys.units as ansunits
 
     meter = pyunits.Quantity(value=1, units="m")
 

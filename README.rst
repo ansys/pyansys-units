@@ -97,7 +97,7 @@ Import the `ansys.units`` package:
 
 .. code:: python
 
-   import ansys.units as pyunits
+   import ansys.units as ansunits
 
 You can instantiate quantities with one of three methods:
 
@@ -146,7 +146,7 @@ Perform arithmetic operations:
 
 .. code:: python
 
-   import ansys.units as pyunits
+   import ansys.units as ansunits
 
    deg = pyunits.Quantity(90, "degree")
    math.sin(deg)  # 1.0
@@ -165,7 +165,7 @@ Directly convert values to another set of units:
 
 .. code:: python
 
-   import ansys.units as pyunits
+   import ansys.units as ansunits
 
    fps = pyunits.Quantity(1, "lb ft^-1 s^-1")
    fps.value  # 1
@@ -178,7 +178,7 @@ Use a custom unit system to perform conversions:
 
 .. code:: python
 
-   import ansys.units as pyunits
+   import ansys.units as ansunits
 
    sys = pyunits.UnitSystem(
        name="sys",

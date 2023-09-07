@@ -1,7 +1,7 @@
 """Provides the ``Quantity`` class."""
 from typing import Optional, Tuple
 
-import ansys.units as pyunits
+import ansys.units as ansunits
 
 
 class Quantity(float):
