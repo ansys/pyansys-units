@@ -826,12 +826,16 @@ def test_unit_from_dimensions_1():
 
 
 def test_unit_from_dimensions_2():
-    l = ansunits.Quantity(10.5, dimensions=[0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    l = ansunits.Quantity(
+        10.5, dimensions=[0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    )
     assert l.units == "m"
 
 
 def test_unit_from_dimensions_3():
-    x = ansunits.Quantity(10.5, dimensions=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    x = ansunits.Quantity(
+        10.5, dimensions=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    )
     assert x.units == ""
 
 
