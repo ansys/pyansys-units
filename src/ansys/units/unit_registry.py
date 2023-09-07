@@ -25,16 +25,19 @@ class UnitRegistry:
     """
 
     def __init__(self, config="cfg.yaml", other={}):
-        file_path = os.path.relpath(__file__)
-        file_dir = os.path.dirname(file_path)
-        qc_path = os.path.join(file_dir, config)
+        unitdict = other
+        if config:
+            file_path = os.path.relpath(__file__)
+            file_dir = os.path.dirname(file_path)
+            qc_path = os.path.join(file_dir, config)
 
-        with open(qc_path, "r") as qc_yaml:
-            qc_data = yaml.safe_load(qc_yaml)
-            _fundamental_units: dict = qc_data["fundamental_units"]
-            _derived_units: dict = qc_data["derived_units"]
+            with open(qc_path, "r") as qc_yaml:
+                qc_data = yaml.safe_load(qc_yaml)
+                _fundamental_units: dict = qc_data["fundamental_units"]
+                _derived_units: dict = qc_data["derived_units"]
 
-        unitdict = dict(_fundamental_units, **_derived_units, **other)
+            unitdict.update(**_fundamental_units, **_derived_units)
+
         for unit in unitdict:
             setattr(self, unit, pyunits.Unit(unit, unitdict[unit]))
 
