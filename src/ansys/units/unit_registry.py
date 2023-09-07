@@ -1,3 +1,7 @@
+import os
+
+import yaml
+
 import ansys.units as pyunits
 
 
@@ -7,9 +11,10 @@ class UnitRegistry:
 
     Parameters
     ----------
-    Config: dict, None
-        Custom dictionary of units.
-
+    Config: filename.yaml
+        Custom units.
+    Other: Dict
+        Dictionary of units.
     Methods
     -------
 
@@ -19,12 +24,17 @@ class UnitRegistry:
         contains all units from cfg.yaml.
     """
 
-    def __init__(self, config=None):
-        if not config:
-            unitdict = dict(pyunits._fundamental_units, **pyunits._derived_units)
-        else:
-            unitdict = config
+    def __init__(self, config="cfg.yaml", other={}):
+        file_path = os.path.relpath(__file__)
+        file_dir = os.path.dirname(file_path)
+        qc_path = os.path.join(file_dir, config)
 
+        with open(qc_path, "r") as qc_yaml:
+            qc_data = yaml.safe_load(qc_yaml)
+            _fundamental_units: dict = qc_data["fundamental_units"]
+            _derived_units: dict = qc_data["derived_units"]
+
+        unitdict = dict(_fundamental_units, **_derived_units, **other)
         for unit in unitdict:
             setattr(self, unit, pyunits.Unit(unit, unitdict[unit]))
 
