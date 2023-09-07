@@ -2,7 +2,7 @@
 .. _ref_basic_usage:
 
 PyAnsys Units basics
---------------
+--------------------
 PyAnsys Units provides a Pythonic interface for units, unit systems, and unit conversions.
 Its features enable seamless setup and usage of physical quantities.
 

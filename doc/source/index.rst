@@ -1,5 +1,5 @@
 PyAnsys Units documentation |version|
-===============================
+=====================================
 
 .. toctree::
    :hidden:
