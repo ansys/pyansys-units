@@ -53,10 +53,10 @@ tests = [
 ]
 
 [project.urls]
-Source = "https://github.com/ansys/pyunits"
-Issues = "https://github.com/ansys/pyunits/issues"
-Documentation = "https://pyunits.docs.pyansys.com"
-Releases = "https://github.com/ansys/pyunits/releases"
+Source = "https://github.com/ansys/pyansys-units"
+Issues = "https://github.com/ansys/pyansys-units/issues"
+Documentation = "https://ansunits.docs.pyansys.com"
+Releases = "https://github.com/ansys/pyansys-units/releases"
 
 [tool.flit.module]
 name = "ansys.units"

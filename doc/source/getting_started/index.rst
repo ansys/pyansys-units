@@ -4,7 +4,7 @@
 Getting started
 ===============
 
-PyUnits provides a Pythonic interface for units, unit systems, and unit
+PyAnsys Units provides a Pythonic interface for units, unit systems, and unit
 conversions.
 
 .. toctree::

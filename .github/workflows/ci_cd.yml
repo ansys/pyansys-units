@@ -15,7 +15,7 @@ concurrency:
 
 env:
   MAIN_PYTHON_VERSION: '3.10'
-  DOCUMENTATION_CNAME: 'pyunits.docs.pyansys.com'
+  DOCUMENTATION_CNAME: 'units.docs.pyansys.com'
   LIBRARY_NAME: 'ansys-units'
   LIBRARY_NAMESPACE: 'ansys.units'
 
