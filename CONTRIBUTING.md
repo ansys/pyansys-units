@@ -10,4 +10,4 @@ a useful tool for all users. As such, we welcome and encourage any
 questions or submissions to this repository.
 
 For contributing to this project, please refer to the [PyAnsys Developer's Guide](https://dev.docs.pyansys.com/).
-Further information about contributing to PyAnsys Units can be found in [Contributing](https://pyunits.docs.pyansys.com/version/stable/getting_started/contribution.html).
+Further information about contributing to PyAnsys Units can be found in [Contributing](https://units.docs.pyansys.com/version/stable/getting_started/contribution.html).
