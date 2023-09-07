@@ -17,7 +17,7 @@ these commands:
 
 .. code::
 
-    git clone https://github.com/ansys/pyunits.git
+    git clone https://github.com/ansys/pyansys-units.git
     cd pyunits
     pip install pip -U
     pip install -e .
@@ -46,7 +46,7 @@ this command:
 
 Post issues
 -----------
-Use the `PyAnsys Units Issues <https://github.com/ansys/pyunits/issues>`_ page to
+Use the `PyAnsys Units Issues <https://github.com/ansys/pyansys-units/issues>`_ page to
 report bugs and request new features.
 
 

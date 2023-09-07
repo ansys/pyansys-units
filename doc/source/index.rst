@@ -33,9 +33,9 @@ In the upper right corner of the documentation's title bar, there is an option f
 switching from viewing the documentation for the latest stable release to viewing
 the documentation for the development version or previously released versions.
 
-On the `PyAnsys Units Issues <https://github.com/ansys/pyunits/issues>`_ page, you can
+On the `PyAnsys Units Issues <https://github.com/ansys/pyansys-units/issues>`_ page, you can
 create issues to report bugs, and request new features. On the `PyAnsys Units Discussions
-<https://github.com/ansys/pyunits/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
+<https://github.com/ansys/pyansys-units/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
 page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback.
 
 To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
@@ -43,7 +43,7 @@ To reach the project support team, email `pyansys.core@ansys.com <pyansys.core@a
 License
 -------
 PyAnsys Units is licensed under the MIT license. For more information, see the
-`LICENSE <https://github.com/ansys/pyunits/raw/main/LICENSE>`_ file.
+`LICENSE <https://github.com/ansys/pyansys-units/raw/main/LICENSE>`_ file.
 
 Project index
 -------------

@@ -14,12 +14,12 @@ PyAnsys Units
    :target: https://pypi.org/project/ansys-units
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/ansys/pyunits/actions/workflows/ci_cd.yml/badge.svg
-   :target: https://github.com/ansys/pyunits/actions/workflows/ci_cd.yml
+.. |GH-CI| image:: https://github.com/ansys/pyansys-units/actions/workflows/ci_cd.yml/badge.svg
+   :target: https://github.com/ansys/pyansys-units/actions/workflows/ci_cd.yml
    :alt: GH-CI
 
-.. |codecov| image:: https://codecov.io/gh/ansys/pyunits/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/ansys/pyunits
+.. |codecov| image:: https://codecov.io/gh/ansys/pyansys-units/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/ansys/pyansys-units
 
 .. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
@@ -29,8 +29,8 @@ PyAnsys Units
    :target: https://github.com/psf/black
    :alt: Black
 
-.. |pre-commit| image:: https://results.pre-commit.ci/badge/github/ansys/pyunits/main.svg
-   :target: https://results.pre-commit.ci/latest/github/ansys/pyunits/main
+.. |pre-commit| image:: https://results.pre-commit.ci/badge/github/ansys/pyansys-units/main.svg
+   :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-units/main
    :alt: pre-commit.ci status
 
 Overview

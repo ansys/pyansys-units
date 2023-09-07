@@ -21,7 +21,7 @@ release with these commands:
 
 .. code:: console
 
-   git clone https://github.com/ansys/pyunits.git
+   git clone https://github.com/ansys/pyansys-units.git
    cd pyunits
    pip install pip -U
    pip install -e .

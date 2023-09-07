@@ -21,7 +21,7 @@ html_short_title = html_title = "PyAnsys Units"
 
 # specify the location of your github repo
 html_theme_options = {
-    "github_url": "https://github.com/ansys/pyunits",
+    "github_url": "https://github.com/ansys/pyansys-units",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "additional_breadcrumbs": [
