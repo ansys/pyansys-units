@@ -23,7 +23,7 @@ from ansys.units.dimensions import Dimensions, DimensionsError  # noqa: F401
 from ansys.units.map import QuantityMap, QuantityMapError  # noqa: F401
 from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
 from ansys.units.systems import UnitSystem, UnitSystemError  # noqa: F401
-from ansys.units.units import Units, parse_temperature_units  # noqa: F401
+import ansys.units.units as Units  # noqa: F401
 
 _THIS_DIRNAME = os.path.dirname(__file__)
 _README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"))

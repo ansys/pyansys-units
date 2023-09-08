@@ -45,7 +45,7 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        _units_table = ansunits.Units()
+        _units_table = ansunits.Units
         _value = float(value)
 
         if units is not None:
@@ -74,7 +74,7 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        self._units = ansunits.Units()
+        self._units = ansunits.Units
         self._value = float(value)
 
         if units is not None:
@@ -330,7 +330,7 @@ class Quantity(float):
     def _fix_these_temperature_units(
         units: str, ignore_exponent: bool, units_to_search: Tuple[str] = None
     ) -> str:
-        new_units = ansunits.parse_temperature_units(
+        new_units = ansunits.Units.parse_temperature_units(
             units, ignore_exponent, units_to_search
         )
         return " ".join(
