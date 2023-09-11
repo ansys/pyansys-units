@@ -9,7 +9,7 @@ This section describes the public classes, functions, and attributes in the PyAn
 
     quantity
     systems
-    units
+    utils
     dimensions
     map
     config
