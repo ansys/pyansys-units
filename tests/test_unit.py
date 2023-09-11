@@ -18,4 +18,10 @@ def test_derived_units():
 
 def test_string_rep():
     C = pyunits.Unit("C")
-    assert C.__str__() == "name: C\ntype: Temperature\nfactor: 1\noffset: 273.15\n"
+    C_string = """name: C
+type: Temperature
+factor: 1
+offset: 273.15
+dimensions: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+"""
+    assert C.__str__() == C_string
