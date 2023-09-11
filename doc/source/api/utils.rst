@@ -1,10 +1,10 @@
 .. _ref_units:
 
 =====
-Units
+Utils
 =====
 
-.. automodule:: ansys.units.units
+.. automodule:: ansys.units.utils
    :members:
    :show-inheritance:
    :undoc-members:
