@@ -1,5 +1,6 @@
 """Provides the ``Dimension`` class."""
 import ansys.units as ansunits
+from ansys.units.utils import condense, filter_unit_term
 
 
 class Dimensions(object):
@@ -26,7 +27,6 @@ class Dimensions(object):
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
-        self._units = ansunits.Units()
         unit_sys = unit_sys or ansunits._unit_systems["SI"]
 
         if units is not None:
@@ -73,7 +73,7 @@ class Dimensions(object):
                 dim = int(dim) if dim % 1 == 0 else dim
                 units += f" {unit_sys[idx]}^{dim}"
 
-        return dimensions, self._units.condense(units=units)
+        return dimensions, condense(units=units)
 
     def _units_to_dim(
         self, units: str, power: float = None, dimensions: list = None
@@ -98,7 +98,7 @@ class Dimensions(object):
 
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
-            _, unit_term, unit_term_power = self._units.filter_unit_term(term)
+            _, unit_term, unit_term_power = filter_unit_term(term)
 
             unit_term_power *= power
 

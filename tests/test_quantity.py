@@ -3,6 +3,7 @@ import math
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.utils import UtilError
 
 DELTA = 1.0e-5
 
@@ -1031,9 +1032,9 @@ def test_error_messages():
 
 
 def test_instantiate_quantity_with_unrecognized_units_causes_exception():
-    with pytest.raises(ansunits.QuantityError):
+    with pytest.raises(UtilError):
         ansunits.Quantity(value=10, units="piggies")
-    with pytest.raises(ansunits.QuantityError):
+    with pytest.raises(UtilError):
         ansunits.Quantity(value=10, units="piggies s^-1")
-    with pytest.raises(ansunits.QuantityError):
+    with pytest.raises(UtilError):
         ansunits.Quantity(value=10, units="piggies^2 m^-3")

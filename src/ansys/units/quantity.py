@@ -2,6 +2,7 @@
 from typing import Optional, Tuple
 
 import ansys.units as ansunits
+from ansys.units.utils import get_type, parse_temperature_units, si_data
 
 
 class Quantity(float):
@@ -45,7 +46,6 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        _units_table = ansunits.Units()
         _value = float(value)
 
         if units is not None:
@@ -59,7 +59,7 @@ class Quantity(float):
             _dimensions = ansunits.Dimensions(dimensions=dimensions)
             _unit = _dimensions.units
 
-        _, si_multiplier, si_offset = _units_table.si_data(units=_unit)
+        _, si_multiplier, si_offset = si_data(units=_unit)
         _si_value = (_value + si_offset) * si_multiplier
 
         return float.__new__(cls, _si_value)
@@ -74,7 +74,6 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        self._units = ansunits.Units()
         self._value = float(value)
 
         if units is not None:
@@ -90,14 +89,14 @@ class Quantity(float):
             self._dimensions = ansunits.Dimensions(dimensions=dimensions)
             self._unit = self._dimensions.units
 
-        self._type = self._units.get_type(self._unit)
+        self._type = get_type(self._unit)
         if (
             self._type == ansunits._QuantityType.temperature
             and _type_hint == ansunits._QuantityType.temperature_difference
         ):
             self._type = ansunits._QuantityType.temperature_difference
 
-        si_units, si_multiplier, si_offset = self._units.si_data(units=self._unit)
+        si_units, si_multiplier, si_offset = si_data(units=self._unit)
 
         self._si_units = si_units
 
@@ -209,7 +208,7 @@ class Quantity(float):
             )
 
         # Retrieve all SI required SI data and perform conversion
-        _, si_multiplier, si_offset = self._units.si_data(to_units)
+        _, si_multiplier, si_offset = si_data(to_units)
         new_value = (self.si_value / si_multiplier) - si_offset
 
         new_obj = Quantity(value=new_value, units=to_units, _type_hint=new_type)
@@ -330,9 +329,7 @@ class Quantity(float):
     def _fix_these_temperature_units(
         units: str, ignore_exponent: bool, units_to_search: Tuple[str] = None
     ) -> str:
-        new_units = ansunits.parse_temperature_units(
-            units, ignore_exponent, units_to_search
-        )
+        new_units = parse_temperature_units(units, ignore_exponent, units_to_search)
         return " ".join(
             ("delta_" + term[0])
             if (term[1] and not term[0].startswith("delta_"))
