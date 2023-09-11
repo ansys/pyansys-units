@@ -1,5 +1,6 @@
 """Provides the ``QuantityMap`` class."""
 import ansys.units as ansunits
+from ansys.units.utils import condense, filter_unit_term
 
 
 class QuantityMap(object):
@@ -50,7 +51,7 @@ class QuantityMap(object):
         # Split unit string into terms and parse data associated with individual terms
         for terms in unit_dict:
             for term in terms.split(" "):
-                _, unit_term, unit_term_power = self._units.filter_unit_term(term)
+                _, unit_term, unit_term_power = filter_unit_term(term)
 
                 unit_term_power *= unit_dict[terms]
 
@@ -59,7 +60,7 @@ class QuantityMap(object):
                 elif unit_term_power != 0.0:
                     units += f" {unit_term}^{unit_term_power}"
 
-        return self._units.condense(units=units)
+        return condense(units=units)
 
     @property
     def units(self):

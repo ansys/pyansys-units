@@ -1,5 +1,6 @@
 """Provides the ``UnitSystem`` class."""
 import ansys.units as ansunits
+from ansys.units.utils import si_data
 
 
 class UnitSystem:
@@ -80,7 +81,7 @@ class UnitSystem:
             dimensions=quantity.dimensions, unit_sys=self._base_units
         )
 
-        _, si_multiplier, si_offset = self._units.si_data(new_dim.units)
+        _, si_multiplier, si_offset = si_data(new_dim.units)
         new_value = (quantity.si_value / si_multiplier) - si_offset
 
         return ansunits.Quantity(value=new_value, units=new_dim.units)

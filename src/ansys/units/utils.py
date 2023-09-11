@@ -1,9 +1,12 @@
 """Provide the ``Units`` functions."""
 from typing import Optional, Tuple
 
-import ansys.units as q
-from ansys.units._constants import _QuantityType
-from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
+from ansys.units._constants import (
+    _derived_units,
+    _fundamental_units,
+    _multipliers,
+    _QuantityType,
+)
 
 
 def _has_multiplier(unit_term: str) -> bool:
@@ -22,7 +25,7 @@ def _has_multiplier(unit_term: str) -> bool:
     """
     # Check if the unit term is not an existing fundamental or derived unit.
     return unit_term and not (
-        (unit_term in q._fundamental_units) or (unit_term in q._derived_units)
+        (unit_term in _fundamental_units) or (unit_term in _derived_units)
     )
 
 
@@ -41,10 +44,10 @@ def _si_map(unit_term: str) -> str:
         SI unit equivalent.
     """
     # Retrieve type associated with unit term
-    unit_term_type = q._fundamental_units[unit_term]["type"]
+    unit_term_type = _fundamental_units[unit_term]["type"]
 
     # Find SI unit with same type as unit term
-    for term, term_info in q._fundamental_units.items():
+    for term, term_info in _fundamental_units.items():
         if term_info["type"] == unit_term_type and term_info["factor"] == 1.0:
             return term
 
@@ -76,7 +79,7 @@ def filter_unit_term(unit_term: str) -> tuple:
     # strip multiplier and base from unit term
     has_multiplier = _has_multiplier(unit_term)
     if has_multiplier:
-        for mult in q._multipliers:
+        for mult in _multipliers:
             if unit_term.startswith(mult):
                 if not _has_multiplier(unit_term[len(mult) :]):
                     multiplier = mult
@@ -87,7 +90,7 @@ def filter_unit_term(unit_term: str) -> tuple:
     # a known unit on its own. So if we can't actually find its multiplier then
     # this string is an invalid unit string
     if has_multiplier and not multiplier:
-        raise QuantityError.UNKNOWN_UNITS(unit_term)
+        raise UtilError.UNKNOWN_UNITS(unit_term)
     return multiplier, base, power
 
 
@@ -122,7 +125,7 @@ def si_data(
     si_units = si_units or ""
     si_multiplier = si_multiplier or 1.0
     si_offset = (
-        q._fundamental_units[units]["offset"] if units in q._fundamental_units else 0.0
+        _fundamental_units[units]["offset"] if units in _fundamental_units else 0.0
     )
 
     # Split unit string into terms and parse data associated with individual terms
@@ -132,29 +135,25 @@ def si_data(
         unit_term_power *= power
 
         si_multiplier *= (
-            q._multipliers[unit_multiplier] ** unit_term_power
-            if unit_multiplier
-            else 1.0
+            _multipliers[unit_multiplier] ** unit_term_power if unit_multiplier else 1.0
         )
 
         # Retrieve data associated with fundamental unit
-        if unit_term in q._fundamental_units:
+        if unit_term in _fundamental_units:
             if unit_term_power == 1.0:
                 si_units += f" {_si_map(unit_term)}"
             elif unit_term_power != 0.0:
                 si_units += f" {_si_map(unit_term)}^{unit_term_power}"
 
-            si_multiplier *= (
-                q._fundamental_units[unit_term]["factor"] ** unit_term_power
-            )
+            si_multiplier *= _fundamental_units[unit_term]["factor"] ** unit_term_power
 
         # Retrieve derived unit composition unit string and factor
-        if unit_term in q._derived_units:
-            si_multiplier *= q._derived_units[unit_term]["factor"] ** unit_term_power
+        if unit_term in _derived_units:
+            si_multiplier *= _derived_units[unit_term]["factor"] ** unit_term_power
 
             # Recursively parse composition unit string
             si_units, si_multiplier, _ = si_data(
-                units=q._derived_units[unit_term]["composition"],
+                units=_derived_units[unit_term]["composition"],
                 power=unit_term_power,
                 si_units=si_units,
                 si_multiplier=si_multiplier,
@@ -221,10 +220,10 @@ def get_type(units: str) -> str:
     if units == "":
         return _QuantityType.no_type
 
-    if units in q._fundamental_units:
-        return q._fundamental_units[units]["type"]
+    if units in _fundamental_units:
+        return _fundamental_units[units]["type"]
 
-    if units in q._derived_units:
+    if units in _derived_units:
         return _QuantityType.derived
 
     # HACK
@@ -281,3 +280,14 @@ def parse_temperature_units(
         )
         units_out.append((term, is_temp_diff))
     return units_out
+
+
+class UtilError(ValueError):
+    """Custom util errors."""
+
+    def __init__(self, err):
+        super().__init__(err)
+
+    @classmethod
+    def UNKNOWN_UNITS(cls, unit: str):
+        return cls(f"`{unit}` is an unknown or unconfigured unit.")
