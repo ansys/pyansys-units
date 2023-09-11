@@ -1033,3 +1033,11 @@ def test_instantiate_quantity_with_unrecognized_units_causes_exception():
         pyunits.Quantity(value=10, units="piggies s^-1")
     with pytest.raises(pyunits.QuantityError):
         pyunits.Quantity(value=10, units="piggies^2 m^-3")
+
+
+def test_returns_correct_units():
+    kb = pyunits.Quantity(1.382e-23, "J K^-1")
+    t = pyunits.Quantity(2.0, "K")
+    e = kb * t
+    assert e.units.name == "kg m^2 s^-2"
+    assert e.value == 2.764e-23

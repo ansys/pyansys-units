@@ -109,7 +109,7 @@ class Quantity(float):
 
         # Well, this is going to have to be a hack, but we
         # need to fix the wider design to do this properly
-        # self._fix_temperature_units()
+        self._fix_temperature_units()
 
         self._si_value = (self.value + si_offset) * si_multiplier
 
