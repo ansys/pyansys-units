@@ -1,4 +1,5 @@
 import ansys.units as ansunits
+from ansys.units.utils import _has_multiplier, _si_map
 
 
 def test_tables():
@@ -11,29 +12,25 @@ def test_tables():
 
 
 def test_has_multiplier():
-    ut = ansunits.Units
+    assert _has_multiplier("km")
+    assert _has_multiplier("ms")
+    assert _has_multiplier("dam")
 
-    assert ut._has_multiplier("km")
-    assert ut._has_multiplier("ms")
-    assert ut._has_multiplier("dam")
-
-    assert not ut._has_multiplier("kg")
-    assert not ut._has_multiplier("cm")
-    assert not ut._has_multiplier("m")
+    assert not _has_multiplier("kg")
+    assert not _has_multiplier("cm")
+    assert not _has_multiplier("m")
 
 
 def test_si_map():
-    ut = ansunits.Units
-
-    assert ut._si_map("g") == "kg"
-    assert ut._si_map("lbm") == "kg"
-    assert ut._si_map("ft") == "m"
-    assert ut._si_map("slugmol") == "mol"
-    assert ut._si_map("degree") == "radian"
+    assert _si_map("g") == "kg"
+    assert _si_map("lbm") == "kg"
+    assert _si_map("ft") == "m"
+    assert _si_map("slugmol") == "mol"
+    assert _si_map("degree") == "radian"
 
 
 def test_filter_unit_term():
-    ut = ansunits.Units
+    ut = ansunits
 
     assert ut.filter_unit_term("cm^-2") == ("", "cm", -2)
     assert ut.filter_unit_term("m") == ("", "m", 1)
@@ -43,7 +40,7 @@ def test_filter_unit_term():
 
 
 def test_si_data():
-    ut = ansunits.Units
+    ut = ansunits
 
     u1, m1, o1 = ut.si_data(units="g")
     assert u1 == "kg"
@@ -72,7 +69,7 @@ def test_si_data():
 
 
 def test_condense():
-    ut = ansunits.Units
+    ut = ansunits
 
     assert ut.condense("m m m m") == "m^4"
     assert ut.condense("kg ft^3 kg^-2") == "kg^-1 ft^3"
@@ -80,7 +77,7 @@ def test_condense():
 
 
 def test_get_type():
-    ut = ansunits.Units
+    ut = ansunits
 
     assert ut.get_type(units="kg") == "Mass"
     assert ut.get_type(units="m") == "Length"
