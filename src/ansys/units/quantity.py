@@ -46,7 +46,6 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        _units_table = ansunits
         _value = float(value)
 
         if units is not None:
@@ -75,7 +74,6 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        self._units = ansunits
         self._value = float(value)
 
         if units is not None:

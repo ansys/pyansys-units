@@ -19,8 +19,6 @@ class QuantityMap(object):
     """
 
     def __init__(self, quantity_map):
-        self._units = ansunits
-
         for item in quantity_map:
             if item not in ansunits._api_quantity_map:
                 raise QuantityMapError.UNKNOWN_MAP_ITEM(item)

@@ -27,7 +27,6 @@ class Dimensions(object):
         if units and dimensions:
             raise DimensionsError.EXCESSIVE_PARAMETERS()
 
-        self._units = ansunits
         unit_sys = unit_sys or ansunits._unit_systems["SI"]
 
         if units is not None:
