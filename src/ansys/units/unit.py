@@ -25,6 +25,8 @@ class Unit:
         self.name = _name
         if not config:
             config = self.get_config(_name)
+        if "type" not in config:
+            config.update({"type": pyunits._QuantityType.derived})
         for key in config:
             setattr(self, f"{key}", config[key])
 
@@ -34,7 +36,7 @@ class Unit:
 
         if name in pyunits._derived_units:
             type = {"type": pyunits._QuantityType.derived}
-            return dict(type, **pyunits._derived_units[name])
+            return dict(**type, **pyunits._derived_units[name])
 
         return {"type": pyunits._QuantityType.composite}
 
