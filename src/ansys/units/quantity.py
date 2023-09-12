@@ -245,6 +245,9 @@ class Quantity(float):
                 units=new_units,
                 _type_hint=self._determine_new_type(__value),
             )
+        if isinstance(__value, pyunits.Unit):
+            base_quantity = Quantity(1, __value)
+            return self * base_quantity
 
         if isinstance(__value, (float, int)):
             new_units = self._temp_precheck() or self.si_units
@@ -270,6 +273,10 @@ class Quantity(float):
             if convert_to_temp_difference:
                 result._unit.type = pyunits._QuantityType.temperature_difference
             return result
+
+        if isinstance(__value, pyunits.Unit):
+            base_quantity = Quantity(1, __value)
+            return self / base_quantity
 
         if isinstance(__value, (float, int)):
             new_units = self.si_units
