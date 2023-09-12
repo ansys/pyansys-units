@@ -2,7 +2,7 @@ import os
 
 import yaml
 
-import ansys.units as pyunits
+import ansys.units as ansunits
 
 
 class UnitRegistry:
@@ -39,10 +39,4 @@ class UnitRegistry:
             unitdict.update(**_fundamental_units, **_derived_units)
 
         for unit in unitdict:
-            setattr(self, unit, pyunits.Unit(unit, unitdict[unit]))
-
-    def newUnit(self, unit):
-        setattr(self, unit.name, unit)
-
-    def __add__(self, other):
-        self.__dict__.update(other.__dict__)
+            setattr(self, unit, ansunits.Unit(unit, unitdict[unit]))

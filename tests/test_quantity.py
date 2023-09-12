@@ -1050,3 +1050,12 @@ def test_compute_temp_unit():
     e = kb * t
     assert e.type == "Composite"
     assert e.units == "kg m^2 s^-2"
+
+
+def test_unit_multiply_quantity():
+    ur = ansunits.UnitRegistry()
+    mass = ansunits.Quantity(10.0, ur.kg)
+    mass_flow_rate = mass / ur.s
+    assert mass_flow_rate.units == "kg s^-1"
+    assert mass_flow_rate.type == "Composite"
+    assert mass_flow_rate.value == 10
