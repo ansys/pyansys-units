@@ -79,6 +79,6 @@ class Unit:
         return self.__rdiv__(__value)
 
     def __pow__(self, __value):
-        temp_dimensions = [dim * __value.dimensions for dim in self.dimensions]
+        temp_dimensions = [dim * __value for dim in self.dimensions]
         new_dimensions = pyunits.Dimensions(dimensions=temp_dimensions)
-        return Unit(units=new_dimensions.units)
+        return Unit(_units=new_dimensions.units)

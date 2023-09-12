@@ -2,7 +2,7 @@
 from typing import Optional, Tuple
 
 import ansys.units as ansunits
-from ansys.units.utils import get_type, parse_temperature_units, si_data
+from ansys.units.utils import parse_temperature_units, si_data
 
 
 class Quantity(float):
@@ -59,7 +59,10 @@ class Quantity(float):
             _dimensions = ansunits.Dimensions(dimensions=dimensions)
             _unit = _dimensions.units
 
-        _, si_multiplier, si_offset = si_data(units=_unit)
+        if not isinstance(_unit, ansunits.Unit):
+            _unit = ansunits.Unit(_unit)
+
+        _, si_multiplier, si_offset = si_data(units=_unit.name)
         _si_value = (_value + si_offset) * si_multiplier
 
         return float.__new__(cls, _si_value)
@@ -78,25 +81,25 @@ class Quantity(float):
 
         if units is not None:
             self._unit = units
-            self._dimensions = ansunits.Dimensions(units=units)
 
         if quantity_map:
             units = ansunits.QuantityMap(quantity_map).units
             self._unit = units
-            self._dimensions = ansunits.Dimensions(units=units)
 
         if dimensions:
-            self._dimensions = ansunits.Dimensions(dimensions=dimensions)
-            self._unit = self._dimensions.units
+            _dimensions = ansunits.Dimensions(dimensions=dimensions)
+            self._unit = _dimensions.units
 
-        self._type = get_type(self._unit)
+        if not isinstance(self._unit, ansunits.Unit):
+            self._unit = ansunits.Unit(self._unit)
+
         if (
-            self._type == ansunits._QuantityType.temperature
+            self._unit.type == ansunits._QuantityType.temperature
             and _type_hint == ansunits._QuantityType.temperature_difference
         ):
-            self._type = ansunits._QuantityType.temperature_difference
+            self._unit.type = ansunits._QuantityType.temperature_difference
 
-        si_units, si_multiplier, si_offset = si_data(units=self._unit)
+        si_units, si_multiplier, si_offset = si_data(units=self._unit.name)
 
         self._si_units = si_units
 
@@ -179,7 +182,7 @@ class Quantity(float):
     @property
     def is_dimensionless(self) -> bool:
         """Check if the quantity is dimensionless."""
-        return all([dim == 0.0 for dim in self.dimensions])
+        return all([dim == 0.0 for dim in self._unit.dimensions])
 
     def to(self, to_units: [str, any]) -> "Quantity":
         """
@@ -227,10 +230,9 @@ class Quantity(float):
         return f'Quantity ({self.value}, "{self.units}")'
 
     def __pow__(self, __value):
-        temp_dimensions = [dim * __value for dim in self.dimensions]
         new_si_value = self.si_value**__value
-        new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
-        return Quantity(value=new_si_value, units=new_dimensions.units)
+        new_units = self._unit**__value
+        return Quantity(value=new_si_value, units=new_units)
 
     def __mul__(self, __value):
         if isinstance(__value, Quantity):

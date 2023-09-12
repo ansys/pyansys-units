@@ -368,13 +368,17 @@ def test_subtraction():
 
 def test_pow():
     q1 = ansunits.Quantity(10.0, "m s^-1")
-    q2 = ansunits.Quantity(5.0, "m s^-1")
+    q2 = ansunits.Quantity(5.0, "ft")
 
     q1_sq = q1**2
     assert q1_sq.units == "m^2 s^-2"
+    assert q1_sq.value == 100
+    q2_sq = q2**2
+    assert q2_sq.units == "m^2"
+    assert q2_sq.value == pytest.approx(2.3225759999999993, DELTA)
 
     assert float(q1) ** 2 == 100.0
-    assert float(q2) ** 2 == 25.0
+    assert float(q2) ** 2 == pytest.approx(2.3225759999999993, DELTA)
 
 
 def test_neg():
@@ -679,22 +683,22 @@ def test_temp_type():
     assert c0.type == "Temperature"
 
     c1 = ansunits.Quantity(1.0, "J kg^-1 C^-1")
-    assert c1.type == "Temperature Difference"
+    assert c1.type == "Composite"
 
     c2 = ansunits.Quantity(1.0, "kg m^-3 s^-1 K^2")
-    assert c2.type == "Temperature Difference"
+    assert c2.type == "Composite"
 
     c4 = ansunits.Quantity(1.0, "F")
     assert c4.type == "Temperature"
 
     c6 = ansunits.Quantity(1.0, "F^1")
-    assert c6.type == "Temperature Difference"
+    assert c6.type == "Composite"
 
     c7 = ansunits.Quantity(1.0, "F^-1")
-    assert c7.type == "Temperature Difference"
+    assert c7.type == "Composite"
 
     c8 = ansunits.Quantity(1.0, "F^2")
-    assert c8.type == "Temperature Difference"
+    assert c8.type == "Composite"
 
 
 def test_temp_difference():
@@ -1038,3 +1042,11 @@ def test_instantiate_quantity_with_unrecognized_units_causes_exception():
         ansunits.Quantity(value=10, units="piggies s^-1")
     with pytest.raises(UtilError):
         ansunits.Quantity(value=10, units="piggies^2 m^-3")
+
+
+def test_compute_temp_unit():
+    kb = ansunits.Quantity(1.382e-23, "J K^-1")
+    t = ansunits.Quantity(2.0, "K")
+    e = kb * t
+    assert e.type == "Composite"
+    assert e.units == "kg m^2 s^-2"
