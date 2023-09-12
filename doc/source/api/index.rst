@@ -1,7 +1,7 @@
 API reference
 =============
 
-This section describes the public classes, functions, and attributes in the PyUnits API.
+This section describes the public classes, functions, and attributes in the PyAnsys Units API.
 
 .. toctree::
     :maxdepth: 1
@@ -9,7 +9,7 @@ This section describes the public classes, functions, and attributes in the PyUn
 
     quantity
     systems
-    units
+    utils
     dimensions
     map
     config

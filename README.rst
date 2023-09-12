@@ -1,5 +1,5 @@
-PyUnits
-========
+PyAnsys Units
+=============
 |pyansys| |pypi| |python| |GH-CI| |codecov| |MIT| |black| |pre-commit|
 
 .. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
@@ -14,12 +14,12 @@ PyUnits
    :target: https://pypi.org/project/ansys-units
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/ansys/pyunits/actions/workflows/ci_cd.yml/badge.svg
-   :target: https://github.com/ansys/pyunits/actions/workflows/ci_cd.yml
+.. |GH-CI| image:: https://github.com/ansys/pyansys-units/actions/workflows/ci_cd.yml/badge.svg
+   :target: https://github.com/ansys/pyansys-units/actions/workflows/ci_cd.yml
    :alt: GH-CI
 
-.. |codecov| image:: https://codecov.io/gh/ansys/pyunits/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/ansys/pyunits
+.. |codecov| image:: https://codecov.io/gh/ansys/pyansys-units/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/ansys/pyansys-units
 
 .. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
@@ -29,13 +29,13 @@ PyUnits
    :target: https://github.com/psf/black
    :alt: Black
 
-.. |pre-commit| image:: https://results.pre-commit.ci/badge/github/ansys/pyunits/main.svg
-   :target: https://results.pre-commit.ci/latest/github/ansys/pyunits/main
+.. |pre-commit| image:: https://results.pre-commit.ci/badge/github/ansys/pyansys-units/main.svg
+   :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-units/main
    :alt: pre-commit.ci status
 
 Overview
 --------
-PyUnits provides a Pythonic interface for units, unit systems, and unit
+PyAnsys Units provides a Pythonic interface for units, unit systems, and unit
 conversions. Its features enable seamless setup and usage of physical
 quantities, enabling you to perform these tasks:
 
@@ -48,16 +48,16 @@ quantities, enabling you to perform these tasks:
 Documentation and issues
 ------------------------
 
-Documentation for the latest stable release of PyUnits is hosted at `PyUnits documentation
-<https://pyunits.docs.pyansys.com>`_.
+Documentation for the latest stable release of PyAnsys Units is hosted at `PyAnsys Units documentation
+<https://units.docs.pyansys.com>`_.
 
 In the upper right corner of the documentation's title bar, there is an option for
 switching from viewing the documentation for the latest stable release to viewing
 the documentation for the development version or previously released versions.
 
-On the `PyUnits Issues <https://github.com/ansys/pyunits/issues>`_ page, you can
-create issues to report bugs, and request new features. On the `PyUnits Discussions
-<https://github.com/ansys/pyunits/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
+On the `PyAnsys Units Issues <https://github.com/ansys/pyansys-units/issues>`_ page, you can
+create issues to report bugs, and request new features. On the `PyAnsys Units Discussions
+<https://github.com/ansys/pyansys-units/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
 page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback.
 
 
@@ -77,13 +77,13 @@ with this command:
 
    pip install ansys-units
 
-If you plan on doing local *development* of PyUnits with Git, install the latest release with
+If you plan on doing local *development* of PyAnsys Units with Git, install the latest release with
 these commands:
 
 .. code:: console
 
-   git clone https://github.com/ansys/pyunits.git
-   cd pyunits
+   git clone https://github.com/ansys/pyansys-units.git
+   cd pyansys-units
    pip install pip -U
    pip install -e .
 
@@ -97,7 +97,7 @@ Import the `ansys.units`` package:
 
 .. code:: python
 
-   import ansys.units as pyunits
+   import ansys.units as ansunits
 
 You can instantiate quantities with one of three methods:
 
@@ -105,21 +105,21 @@ You can instantiate quantities with one of three methods:
 
    # unit string
 
-   volume = pyunits.Quantity(value=1, units="m^3")
+   volume = ansunits.Quantity(value=1, units="m^3")
 
    volume.value  # 1.0
    volume.units  # "m^3"
 
    # dimensions
 
-   acceleration = pyunits.Quantity(value=3, dimensions=[0, 1, -2])
+   acceleration = ansunits.Quantity(value=3, dimensions=[0, 1, -2])
 
    acceleration.value  # 3.0
    acceleration.units  # "m s^-2"
 
    # quantity map
 
-   torque = pyunits.Quantity(5, quantity_map={"Torque": 1})
+   torque = ansunits.Quantity(5, quantity_map={"Torque": 1})
 
    torque.value  # 5.0
    torque.units  # "N m"
@@ -130,14 +130,14 @@ You can instantiate unit systems with one of two methods:
 
    # custom unit systems
 
-   sys = pyunits.UnitSystem(
+   sys = ansunits.UnitSystem(
        name="sys",
        base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
    )
 
    # pre-defined unit systems
 
-   si = pyunits.UnitSystem(unit_sys="SI")
+   si = ansunits.UnitSystem(unit_sys="SI")
 
 Examples
 ~~~~~~~~
@@ -146,13 +146,13 @@ Perform arithmetic operations:
 
 .. code:: python
 
-   import ansys.units as pyunits
+   import ansys.units as ansunits
 
-   deg = pyunits.Quantity(90, "degree")
+   deg = ansunits.Quantity(90, "degree")
    math.sin(deg)  # 1.0
 
-   v1 = pyunits.Quantity(10.0, "m s^-1")
-   v2 = pyunits.Quantity(5.0, "m s^-1")
+   v1 = ansunits.Quantity(10.0, "m s^-1")
+   v2 = ansunits.Quantity(5.0, "m s^-1")
 
    v3 = v1 - v2
    v3.value  # 5.0
@@ -165,9 +165,9 @@ Directly convert values to another set of units:
 
 .. code:: python
 
-   import ansys.units as pyunits
+   import ansys.units as ansunits
 
-   fps = pyunits.Quantity(1, "lb ft^-1 s^-1")
+   fps = ansunits.Quantity(1, "lb ft^-1 s^-1")
    fps.value  # 1
 
    pas = fps.to("Pa s")
@@ -178,14 +178,14 @@ Use a custom unit system to perform conversions:
 
 .. code:: python
 
-   import ansys.units as pyunits
+   import ansys.units as ansunits
 
-   sys = pyunits.UnitSystem(
+   sys = ansunits.UnitSystem(
        name="sys",
        base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
    )
 
-   v = pyunits.Quantity(10, "kg m s^2")
+   v = ansunits.Quantity(10, "kg m s^2")
    v2 = sys.convert(v)
 
    v2.value  # 2.2480894309971045
@@ -193,5 +193,5 @@ Use a custom unit system to perform conversions:
 
 License
 -------
-PyUnits is licensed under the MIT license. For more information, see the
-`LICENSE <https://github.com/ansys/pyunits/raw/main/LICENSE>`_ file.
+PyAnsys Units is licensed under the MIT license. For more information, see the
+`LICENSE <https://github.com/ansys/pyansys-units/raw/main/LICENSE>`_ file.

@@ -16,12 +16,12 @@ with this command:
 
    pip install ansys-units
 
-If you plan on doing local *development* of PyUnits with Git, install the latest
+If you plan on doing local *development* of PyAnsys Units with Git, install the latest
 release with these commands:
 
 .. code:: console
 
-   git clone https://github.com/ansys/pyunits.git
-   cd pyunits
+   git clone https://github.com/ansys/pyansys-units.git
+   cd ansunits
    pip install pip -U
    pip install -e .
