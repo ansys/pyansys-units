@@ -24,8 +24,9 @@ class UnitRegistry:
         contains all units from cfg.yaml.
     """
 
-    def __init__(self, config="cfg.yaml", other={}):
-        unitdict = other
+    def __init__(self, config="cfg.yaml", other: dict = None):
+        unitdict = other or {}
+
         if config:
             file_path = os.path.relpath(__file__)
             file_dir = os.path.dirname(file_path)
