@@ -11,13 +11,13 @@ def test_default_units():
     kg = ur.kg
     assert kg.name == "kg"
     assert kg.type == "Mass"
-    assert kg.factor == 1
-    assert kg.offset == 0
+    assert kg._factor == 1
+    assert kg._offset == 0
     N = ur.N
     assert N.name == "N"
     assert N.type == "Derived"
-    assert N.composition == "kg m s^-2"
-    assert N.factor == 1
+    assert N._composition == "kg m s^-2"
+    assert N._factor == 1
 
 
 def test_custom_yaml():
@@ -37,7 +37,7 @@ derived_units:
     composition: kg m s^-2
     factor: 1
   Pa:
-    composition: N m^-2
+    _composition: N m^-2
     factor: 1
 """
     with tempfile.NamedTemporaryFile(delete=False, suffix=".yaml", dir=cwd) as fp:
@@ -51,5 +51,5 @@ derived_units:
         ur.ft
     assert str(e.value) == "'UnitRegistry' object has no attribute 'ft'"
     assert ur.kg.name == "kg"
-    assert ur.N.composition == "kg m s^-2"
-    assert ur.Pa.factor == 1
+    assert ur.N._composition == "kg m s^-2"
+    assert ur.Pa._factor == 1

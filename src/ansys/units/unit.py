@@ -21,18 +21,18 @@ class Unit:
         Unit instance.
     """
 
-    def __init__(self, _units: str, config: dict = None):
-        self.name = _units
+    def __init__(self, units: str, config: dict = None):
+        self._name = units
 
         if not config:
-            config = self.get_config(self.name)
+            config = self.get_config(self._name)
         if "type" not in config:
-            config.update({"type": self.get_config(self.name)["type"]})
+            config.update({"type": self.get_config(self._name)["type"]})
         for key in config:
-            setattr(self, f"{key}", config[key])
+            setattr(self, f"_{key}", config[key])
 
-        dimensions = ansunits.Dimensions(units=_units)
-        self.dimensions = dimensions.dimensions
+        dimensions = ansunits.Dimensions(units=units)
+        self._dimensions = dimensions.dimensions
 
     def get_config(self, name: str) -> dict:
         if name in ansunits._fundamental_units:
@@ -43,6 +43,18 @@ class Unit:
             return dict(**type, **ansunits._derived_units[name])
 
         return {"type": ansunits._QuantityType.composite}
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def dimensions(self):
+        return self._dimensions
 
     def __str__(self):
         returned_string = ""
@@ -58,7 +70,7 @@ class Unit:
             ]
             new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
             new_units = new_dimensions.units
-            return Unit(_units=new_units)
+            return Unit(units=new_units)
 
         if isinstance(__value, (float, int)):
             return ansunits.Quantity(value=__value, units=self)
@@ -73,9 +85,9 @@ class Unit:
             ]
             new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
             new_units = new_dimensions.units
-            return Unit(_units=new_units)
+            return Unit(units=new_units)
 
     def __pow__(self, __value):
         temp_dimensions = [dim * __value for dim in self.dimensions]
         new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
-        return Unit(_units=new_dimensions.units)
+        return Unit(units=new_dimensions.units)
