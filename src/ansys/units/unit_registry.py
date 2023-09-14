@@ -7,21 +7,23 @@ import ansys.units as ansunits
 
 class UnitRegistry:
     """
-    Initializes a Unit Registry.
+    Initializes a Unit Registry. Pre-initalize a configuration of common units for ease
+    of use.
 
     Parameters
     ----------
     Config: filename.yaml
-        Custom units.
+        Custom units set up following the 'cfg.yaml' format.
     Other: Dict
-        Dictionary of units.
+        Dictionary for extra units.
     Methods
     -------
 
     Returns
     -------
     UnitRegistry
-        contains all units from cfg.yaml.
+        contains all units from the parameters.
+        defaults to 'cfg.yaml'
     """
 
     def __init__(self, config="cfg.yaml", other: dict = None):

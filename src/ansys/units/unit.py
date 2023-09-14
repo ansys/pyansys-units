@@ -3,12 +3,12 @@ import ansys.units as ansunits
 
 class Unit:
     """
-    Initializes a unit.
+    Initializes a Unit. Contains all the unit information.
 
     Parameters
     ----------
-    Name: str, dimension list
-        Unit name or dimension list
+    Name: str,
+        Name of the unit or string chain of combined units
     Config: dict
         dictionary of unit properties
 
@@ -34,7 +34,7 @@ class Unit:
         dimensions = ansunits.Dimensions(units=units)
         self._dimensions = dimensions.dimensions
 
-    def get_config(self, name: str) -> dict:
+    def _get_config(self, name: str) -> dict:
         if name in ansunits._fundamental_units:
             return ansunits._fundamental_units[name]
 
