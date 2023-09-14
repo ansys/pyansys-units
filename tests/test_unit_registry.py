@@ -53,3 +53,4 @@ derived_units:
     assert ur.kg.name == "kg"
     assert ur.N._composition == "kg m s^-2"
     assert ur.Pa._factor == 1
+    assert ur.__str__() == "kg, g, N, Pa, "

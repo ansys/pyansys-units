@@ -1,18 +1,41 @@
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.utils import UtilError
 
 
 def test_pre_defined_unit_system():
     us = ansunits.UnitSystem(unit_sys="SI")
     assert us.name == "SI"
-    assert us.base_units == ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
+    assert us.base_units == [
+        "kg",
+        "m",
+        "s",
+        "K",
+        "delta_K",
+        "radian",
+        "mol",
+        "cd",
+        "A",
+        "sr",
+    ]
 
 
 def test_custom_unit_system():
+    ur = ansunits.UnitRegistry()
     us = ansunits.UnitSystem(
         name="sys",
-        base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
+        base_units=[
+            ur.slug,
+            ur.ft,
+            ur.s,
+            ur.R,
+            ur.radian,
+            ur.slugmol,
+            ur.cd,
+            ur.A,
+            ur.sr,
+        ],
     )
     assert us.name == "sys"
     assert us.base_units == [
@@ -20,6 +43,7 @@ def test_custom_unit_system():
         "ft",
         "s",
         "R",
+        "delta_R",
         "radian",
         "slugmol",
         "cd",
@@ -73,7 +97,7 @@ def test_errors():
             ],
         )
 
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
+    with pytest.raises(UtilError) as e_info:
         us3 = ansunits.UnitSystem(
             name="sys",
             base_units=["slug", "ft", "eon", "R", "radian", "slugmol", "cd", "A", "sr"],
@@ -87,6 +111,22 @@ def test_errors():
 
     with pytest.raises(ansunits.UnitSystemError) as e_info:
         us5 = ansunits.UnitSystem(unit_sys="Standard")
+
+    with pytest.raises(ansunits.UnitSystemError) as e_info:
+        us6 = ansunits.UnitSystem(
+            name="us6",
+            base_units=[
+                "kg s^-1",
+                "ft",
+                "s",
+                "R",
+                "radian",
+                "slugmol",
+                "cd",
+                "A",
+                "sr",
+            ],
+        )
 
 
 def test_error_messages():
@@ -103,19 +143,33 @@ def test_error_messages():
     )
     assert str(e2) == expected_str
 
-    e3 = ansunits.UnitSystemError.UNIT_UNDEFINED("pizza")
+    e3 = ansunits.UnitSystemError.NOT_FUNDAMENTAL(ansunits.Unit("kg s^-1"))
     expected_str = (
-        "`pizza` is an undefined unit. To use `pizza`, add it to the "
+        "`kg s^-1` is not a fundimental unit. To use `kg s^-1`, add it to the "
         "`fundamental_units` table within the cfg.yaml file."
     )
     assert str(e3) == expected_str
 
-    e4 = ansunits.UnitSystemError.UNIT_ORDER("Mass", 1, "Light", 7)
+    e4 = ansunits.UnitSystemError.UNIT_TYPE(ansunits.Unit("m"))
     expected_str = (
-        "Expected unit of type: `Mass` (order: 1). Received unit of type: "
-        "`Light` (order: 7)."
+        "Unit of type: `Length` already exits in this unit system"
+        "replace 'm' with unit of another type"
     )
     assert str(e4) == expected_str
 
     e5 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
     assert str(e5) == "`ham sandwich` is not a supported unit system."
+
+
+def test_si_properties():
+    us = ansunits.UnitSystem()
+    assert us.mass.name == "kg"
+    assert us.angle.name == "radian"
+    assert us.chemical_amount.name == "mol"
+    assert us.length.name == "m"
+    assert us.current.name == "A"
+    assert us.solid_angle.name == "sr"
+    assert us.temperature.name == "K"
+    assert us.temperature_difference.name == "delta_K"
+    assert us.light.name == "cd"
+    assert us.time.name == "s"

@@ -41,3 +41,10 @@ class UnitRegistry:
 
         for unit in unitdict:
             setattr(self, unit, ansunits.Unit(unit, unitdict[unit]))
+
+    def __str__(self):
+        returned_string = ""
+        attrs = self.__dict__
+        for key in attrs:
+            returned_string += f"{key}, "
+        return returned_string

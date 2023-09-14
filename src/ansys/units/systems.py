@@ -35,31 +35,33 @@ class UnitSystem:
             if len(base_units) != ansunits.Dimensions.max_dim_len():
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
-            for idx, unit in enumerate(base_units):
-                if unit not in ansunits._fundamental_units:
-                    raise UnitSystemError.UNIT_UNDEFINED(unit)
-
-                if (idx + 1) != ansunits._dimension_order[
-                    ansunits._fundamental_units[unit]["type"]
-                ]:
-                    raise UnitSystemError.UNIT_ORDER(
-                        t1=list(ansunits._dimension_order.keys())[idx],
-                        o1=idx + 1,
-                        t2=ansunits._fundamental_units[unit]["type"],
-                        o2=ansunits._dimension_order[
-                            ansunits._fundamental_units[unit]["type"]
-                        ],
-                    )
-
             self._name = name
             self._base_units = base_units
 
-        if unit_sys is not None:
+        else:
+            if not unit_sys:
+                unit_sys = "SI"
             if unit_sys not in ansunits._unit_systems:
                 raise UnitSystemError.INVALID_UNIT_SYS(unit_sys)
 
             self._name = unit_sys
             self._base_units = ansunits._unit_systems[unit_sys]
+
+        for unit in self._base_units:
+            if not isinstance(unit, ansunits.Unit):
+                unit = ansunits.Unit(unit)
+
+            if unit.name not in ansunits._fundamental_units:
+                raise UnitSystemError.NOT_FUNDAMENTAL(unit)
+
+            if hasattr(self, f"_{unit.type.lower()}"):
+                raise UnitSystemError.UNIT_TYPE(unit)
+
+            setattr(self, f"_{unit.type.lower()}", unit)
+
+            if unit.type == "Temperature":
+                delta_unit = ansunits.Unit(f"delta_{unit.name}")
+                setattr(self, "_temperature difference", delta_unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -76,7 +78,7 @@ class UnitSystem:
             Quantity object containing the desired unit system conversion.
         """
         new_dim = ansunits.Dimensions(
-            dimensions=quantity.dimensions, unit_sys=self._base_units
+            dimensions=quantity.dimensions, unit_sys=self.base_units
         )
 
         _, si_multiplier, si_offset = si_data(new_dim.units)
@@ -92,7 +94,62 @@ class UnitSystem:
     @property
     def base_units(self):
         """Units associated with the unit system."""
-        return self._base_units
+        _base_units = []
+        dim_order = ansunits._dimension_order
+        for order in dim_order:
+            unit = getattr(self, f"_{order.lower()}")
+            _base_units.append(unit.name)
+        return _base_units
+
+    @property
+    def mass(self):
+        """Mass unit of the unit system."""
+        return self._mass
+
+    @property
+    def length(self):
+        """Length unit of the unit system."""
+        return self._length
+
+    @property
+    def time(self):
+        """Time unit of the unit system."""
+        return self._time
+
+    @property
+    def temperature(self):
+        """Temperature unit of the unit system."""
+        return self._temperature
+
+    @property
+    def temperature_difference(self):
+        """Temperature unit of the unit system."""
+        return getattr(self, "_temperature difference")
+
+    @property
+    def angle(self):
+        """Angle unit of the unit system."""
+        return self._angle
+
+    @property
+    def chemical_amount(self):
+        """Chemical Amount unit of the unit system."""
+        return getattr(self, "_chemical amount")
+
+    @property
+    def light(self):
+        """Light unit of the unit system."""
+        return self._light
+
+    @property
+    def current(self):
+        """Current unit of the unit system."""
+        return self._current
+
+    @property
+    def solid_angle(self):
+        """Solid Angle unit of the unit system."""
+        return getattr(self, "_solid angle")
 
 
 class UnitSystemError(ValueError):
@@ -115,17 +172,17 @@ class UnitSystemError(ValueError):
         )
 
     @classmethod
-    def UNIT_UNDEFINED(cls, unit):
+    def NOT_FUNDAMENTAL(cls, unit):
         return cls(
-            f"`{unit}` is an undefined unit. To use `{unit}`, add it to the "
+            f"`{unit.name}` is not a fundimental unit. To use `{unit.name}`, add it to the "
             "`fundamental_units` table within the cfg.yaml file."
         )
 
     @classmethod
-    def UNIT_ORDER(cls, t1, o1, t2, o2):
+    def UNIT_TYPE(cls, unit):
         return cls(
-            f"Expected unit of type: `{t1}` (order: {o1}). Received unit of type: "
-            f"`{t2}` (order: {o2})."
+            f"Unit of type: `{unit.type}` already exits in this unit system"
+            f"replace '{unit.name}' with unit of another type"
         )
 
     @classmethod
