@@ -27,7 +27,7 @@ class Unit:
         if not config:
             config = self.get_config(self._name)
         if "type" not in config:
-            config.update({"type": self.get_config(self._name)["type"]})
+            config.update({"type": self._get_config(self._name)["type"]})
         for key in config:
             setattr(self, f"_{key}", config[key])
 
