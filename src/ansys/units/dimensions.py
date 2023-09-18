@@ -1,6 +1,6 @@
 """Provides the ``Dimension`` class."""
 import ansys.units as ansunits
-from ansys.units.utils import condense, filter_unit_term
+from ansys.units.utils import filter_unit_term
 
 
 class Dimensions(object):
@@ -30,7 +30,6 @@ class Dimensions(object):
         unit_sys = unit_sys or ansunits._unit_systems["SI"]
 
         if units is not None:
-            self._unit = units
             self._dimensions = self._units_to_dim(units=units)
 
         if dimensions:
@@ -40,40 +39,6 @@ class Dimensions(object):
             self._dimensions, self._unit = self._dim_to_units(
                 dimensions=dimensions, unit_sys=unit_sys
             )
-
-    def _dim_to_units(self, dimensions: list, unit_sys: list) -> str:
-        """
-        Convert a dimensions list into a unit string.
-
-        Parameters
-        ----------
-        dimensions : list
-            List of unit dimensions.
-
-        unit_sys : list
-            Unit system of the dimensions.
-
-        Returns
-        -------
-        str
-            Unit string representation of the dimensions.
-        """
-        # Ensure dimensions list contains 9 terms
-        dimensions = [
-            float(dim)
-            for dim in dimensions + ((self.max_dim_len() - len(dimensions)) * [0])
-        ]
-        units = ""
-
-        # Define unit term and associated value from dimension with dimensions list
-        for idx, dim in enumerate(dimensions):
-            if dim == 1.0:
-                units += f" {unit_sys[idx]}"
-            elif dim != 0.0:
-                dim = int(dim) if dim % 1 == 0 else dim
-                units += f" {unit_sys[idx]}^{dim}"
-
-        return dimensions, condense(units=units)
 
     def _units_to_dim(
         self, units: str, power: float = None, dimensions: list = None
@@ -124,11 +89,6 @@ class Dimensions(object):
         return dimensions
 
     @property
-    def units(self):
-        """Unit string representation of dimensions."""
-        return self._unit
-
-    @property
     def dimensions(self):
         """Dimensions list."""
         return self._dimensions
@@ -136,7 +96,7 @@ class Dimensions(object):
     @staticmethod
     def max_dim_len():
         """Maximum number of elements within a dimensions list."""
-        return 9
+        return 10
 
 
 class DimensionsError(ValueError):

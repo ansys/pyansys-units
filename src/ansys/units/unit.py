@@ -11,6 +11,11 @@ class Unit:
         Name of the unit or string chain of combined units
     Config: dict
         dictionary of unit properties
+    Dimensions: list
+        A list of length 9 to describe all base units.
+    Unit System: str
+        Define the unit system for base units of dimension,
+        default is SI.
 
     Methods
     -------
@@ -21,8 +26,25 @@ class Unit:
         Unit instance.
     """
 
-    def __init__(self, units: str, config: dict = None):
-        self._name = units
+    def __init__(
+        self,
+        units: str = None,
+        config: dict = None,
+        dimensions: list = None,
+        unit_sys: str = None,
+    ):
+        if units and dimensions:
+            raise UnitError.EXCESSIVE_PARAMETERS()
+
+        if units:
+            self._name = units
+            dimensions = ansunits.Dimensions(units=units)
+            self._dimensions = dimensions.dimensions
+        elif len(dimensions) > self.max_dim_len():
+            raise UnitError.EXCESSIVE_DIMENSIONS(len(dimensions))
+        else:
+            self._dimensions = dimensions
+            self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
 
         if not config:
             config = self._get_config(self._name)
@@ -30,9 +52,6 @@ class Unit:
             config.update({"type": self._get_config(self._name)["type"]})
         for key in config:
             setattr(self, f"_{key}", config[key])
-
-        dimensions = ansunits.Dimensions(units=units)
-        self._dimensions = dimensions.dimensions
 
     def _get_config(self, name: str) -> dict:
         if name in ansunits._fundamental_units:
@@ -43,6 +62,44 @@ class Unit:
             return dict(**type, **ansunits._derived_units[name])
 
         return {"type": ansunits._QuantityType.composite}
+
+    def _dim_to_units(self, dimensions: list, unit_sys: list) -> str:
+        """
+        Convert a dimensions list into a unit string.
+
+        Parameters
+        ----------
+        dimensions : list
+            List of unit dimensions.
+
+        unit_sys : list
+            Unit system of the dimensions.
+
+        Returns
+        -------
+        str
+            Unit string representation of the dimensions.
+        """
+        # Ensure dimensions list contains 9 terms
+        dimensions = [
+            float(dim)
+            for dim in dimensions + ((self.max_dim_len() - len(dimensions)) * [0])
+        ]
+        units = ""
+        if isinstance(unit_sys, ansunits.UnitSystem):
+            unit_sys = unit_sys.base_units
+        else:
+            unit_sys = unit_sys or "SI"
+            unit_sys = ansunits._unit_systems[unit_sys]
+        # Define unit term and associated value from dimension with dimensions list
+        for idx, dim in enumerate(dimensions):
+            if dim == 1.0:
+                units += f"{unit_sys[idx]} "
+            elif dim != 0.0:
+                dim = int(dim) if dim % 1 == 0 else dim
+                units += f"{unit_sys[idx]}^{dim} "
+
+        return units.strip()
 
     @property
     def name(self):
@@ -56,6 +113,11 @@ class Unit:
     def dimensions(self):
         return self._dimensions
 
+    @staticmethod
+    def max_dim_len():
+        """Maximum number of elements within a dimensions list."""
+        return 10
+
     def __str__(self):
         returned_string = ""
         attrs = self.__dict__
@@ -65,12 +127,10 @@ class Unit:
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
-            temp_dimensions = [
+            new_dimensions = [
                 dim + __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
             ]
-            new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
-            new_units = new_dimensions.units
-            return Unit(units=new_units)
+            return Unit(dimensions=new_dimensions)
 
         if isinstance(__value, (float, int)):
             return ansunits.Quantity(value=__value, units=self)
@@ -80,14 +140,32 @@ class Unit:
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):
-            temp_dimensions = [
+            new_dimensions = [
                 dim - __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
             ]
-            new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
-            new_units = new_dimensions.units
-            return Unit(units=new_units)
+            return Unit(dimensions=new_dimensions)
 
     def __pow__(self, __value):
-        temp_dimensions = [dim * __value for dim in self.dimensions]
-        new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
-        return Unit(units=new_dimensions.units)
+        new_dimensions = [dim * __value for dim in self.dimensions]
+        return Unit(dimensions=new_dimensions)
+
+
+class UnitError(ValueError):
+    """Custom dimensions errors."""
+
+    def __init__(self, err):
+        super().__init__(err)
+
+    @classmethod
+    def EXCESSIVE_PARAMETERS(cls):
+        """Return in case of excessive parameters."""
+        return cls(
+            "Unit only accepts 1 of the following parameters: (units) or (dimensions)."
+        )
+
+    @classmethod
+    def EXCESSIVE_DIMENSIONS(cls, len):
+        """Return in case of excessive dimensions."""
+        return cls(
+            f"The `dimensions` argument must contain 9 values or less, currently there are {len}."
+        )
