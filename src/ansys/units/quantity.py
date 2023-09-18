@@ -56,8 +56,7 @@ class Quantity(float):
             _unit = units
 
         if dimensions:
-            _dimensions = ansunits.Dimensions(dimensions=dimensions)
-            _unit = _dimensions.units
+            _unit = ansunits.Unit(dimensions=dimensions)
 
         if not isinstance(_unit, ansunits.Unit):
             _unit = ansunits.Unit(_unit)

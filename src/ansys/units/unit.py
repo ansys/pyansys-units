@@ -63,7 +63,7 @@ class Unit:
 
         return {"type": ansunits._QuantityType.composite}
 
-    def _dim_to_units(self, dimensions: list, unit_sys: list) -> str:
+    def _dim_to_units(self, dimensions: list, unit_sys: list = None) -> str:
         """
         Convert a dimensions list into a unit string.
 
@@ -73,14 +73,15 @@ class Unit:
             List of unit dimensions.
 
         unit_sys : list
-            Unit system of the dimensions.
+            Optional unit system for dimensions list.
+            default is SI units
 
         Returns
         -------
         str
             Unit string representation of the dimensions.
         """
-        # Ensure dimensions list contains 9 terms
+        # Ensure dimensions list contains 10 terms
         dimensions = [
             float(dim)
             for dim in dimensions + ((self.max_dim_len() - len(dimensions)) * [0])
