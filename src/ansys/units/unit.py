@@ -15,7 +15,7 @@ class Unit:
     Returns
     -------
     Unit
-        Unit instance containing unit information.
+        Unit instance
     """
 
     def __init__(self, units: str, config: dict = None):
