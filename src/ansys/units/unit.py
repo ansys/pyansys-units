@@ -1,4 +1,5 @@
 import ansys.units as ansunits
+from ansys.units import filter_unit_term
 
 
 class Unit:
@@ -101,6 +102,54 @@ class Unit:
                 units += f"{unit_sys[idx]}^{dim} "
 
         return units.strip()
+
+    def _units_to_dim(
+        self, units: str, power: float = None, dimensions: list = None
+    ) -> list:
+        """
+        Convert a unit string into a dimensions list.
+
+        Parameters
+        ----------
+        units : str
+            Unit string of quantity.
+        power : float
+            Power of unit string.
+
+        Returns
+        -------
+        list
+            Dimensions representation of unit string.
+        """
+        power = power or 1.0
+        dimensions = dimensions or [0.0] * self.max_dim_len()
+
+        # Split unit string into terms and parse data associated with individual terms
+        for term in units.split(" "):
+            _, unit_term, unit_term_power = filter_unit_term(term)
+
+            unit_term_power *= power
+
+            # retrieve data associated with fundamental unit
+            if unit_term in ansunits._fundamental_units:
+                idx = (
+                    ansunits._dimension_order[
+                        ansunits._fundamental_units[unit_term]["type"]
+                    ]
+                    - 1
+                )
+                dimensions[idx] += unit_term_power
+
+            # Retrieve derived unit composition unit string and factor.
+            if unit_term in ansunits._derived_units:
+                # Recursively parse composition unit string
+                dimensions = self._units_to_dim(
+                    units=ansunits._derived_units[unit_term]["composition"],
+                    power=unit_term_power,
+                    dimensions=dimensions,
+                )
+
+        return dimensions
 
     @property
     def name(self):
