@@ -1,5 +1,5 @@
 import ansys.units as ansunits
-from ansys.units import filter_unit_term
+from ansys.units.utils import filter_unit_term
 
 
 class Unit:
@@ -39,12 +39,12 @@ class Unit:
 
         if units:
             self._name = units
-            dimensions = ansunits.Dimensions(units=units)
-            self._dimensions = dimensions.dimensions
+            dimensions = self._units_to_dim(units=units)
+            self._dimensions = ansunits.Dimensions(dimensions)
         elif len(dimensions) > self.max_dim_len():
             raise UnitError.EXCESSIVE_DIMENSIONS(len(dimensions))
         else:
-            self._dimensions = dimensions
+            self._dimensions = ansunits.Dimensions(dimensions)
             self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
 
         if not config:
@@ -105,9 +105,9 @@ class Unit:
 
     def _units_to_dim(
         self, units: str, power: float = None, dimensions: list = None
-    ) -> list:
+    ) -> ansunits.Dimensions:
         """
-        Convert a unit string into a dimensions list.
+        Convert a unit string into a Dimensions instance.
 
         Parameters
         ----------
@@ -115,11 +115,10 @@ class Unit:
             Unit string of quantity.
         power : float
             Power of unit string.
-
         Returns
         -------
-        list
-            Dimensions representation of unit string.
+        Dimensions
+            Dimensions instance.
         """
         power = power or 1.0
         dimensions = dimensions or [0.0] * self.max_dim_len()
@@ -177,9 +176,7 @@ class Unit:
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
-            new_dimensions = [
-                dim + __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
-            ]
+            new_dimensions = self.dimensions + __value.dimensions
             return Unit(dimensions=new_dimensions)
 
         if isinstance(__value, (float, int)):
@@ -190,13 +187,11 @@ class Unit:
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):
-            new_dimensions = [
-                dim - __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
-            ]
+            new_dimensions = self.dimensions - __value.dimensions
             return Unit(dimensions=new_dimensions)
 
     def __pow__(self, __value):
-        new_dimensions = [dim * __value for dim in self.dimensions]
+        new_dimensions = self.dimensions * __value
         return Unit(dimensions=new_dimensions)
 
 

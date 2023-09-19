@@ -123,7 +123,9 @@ class Quantity(float):
             SI unit string of the new quantity.
         """
         # Cannot perform operations between quantities with incompatible dimensions
-        if isinstance(__value, Quantity) and (self.dimensions != __value.dimensions):
+        if isinstance(__value, Quantity) and (
+            self.dimensions.full_list != __value.dimensions.full_list
+        ):
             raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
         # Cannot perform operations on a non-dimensionless quantity
         if not isinstance(__value, Quantity) and (not self.is_dimensionless):
