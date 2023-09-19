@@ -8,17 +8,14 @@ class Unit:
     Parameters
     ----------
     Name: str,
-        Name of the unit or string chain of combined units
+        Name of the unit or string chain of combined units.
     Config: dict
-        dictionary of unit properties
-
-    Methods
-    -------
+        dictionary of unit properties.
 
     Returns
     -------
     Unit
-        Unit instance.
+        Unit instance containing unit information.
     """
 
     def __init__(self, units: str, config: dict = None):
