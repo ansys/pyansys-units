@@ -3,67 +3,43 @@ import pytest
 import ansys.units as ansunits
 
 
-def test_units():
-    d1 = ansunits.Dimensions(units="ft")
-    assert d1.units == "ft"
-    assert d1.dimensions == [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-    d2 = ansunits.Dimensions(units="kPa")
-    assert d2.units == "kPa"
-    assert d2.dimensions == [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-    d3 = ansunits.Dimensions(units="slug^2 ft^-1 s R radian^-3 slugmol cd^4 A sr")
-    assert d3.units == "slug^2 ft^-1 s R radian^-3 slugmol cd^4 A sr"
-    assert d3.dimensions == [2.0, -1.0, 1.0, 1.0, -3.0, 1.0, 4.0, 1.0, 1.0]
-
-
 def test_dimensions():
-    d1 = ansunits.Dimensions(dimensions=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    assert d1.units == ""
-    assert d1.dimensions == [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-    d2 = ansunits.Dimensions(dimensions=[0, 1.0, -2.0])
-    assert d2.units == "m s^-2"
-    assert d2.dimensions == [0.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-    d3 = ansunits.Dimensions(dimensions=[1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    assert d3.units == "kg m^-1 s^-2"
-    assert d3.dimensions == [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-
-def test_unit_sys():
     d1 = ansunits.Dimensions(
-        dimensions=[1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        unit_sys=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
+        dimensions_container=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     )
-    assert d1.units == "slug ft^-1 s^-2"
-    assert d1.dimensions == [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    assert d1.full_list == [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    d2 = ansunits.Dimensions(dimensions_container=[0, 1.0, -2.0])
+    assert d2.full_list == [0.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    d3 = ansunits.Dimensions(
+        dimensions_container=[1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    )
+    assert d3.full_list == [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 
 def test_max_dim_len():
     max_len = ansunits.Dimensions.max_dim_len()
-    assert max_len == 9
+    assert max_len == 10
 
 
 def test_errors():
     with pytest.raises(ansunits.DimensionsError) as e_info:
-        d1 = ansunits.Dimensions(units="m s", dimensions=[0.0, 1.0, 1.0])
-
-    with pytest.raises(ansunits.DimensionsError) as e_info:
-        d2 = ansunits.Dimensions(
-            dimensions=[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        d1 = ansunits.Dimensions(
+            dimensions_container=[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
         )
+    with pytest.raises(ansunits.DimensionsError) as e_info:
+        d2 = ansunits.Dimensions(dimensions_container={"Mass": 1, "Sound": 1})
 
 
 def test_error_messages():
-    e1 = ansunits.DimensionsError.EXCESSIVE_PARAMETERS()
+    e1 = ansunits.DimensionsError.EXCESSIVE_DIMENSIONS(200)
     assert (
         e1.__str__()
-        == "Dimensions only accepts 1 of the following parameters: (units) or (dimensions)."
+        == "The `dimensions` argument must contain 10 values or less, currently there are 200."
     )
-
-    e2 = ansunits.DimensionsError.EXCESSIVE_DIMENSIONS(200)
+    e2 = ansunits.DimensionsError.INCORRECT_DIMENSIONS()
     assert (
         e2.__str__()
-        == "The `dimensions` argument must contain 9 values or less, currently there are 200."
+        == f"The `dimensions` must only contain values from {ansunits._dimension_order}"
     )

@@ -73,14 +73,12 @@ class UnitSystem:
         Quantity
             Quantity object containing the desired unit system conversion.
         """
-        new_dim = ansunits.Dimensions(
-            dimensions=quantity.dimensions, unit_sys=self.base_units
-        )
+        new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
 
-        _, si_multiplier, si_offset = si_data(new_dim.units)
+        _, si_multiplier, si_offset = si_data(new_unit.name)
         new_value = (quantity.si_value / si_multiplier) - si_offset
 
-        return ansunits.Quantity(value=new_value, units=new_dim.units)
+        return ansunits.Quantity(value=new_value, units=new_unit)
 
     @property
     def name(self):
@@ -164,7 +162,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def BASE_UNITS_LENGTH(cls, len):
         return cls(
-            f"The `base_units` argument must contain 9 units, currently there are {len}."
+            f"The `base_units` argument must contain 10 units, currently there are {len}."
         )
 
     @classmethod

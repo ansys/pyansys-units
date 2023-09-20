@@ -16,7 +16,7 @@ class Dimensions:
     Dimensions instance.
     """
 
-    def __init__(self, dimensions_container: (dict[str, float], list[float])):
+    def __init__(self, dimensions_container: (dict[str, float], list[float]) = None):
         self._mass = 0
         self._length = 0
         self._time = 0
@@ -27,20 +27,21 @@ class Dimensions:
         self._light = 0
         self._current = 0
         self._solid_angle = 0
-        if len(dimensions_container) > Dimensions.max_dim_len():
-            raise DimensionsError.EXCESSIVE_DIMENSIONS()
+        if dimensions_container:
+            if len(dimensions_container) > Dimensions.max_dim_len():
+                raise DimensionsError.EXCESSIVE_DIMENSIONS(len(dimensions_container))
 
-        if isinstance(dimensions_container, dict):
-            for dim in dimensions_container:
-                if dim in ansunits._dimension_order:
-                    private_dim = f"_{dim.lower().replace(' ','_')}"
-                    setattr(self, private_dim, dimensions_container[dim])
-                else:
-                    raise DimensionsError.INCORRECT_DIMENSIONS()
-        else:
-            for idx, attr in enumerate(self.__dict__):
-                if idx < len(dimensions_container):
-                    setattr(self, attr, dimensions_container[idx])
+            if isinstance(dimensions_container, dict):
+                for dim in dimensions_container:
+                    if dim in ansunits._dimension_order:
+                        private_dim = f"_{dim.lower().replace(' ','_')}"
+                        setattr(self, private_dim, dimensions_container[dim])
+                    else:
+                        raise DimensionsError.INCORRECT_DIMENSIONS()
+            else:
+                for idx, attr in enumerate(self.__dict__):
+                    if idx < len(dimensions_container):
+                        setattr(self, attr, dimensions_container[idx])
 
     @property
     def short_dictionary(self):
@@ -56,11 +57,10 @@ class Dimensions:
     @property
     def short_list(self):
         short_list = []
-        attrs = self.__dict__
-        for attr in attrs:
-            attr_value = getattr(self, attr)
-            if attr_value != 0:
-                short_list.append(attr_value)
+        for idx, dim in enumerate(reversed(self.full_list)):
+            if dim != 0:
+                short_list = self.full_list[: -1 * idx]
+                break
         return short_list
 
     @property
@@ -82,18 +82,18 @@ class Dimensions:
 
     def __add__(self, other):
         dim_list = []
-        for idx, dim in enumerate(self.all):
-            dim_list.append(dim + other.all[idx])
+        for idx, dim in enumerate(self.full_list):
+            dim_list.append(dim + other.full_list[idx])
         return Dimensions(dim_list)
 
     def __sub__(self, other):
         dim_list = []
-        for idx, dim in enumerate(self.all):
-            dim_list.append(dim - other.all[idx])
+        for idx, dim in enumerate(self.full_list):
+            dim_list.append(dim - other.full_list[idx])
         return Dimensions(dim_list)
 
     def __mul__(self, __value):
-        new_dim = [i * 5 for i in self.all]
+        new_dim = [i * __value for i in self.full_list]
         return Dimensions(new_dim)
 
 
@@ -104,17 +104,10 @@ class DimensionsError(ValueError):
         super().__init__(err)
 
     @classmethod
-    def EXCESSIVE_PARAMETERS(cls):
-        """Return in case of excessive parameters."""
-        return cls(
-            "Dimensions only accepts 1 of the following parameters: (units) or (dimensions)."
-        )
-
-    @classmethod
     def EXCESSIVE_DIMENSIONS(cls, len):
         """Return in case of excessive dimensions."""
         return cls(
-            f"The `dimensions` argument must contain 9 values or less, currently there are {len}."
+            f"The `dimensions` argument must contain 10 values or less, currently there are {len}."
         )
 
     @classmethod

@@ -10,14 +10,15 @@ class TestDimension(list):
     LENGTH = 1
     TIME = 2
     TEMPERATURE = 3
-    ANGLE = 4
-    CHEMICAL_AMOUNT = 5
-    LIGHT = 6
-    CURRENT = 7
-    SOLID_ANGLE = 8
+    TEMPERATURE_DIFFERENCE = 4
+    ANGLE = 5
+    CHEMICAL_AMOUNT = 6
+    LIGHT = 7
+    CURRENT = 8
+    SOLID_ANGLE = 9
 
     def __init__(self, d: Dict[int, float]):
-        dims = 9 * [0]
+        dims = 10 * [0.0]
         for dim, exponent in d.items():
             dims[dim] = exponent
         super().__init__(dims)

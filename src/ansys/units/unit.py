@@ -31,7 +31,7 @@ class Unit:
         self,
         units: str = None,
         config: dict = None,
-        dimensions: list = None,
+        dimensions: (ansunits.Dimensions, list) = None,
         unit_sys: str = None,
     ):
         if units and dimensions:
@@ -41,11 +41,14 @@ class Unit:
             self._name = units
             dimensions = self._units_to_dim(units=units)
             self._dimensions = ansunits.Dimensions(dimensions)
-        elif len(dimensions) > self.max_dim_len():
-            raise UnitError.EXCESSIVE_DIMENSIONS(len(dimensions))
-        else:
-            self._dimensions = ansunits.Dimensions(dimensions)
+        elif dimensions:
+            if isinstance(dimensions, list):
+                dimensions = ansunits.Dimensions(dimensions)
+            self._dimensions = dimensions
             self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
+        else:
+            self._name = units or ""
+            self._dimensions = ansunits.Dimensions(dimensions)
 
         if not config:
             config = self._get_config(self._name)
@@ -64,16 +67,20 @@ class Unit:
 
         return {"type": ansunits._QuantityType.composite}
 
-    def _dim_to_units(self, dimensions: list, unit_sys: list = None) -> str:
+    def _dim_to_units(
+        self,
+        dimensions: ansunits.Dimensions,
+        unit_sys: (ansunits.UnitSystem, list) = None,
+    ) -> str:
         """
         Convert a dimensions list into a unit string.
 
         Parameters
         ----------
-        dimensions : list
-            List of unit dimensions.
+        dimensions : Dimensions object
+            instance of Dimension class.
 
-        unit_sys : list
+        unit_sys : list, UnitSystem object
             Optional unit system for dimensions list.
             default is SI units
 
@@ -82,24 +89,20 @@ class Unit:
         str
             Unit string representation of the dimensions.
         """
-        # Ensure dimensions list contains 10 terms
-        dimensions = [
-            float(dim)
-            for dim in dimensions + ((self.max_dim_len() - len(dimensions)) * [0])
-        ]
+        if not unit_sys:
+            unit_sys = ansunits.UnitSystem(name="SI")
+        if isinstance(unit_sys, list):
+            unit_sys = ansunits.UnitSystem(base_units=unit_sys)
+
+        base_units = unit_sys.base_units
+
         units = ""
-        if isinstance(unit_sys, ansunits.UnitSystem):
-            unit_sys = unit_sys.base_units
-        else:
-            unit_sys = unit_sys or "SI"
-            unit_sys = ansunits._unit_systems[unit_sys]
-        # Define unit term and associated value from dimension with dimensions list
-        for idx, dim in enumerate(dimensions):
-            if dim == 1.0:
-                units += f"{unit_sys[idx]} "
+        for idx, dim in enumerate(dimensions.full_list):
+            if dim == 1:
+                units += f"{base_units[idx]} "
             elif dim != 0.0:
                 dim = int(dim) if dim % 1 == 0 else dim
-                units += f"{unit_sys[idx]}^{dim} "
+                units += f"{base_units[idx]}^{dim} "
 
         return units.strip()
 

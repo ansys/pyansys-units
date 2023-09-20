@@ -30,6 +30,7 @@ def test_custom_unit_system():
             ur.ft,
             ur.s,
             ur.R,
+            ur.delta_R,
             ur.radian,
             ur.slugmol,
             ur.cd,
@@ -61,7 +62,8 @@ def test_conversion():
     assert q2.units == "slug ft s"
 
     us2 = ansunits.UnitSystem(
-        name="sys", base_units=["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
+        name="sys",
+        base_units=["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"],
     )
     q3 = ansunits.Quantity(4, "slug cm s")
 
@@ -100,7 +102,18 @@ def test_errors():
     with pytest.raises(UtilError) as e_info:
         us3 = ansunits.UnitSystem(
             name="sys",
-            base_units=["slug", "ft", "eon", "R", "radian", "slugmol", "cd", "A", "sr"],
+            base_units=[
+                "slug",
+                "ft",
+                "eon",
+                "R",
+                "delta_R",
+                "radian",
+                "slugmol",
+                "cd",
+                "A",
+                "sr",
+            ],
         )
 
     with pytest.raises(ansunits.UnitSystemError) as e_info:
@@ -137,9 +150,9 @@ def test_error_messages():
     )
     assert str(e1) == expected_str
 
-    e2 = ansunits.UnitSystemError.BASE_UNITS_LENGTH(10)
+    e2 = ansunits.UnitSystemError.BASE_UNITS_LENGTH(11)
     expected_str = (
-        "The `base_units` argument must contain 9 units, currently there are 10."
+        "The `base_units` argument must contain 10 units, currently there are 11."
     )
     assert str(e2) == expected_str
 

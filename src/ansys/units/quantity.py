@@ -56,7 +56,8 @@ class Quantity(float):
             _unit = units
 
         if dimensions:
-            _unit = ansunits.Unit(dimensions=dimensions)
+            _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
+            _unit = ansunits.Unit(dimensions=_dimensions)
 
         if not isinstance(_unit, ansunits.Unit):
             _unit = ansunits.Unit(_unit)
@@ -86,8 +87,8 @@ class Quantity(float):
             self._unit = units
 
         if dimensions:
-            _dimensions = ansunits.Dimensions(dimensions=dimensions)
-            self._unit = _dimensions.units
+            _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
+            self._unit = ansunits.Unit(dimensions=_dimensions)
 
         if not isinstance(self._unit, ansunits.Unit):
             self._unit = ansunits.Unit(self._unit)
@@ -122,13 +123,22 @@ class Quantity(float):
         str
             SI unit string of the new quantity.
         """
+
         # Cannot perform operations between quantities with incompatible dimensions
-        if isinstance(__value, Quantity) and (
-            self.dimensions.full_list != __value.dimensions.full_list
-        ):
-            raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
+        if isinstance(__value, Quantity):
+            temp_dim = [
+                x - y
+                for x, y in zip(self.dimensions.full_list, __value.dimensions.full_list)
+            ]
+            temp = temp_dim.pop(4) + temp_dim.pop(3)
+            temp_dim.insert(3, temp)
+            print(self.dimensions.full_list)
+            print(__value.dimensions.full_list)
+            print(temp_dim)
+            if not all([dim == 0.0 for dim in temp_dim]):
+                raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
         # Cannot perform operations on a non-dimensionless quantity
-        if not isinstance(__value, Quantity) and (not self.is_dimensionless):
+        if not isinstance(__value, Quantity) and (self.has_dimensions):
             raise QuantityError.INCOMPATIBLE_VALUE(__value)
 
     def _temp_precheck(self) -> Optional[str]:
@@ -181,9 +191,9 @@ class Quantity(float):
         return self._unit.dimensions
 
     @property
-    def is_dimensionless(self) -> bool:
+    def has_dimensions(self) -> bool:
         """Check if the quantity is dimensionless."""
-        return all([dim == 0.0 for dim in self._unit.dimensions])
+        return bool(self.dimensions.short_list)
 
     def to(self, to_units: [str, any]) -> "Quantity":
         """
