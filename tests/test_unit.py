@@ -1,3 +1,5 @@
+import pytest
+
 import ansys.units as ansunits
 
 
@@ -14,6 +16,18 @@ def test_derived_units():
     assert N.name == "N"
     assert N._composition == "kg m s^-2"
     assert N._factor == 1
+
+
+def test_dimensions_list():
+    N = ansunits.Unit(dimensions=[1, 1, -2])
+    assert N.name == "kg m s^-2"
+
+
+def test_unitless():
+    unit = ansunits.Unit()
+    assert unit.name == ""
+
+    assert unit.dimensions.short_list == []
 
 
 def test_string_rep():
@@ -38,3 +52,40 @@ def test_reverse_multiply():
     ur = ansunits.UnitRegistry()
     new_unit = ur.K * ur.kg * ur.J
     assert new_unit.name == "kg^2 m^2 s^-2 K"
+
+
+def test_unit_div():
+    K = ansunits.Unit("K")
+    kg = ansunits.Unit("kg")
+    kg_K = kg / K
+    assert kg_K.name == "kg K^-1"
+
+
+def test_unit_pow():
+    kg_K = ansunits.Unit("kg K")
+    kg_K_sq = kg_K**2
+    assert kg_K_sq.name == "kg^2 K^2"
+
+
+def test_unit_sys_list():
+    slug = ansunits.Unit(
+        dimensions=[1],
+        unit_sys=[
+            "slug",
+            "ft",
+            "s",
+            "R",
+            "delta_R",
+            "radian",
+            "slugmol",
+            "cd",
+            "A",
+            "sr",
+        ],
+    )
+    assert slug.name == "slug"
+
+
+def test_excessive_parameters():
+    with pytest.raises(ansunits.UnitError):
+        C = ansunits.Unit("kg", dimensions=[1])

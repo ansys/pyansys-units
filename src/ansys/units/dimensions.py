@@ -17,16 +17,16 @@ class Dimensions:
     """
 
     def __init__(self, dimensions_container: (dict[str, float], list[float]) = None):
-        self._mass = 0
-        self._length = 0
-        self._time = 0
-        self._temperature = 0
-        self._temperature_difference = 0
-        self._angle = 0
-        self._chemical_amount = 0
-        self._light = 0
-        self._current = 0
-        self._solid_angle = 0
+        self._mass = 0.0
+        self._length = 0.0
+        self._time = 0.0
+        self._temperature = 0.0
+        self._temperature_difference = 0.0
+        self._angle = 0.0
+        self._chemical_amount = 0.0
+        self._light = 0.0
+        self._current = 0.0
+        self._solid_angle = 0.0
         if dimensions_container:
             if len(dimensions_container) > Dimensions.max_dim_len():
                 raise DimensionsError.EXCESSIVE_DIMENSIONS(len(dimensions_container))

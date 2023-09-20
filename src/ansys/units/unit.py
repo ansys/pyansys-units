@@ -210,10 +210,3 @@ class UnitError(ValueError):
         return cls(
             "Unit only accepts 1 of the following parameters: (units) or (dimensions)."
         )
-
-    @classmethod
-    def EXCESSIVE_DIMENSIONS(cls, len):
-        """Return in case of excessive dimensions."""
-        return cls(
-            f"The `dimensions` argument must contain 9 values or less, currently there are {len}."
-        )
