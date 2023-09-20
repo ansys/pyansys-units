@@ -2,7 +2,7 @@
 from typing import Optional, Tuple
 
 import ansys.units as ansunits
-from ansys.units.utils import get_type, parse_temperature_units, si_data
+from ansys.units.utils import parse_temperature_units, si_data
 
 
 class Quantity(float):
@@ -59,7 +59,10 @@ class Quantity(float):
             _dimensions = ansunits.Dimensions(dimensions=dimensions)
             _unit = _dimensions.units
 
-        _, si_multiplier, si_offset = si_data(units=_unit)
+        if not isinstance(_unit, ansunits.Unit):
+            _unit = ansunits.Unit(_unit)
+
+        _, si_multiplier, si_offset = si_data(units=_unit.name)
         _si_value = (_value + si_offset) * si_multiplier
 
         return float.__new__(cls, _si_value)
@@ -78,31 +81,31 @@ class Quantity(float):
 
         if units is not None:
             self._unit = units
-            self._dimensions = ansunits.Dimensions(units=units)
 
         if quantity_map:
             units = ansunits.QuantityMap(quantity_map).units
             self._unit = units
-            self._dimensions = ansunits.Dimensions(units=units)
 
         if dimensions:
-            self._dimensions = ansunits.Dimensions(dimensions=dimensions)
-            self._unit = self._dimensions.units
+            _dimensions = ansunits.Dimensions(dimensions=dimensions)
+            self._unit = _dimensions.units
 
-        self._type = get_type(self._unit)
+        if not isinstance(self._unit, ansunits.Unit):
+            self._unit = ansunits.Unit(self._unit)
+
         if (
-            self._type == ansunits._QuantityType.temperature
+            self._unit.type == ansunits._QuantityType.temperature
             and _type_hint == ansunits._QuantityType.temperature_difference
         ):
-            self._type = ansunits._QuantityType.temperature_difference
+            self._unit.type = ansunits._QuantityType.temperature_difference
 
-        si_units, si_multiplier, si_offset = si_data(units=self._unit)
+        si_units, si_multiplier, si_offset = si_data(units=self._unit.name)
 
         self._si_units = si_units
 
         # Well, this is going to have to be a hack, but we
         # need to fix the wider design to do this properly
-        self._fix_temperature_units()
+        # self._fix_temperature_units()
 
         self._si_value = (self.value + si_offset) * si_multiplier
 
@@ -154,7 +157,12 @@ class Quantity(float):
     @property
     def units(self):
         """Unit string."""
-        return self._unit
+        return self._unit.name
+
+    @property
+    def type(self):
+        """Type of units."""
+        return self._unit.type
 
     @property
     def si_value(self):
@@ -169,25 +177,20 @@ class Quantity(float):
     @property
     def dimensions(self):
         """Dimensions."""
-        return self._dimensions.dimensions
+        return self._unit.dimensions
 
     @property
     def is_dimensionless(self) -> bool:
         """Check if the quantity is dimensionless."""
-        return all([dim == 0.0 for dim in self.dimensions])
+        return all([dim == 0.0 for dim in self._unit.dimensions])
 
-    @property
-    def type(self):
-        """Type."""
-        return self._type
-
-    def to(self, to_units: str) -> "Quantity":
+    def to(self, to_units: [str, any]) -> "Quantity":
         """
         Perform quantity conversions.
 
         Parameters
         ----------
-        to_units : str
+        to_units : str, Unit
             Desired unit to convert to.
 
         Returns
@@ -195,6 +198,8 @@ class Quantity(float):
         Quantity
             Quantity object containing the desired quantity conversion.
         """
+        if isinstance(to_units, ansunits.Unit):
+            to_units = to_units.name
 
         if not isinstance(to_units, str):
             raise TypeError("`to_units` should be a `str` type.")
@@ -225,24 +230,23 @@ class Quantity(float):
         return f'Quantity ({self.value}, "{self.units}")'
 
     def __pow__(self, __value):
-        temp_dimensions = [dim * __value for dim in self.dimensions]
         new_si_value = self.si_value**__value
-        new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
-        return Quantity(value=new_si_value, units=new_dimensions.units)
+        new_units = self._unit**__value
+        return Quantity(value=new_si_value, units=new_units)
 
     def __mul__(self, __value):
         if isinstance(__value, Quantity):
-            temp_dimensions = [
-                dim + __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
-            ]
             new_si_value = self.si_value * __value.si_value
-            new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
-            new_units = new_dimensions.units
+
+            new_units = new_units = self._unit * __value._unit
             return Quantity(
                 value=new_si_value,
                 units=new_units,
                 _type_hint=self._determine_new_type(__value),
             )
+        if isinstance(__value, ansunits.Unit):
+            base_quantity = Quantity(1, __value)
+            return self * base_quantity
 
         if isinstance(__value, (float, int)):
             new_units = self._temp_precheck() or self.si_units
@@ -253,12 +257,8 @@ class Quantity(float):
 
     def __truediv__(self, __value):
         if isinstance(__value, Quantity):
-            temp_dimensions = [
-                dim - __value.dimensions[idx] for idx, dim in enumerate(self.dimensions)
-            ]
             new_si_value = self.si_value / __value.si_value
-            new_dimensions = ansunits.Dimensions(dimensions=temp_dimensions)
-            new_units = new_dimensions.units
+            new_units = self._unit / __value._unit
             result = Quantity(value=new_si_value, units=new_units)
             # HACK
             convert_to_temp_difference = (
@@ -272,6 +272,10 @@ class Quantity(float):
             if convert_to_temp_difference:
                 result._type = ansunits._QuantityType.temperature_difference
             return result
+
+        if isinstance(__value, ansunits.Unit):
+            base_quantity = Quantity(1, __value)
+            return self / base_quantity
 
         if isinstance(__value, (float, int)):
             new_units = self.si_units
@@ -299,7 +303,7 @@ class Quantity(float):
         return self.__sub__(__value)
 
     def __neg__(self):
-        return Quantity(-self.value, self.units)
+        return Quantity(-self.value, self._unit)
 
     def __gt__(self, __value):
         self._arithmetic_precheck(__value)

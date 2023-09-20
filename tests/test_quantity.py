@@ -255,14 +255,14 @@ def test_to_29():
     v = ansunits.Quantity(1.0, "BTU lb^-1 R^-1")
     to = v.to("J kg^-1 K^-1")
     assert to.value == pytest.approx(4186.8161854, DELTA)
-    assert to.units == "J kg^-1 delta_K^-1"
+    assert to.units == "J kg^-1 K^-1"
 
 
 def test_to_30():
     v = ansunits.Quantity(1.0, "BTU lb^-1 F^-1")
     to = v.to("J kg^-1 K^-1")
     assert to.value == pytest.approx(4186.8161854, DELTA)
-    assert to.units == "J kg^-1 delta_K^-1"
+    assert to.units == "J kg^-1 K^-1"
 
 
 def test_to_31():
@@ -329,11 +329,11 @@ def test_complex_temperature_difference_to():
     m = ansunits.Quantity(1.0, "kg")
     result = m * (t2 - t1)
     resultC1 = result.to("kg C")
-    assert resultC1.type == "Temperature Difference"
+    assert resultC1.type == "Composite"
     assert resultC1.value == 1.0
-    assert resultC1.units == "kg delta_C"
+    assert resultC1.units == "kg C"
     resultC2 = result.to("kg delta_C")
-    assert resultC2.type == "Temperature Difference"
+    assert resultC2.type == "Composite"
     assert resultC2.value == 1.0
     assert resultC2.units == "kg delta_C"
 
@@ -368,13 +368,17 @@ def test_subtraction():
 
 def test_pow():
     q1 = ansunits.Quantity(10.0, "m s^-1")
-    q2 = ansunits.Quantity(5.0, "m s^-1")
+    q2 = ansunits.Quantity(5.0, "ft")
 
     q1_sq = q1**2
     assert q1_sq.units == "m^2 s^-2"
+    assert q1_sq.value == 100
+    q2_sq = q2**2
+    assert q2_sq.units == "m^2"
+    assert q2_sq.value == pytest.approx(2.3225759999999993, DELTA)
 
     assert float(q1) ** 2 == 100.0
-    assert float(q2) ** 2 == 25.0
+    assert float(q2) ** 2 == pytest.approx(2.3225759999999993, DELTA)
 
 
 def test_neg():
@@ -591,37 +595,37 @@ def test_temp_7():
     hcto1 = hc.to("kJ kg^-1 K^-1")
 
     assert hcto1.value == pytest.approx(1.0, DELTA)
-    assert hcto1.units == "kJ kg^-1 delta_K^-1"
+    assert hcto1.units == "kJ kg^-1 K^-1"
 
     hcto2 = hc.to("J kg^-1 C^-1")
 
     assert hcto2.value == pytest.approx(1000.0, DELTA)
-    assert hcto2.units == "J kg^-1 delta_C^-1"
+    assert hcto2.units == "J kg^-1 C^-1"
 
     hcto3 = hc.to("kJ kg^-1 C^-1")
 
     assert hcto3.value == pytest.approx(1.0, DELTA)
-    assert hcto3.units == "kJ kg^-1 delta_C^-1"
+    assert hcto3.units == "kJ kg^-1 C^-1"
 
     hcto4 = hc.to("cal g^-1 C^-1")
 
     assert hcto4.value == pytest.approx(0.2390057, DELTA)
-    assert hcto4.units == "cal g^-1 delta_C^-1"
+    assert hcto4.units == "cal g^-1 C^-1"
 
     hcto5 = hc.to("cal kg^-1 C^-1")
 
     assert hcto5.value == pytest.approx(239.0057, DELTA)
-    assert hcto5.units == "cal kg^-1 delta_C^-1"
+    assert hcto5.units == "cal kg^-1 C^-1"
 
     hcto6 = hc.to("kcal kg^-1 C^-1")
 
     assert hcto6.value == pytest.approx(0.2390057, DELTA)
-    assert hcto6.units == "kcal kg^-1 delta_C^-1"
+    assert hcto6.units == "kcal kg^-1 C^-1"
 
     hcto7 = hc.to("BTU lb^-1 F^-1")
 
     assert hcto7.value == pytest.approx(0.238845, DELTA)
-    assert hcto7.units == "BTU lb^-1 delta_F^-1"
+    assert hcto7.units == "BTU lb^-1 F^-1"
 
 
 def test_temp_8():
@@ -630,32 +634,32 @@ def test_temp_8():
     temp_varto1 = temp_var.to("g cm^-3 s^-1 K^2")
 
     assert temp_varto1.value == pytest.approx(0.001, DELTA)
-    assert temp_varto1.units == "g cm^-3 s^-1 delta_K^2"
+    assert temp_varto1.units == "g cm^-3 s^-1 K^2"
 
     temp_varto2 = temp_var.to("kg mm^-3 s^-1 K^2")
 
     assert temp_varto2.value == pytest.approx(1e-09, DELTA)
-    assert temp_varto2.units == "kg mm^-3 s^-1 delta_K^2"
+    assert temp_varto2.units == "kg mm^-3 s^-1 K^2"
 
     temp_varto3 = temp_var.to("kg um^-3 s^-1 K^2")
 
     assert temp_varto3.value == pytest.approx(9.999999999999999e-19, DELTA)
-    assert temp_varto3.units == "kg um^-3 s^-1 delta_K^2"
+    assert temp_varto3.units == "kg um^-3 s^-1 K^2"
 
-    temp_varto4 = temp_var.to("mg mm^-3 ms^-1 delta_K^2")
+    temp_varto4 = temp_var.to("mg mm^-3 ms^-1 K^2")
 
     assert temp_varto4.value == pytest.approx(1.0000000000000002e-06, DELTA)
-    assert temp_varto4.units == "mg mm^-3 ms^-1 delta_K^2"
+    assert temp_varto4.units == "mg mm^-3 ms^-1 K^2"
 
     temp_varto5 = temp_var.to("g cm^-3 us^-1 K^2")
 
     assert temp_varto5.value == pytest.approx(1e-09, DELTA)
-    assert temp_varto5.units == "g cm^-3 us^-1 delta_K^2"
+    assert temp_varto5.units == "g cm^-3 us^-1 K^2"
 
     temp_varto6 = temp_var.to("pg um^-3 ms^-1 K^2")
 
     assert temp_varto6.value == pytest.approx(9.999999999999997e-07, DELTA)
-    assert temp_varto6.units == "pg um^-3 ms^-1 delta_K^2"
+    assert temp_varto6.units == "pg um^-3 ms^-1 K^2"
 
 
 def test_temp_inverse_1():
@@ -679,22 +683,22 @@ def test_temp_type():
     assert c0.type == "Temperature"
 
     c1 = ansunits.Quantity(1.0, "J kg^-1 C^-1")
-    assert c1.type == "Temperature Difference"
+    assert c1.type == "Composite"
 
     c2 = ansunits.Quantity(1.0, "kg m^-3 s^-1 K^2")
-    assert c2.type == "Temperature Difference"
+    assert c2.type == "Composite"
 
     c4 = ansunits.Quantity(1.0, "F")
     assert c4.type == "Temperature"
 
     c6 = ansunits.Quantity(1.0, "F^1")
-    assert c6.type == "Temperature Difference"
+    assert c6.type == "Composite"
 
     c7 = ansunits.Quantity(1.0, "F^-1")
-    assert c7.type == "Temperature Difference"
+    assert c7.type == "Composite"
 
     c8 = ansunits.Quantity(1.0, "F^2")
-    assert c8.type == "Temperature Difference"
+    assert c8.type == "Composite"
 
 
 def test_temp_difference():
@@ -743,14 +747,14 @@ def test_temp_diff_combined_multiply_2():
     q2 = ansunits.Quantity(4.0, "K")
     res = q1 * q2
     assert res.value == 8.0
-    assert res.units == "kg m^2 s^-2 delta_K^-1"
+    assert res.units == "kg m^2 s^-2 K^-1"
 
 
 def test_temp_diff_combined_inverse():
     t = ansunits.Quantity(4.0, "K")
     inv_t = 2.0 / t
     assert inv_t.value == 0.5
-    assert inv_t.units == "delta_K^-1"
+    assert inv_t.units == "K^-1"
 
 
 def test_temp_diff_combined_divide():
@@ -787,19 +791,19 @@ def test_core_temp():
 
     invt1 = ansunits.Quantity(1.0, "K^-1")
     assert float(invt1) == 1.0
-    assert invt1.type == "Temperature Difference"
+    assert invt1.type == "Composite"
 
     dt3 = 1.0 / invt1
     assert float(dt3) == 1.0
-    assert dt1.type == dt2.type == dt3.type
+    assert dt1.type == dt2.type
 
     invt2 = ansunits.Quantity(1.0, "C^-1")
     assert float(invt2) == 1.0
-    assert invt2.type == "Temperature Difference"
+    assert invt2.type == "Composite"
 
     dt4 = 1.0 / invt2
     assert float(dt4) == 1.0
-    assert dt4.type == "Temperature Difference"
+    assert dt4.type == "Temperature"
 
 
 def test_temp_addition():
@@ -1038,3 +1042,20 @@ def test_instantiate_quantity_with_unrecognized_units_causes_exception():
         ansunits.Quantity(value=10, units="piggies s^-1")
     with pytest.raises(UtilError):
         ansunits.Quantity(value=10, units="piggies^2 m^-3")
+
+
+def test_compute_temp_unit():
+    kb = ansunits.Quantity(1.382e-23, "J K^-1")
+    t = ansunits.Quantity(2.0, "K")
+    e = kb * t
+    assert e.type == "Composite"
+    assert e.units == "kg m^2 s^-2"
+
+
+def test_unit_multiply_quantity():
+    ur = ansunits.UnitRegistry()
+    mass = ansunits.Quantity(10.0, ur.kg)
+    mass_flow_rate = mass / ur.s
+    assert mass_flow_rate.units == "kg s^-1"
+    assert mass_flow_rate.type == "Composite"
+    assert mass_flow_rate.value == 10
