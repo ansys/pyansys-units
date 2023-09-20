@@ -132,9 +132,6 @@ class Quantity(float):
             ]
             temp = temp_dim.pop(4) + temp_dim.pop(3)
             temp_dim.insert(3, temp)
-            print(self.dimensions.full_list)
-            print(__value.dimensions.full_list)
-            print(temp_dim)
             if not all([dim == 0.0 for dim in temp_dim]):
                 raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
         # Cannot perform operations on a non-dimensionless quantity
