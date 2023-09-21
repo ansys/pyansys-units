@@ -1,3 +1,13 @@
+'''
+>>> import ansys.units.dims as dims 
+>>> (dims.Mass / dims.Time).dimension_of(dims.BaseDimension.time)
+-1
+>>> dims.Mass / dims.Time
+<ansys.units.dims.Dimensions object at 0x7f3292b83730>
+>>> (dims.Mass / dims.Time).items()
+dict_items([(<BaseDimension.mass: 1>, 1), (<BaseDimension.time: 3>, -1)])
+'''
+
 from __future__ import annotations
 from enum import Enum
 from typing import Union
