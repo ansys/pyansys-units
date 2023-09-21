@@ -18,9 +18,6 @@ class Unit:
         Define the unit system for base units of dimension,
         default is SI.
 
-    Methods
-    -------
-
     Returns
     -------
     Unit

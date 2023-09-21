@@ -1,6 +1,7 @@
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.utils import UtilError
 
 
 def test_pre_defined_unit_system():
@@ -98,7 +99,7 @@ def test_errors():
             ],
         )
 
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
+    with pytest.raises(UtilError) as e_info:
         us3 = ansunits.UnitSystem(
             name="sys",
             base_units=[
@@ -143,6 +144,22 @@ def test_errors():
 
     with pytest.raises(ansunits.UnitSystemError) as e_info:
         us7 = ansunits.UnitSystem(
+            name="us6",
+            base_units=[
+                "kg s^-1",
+                "ft",
+                "s",
+                "R",
+                "radian",
+                "slugmol",
+                "cd",
+                "A",
+                "sr",
+            ],
+        )
+
+    with pytest.raises(ansunits.UnitSystemError) as e_info:
+        us6 = ansunits.UnitSystem(
             name="us6",
             base_units=[
                 "kg s^-1",

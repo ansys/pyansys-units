@@ -16,8 +16,6 @@ class UnitRegistry:
         Custom units set up following the 'cfg.yaml' format.
     Other: Dict
         Dictionary for extra units.
-    Methods
-    -------
 
     Returns
     -------
