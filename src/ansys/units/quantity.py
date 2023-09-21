@@ -90,7 +90,6 @@ class Quantity(float):
             _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
             self._unit = ansunits.Unit(dimensions=_dimensions)
 
-
         if not isinstance(self._unit, ansunits.Unit):
             self._unit = ansunits.Unit(self._unit)
 
@@ -192,7 +191,6 @@ class Quantity(float):
     def has_dimensions(self) -> bool:
         """Check if the quantity is dimensionless."""
         return bool(self.dimensions.short_list)
-
 
     def to(self, to_units: [str, any]) -> "Quantity":
         """

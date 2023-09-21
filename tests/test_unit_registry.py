@@ -62,4 +62,3 @@ def test_default_units():
     )
     assert str(ur) == "kg, "
     assert ur.kg._factor == 1
-

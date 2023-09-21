@@ -1,4 +1,3 @@
-
 import pytest
 
 import ansys.units as ansunits
@@ -40,7 +39,6 @@ _factor: 1
 _offset: 273.15
 """
     assert str(C) == C_string
-
 
 
 def test_unit_multiply_by_value():
@@ -91,4 +89,3 @@ def test_unit_sys_list():
 def test_excessive_parameters():
     with pytest.raises(ansunits.UnitError):
         C = ansunits.Unit("kg", dimensions=[1])
-

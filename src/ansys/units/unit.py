@@ -162,7 +162,6 @@ class Unit:
     def dimensions(self):
         return self._dimensions
 
-
     @staticmethod
     def max_dim_len():
         """Maximum number of elements within a dimensions list."""
@@ -208,4 +207,3 @@ class UnitError(ValueError):
         return cls(
             "Unit only accepts 1 of the following parameters: (units) or (dimensions)."
         )
-

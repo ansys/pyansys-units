@@ -24,7 +24,6 @@ from ansys.units.map import QuantityMap, QuantityMapError  # noqa: F401
 from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
 from ansys.units.systems import UnitSystem, UnitSystemError  # noqa: F401
 from ansys.units.unit import Unit, UnitError  # noqa: F401
-
 from ansys.units.unit_registry import UnitRegistry  # noqa: F401
 
 _THIS_DIRNAME = os.path.dirname(__file__)
