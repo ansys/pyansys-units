@@ -12,8 +12,8 @@ class Unit:
         Name of the unit or string chain of combined units
     Config: dict
         dictionary of unit properties
-    Dimensions: list
-        A list of max length 10 to describe all base units.
+    Dimensions: Dimensions
+        An instance of the Dimensions class.
     Unit System: str
         Define the unit system for base units of dimension,
         default is SI.
@@ -31,7 +31,7 @@ class Unit:
         self,
         units: str = None,
         config: dict = None,
-        dimensions: (ansunits.Dimensions, list) = None,
+        dimensions: ansunits.Dimensions = None,
         unit_sys: str = None,
     ):
         if units and dimensions:
@@ -42,13 +42,11 @@ class Unit:
             dimensions = self._units_to_dim(units=units)
             self._dimensions = ansunits.Dimensions(dimensions)
         elif dimensions:
-            if isinstance(dimensions, list):
-                dimensions = ansunits.Dimensions(dimensions)
             self._dimensions = dimensions
             self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
         else:
             self._name = units or ""
-            self._dimensions = ansunits.Dimensions(dimensions)
+            self._dimensions = ansunits.Dimensions()
 
         if not config:
             config = self._get_config(self._name)
