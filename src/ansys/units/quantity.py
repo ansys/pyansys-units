@@ -16,13 +16,13 @@ class Quantity(float):
     ----------
     value : int | float
         Real value of the quantity.
-    units : str, None
+    units : str, Unit, optional
         Unit string representation of the quantity.
-    quantity_map : dict, None
+    quantity_map : dict, optional
         Quantity map representation of the quantity.
-    dimensions : list, None
+    dimensions : list, Dimensions, optional
         Dimensions representation of the quantity.
-    _type_hint : _QuantityType.temperature_difference, None
+    _type_hint : _QuantityType.temperature_difference, optional
         Unit type override for temperature difference.
 
     Methods
@@ -56,7 +56,8 @@ class Quantity(float):
             _unit = units
 
         if dimensions:
-            _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
+            if not isinstance(dimensions, ansunits.Dimensions):
+                _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
             _unit = ansunits.Unit(dimensions=_dimensions)
 
         if not isinstance(_unit, ansunits.Unit):
@@ -87,7 +88,8 @@ class Quantity(float):
             self._unit = units
 
         if dimensions:
-            _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
+            if not isinstance(dimensions, ansunits.Dimensions):
+                _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
             self._unit = ansunits.Unit(dimensions=_dimensions)
 
         if not isinstance(self._unit, ansunits.Unit):

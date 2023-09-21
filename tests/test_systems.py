@@ -1,7 +1,6 @@
 import pytest
 
 import ansys.units as ansunits
-from ansys.units.utils import UtilError
 
 
 def test_pre_defined_unit_system():
@@ -99,7 +98,7 @@ def test_errors():
             ],
         )
 
-    with pytest.raises(UtilError) as e_info:
+    with pytest.raises(ansunits.UnitSystemError) as e_info:
         us3 = ansunits.UnitSystem(
             name="sys",
             base_units=[

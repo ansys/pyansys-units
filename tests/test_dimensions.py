@@ -20,11 +20,11 @@ def test_dimensions():
 
 def test_dictionary():
     d1 = ansunits.Dimensions(dimensions_container=[0, 1.0, -2.0])
-    assert d1.short_dictionary == {"length": 1.0, "time": -2.0}
+    assert d1.as_dict(non_zero=True) == {"_length": 1.0, "_time": -2.0}
     d2 = ansunits.Dimensions(
         dimensions_container=[1.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
     )
-    assert d2.short_dictionary == {"mass": 1, "time": -2.0, "light": 1}
+    assert d2.as_dict(non_zero=True) == {"_mass": 1, "_time": -2.0, "_light": 1}
 
 
 def test_short_list():
@@ -66,7 +66,7 @@ def test_sub():
     )
     d2 = ansunits.Dimensions(dimensions_container={"Mass": 1, "Current": 1})
     d3 = d1 - d2
-    assert d3.short_dictionary == {"mass": -1}
+    assert d3.as_dict(non_zero=True) == {"_mass": -1}
 
 
 def test_mul():

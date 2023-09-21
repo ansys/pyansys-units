@@ -8,13 +8,13 @@ class Unit:
 
     Parameters
     ----------
-    Name: str,
+    units: str, optional
         Name of the unit or string chain of combined units
-    Config: dict
+    config: dict, optional
         dictionary of unit properties
-    Dimensions: Dimensions
+    dimensions: Dimensions, optional
         An instance of the Dimensions class.
-    Unit System: str
+    unit_sys: str, optional
         Define the unit system for base units of dimension,
         default is SI.
 
@@ -75,8 +75,8 @@ class Unit:
         dimensions : Dimensions object
             instance of Dimension class.
 
-        unit_sys : list, UnitSystem object
-            Optional unit system for dimensions list.
+        unit_sys : list, UnitSystem object, optional
+            Unit system for dimensions list.
             default is SI units
 
         Returns
@@ -111,12 +111,11 @@ class Unit:
         ----------
         units : str
             Unit string of quantity.
-        power : float
+        power : float, optional
             Power of unit string.
         Returns
         -------
-        Dimensions
-            Dimensions instance.
+        dimensions list
         """
         power = power or 1.0
         dimensions = dimensions or [0.0] * self.max_dim_len()

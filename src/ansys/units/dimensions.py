@@ -8,7 +8,7 @@ class Dimensions:
 
     Parameters
     ----------
-    dimensions : dictionary, list
+    dimensions_container : dictionary, list, optional
         Dictionary of dimensions from the dimensions_order or list.
 
     Returns
@@ -43,16 +43,11 @@ class Dimensions:
                     if idx < len(dimensions_container):
                         setattr(self, attr, dimensions_container[idx])
 
-    @property
-    def short_dictionary(self):
-        short_dictionary = {}
-        attrs = self.__dict__
-        for attr in attrs:
-            attr_name = attr[1:]
-            attr_value = getattr(self, attr)
-            if attr_value != 0:
-                short_dictionary.update({attr_name: attr_value})
-        return short_dictionary
+    def as_dict(self, non_zero=False):
+        dictionary = self.__dict__
+        if non_zero:
+            dictionary = {x: y for x, y in dictionary.items() if y != 0}
+        return dictionary
 
     @property
     def short_list(self):

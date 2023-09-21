@@ -9,11 +9,11 @@ class UnitSystem:
 
     Parameters
     ----------
-    name: str, None
+    name: str, optional
         Custom name associated with a user-defined unit system.
-    base_units: list, None
+    base_units: list, optional
         Custom units associated with a user-defined unit system.
-    unit_sys: str, None
+    unit_sys: str, optional
         Predefined unit system.
 
     Methods
