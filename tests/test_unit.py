@@ -38,7 +38,7 @@ _type: Temperature
 _factor: 1
 _offset: 273.15
 """
-    assert C.__str__() == C_string
+    assert str(C) == C_string
 
 
 def test_unit_multiply_by_value():

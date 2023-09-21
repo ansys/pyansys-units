@@ -1056,16 +1056,16 @@ def test_errors():
 def test_error_messages():
     e1 = ansunits.QuantityError.EXCESSIVE_PARAMETERS()
     assert (
-        e1.__str__()
+        str(e1)
         == "Quantity only accepts one of the following parameters: \
             (units) or (quantity_map) or (dimensions)."
     )
 
     e2 = ansunits.QuantityError.INCOMPATIBLE_DIMENSIONS("mm", "K")
-    assert e2.__str__() == "`mm` and `K` have incompatible dimensions."
+    assert str(e2) == "`mm` and `K` have incompatible dimensions."
 
     e3 = ansunits.QuantityError.INCOMPATIBLE_VALUE("radian")
-    assert e3.__str__() == "`radian` is incompatible with the current quantity object."
+    assert str(e3) == "`radian` is incompatible with the current quantity object."
 
 
 def test_instantiate_quantity_with_unrecognized_units_causes_exception():

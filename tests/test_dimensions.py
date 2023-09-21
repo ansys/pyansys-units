@@ -45,10 +45,10 @@ def test_str_():
     d1 = ansunits.Dimensions(
         dimensions_container=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
     )
-    assert d1.__str__() == "[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0]"
+    assert str(d1) == "[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0]"
 
     d2 = ansunits.Dimensions(dimensions_container=[0.0, 1.0, -3.0])
-    assert d2.__str__() == "[0.0, 1.0, -3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+    assert str(d2) == "[0.0, 1.0, -3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
 
 
 def test_add():
@@ -87,11 +87,11 @@ def test_errors():
 def test_error_messages():
     e1 = ansunits.DimensionsError.EXCESSIVE_DIMENSIONS(200)
     assert (
-        e1.__str__()
+        str(e1)
         == "The `dimensions` argument must contain 10 values or less, currently there are 200."
     )
     e2 = ansunits.DimensionsError.INCORRECT_DIMENSIONS()
     assert (
-        e2.__str__()
+        str(e2)
         == f"The `dimensions` must only contain values from {ansunits._dimension_order}"
     )
