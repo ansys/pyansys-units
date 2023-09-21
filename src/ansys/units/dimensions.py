@@ -44,6 +44,18 @@ class Dimensions:
                         setattr(self, attr, dimensions_container[idx])
 
     def as_dict(self, non_zero=False):
+        """
+        Dimensions dictionary.
+
+        Parameters
+        ----------
+        non_zero : bool, False
+        Removes items with zero value
+
+        Returns
+        -------
+        dictianry of dimensions
+        """
         dictionary = self.__dict__
         if non_zero:
             dictionary = {x: y for x, y in dictionary.items() if y != 0}
@@ -51,6 +63,7 @@ class Dimensions:
 
     @property
     def short_list(self):
+        """Dimensions list without trailing zero items."""
         short_list = []
         for idx, dim in enumerate(reversed(self.full_list)):
             if dim != 0:
