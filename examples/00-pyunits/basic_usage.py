@@ -73,7 +73,7 @@ torque = ansunits.Quantity(value=5, quantity_map=tor_map)
 # 3. si_value : float | int
 # 4. si_units : str
 # 5. dimensions : list
-# 6. is_dimensionless : bool
+# 6. has_dimensions : bool
 # 7. type : str
 
 cap_map = {"Capacitance": 1}
@@ -83,8 +83,8 @@ capacitance.value  # >>> 50.0
 capacitance.units  # >>> "farad"
 capacitance.si_value  # >>> 50.0
 capacitance.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
-capacitance.dimensions  # >>> [-1.0, -2.0, 4.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0]
-capacitance.is_dimensionless  # >>> False
+capacitance.dimensions.full_list  # >>> [-1.0, -2.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0]
+capacitance.has_dimensions  # >>> True
 capacitance.type  # >>> "Derived"
 
 ###############################################################################
