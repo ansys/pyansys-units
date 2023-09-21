@@ -20,7 +20,7 @@ class Quantity(float):
         Unit string representation of the quantity.
     quantity_map : dict, optional
         Quantity map representation of the quantity.
-    dimensions : list, Dimensions, optional
+    dimensions : Dimensions, optional
         Dimensions representation of the quantity.
     _type_hint : _QuantityType.temperature_difference, optional
         Unit type override for temperature difference.
@@ -37,7 +37,12 @@ class Quantity(float):
     """
 
     def __new__(
-        cls, value, units=None, quantity_map=None, dimensions=None, _type_hint=None
+        cls,
+        value,
+        units=None,
+        quantity_map=None,
+        dimensions: ansunits.Dimensions = None,
+        _type_hint=None,
     ):
         if (
             (units and quantity_map)
@@ -56,9 +61,7 @@ class Quantity(float):
             _unit = units
 
         if dimensions:
-            if not isinstance(dimensions, ansunits.Dimensions):
-                _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
-            _unit = ansunits.Unit(dimensions=_dimensions)
+            _unit = ansunits.Unit(dimensions=dimensions)
 
         if not isinstance(_unit, ansunits.Unit):
             _unit = ansunits.Unit(_unit)
@@ -69,7 +72,12 @@ class Quantity(float):
         return float.__new__(cls, _si_value)
 
     def __init__(
-        self, value, units=None, quantity_map=None, dimensions=None, _type_hint=None
+        self,
+        value,
+        units=None,
+        quantity_map=None,
+        dimensions: ansunits.Dimensions = None,
+        _type_hint=None,
     ):
         if (
             (units and quantity_map)
@@ -88,9 +96,7 @@ class Quantity(float):
             self._unit = units
 
         if dimensions:
-            if not isinstance(dimensions, ansunits.Dimensions):
-                _dimensions = ansunits.Dimensions(dimensions_container=dimensions)
-            self._unit = ansunits.Unit(dimensions=_dimensions)
+            self._unit = ansunits.Unit(dimensions=dimensions)
 
         if not isinstance(self._unit, ansunits.Unit):
             self._unit = ansunits.Unit(self._unit)
@@ -127,15 +133,9 @@ class Quantity(float):
         """
 
         # Cannot perform operations between quantities with incompatible dimensions
-        if isinstance(__value, Quantity):
-            temp_dim = [
-                x - y
-                for x, y in zip(self.dimensions.full_list, __value.dimensions.full_list)
-            ]
-            temp = temp_dim.pop(4) + temp_dim.pop(3)
-            temp_dim.insert(3, temp)
-            if not all([dim == 0.0 for dim in temp_dim]):
-                raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
+
+        if isinstance(__value, Quantity) and self.dimensions != __value.dimensions:
+            raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
         # Cannot perform operations on a non-dimensionless quantity
         if not isinstance(__value, Quantity) and (self.has_dimensions):
             raise QuantityError.INCOMPATIBLE_VALUE(__value)

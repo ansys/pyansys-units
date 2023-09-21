@@ -29,7 +29,7 @@ class Unit:
         units: str = None,
         config: dict = None,
         dimensions: ansunits.Dimensions = None,
-        unit_sys: str = None,
+        unit_sys: ansunits.UnitSystem = None,
     ):
         if units and dimensions:
             raise UnitError.EXCESSIVE_PARAMETERS()
@@ -65,7 +65,7 @@ class Unit:
     def _dim_to_units(
         self,
         dimensions: ansunits.Dimensions,
-        unit_sys: (ansunits.UnitSystem, list) = None,
+        unit_sys: ansunits.UnitSystem = None,
     ) -> str:
         """
         Convert a dimensions list into a unit string.
@@ -75,7 +75,7 @@ class Unit:
         dimensions : Dimensions object
             instance of Dimension class.
 
-        unit_sys : list, UnitSystem object, optional
+        unit_sys : UnitSystem object, optional
             Unit system for dimensions list.
             default is SI units
 
@@ -86,24 +86,19 @@ class Unit:
         """
         if not unit_sys:
             unit_sys = ansunits.UnitSystem(name="SI")
-        if isinstance(unit_sys, list):
-            unit_sys = ansunits.UnitSystem(base_units=unit_sys)
 
         base_units = unit_sys.base_units
-
         units = ""
-        for idx, dim in enumerate(dimensions.full_list):
-            if dim == 1:
+        for idx, value in dimensions.dimensions.items():
+            if value == 1:
                 units += f"{base_units[idx]} "
-            elif dim != 0.0:
-                dim = int(dim) if dim % 1 == 0 else dim
-                units += f"{base_units[idx]}^{dim} "
+            elif value != 0.0:
+                value = int(value) if value % 1 == 0 else value
+                units += f"{base_units[idx]}^{value} "
 
         return units.strip()
 
-    def _units_to_dim(
-        self, units: str, power: float = None, dimensions: list = None
-    ) -> ansunits.Dimensions:
+    def _units_to_dim(self, units: str, power: float = None, dimensions: dict = None):
         """
         Convert a unit string into a Dimensions instance.
 
@@ -111,30 +106,25 @@ class Unit:
         ----------
         units : str
             Unit string of quantity.
-        power : float, optional
-            Power of unit string.
         Returns
         -------
         dimensions list
         """
         power = power or 1.0
-        dimensions = dimensions or [0.0] * self.max_dim_len()
-
+        dimensions = dimensions or {}
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
             _, unit_term, unit_term_power = filter_unit_term(term)
 
-            unit_term_power *= power
-
             # retrieve data associated with fundamental unit
             if unit_term in ansunits._fundamental_units:
-                idx = (
-                    ansunits._dimension_order[
-                        ansunits._fundamental_units[unit_term]["type"]
-                    ]
-                    - 1
-                )
-                dimensions[idx] += unit_term_power
+                full_string = ansunits._fundamental_units[unit_term]["type"]
+                idx = full_string.lower().replace(" ", "_")
+
+                if ansunits.BaseDimensions[idx] in dimensions:
+                    dimensions[ansunits.BaseDimensions[idx]] += unit_term_power
+                else:
+                    dimensions[ansunits.BaseDimensions[idx]] = unit_term_power
 
             # Retrieve derived unit composition unit string and factor.
             if unit_term in ansunits._derived_units:

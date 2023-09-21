@@ -19,7 +19,11 @@ from ansys.units._constants import (  # noqa: F401
     _QuantityType,
     _unit_systems,
 )
-from ansys.units.dimensions import Dimensions, DimensionsError  # noqa: F401
+from ansys.units.dimensions import (  # noqa: F401
+    BaseDimensions,
+    Dimensions,
+    DimensionsError,
+)
 from ansys.units.map import QuantityMap, QuantityMapError  # noqa: F401
 from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
 from ansys.units.systems import UnitSystem, UnitSystemError  # noqa: F401

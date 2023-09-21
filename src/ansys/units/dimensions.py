@@ -1,5 +1,20 @@
 """Provides the ``Dimension`` class."""
-import ansys.units as ansunits
+from enum import Enum
+
+
+class BaseDimensions(Enum):
+    """Base dimensions."""
+
+    mass = 0
+    length = 1
+    time = 2
+    temperature = 3
+    temperature_difference = 4
+    angle = 5
+    chemical_amount = 6
+    light = 7
+    current = 8
+    solid_angle = 9
 
 
 class Dimensions:
@@ -16,68 +31,18 @@ class Dimensions:
     Dimensions instance.
     """
 
-    def __init__(self, dimensions_container: (dict[str, float], list[float]) = None):
-        self._mass = 0.0
-        self._length = 0.0
-        self._time = 0.0
-        self._temperature = 0.0
-        self._temperature_difference = 0.0
-        self._angle = 0.0
-        self._chemical_amount = 0.0
-        self._light = 0.0
-        self._current = 0.0
-        self._solid_angle = 0.0
-        if dimensions_container:
-            if len(dimensions_container) > Dimensions.max_dim_len():
-                raise DimensionsError.EXCESSIVE_DIMENSIONS(len(dimensions_container))
-
-            if isinstance(dimensions_container, dict):
-                for dim in dimensions_container:
-                    if dim in ansunits._dimension_order:
-                        private_dim = f"_{dim.lower().replace(' ','_')}"
-                        setattr(self, private_dim, dimensions_container[dim])
-                    else:
-                        raise DimensionsError.INCORRECT_DIMENSIONS()
-            else:
-                for idx, attr in enumerate(self.__dict__):
-                    if idx < len(dimensions_container):
-                        setattr(self, attr, dimensions_container[idx])
-
-    def as_dict(self, non_zero=False):
-        """
-        Dimensions dictionary.
-
-        Parameters
-        ----------
-        non_zero : bool, False
-        Removes items with zero value
-
-        Returns
-        -------
-        dictianry of dimensions
-        """
-        dictionary = self.__dict__
-        if non_zero:
-            dictionary = {x: y for x, y in dictionary.items() if y != 0}
-        return dictionary
+    def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = {}):
+        self._dimensions = dimensions_container.copy()
+        for x, y in dimensions_container.items():
+            if not isinstance(x, BaseDimensions):
+                raise DimensionsError.INCORRECT_DIMENSIONS()
+            if y == 0:
+                del self._dimensions[x]
 
     @property
-    def short_list(self):
-        """Dimensions list without trailing zero items."""
-        short_list = []
-        for idx, dim in enumerate(reversed(self.full_list)):
-            if dim != 0:
-                short_list = self.full_list[: -1 * idx]
-                break
-        return short_list
-
-    @property
-    def full_list(self):
-        """Dimensions list."""
-        dims = []
-        for attr in self.__dict__:
-            value = getattr(self, attr)
-            dims.append(value)
+    def dimensions(self):
+        """Dimensions as dictionary."""
+        dims = {x.value: y for x, y in self._dimensions.items()}
         return dims
 
     @staticmethod
@@ -86,23 +51,45 @@ class Dimensions:
         return 10
 
     def __str__(self):
-        return str(self.full_list)
+        dims = {x.name: y for x, y in self._dimensions.items()}
+        return str(dims)
 
     def __add__(self, other):
-        dim_list = []
-        for idx, dim in enumerate(self.full_list):
-            dim_list.append(dim + other.full_list[idx])
-        return Dimensions(dim_list)
+        results = self._dimensions.copy()
+        for dim, value in other._dimensions.items():
+            if dim in results:
+                results[dim] += value
+            else:
+                results[dim] = value
+        return Dimensions(results)
 
     def __sub__(self, other):
-        dim_list = []
-        for idx, dim in enumerate(self.full_list):
-            dim_list.append(dim - other.full_list[idx])
-        return Dimensions(dim_list)
+        results = self._dimensions.copy()
+        for dim, value in other._dimensions.items():
+            if dim in results:
+                results[dim] -= value
+            else:
+                results[dim] = -value
+        return Dimensions(results)
 
     def __mul__(self, __value):
-        new_dim = [i * __value for i in self.full_list]
-        return Dimensions(new_dim)
+        results = self._dimensions.copy()
+        for dim in self._dimensions:
+            results[dim] *= __value
+        return Dimensions(results)
+
+    def __eq__(self, other):
+        temp_dim = self - other
+        temp = BaseDimensions.temperature
+        temp_diff = BaseDimensions.temperature_difference
+        if temp in temp_dim._dimensions and temp_diff in temp_dim._dimensions:
+            if temp_dim._dimensions[temp] == -temp_dim._dimensions[temp_diff]:
+                del temp_dim._dimensions[temp_diff]
+                del temp_dim._dimensions[temp]
+        return not bool(temp_dim.dimensions)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class DimensionsError(ValueError):
@@ -112,15 +99,6 @@ class DimensionsError(ValueError):
         super().__init__(err)
 
     @classmethod
-    def EXCESSIVE_DIMENSIONS(cls, len):
-        """Return in case of excessive dimensions."""
-        return cls(
-            f"The `dimensions` argument must contain 10 values or less, currently there are {len}."
-        )
-
-    @classmethod
     def INCORRECT_DIMENSIONS(cls):
         """Return in case of dimensions not in dimension order."""
-        return cls(
-            f"The `dimensions` must only contain values from {ansunits._dimension_order}"
-        )
+        return cls(f"The `dimensions` must only contain values from 'BaseDimensions'")
