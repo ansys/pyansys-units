@@ -18,11 +18,6 @@ def test_derived_units():
     assert N._factor == 1
 
 
-def test_dimensions_list():
-    N = ansunits.Unit(dimensions=[1, 1, -2])
-    assert N.name == "kg m s^-2"
-
-
 def test_unitless():
     unit = ansunits.Unit()
     assert unit.name == ""
@@ -69,7 +64,7 @@ def test_unit_pow():
 
 def test_unit_sys_list():
     slug = ansunits.Unit(
-        dimensions=[1],
+        dimensions=ansunits.Dimensions([1]),
         unit_sys=[
             "slug",
             "ft",

@@ -121,7 +121,7 @@ def test_errors():
             base_units=[
                 "slug",
                 "slug",
-                "N",
+                "s",
                 "R",
                 "delta_R",
                 "radian",
