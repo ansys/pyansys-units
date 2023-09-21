@@ -13,7 +13,7 @@ class Unit:
     Config: dict
         dictionary of unit properties
     Dimensions: list
-        A list of length 9 to describe all base units.
+        A list of max length 10 to describe all base units.
     Unit System: str
         Define the unit system for base units of dimension,
         default is SI.
