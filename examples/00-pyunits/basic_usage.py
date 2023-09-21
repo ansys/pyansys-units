@@ -175,18 +175,18 @@ pas.units  # >>> "Pa s"
 
 # Custom units
 
-sys_units = ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
+sys_units = ["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
 sys = ansunits.UnitSystem(name="sys", base_units=sys_units)
 
 sys.name  # >>> "sys"
-sys.base_units  # >>> ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
+sys.base_units  # >>> ["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
 
 # Predefined unit systems
 
 cgs = ansunits.UnitSystem(unit_sys="CGS")
 
 cgs.name  # >>> "cgs"
-cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
+cgs.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
 
 ###############################################################################
 # Create a unit system independently
