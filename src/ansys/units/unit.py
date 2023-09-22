@@ -26,23 +26,20 @@ class Unit:
 
         if not config:
             config = self._get_config(self._name)
-        if "type" not in config:
-            config.update({"type": self._get_config(self._name)["type"]})
-        for key in config:
-            setattr(self, f"_{key}", config[key])
+        if config:
+            for key in config:
+                setattr(self, f"_{key}", config[key])
 
-        dimensions = ansunits.Dimensions(units=units)
-        self._dimensions = dimensions.dimensions
+        self._dimensions = ansunits.Dimensions(units=units)
 
     def _get_config(self, name: str) -> dict:
         if name in ansunits._fundamental_units:
             return ansunits._fundamental_units[name]
 
         if name in ansunits._derived_units:
-            type = {"type": ansunits._QuantityType.derived}
-            return dict(**type, **ansunits._derived_units[name])
+            return ansunits._derived_units[name]
 
-        return {"type": ansunits._QuantityType.composite}
+        return
 
     @property
     def name(self):
