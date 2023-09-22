@@ -76,7 +76,6 @@ torque = ansunits.Quantity(value=5, quantity_map=tor_map)
 # 4. si_units : str
 # 5. dimensions : list
 # 6. has_dimensions : bool
-# 7. type : str
 
 cap_map = {"Capacitance": 1}
 capacitance = ansunits.Quantity(value=50, quantity_map=cap_map)
@@ -87,7 +86,6 @@ capacitance.si_value  # >>> 50.0
 capacitance.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
 capacitance.dimensions.dimensions  # >>> {0: -1.0, 1: -2.0, 2: 4.0, 8: 2.0}
 bool(capacitance.dimensions.dimensions)  # >>> True
-capacitance.type  # >>> "Derived"
 
 ###############################################################################
 # Perform arithmetic operations
