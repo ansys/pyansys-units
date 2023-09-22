@@ -38,11 +38,13 @@ class Unit:
             self._name = units
             dimensions = self._units_to_dim(units=units)
             self._dimensions = ansunits.Dimensions(dimensions)
+            if not self._dimensions.dimensions:
+                self._name = ""
         elif dimensions:
             self._dimensions = dimensions
             self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
         else:
-            self._name = units or ""
+            self._name = ""
             self._dimensions = ansunits.Dimensions()
 
         if not config:

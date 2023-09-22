@@ -97,13 +97,16 @@ class Quantity(float):
         if not isinstance(self._unit, ansunits.Unit):
             self._unit = ansunits.Unit(self._unit)
 
+        if (
+            (self._unit.name in ["K", "R"] and value < 0)
+            or (self._unit.name == "C" and value < -273.15)
+            or (self._unit.name == "F" and value < -459.67)
+        ):
+            self._unit = ansunits.Unit(f"delta_{self._unit.name}")
+
         si_units, si_multiplier, si_offset = si_data(units=self._unit.name)
 
         self._si_units = si_units
-
-        # Well, this is going to have to be a hack, but we
-        # need to fix the wider design to do this properly
-        # self._fix_temperature_units()
 
         self._si_value = (self.value + si_offset) * si_multiplier
 
@@ -138,12 +141,12 @@ class Quantity(float):
         delta_temp = ["delta_K", "delta_C", "delta_F", "delta_R"]
         if self.units in temp and units in temp:
             return delta_temp[temp.index(self.units)]
-        if self.units in delta_temp and units in temp:
+        elif self.units in delta_temp and units in temp:
             return temp[delta_temp.index(self.units)]
-        if self.units in temp and units in delta_temp:
+        elif self.units in [temp, delta_temp] and units in delta_temp:
             return self.units
-        if self.units in delta_temp and units in delta_temp:
-            return self.units
+        else:
+            return None
 
     @property
     def value(self):
@@ -174,7 +177,7 @@ class Quantity(float):
         """Dimensions."""
         return self._unit.dimensions
 
-    def to(self, to_units: str | ansunits.Unit) -> "Quantity":
+    def to(self, to_units: (str)) -> "Quantity":
         """
         Perform quantity conversions.
 
@@ -229,8 +232,7 @@ class Quantity(float):
             return self * base_quantity
 
         if isinstance(__value, (float, int)):
-            new_units = self._temp_precheck() or self.si_units
-            return Quantity(value=self.si_value * __value, units=new_units)
+            return Quantity(value=self.si_value * __value, units=self._unit)
 
     def __rmul__(self, __value):
         return self.__mul__(__value)
@@ -249,8 +251,7 @@ class Quantity(float):
             return self / base_quantity
 
         if isinstance(__value, (float, int)):
-            new_units = self.si_units
-            return Quantity(value=self.si_value / __value, units=new_units)
+            return Quantity(value=self.si_value / __value, units=self._unit)
 
     def __rtruediv__(self, __value):
         return Quantity(__value, "") / self
@@ -261,7 +262,7 @@ class Quantity(float):
         new_value = float(self) + float(__value)
         new_quantity = Quantity(value=new_value, units=new_units)
         preferred_units = self._temp_precheck(__value.units)
-        if preferred_units != new_units:
+        if preferred_units and preferred_units != new_units:
             return new_quantity.to(preferred_units)
         return new_quantity
 
@@ -274,7 +275,7 @@ class Quantity(float):
         new_value = float(self) - float(__value)
         new_quantity = Quantity(value=new_value, units=new_units)
         preferred_units = self._temp_precheck(__value.units)
-        if preferred_units != new_units:
+        if preferred_units and preferred_units != new_units:
             return new_quantity.to(preferred_units)
         return new_quantity
 
