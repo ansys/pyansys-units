@@ -12,9 +12,9 @@ class UnitRegistry:
 
     Parameters
     ----------
-    Config: filename.yaml
+    config: filename.yaml, optional
         Custom units set up following the 'cfg.yaml' format.
-    Other: Dict
+    other: Dict, optional
         Dictionary for extra units.
 
     Returns

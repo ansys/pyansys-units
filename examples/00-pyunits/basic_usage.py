@@ -43,13 +43,15 @@ torque = ansunits.Quantity(value=5, units="N m")
 
 # Dimensions
 
-vol_dims = [0, 3]
+dims = ansunits.BaseDimensions
+
+vol_dims = ansunits.Dimensions({dims.length: 3})
 volume = ansunits.Quantity(value=1, dimensions=vol_dims)
 
-acc_dims = [0, 1, -2]
+acc_dims = ansunits.Dimensions({dims.length: 1, dims.time: -2})
 acceleration = ansunits.Quantity(value=3, dimensions=acc_dims)
 
-tor_dims = [1, 2, -2]
+tor_dims = ansunits.Dimensions({dims.mass: 1, dims.length: 2, dims.time: -2})
 torque = ansunits.Quantity(value=5, dimensions=tor_dims)
 
 # Quantity map
@@ -73,7 +75,7 @@ torque = ansunits.Quantity(value=5, quantity_map=tor_map)
 # 3. si_value : float | int
 # 4. si_units : str
 # 5. dimensions : list
-# 6. is_dimensionless : bool
+# 6. has_dimensions : bool
 # 7. type : str
 
 cap_map = {"Capacitance": 1}
@@ -83,8 +85,8 @@ capacitance.value  # >>> 50.0
 capacitance.units  # >>> "farad"
 capacitance.si_value  # >>> 50.0
 capacitance.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
-capacitance.dimensions  # >>> [-1.0, -2.0, 4.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0]
-capacitance.is_dimensionless  # >>> False
+capacitance.dimensions.dimensions  # >>> {0: -1.0, 1: -2.0, 2: 4.0, 8: 2.0}
+bool(capacitance.dimensions.dimensions)  # >>> True
 capacitance.type  # >>> "Derived"
 
 ###############################################################################
@@ -175,18 +177,18 @@ pas.units  # >>> "Pa s"
 
 # Custom units
 
-sys_units = ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
+sys_units = ["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
 sys = ansunits.UnitSystem(name="sys", base_units=sys_units)
 
 sys.name  # >>> "sys"
-sys.base_units  # >>> ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
+sys.base_units  # >>> ["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
 
 # Predefined unit systems
 
 cgs = ansunits.UnitSystem(unit_sys="CGS")
 
 cgs.name  # >>> "cgs"
-cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
+cgs.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
 
 ###############################################################################
 # Create a unit system independently

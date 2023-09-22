@@ -53,4 +53,12 @@ derived_units:
     assert ur.kg.name == "kg"
     assert ur.N._composition == "kg m s^-2"
     assert ur.Pa._factor == 1
-    assert ur.__str__() == "kg, g, N, Pa, "
+    assert str(ur) == "kg, g, N, Pa, "
+
+
+def test_default_units():
+    ur = ansunits.UnitRegistry(
+        config=None, other={"kg": {"type": "Mass", "factor": 1, "offset": 0}}
+    )
+    assert str(ur) == "kg, "
+    assert ur.kg._factor == 1

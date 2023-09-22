@@ -31,4 +31,4 @@ def test_errors():
 
 def test_error_messages():
     e1 = ansunits.QuantityMapError.UNKNOWN_MAP_ITEM("Risk")
-    assert e1.__str__() == "`Risk` is not a valid quantity map item."
+    assert str(e1) == "`Risk` is not a valid quantity map item."

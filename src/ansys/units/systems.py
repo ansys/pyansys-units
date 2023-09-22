@@ -8,11 +8,11 @@ class UnitSystem:
 
     Parameters
     ----------
-    name: str, None
+    name: str, optional
         Custom name associated with a user-defined unit system.
-    base_units: list, None
+    base_units: list, optional
         Custom units associated with a user-defined unit system.
-    unit_sys: str, None
+    unit_sys: str, optional
         Predefined unit system.
 
     Methods
@@ -73,6 +73,7 @@ class UnitSystem:
         Quantity
             Quantity object containing the desired unit system conversion.
         """
+        new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
         new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
 
         return quantity.to(to_units=new_unit)
@@ -140,7 +141,12 @@ class UnitSystem:
     @property
     def solid_angle(self):
         """Solid Angle unit of the unit system."""
-        return self._solid_angle
+        return getattr(self, "_solid angle")
+
+    @staticmethod
+    def max_dim_len():
+        """Maximum number of elements within a dimensions list."""
+        return 10
 
 
 class UnitSystemError(ValueError):
@@ -159,7 +165,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def BASE_UNITS_LENGTH(cls, len):
         return cls(
-            f"The `base_units` argument must contain 9 units, currently there are {len}."
+            f"The `base_units` argument must contain 10 units, currently there are {len}."
         )
 
     @classmethod

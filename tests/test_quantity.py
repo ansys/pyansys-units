@@ -44,17 +44,28 @@ def test_value():
 
 def test_dimensions_1():
     v = ansunits.Quantity(1.0, "ft")
-    assert v.dimensions == [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    assert v.dimensions.dimensions == {1: 1.0}
 
 
 def test_dimensions_2():
     v = ansunits.Quantity(1.0, "kPa")
-    assert v.dimensions == [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    assert v.dimensions.dimensions == {0: 1.0, 1: -1, 2: -2}
 
 
 def test_dimensions_3():
-    v = ansunits.Quantity(1.0, "slug ft s R radian slugmol cd A sr")
-    assert v.dimensions == [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    v = ansunits.Quantity(1.0, "slug ft s R delta_K radian slugmol cd A sr")
+    assert v.dimensions.dimensions == {
+        0: 1.0,
+        1: 1.0,
+        2: 1.0,
+        3: 1.0,
+        4: 1.0,
+        5: 1.0,
+        6: 1.0,
+        7: 1.0,
+        8: 1.0,
+        9: 1.0,
+    }
 
 
 def test_to_1():
@@ -824,36 +835,43 @@ def test_temp_addition():
 
 
 def test_unit_from_dimensions_1():
+    dims = ansunits.BaseDimensions
     p = ansunits.Quantity(
-        10.5, dimensions=[1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        10.5,
+        dimensions=ansunits.Dimensions(
+            {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0}
+        ),
     )
     assert p.units == "kg m^-1 s^-2"
 
 
 def test_unit_from_dimensions_2():
-    l = ansunits.Quantity(
-        10.5, dimensions=[0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    )
+    dims = ansunits.BaseDimensions
+    l = ansunits.Quantity(10.5, dimensions=ansunits.Dimensions({dims.length: 1.0}))
     assert l.units == "m"
 
 
 def test_unit_from_dimensions_3():
-    x = ansunits.Quantity(
-        10.5, dimensions=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    )
+    x = ansunits.Quantity(10.5, dimensions=ansunits.Dimensions())
     assert x.units == ""
 
 
 def test_unit_from_dimensions_4():
-    test = ansunits.Quantity(10.5, dimensions=[0, 1, -1])
+    dims = ansunits.BaseDimensions
+    test = ansunits.Quantity(
+        10.5, dimensions=ansunits.Dimensions({dims.length: 1.0, dims.time: -1})
+    )
     assert test.units == "m s^-1"
-    assert test.dimensions == [0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    assert test.dimensions.dimensions == {1: 1.0, 2: -1.0}
 
 
 def test_unit_from_dimensions_5():
-    test = ansunits.Quantity(10.5, dimensions=[0, 1.0, -2.0])
+    dims = ansunits.BaseDimensions
+    test = ansunits.Quantity(
+        10.5, dimensions=ansunits.Dimensions({dims.length: 1.0, dims.time: -2})
+    )
     assert test.units == "m s^-2"
-    assert test.dimensions == [0.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    assert test.dimensions.dimensions == {1: 1.0, 2: -2.0}
 
 
 def test_quantity_map_1():
@@ -900,24 +918,25 @@ def test_quantity_map_3():
 def testing_dimensions():
     print(f"{'*' * 25} {testing_dimensions.__name__} {'*' * 25}")
 
-    def dim_test(units, dim_list):
+    def dim_test(units, dim_dict):
         qt = ansunits.Quantity(10, units)
         print(f"{units} : {qt.dimensions}")
-        assert qt.dimensions == dim_list
+        assert qt.dimensions.dimensions == dim_dict
 
-    dim_test("m", [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("m s^-1", [0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("kg m s^-2 m^-2", [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("Pa", [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("kPa", [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("Pa^2", [2.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("daPa", [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("MPa", [1.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("kPa^2", [2.0, -2.0, -4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("slug in^-1 s^-1", [1.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("radian", [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
-    dim_test("ohm", [1.0, 2.0, -3.0, 0.0, 0.0, 0.0, 0.0, -2.0, 0.0])
-    dim_test("lb cm s^-2", [1.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    dim_test("m", {1: 1.0})
+    {0: 1.0, 1: 2.0, 2: -3.0, 3: 0.0, 4: 0.0, 5: 0.0, 6: 0.0, 7: 0.0, 8: -2.0, 9: 0.0}
+    dim_test("m s^-1", {1: 1.0, 2: -1.0})
+    dim_test("kg m s^-2 m^-2", {0: 1.0, 1: -1.0, 2: -2.0})
+    dim_test("Pa", {0: 1.0, 1: -1.0, 2: -2.0})
+    dim_test("kPa", {0: 1.0, 1: -1.0, 2: -2.0})
+    dim_test("Pa^2", {0: 2.0, 1: -2.0, 2: -4.0})
+    dim_test("daPa", {0: 1.0, 1: -1.0, 2: -2.0})
+    dim_test("MPa", {0: 1.0, 1: -1.0, 2: -2.0})
+    dim_test("kPa^2", {0: 2.0, 1: -2.0, 2: -4.0})
+    dim_test("slug in^-1 s^-1", {0: 1.0, 1: -1.0, 2: -1.0})
+    dim_test("radian", {5: 1.0})
+    dim_test("ohm", {0: 1.0, 1: 2.0, 2: -3.0, 8: -2.0})
+    dim_test("lb cm s^-2", {0: 1.0, 1: 1.0, 2: -2.0})
     print("-" * 75)
 
 
@@ -1014,25 +1033,29 @@ def testing_arithmetic_operators():
 
 
 def test_errors():
+    ansunits.BaseDimensions.mass
     with pytest.raises(ansunits.QuantityError):
         e1 = ansunits.Quantity(
-            value=10, units="farad", dimensions=[0, 1], quantity_map={"Velocity": 3}
+            value=10,
+            units="farad",
+            dimensions=ansunits.Dimensions({ansunits.BaseDimensions.mass: 1}),
+            quantity_map={"Velocity": 3},
         )
 
 
 def test_error_messages():
     e1 = ansunits.QuantityError.EXCESSIVE_PARAMETERS()
     assert (
-        e1.__str__()
+        str(e1)
         == "Quantity only accepts one of the following parameters: \
             (units) or (quantity_map) or (dimensions)."
     )
 
     e2 = ansunits.QuantityError.INCOMPATIBLE_DIMENSIONS("mm", "K")
-    assert e2.__str__() == "`mm` and `K` have incompatible dimensions."
+    assert str(e2) == "`mm` and `K` have incompatible dimensions."
 
     e3 = ansunits.QuantityError.INCOMPATIBLE_VALUE("radian")
-    assert e3.__str__() == "`radian` is incompatible with the current quantity object."
+    assert str(e3) == "`radian` is incompatible with the current quantity object."
 
 
 def test_instantiate_quantity_with_unrecognized_units_causes_exception():
