@@ -23,8 +23,8 @@ class Dimensions:
 
     Parameters
     ----------
-    dimensions_container : dictionary, list, optional
-        Dictionary of dimensions from the dimensions_order or list.
+    dimensions_container : dictionary, optional
+        Dictionary of dimensions from the 'BaseDimensions'.
 
     Returns
     -------
