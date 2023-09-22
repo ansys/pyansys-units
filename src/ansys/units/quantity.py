@@ -40,7 +40,6 @@ class Quantity(float):
         units=None,
         quantity_map=None,
         dimensions: ansunits.Dimensions = None,
-        _type_hint=None,
     ):
         if (
             (units and quantity_map)
@@ -75,7 +74,6 @@ class Quantity(float):
         units=None,
         quantity_map=None,
         dimensions: ansunits.Dimensions = None,
-        _type_hint=None,
     ):
         if (
             (units and quantity_map)
@@ -176,7 +174,7 @@ class Quantity(float):
         """Dimensions."""
         return self._unit.dimensions
 
-    def to(self, to_units: [str, any]) -> "Quantity":
+    def to(self, to_units: str | ansunits.Unit) -> "Quantity":
         """
         Perform quantity conversions.
 
@@ -198,9 +196,7 @@ class Quantity(float):
 
         # Retrieve all SI required SI data and perform conversion
         _, si_multiplier, si_offset = si_data(to_units)
-        print(self.si_value)
         new_value = (self.si_value / si_multiplier) - si_offset
-        print(new_value)
 
         new_obj = Quantity(value=new_value, units=to_units)
 
