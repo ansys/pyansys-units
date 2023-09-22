@@ -43,15 +43,12 @@ class Dimensions:
     def dimensions(self):
         """Dimensions as dictionary."""
         dims = {x.value: y for x, y in self._dimensions.items()}
-        return dims
-
-    @staticmethod
-    def max_dim_len():
-        """Maximum number of elements within a dimensions list."""
-        return 10
+        return dict(dims)
 
     def __str__(self):
         dims = {x.name: y for x, y in self._dimensions.items()}
+        if not dims:
+            dims = ""
         return str(dims)
 
     def __add__(self, other):
@@ -101,4 +98,4 @@ class DimensionsError(ValueError):
     @classmethod
     def INCORRECT_DIMENSIONS(cls):
         """Return in case of dimensions not in dimension order."""
-        return cls(f"The `dimensions` must only contain values from 'BaseDimensions'")
+        return cls(f"The `dimensions_container` key must be a 'BaseDimensions' object")

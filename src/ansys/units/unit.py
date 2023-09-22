@@ -115,7 +115,7 @@ class Unit:
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
             _, unit_term, unit_term_power = filter_unit_term(term)
-
+            unit_term_power *= power
             # retrieve data associated with fundamental unit
             if unit_term in ansunits._fundamental_units:
                 full_string = ansunits._fundamental_units[unit_term]["type"]
@@ -129,6 +129,7 @@ class Unit:
             # Retrieve derived unit composition unit string and factor.
             if unit_term in ansunits._derived_units:
                 # Recursively parse composition unit string
+
                 dimensions = self._units_to_dim(
                     units=ansunits._derived_units[unit_term]["composition"],
                     power=unit_term_power,
@@ -148,11 +149,6 @@ class Unit:
     @property
     def dimensions(self):
         return self._dimensions
-
-    @staticmethod
-    def max_dim_len():
-        """Maximum number of elements within a dimensions list."""
-        return 10
 
     def __str__(self):
         returned_string = ""

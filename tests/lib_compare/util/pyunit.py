@@ -5,7 +5,7 @@ from typing import Dict
 #
 
 
-class TestDimension(list):
+class TestDimension(dict):
     MASS = 0
     LENGTH = 1
     TIME = 2
@@ -18,7 +18,7 @@ class TestDimension(list):
     SOLID_ANGLE = 9
 
     def __init__(self, d: Dict[int, float]):
-        dims = 10 * [0.0]
+        dims = {}
         for dim, exponent in d.items():
             dims[dim] = exponent
         super().__init__(dims)
