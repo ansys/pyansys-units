@@ -82,7 +82,7 @@ cap_map = {"Capacitance": 1}
 capacitance = ansunits.Quantity(value=50, quantity_map=cap_map)
 
 capacitance.value  # >>> 50.0
-capacitance.units  # >>> "farad"
+capacitance.units  # >>> "kg^-1 m^-2 s^4 A^2"
 capacitance.si_value  # >>> 50.0
 capacitance.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
 capacitance.dimensions  # >>> {'MASS': -1.0, 'LENGTH': -2.0, 'TIME': 4.0, 'CURRENT': 2.0}
