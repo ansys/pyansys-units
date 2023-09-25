@@ -32,8 +32,7 @@ class Dimensions:
     """
 
     def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
-        dimensions_container = dimensions_container or {}
-        self._dimensions = dimensions_container.copy()
+        self._dimensions = dimensions_container.copy() if dimensions_container else {}
         for x, y in dimensions_container.items():
             if not isinstance(x, BaseDimensions):
                 raise DimensionsError.INCORRECT_DIMENSIONS()
