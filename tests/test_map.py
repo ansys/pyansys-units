@@ -12,7 +12,7 @@ def test_quantity_map():
         "Epsilon Flux Coefficient": 2,
     }
     qm1 = ansunits.QuantityMap(quantity_map=qm1_map)
-    assert qm1.units == "kg^3 m^-1.5 s^-6.5 A^3 cd"
+    assert qm1.units.name == "kg^3 m^-1.5 s^-6.5 A^3 cd"
 
     qm2_map = {
         "Temperature": 1,
@@ -20,7 +20,7 @@ def test_quantity_map():
         "Volume": 1,
     }
     qm2 = ansunits.QuantityMap(quantity_map=qm2_map)
-    assert qm2.units == "K Pa m^3"
+    assert qm2.units.name == "K kg m^2 s^-2"
 
 
 def test_errors():

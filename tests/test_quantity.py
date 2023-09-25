@@ -814,7 +814,7 @@ def test_unit_from_dimensions_1():
     p = ansunits.Quantity(
         10.5,
         dimensions=ansunits.Dimensions(
-            {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0}
+            {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
         ),
     )
     assert p.units == "kg m^-1 s^-2"
@@ -822,7 +822,7 @@ def test_unit_from_dimensions_1():
 
 def test_unit_from_dimensions_2():
     dims = ansunits.BaseDimensions
-    l = ansunits.Quantity(10.5, dimensions=ansunits.Dimensions({dims.length: 1.0}))
+    l = ansunits.Quantity(10.5, dimensions=ansunits.Dimensions({dims.LENGTH: 1.0}))
     assert l.units == "m"
 
 
@@ -834,7 +834,7 @@ def test_unit_from_dimensions_3():
 def test_unit_from_dimensions_4():
     dims = ansunits.BaseDimensions
     test = ansunits.Quantity(
-        10.5, dimensions=ansunits.Dimensions({dims.length: 1.0, dims.time: -1})
+        10.5, dimensions=ansunits.Dimensions({dims.LENGTH: 1.0, dims.TIME: -1})
     )
     assert test.units == "m s^-1"
     assert test.dimensions == ansunits.Dimensions({dims.length: 1.0, dims.time: -1})
@@ -843,7 +843,7 @@ def test_unit_from_dimensions_4():
 def test_unit_from_dimensions_5():
     dims = ansunits.BaseDimensions
     test = ansunits.Quantity(
-        10.5, dimensions=ansunits.Dimensions({dims.length: 1.0, dims.time: -2})
+        10.5, dimensions=ansunits.Dimensions({dims.LENGTH: 1.0, dims.TIME: -2})
     )
     assert test.units == "m s^-2"
     assert test.dimensions == ansunits.Dimensions({dims.length: 1.0, dims.time: -2})
@@ -887,7 +887,7 @@ def test_quantity_map_3():
 
     api_test = ansunits.Quantity(10.5, quantity_map=quantity_map_from_settings_API)
     assert api_test.value == 10.5
-    assert api_test.units == "K Pa m^3"
+    assert api_test.units == "K kg m^2 s^-2"
 
 
 def testing_dimensions():
@@ -1010,12 +1010,12 @@ def testing_arithmetic_operators():
 
 
 def test_errors():
-    ansunits.BaseDimensions.mass
+    dims = ansunits.BaseDimensions
     with pytest.raises(ansunits.QuantityError):
         e1 = ansunits.Quantity(
             value=10,
             units="farad",
-            dimensions=ansunits.Dimensions({ansunits.BaseDimensions.mass: 1}),
+            dimensions=ansunits.Dimensions({dims.MASS: 1}),
             quantity_map={"Velocity": 3},
         )
 

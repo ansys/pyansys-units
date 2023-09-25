@@ -32,7 +32,7 @@ class UnitSystem:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 
         if base_units:
-            if len(base_units) != self.max_dim_len():
+            if len(base_units) != len(ansunits.BaseDimensions):
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
             self._name = name
@@ -144,11 +144,6 @@ class UnitSystem:
     def solid_angle(self):
         """Solid Angle unit of the unit system."""
         return getattr(self, "_solid angle")
-
-    @staticmethod
-    def max_dim_len():
-        """Maximum number of elements within a dimensions list."""
-        return 10
 
 
 class UnitSystemError(ValueError):

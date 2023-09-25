@@ -125,7 +125,7 @@ class Quantity(float):
             raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
         # Cannot perform operations on a non-dimensionless quantity
 
-        if not isinstance(__value, Quantity) and (self.dimensions.dimensions):
+        if not isinstance(__value, Quantity) and not self.is_dimensionless:
             raise QuantityError.INCOMPATIBLE_VALUE(__value)
 
     def _temp_precheck(self, units) -> Optional[str]:
@@ -177,7 +177,12 @@ class Quantity(float):
         """Dimensions."""
         return self._unit.dimensions
 
-    def to(self, to_units: (str)) -> "Quantity":
+    @property
+    def is_dimensionless(self):
+        """Dimensions."""
+        return not bool(self._unit.dimensions.dimensions)
+
+    def to(self, to_units: [str, any]) -> "Quantity":
         """
         Perform quantity conversions.
 
