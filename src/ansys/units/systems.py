@@ -71,7 +71,7 @@ class UnitSystem:
         Returns
         -------
         Quantity
-            Quantity object containing the desired unit system conversion.
+            Quantity object converted to the desired unit system.
         """
         new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
         new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
@@ -141,7 +141,7 @@ class UnitSystem:
     @property
     def solid_angle(self):
         """Solid Angle unit of the unit system."""
-        return getattr(self, "_solid angle")
+        return self._solid_angle
 
     @staticmethod
     def max_dim_len():
