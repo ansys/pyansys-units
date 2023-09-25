@@ -74,7 +74,6 @@ class UnitSystem:
             Quantity object converted to the desired unit system.
         """
         new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
-        new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
 
         return quantity.to(to_units=new_unit)
 
