@@ -53,10 +53,10 @@ class UnitSystem:
             if unit.name not in ansunits._fundamental_units:
                 raise UnitSystemError.NOT_FUNDAMENTAL(unit)
 
-            if hasattr(self, f"_{unit.type.lower().replace(' ','_')}"):
+            if hasattr(self, f"_{unit._type.lower().replace(' ','_')}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit.type.lower().replace(' ','_')}", unit)
+            setattr(self, f"_{unit._type.lower().replace(' ','_')}", unit)
             print(self.__dict__)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:

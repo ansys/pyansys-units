@@ -37,6 +37,8 @@ class Unit:
             self._dimensions = ansunits.Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise UnitError.INCONSISTENT_DIMENSIONS()
+            if not self._dimensions.dimensions:
+                self._name = ""
         elif dimensions:
             self._dimensions = dimensions
             self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)

@@ -63,9 +63,9 @@ def test_unit_pow():
 
 
 def test_unit_sys_list():
-    dim1 = ansunits.BaseDimensions.MASS
+    dims = ansunits.BaseDimensions
     slug = ansunits.Unit(
-        dimensions=ansunits.Dimensions({dims.mass: 1}),
+        dimensions=ansunits.Dimensions({dims.MASS: 1}),
         unit_sys=ansunits.UnitSystem(
             name="sys",
             base_units=[
@@ -83,7 +83,7 @@ def test_unit_sys_list():
         ),
     )
     assert slug.name == "slug"
-    assert slug.dimensions == ansunits.Dimensions({dims.mass: 1})
+    assert slug.dimensions == ansunits.Dimensions({dims.MASS: 1})
 
 
 def test_excessive_parameters():
