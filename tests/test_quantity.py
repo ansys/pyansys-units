@@ -912,7 +912,7 @@ def test_quantity_map_3():
 
     api_test = ansunits.Quantity(10.5, quantity_map=quantity_map_from_settings_API)
     assert api_test.value == 10.5
-    assert api_test.units == "K Pa m^3"
+    assert api_test.units == "K kg m^2 s^-2"
 
 
 def testing_dimensions():
