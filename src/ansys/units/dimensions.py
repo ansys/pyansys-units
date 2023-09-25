@@ -31,7 +31,9 @@ class Dimensions:
     Dimensions instance.
     """
 
-    def __init__(self, dimensions_container: Optional[Dict[BaseDimensions : int | float]] = None):
+    def __init__(
+        self, dimensions_container: Optional[Dict[BaseDimensions : int | float]] = None
+    ):
         self._dimensions = dimensions_container.copy() if dimensions_container else {}
         for x, y in dimensions_container.items():
             if not isinstance(x, BaseDimensions):
