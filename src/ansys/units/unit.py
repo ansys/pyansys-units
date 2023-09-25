@@ -31,36 +31,33 @@ class Unit:
         dimensions: ansunits.Dimensions = None,
         unit_sys: ansunits.UnitSystem = None,
     ):
-        if units and dimensions:
-            raise UnitError.EXCESSIVE_PARAMETERS()
-
         if units:
             self._name = units
-            dimensions = self._units_to_dim(units=units)
-            self._dimensions = ansunits.Dimensions(dimensions)
+            _dimensions = self._units_to_dim(units=units)
+            self._dimensions = ansunits.Dimensions(_dimensions)
+            if dimensions and self._dimensions != dimensions:
+                raise UnitError.INCONSISTENT_DIMENSIONS()
         elif dimensions:
             self._dimensions = dimensions
             self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
         else:
-            self._name = units or ""
+            self._name = ""
             self._dimensions = ansunits.Dimensions()
 
         if not config:
             config = self._get_config(self._name)
-        if "type" not in config:
-            config.update({"type": self._get_config(self._name)["type"]})
-        for key in config:
-            setattr(self, f"_{key}", config[key])
+        if config:
+            for key in config:
+                setattr(self, f"_{key}", config[key])
 
     def _get_config(self, name: str) -> dict:
         if name in ansunits._fundamental_units:
             return ansunits._fundamental_units[name]
 
         if name in ansunits._derived_units:
-            type = {"type": ansunits._QuantityType.derived}
-            return dict(**type, **ansunits._derived_units[name])
+            return ansunits._derived_units[name]
 
-        return {"type": ansunits._QuantityType.composite}
+        return
 
     def _dim_to_units(
         self,
@@ -119,7 +116,7 @@ class Unit:
             # retrieve data associated with fundamental unit
             if unit_term in ansunits._fundamental_units:
                 full_string = ansunits._fundamental_units[unit_term]["type"]
-                idx = full_string.lower().replace(" ", "_")
+                idx = full_string.upper().replace(" ", "_")
 
                 if ansunits.BaseDimensions[idx] in dimensions:
                     dimensions[ansunits.BaseDimensions[idx]] += unit_term_power
@@ -143,10 +140,6 @@ class Unit:
         return self._name
 
     @property
-    def type(self):
-        return self._type
-
-    @property
     def dimensions(self):
         return self._dimensions
 
@@ -159,7 +152,7 @@ class Unit:
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
-            new_dimensions = self.dimensions + __value.dimensions
+            new_dimensions = self.dimensions * __value.dimensions
             return Unit(dimensions=new_dimensions)
 
         if isinstance(__value, (float, int)):
@@ -170,11 +163,11 @@ class Unit:
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):
-            new_dimensions = self.dimensions - __value.dimensions
+            new_dimensions = self.dimensions / __value.dimensions
             return Unit(dimensions=new_dimensions)
 
     def __pow__(self, __value):
-        new_dimensions = self.dimensions * __value
+        new_dimensions = self.dimensions**__value
         return Unit(dimensions=new_dimensions)
 
 
@@ -185,8 +178,8 @@ class UnitError(ValueError):
         super().__init__(err)
 
     @classmethod
-    def EXCESSIVE_PARAMETERS(cls):
+    def INCONSISTENT_DIMENSIONS(
+        cls,
+    ):
         """Return in case of excessive parameters."""
-        return cls(
-            "Unit only accepts 1 of the following parameters: (units) or (dimensions)."
-        )
+        return cls("Units dimensions do not match given dimensions.")

@@ -6,7 +6,7 @@ import ansys.units as ansunits
 def test_fundamental_units():
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
-    assert kg.type == "Mass"
+    assert kg._type == "Mass"
     assert kg._factor == 1
     assert kg._offset == 0
 
@@ -22,13 +22,13 @@ def test_unitless():
     unit = ansunits.Unit()
     assert unit.name == ""
 
-    assert unit.dimensions.dimensions == {}
+    assert unit.dimensions == ansunits.Dimensions()
 
 
 def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C
-_dimensions: {'temperature': 1.0}
+_dimensions: {'TEMPERATURE': 1.0}
 _type: Temperature
 _factor: 1
 _offset: 273.15
@@ -63,9 +63,9 @@ def test_unit_pow():
 
 
 def test_unit_sys_list():
-    dim1 = ansunits.BaseDimensions.mass
+    dim1 = ansunits.BaseDimensions.MASS
     slug = ansunits.Unit(
-        dimensions=ansunits.Dimensions({dim1: 1}),
+        dimensions=ansunits.Dimensions({dims.mass: 1}),
         unit_sys=ansunits.UnitSystem(
             name="sys",
             base_units=[
@@ -83,9 +83,10 @@ def test_unit_sys_list():
         ),
     )
     assert slug.name == "slug"
-    assert slug.dimensions.dimensions == {0: 1}
+    assert slug.dimensions == ansunits.Dimensions({dims.mass: 1})
 
 
 def test_excessive_parameters():
+    dims = ansunits.BaseDimensions
     with pytest.raises(ansunits.UnitError):
-        C = ansunits.Unit("kg", dimensions=[1])
+        C = ansunits.Unit("kg", dimensions=ansunits.Dimensions({dims.LENGTH: 1}))

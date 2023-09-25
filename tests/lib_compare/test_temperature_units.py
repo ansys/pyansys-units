@@ -36,15 +36,15 @@ def test_ansunits_distinguishes_temperature_from_difference():
     from ansys.units.quantity import Quantity
 
     t1 = Quantity(150.0, "C")
-    assert t1.type == "Temperature"
+    assert str(t1.dimensions) == "{'temperature': 1.0}"
     t2 = Quantity(100.0, "C")
-    assert t2.type == "Temperature"
+    assert str(t2.dimensions) == "{'temperature': 1.0}"
     td1 = t1 - t2
-    assert td1.type == "Temperature Difference"
+    assert str(td1.dimensions) == "{'temperature_difference': 1.0}"
     t3 = Quantity(1.0, "K")
     t4 = Quantity(2.0, "K")
     td2 = t4 - t3
-    assert td2.type == "Temperature Difference"
+    assert str(td2.dimensions) == "{'temperature_difference': 1.0}"
 
 
 # These next tests are completely debatable.
@@ -54,38 +54,24 @@ def test_ansunits_distinguishes_temperature_from_difference():
 # OTOH if you start asserting that -1 K has to be a temperature difference, you
 # can run into a bunch of other issues.
 def test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value():
-    from util import assert_rightly_but_fail, assert_wrongly
-
     from ansys.units.quantity import Quantity
 
     t = Quantity(-1.0, "K")
-    assert_wrongly(
-        t.type == "Temperature",
-        "test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value",
-    )
-    assert_rightly_but_fail(
-        t.type == "Temperature Difference",
-        "test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value",
-    )
+    assert str(t.dimensions) == "{'temperature_difference': 1.0}"
+    assert t.units == "delta_K"
+    assert t.value == -1.0
 
 
 # shortened from test_ansunits_automatically_creates_temperature_
 # difference_from_negative_absolute_value_based_on_relative_value
 # to test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value
 def test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value():
-    from util import assert_rightly_but_fail, assert_wrongly
-
     from ansys.units.quantity import Quantity
 
     t = Quantity(-274.0, "C")
-    assert_wrongly(
-        t.type == "Temperature",
-        "test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value",
-    )
-    assert_rightly_but_fail(
-        t.type == "Temperature Difference",
-        "test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value",
-    )
+    assert str(t.dimensions) == "{'temperature_difference': 1.0}"
+    assert t.units == "delta_C"
+    assert t.value == -274.0
 
 
 def test_ansunits_converts_temperature_correctly():
@@ -106,7 +92,7 @@ def test_ansunits_converts_temperature_difference_correctly():
     assert dK.value == -1.0
     assert dK.units == "delta_K"
 
-    tC = dK.to("C")
+    tC = dK.to("delta_C")
     assert tC.value == -1.0
     assert tC.units == "delta_C"
     assert float(tC) == -1.0
@@ -115,7 +101,7 @@ def test_ansunits_converts_temperature_difference_correctly():
     assert dK.value == 1.0
     assert dK.units == "delta_K"
 
-    tC = dK.to("C")
+    tC = dK.to("delta_C")
     assert tC.value == 1.0
     assert tC.units == "delta_C"
     assert float(tC) == 1.0

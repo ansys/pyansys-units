@@ -31,7 +31,7 @@ class UnitSystem:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 
         if base_units:
-            if len(base_units) != self.max_dim_len():
+            if len(base_units) != len(ansunits.BaseDimensions):
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
             self._name = name
@@ -58,6 +58,7 @@ class UnitSystem:
 
             setattr(self, f"_{unit.type.lower().replace(' ','_')}", unit)
             print(self.__dict__)
+
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -142,11 +143,6 @@ class UnitSystem:
         """Solid Angle unit of the unit system."""
         return self._solid_angle
 
-    @staticmethod
-    def max_dim_len():
-        """Maximum number of elements within a dimensions list."""
-        return 10
-
 
 class UnitSystemError(ValueError):
     """Provides custom unit system errors."""
@@ -177,7 +173,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def UNIT_TYPE(cls, unit):
         return cls(
-            f"Unit of type: `{unit.type}` already exits in this unit system"
+            f"Unit of type: `{unit._type}` already exits in this unit system"
             f"replace '{unit.name}' with unit of another type"
         )
 
