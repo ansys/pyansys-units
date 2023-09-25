@@ -839,7 +839,7 @@ def test_unit_from_dimensions_1():
     p = ansunits.Quantity(
         10.5,
         dimensions=ansunits.Dimensions(
-            {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0}
+            {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
         ),
     )
     assert p.units == "kg m^-1 s^-2"
@@ -847,7 +847,7 @@ def test_unit_from_dimensions_1():
 
 def test_unit_from_dimensions_2():
     dims = ansunits.BaseDimensions
-    l = ansunits.Quantity(10.5, dimensions=ansunits.Dimensions({dims.length: 1.0}))
+    l = ansunits.Quantity(10.5, dimensions=ansunits.Dimensions({dims.LENGTH: 1.0}))
     assert l.units == "m"
 
 
@@ -859,7 +859,7 @@ def test_unit_from_dimensions_3():
 def test_unit_from_dimensions_4():
     dims = ansunits.BaseDimensions
     test = ansunits.Quantity(
-        10.5, dimensions=ansunits.Dimensions({dims.length: 1.0, dims.time: -1})
+        10.5, dimensions=ansunits.Dimensions({dims.LENGTH: 1.0, dims.TIME: -1})
     )
     assert test.units == "m s^-1"
     assert test.dimensions.dimensions == {1: 1.0, 2: -1.0}
@@ -868,7 +868,7 @@ def test_unit_from_dimensions_4():
 def test_unit_from_dimensions_5():
     dims = ansunits.BaseDimensions
     test = ansunits.Quantity(
-        10.5, dimensions=ansunits.Dimensions({dims.length: 1.0, dims.time: -2})
+        10.5, dimensions=ansunits.Dimensions({dims.LENGTH: 1.0, dims.TIME: -2})
     )
     assert test.units == "m s^-2"
     assert test.dimensions.dimensions == {1: 1.0, 2: -2.0}
@@ -1033,12 +1033,12 @@ def testing_arithmetic_operators():
 
 
 def test_errors():
-    ansunits.BaseDimensions.mass
+    dims = ansunits.BaseDimensions
     with pytest.raises(ansunits.QuantityError):
         e1 = ansunits.Quantity(
             value=10,
             units="farad",
-            dimensions=ansunits.Dimensions({ansunits.BaseDimensions.mass: 1}),
+            dimensions=ansunits.Dimensions({dims.MASS: 1}),
             quantity_map={"Velocity": 3},
         )
 

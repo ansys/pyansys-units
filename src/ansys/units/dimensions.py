@@ -5,16 +5,16 @@ from enum import Enum
 class BaseDimensions(Enum):
     """Base dimensions."""
 
-    mass = 0
-    length = 1
-    time = 2
-    temperature = 3
-    temperature_difference = 4
-    angle = 5
-    chemical_amount = 6
-    light = 7
-    current = 8
-    solid_angle = 9
+    MASS = 0
+    LENGTH = 1
+    TIME = 2
+    TEMPERATURE = 3
+    TEMPERATURE_DIFFERENCE = 4
+    ANGLE = 5
+    CHEMICAL_AMOUNT = 6
+    LIGHT = 7
+    CURRENT = 8
+    SOLID_ANGLE = 9
 
 
 class Dimensions:
@@ -31,8 +31,9 @@ class Dimensions:
     Dimensions instance.
     """
 
-    def __init__(self, dimensions_container: Optional[Dict[BaseDimensions : int | float]] = None):
-        self._dimensions = dimensions_container.copy() if dimensions_container else {}
+    def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
+        dimensions_container = dimensions_container or {}
+        self._dimensions = dimensions_container.copy()
         for x, y in dimensions_container.items():
             if not isinstance(x, BaseDimensions):
                 raise DimensionsError.INCORRECT_DIMENSIONS()
@@ -41,7 +42,7 @@ class Dimensions:
 
     @property
     def dimensions(self):
-        """Dimensions as dictionary."""
+        """Dimensions as a dictionary."""
         dims = {x.value: y for x, y in self._dimensions.items()}
         return dict(dims)
 
@@ -51,7 +52,13 @@ class Dimensions:
             dims = ""
         return str(dims)
 
-    def __add__(self, other):
+    def __repr__(self):
+        dims = {x.name: y for x, y in self._dimensions.items()}
+        if not dims:
+            dims = ""
+        return str(dims)
+
+    def __mul__(self, other):
         results = self._dimensions.copy()
         for dim, value in other._dimensions.items():
             if dim in results:
@@ -60,7 +67,7 @@ class Dimensions:
                 results[dim] = value
         return Dimensions(results)
 
-    def __sub__(self, other):
+    def __truediv__(self, other):
         results = self._dimensions.copy()
         for dim, value in other._dimensions.items():
             if dim in results:
@@ -69,16 +76,16 @@ class Dimensions:
                 results[dim] = -value
         return Dimensions(results)
 
-    def __mul__(self, __value):
+    def __pow__(self, __value):
         results = self._dimensions.copy()
         for dim in self._dimensions:
             results[dim] *= __value
         return Dimensions(results)
 
     def __eq__(self, other):
-        temp_dim = self - other
-        temp = BaseDimensions.temperature
-        temp_diff = BaseDimensions.temperature_difference
+        temp_dim = self / other
+        temp = BaseDimensions.TEMPERATURE
+        temp_diff = BaseDimensions.TEMPERATURE_DIFFERENCE
         if temp in temp_dim._dimensions and temp_diff in temp_dim._dimensions:
             if temp_dim._dimensions[temp] == -temp_dim._dimensions[temp_diff]:
                 del temp_dim._dimensions[temp_diff]
