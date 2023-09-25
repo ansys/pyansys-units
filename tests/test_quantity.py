@@ -14,7 +14,6 @@ def test_properties_1():
     assert v.units == "m"
     assert v.si_value == 10.6
     assert v.si_units == "m"
-    assert v.type == "Length"
 
 
 def test_properties_2():
@@ -23,7 +22,6 @@ def test_properties_2():
     assert v.units == "ft s^-1"
     assert v.si_value == pytest.approx(0.30479999, DELTA)
     assert v.si_units == "m s^-1"
-    assert v.type == "Composite"
 
 
 def test_properties_3():
@@ -32,7 +30,6 @@ def test_properties_3():
     assert v.units == "farad"
     assert v.si_value == 1.0
     assert v.si_units == "kg^-1 m^-2 s^4 A^2"
-    assert v.type == "Derived"
 
 
 def test_value():
@@ -43,29 +40,36 @@ def test_value():
 
 
 def test_dimensions_1():
+    dims = ansunits.BaseDimensions
     v = ansunits.Quantity(1.0, "ft")
-    assert v.dimensions.dimensions == {1: 1.0}
+    assert v.dimensions == ansunits.Dimensions({dims.length: 1.0})
 
 
 def test_dimensions_2():
+    dims = ansunits.BaseDimensions
     v = ansunits.Quantity(1.0, "kPa")
-    assert v.dimensions.dimensions == {0: 1.0, 1: -1, 2: -2}
+    assert v.dimensions == ansunits.Dimensions(
+        {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0}
+    )
 
 
 def test_dimensions_3():
+    dims = ansunits.BaseDimensions
     v = ansunits.Quantity(1.0, "slug ft s R delta_K radian slugmol cd A sr")
-    assert v.dimensions.dimensions == {
-        0: 1.0,
-        1: 1.0,
-        2: 1.0,
-        3: 1.0,
-        4: 1.0,
-        5: 1.0,
-        6: 1.0,
-        7: 1.0,
-        8: 1.0,
-        9: 1.0,
-    }
+    assert v.dimensions == ansunits.Dimensions(
+        {
+            dims.mass: 1.0,
+            dims.length: 1.0,
+            dims.time: 1.0,
+            dims.temperature: 1.0,
+            dims.temperature_difference: 1.0,
+            dims.angle: 1.0,
+            dims.chemical_amount: 1.0,
+            dims.light: 1.0,
+            dims.current: 1.0,
+            dims.solid_angle: 1.0,
+        }
+    )
 
 
 def test_to_1():
@@ -297,39 +301,42 @@ def test_to_33():
 
 
 def test_temperature_to():
+    dims = ansunits.BaseDimensions
     t1 = ansunits.Quantity(273.15, "K")
     t1C = t1.to("C")
-    assert t1C.type == "Temperature"
+    assert t1C.dimensions == ansunits.Dimensions({dims.temperature: 1.0})
     assert t1C.value == 0.0
     assert t1C.units == "C"
 
 
 def test_temperature_difference_to_with_explicit_delta():
+    dims = ansunits.BaseDimensions
     t1 = ansunits.Quantity(1.0, "K")
     t2 = ansunits.Quantity(2.0, "K")
     td1 = t2 - t1
     td1C = td1.to("delta_C")
-    assert td1C.type == "Temperature Difference"
+    assert td1C.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
     assert td1C.value == 1.0
     assert td1C.units == "delta_C"
     td2 = t1 - t2
     td2C = td2.to("delta_C")
-    assert td2C.type == "Temperature Difference"
+    assert td2C.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
     assert td2C.value == -1.0
     assert td2C.units == "delta_C"
 
 
 def test_temperature_difference_to_with_implicit_delta():
+    dims = ansunits.BaseDimensions
     t1 = ansunits.Quantity(1.0, "K")
     t2 = ansunits.Quantity(2.0, "K")
     td1 = t2 - t1
-    td1C = td1.to("C")
-    assert td1C.type == "Temperature Difference"
+    td1C = td1.to("delta_C")
+    assert td1C.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
     assert td1C.value == 1.0
     assert td1C.units == "delta_C"
     td2 = t1 - t2
-    td2C = td2.to("C")
-    assert td2C.type == "Temperature Difference"
+    td2C = td2.to("delta_C")
+    assert td2C.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
     assert td2C.value == -1.0
     assert td2C.units == "delta_C"
 
@@ -340,11 +347,9 @@ def test_complex_temperature_difference_to():
     m = ansunits.Quantity(1.0, "kg")
     result = m * (t2 - t1)
     resultC1 = result.to("kg C")
-    assert resultC1.type == "Composite"
     assert resultC1.value == 1.0
     assert resultC1.units == "kg C"
     resultC2 = result.to("kg delta_C")
-    assert resultC2.type == "Composite"
     assert resultC2.value == 1.0
     assert resultC2.units == "kg delta_C"
 
@@ -459,6 +464,7 @@ def test_power():
     qtm = qt * 2
 
     assert qtm.value == 10.0
+    assert qtm.dimensions == ansunits.Dimensions()
     assert qtm.units == ""
 
 
@@ -535,15 +541,15 @@ def test_temp_1():
 
     kc = k.to("C")
     assert kc.value == -313.15
-    assert kc.units == "C"
+    assert kc.units == "delta_C"
 
     kc = k.to("R")
     assert kc.value == pytest.approx(-72.0, DELTA)
-    assert kc.units == "R"
+    assert kc.units == "delta_R"
 
     kc = k.to("F")
     assert kc.value == pytest.approx(-531.67, DELTA)
-    assert kc.units == "F"
+    assert kc.units == "delta_F"
 
 
 def test_temp_2():
@@ -689,54 +695,32 @@ def test_temp_inverse_2():
     assert float(f_inverse) == pytest.approx(3.5999999999999996, DELTA)
 
 
-def test_temp_type():
-    c0 = ansunits.Quantity(1.0, "C")
-    assert c0.type == "Temperature"
-
-    c1 = ansunits.Quantity(1.0, "J kg^-1 C^-1")
-    assert c1.type == "Composite"
-
-    c2 = ansunits.Quantity(1.0, "kg m^-3 s^-1 K^2")
-    assert c2.type == "Composite"
-
-    c4 = ansunits.Quantity(1.0, "F")
-    assert c4.type == "Temperature"
-
-    c6 = ansunits.Quantity(1.0, "F^1")
-    assert c6.type == "Composite"
-
-    c7 = ansunits.Quantity(1.0, "F^-1")
-    assert c7.type == "Composite"
-
-    c8 = ansunits.Quantity(1.0, "F^2")
-    assert c8.type == "Composite"
-
-
 def test_temp_difference():
+    dims = ansunits.BaseDimensions
     td1 = ansunits.Quantity(150.0, "delta_C")
-    assert td1.type == "Temperature Difference"
+    assert td1.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
 
     td2 = ansunits.Quantity(100.0, "delta_C")
-    assert td2.type == "Temperature Difference"
+    assert td2.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
 
     td = td1 - td2
-    assert td.type == "Temperature Difference"
+    assert td.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
 
     td_m = td * 2
     assert td_m.units == "delta_K"
-    assert td_m.type == "Temperature Difference"
+    assert td_m.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
 
     t1 = ansunits.Quantity(150.0, "C")
-    assert t1.type == "Temperature"
+    assert t1.dimensions == ansunits.Dimensions({dims.temperature: 1.0})
 
     t2 = ansunits.Quantity(100.0, "C")
-    assert t2.type == "Temperature"
+    assert t2.dimensions == ansunits.Dimensions({dims.temperature: 1.0})
 
     td = t1 - t2
-    assert td.type == "Temperature Difference"
+    assert td.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
 
     td2 = t2 - t1
-    assert td2.type == "Temperature Difference"
+    assert td2.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
 
     tc1 = ansunits.Quantity(100.0, "C")
     td1 = ansunits.Quantity(50.0, "C^-1")
@@ -776,45 +760,37 @@ def test_temp_diff_combined_divide():
 
 
 def test_core_temp():
+    dims = ansunits.BaseDimensions
     t1 = ansunits.Quantity(1.0, "K")
     assert float(t1) == 1.0
-    assert t1.type == "Temperature"
 
     t2 = ansunits.Quantity(2.0, "K")
     assert float(t2) == 2.0
-    assert t2.type == "Temperature"
 
     dt1 = t2 - t1
     assert float(dt1) == 1.0
-    assert dt1.type == "Temperature Difference"
 
     t3 = ansunits.Quantity(1.0, "C")
     assert float(t3) == 274.15
-    assert t3.type == "Temperature"
 
     t4 = ansunits.Quantity(2.0, "C")
     assert float(t4) == 275.15
-    assert t4.type == "Temperature"
 
     dt2 = t4 - t3
     assert float(dt2) == 1.0
-    assert dt2.type == "Temperature Difference"
+    assert dt2.dimensions == ansunits.Dimensions({dims.temperature_difference: 1.0})
 
     invt1 = ansunits.Quantity(1.0, "K^-1")
     assert float(invt1) == 1.0
-    assert invt1.type == "Composite"
 
     dt3 = 1.0 / invt1
     assert float(dt3) == 1.0
-    assert dt1.type == dt2.type
 
     invt2 = ansunits.Quantity(1.0, "C^-1")
     assert float(invt2) == 1.0
-    assert invt2.type == "Composite"
 
     dt4 = 1.0 / invt2
     assert float(dt4) == 1.0
-    assert dt4.type == "Temperature"
 
 
 def test_temp_addition():
@@ -822,16 +798,15 @@ def test_temp_addition():
     t2 = ansunits.Quantity(50.0, "C")
 
     td = t1 - t2
-    assert td.type == "Temperature Difference"
+    assert td.units == "delta_C"
     assert float(td) == 100.0
-    assert td.units == "delta_K"
 
     kd = ansunits.Quantity(50.0, "delta_C")
     k = ansunits.Quantity(50.0, "K")
 
     t = k + kd
     assert float(t) == 100.0
-    assert t.type == "Temperature Difference"
+    assert t.units == "K"
 
 
 def test_unit_from_dimensions_1():
@@ -862,7 +837,7 @@ def test_unit_from_dimensions_4():
         10.5, dimensions=ansunits.Dimensions({dims.LENGTH: 1.0, dims.TIME: -1})
     )
     assert test.units == "m s^-1"
-    assert test.dimensions.dimensions == {1: 1.0, 2: -1.0}
+    assert test.dimensions == ansunits.Dimensions({dims.length: 1.0, dims.time: -1})
 
 
 def test_unit_from_dimensions_5():
@@ -871,7 +846,7 @@ def test_unit_from_dimensions_5():
         10.5, dimensions=ansunits.Dimensions({dims.LENGTH: 1.0, dims.TIME: -2})
     )
     assert test.units == "m s^-2"
-    assert test.dimensions.dimensions == {1: 1.0, 2: -2.0}
+    assert test.dimensions == ansunits.Dimensions({dims.length: 1.0, dims.time: -2})
 
 
 def test_quantity_map_1():
@@ -917,26 +892,28 @@ def test_quantity_map_3():
 
 def testing_dimensions():
     print(f"{'*' * 25} {testing_dimensions.__name__} {'*' * 25}")
+    dims = ansunits.BaseDimensions
 
     def dim_test(units, dim_dict):
         qt = ansunits.Quantity(10, units)
         print(f"{units} : {qt.dimensions}")
-        assert qt.dimensions.dimensions == dim_dict
+        assert qt.dimensions == ansunits.Dimensions(dim_dict)
 
-    dim_test("m", {1: 1.0})
-    {0: 1.0, 1: 2.0, 2: -3.0, 3: 0.0, 4: 0.0, 5: 0.0, 6: 0.0, 7: 0.0, 8: -2.0, 9: 0.0}
-    dim_test("m s^-1", {1: 1.0, 2: -1.0})
-    dim_test("kg m s^-2 m^-2", {0: 1.0, 1: -1.0, 2: -2.0})
-    dim_test("Pa", {0: 1.0, 1: -1.0, 2: -2.0})
-    dim_test("kPa", {0: 1.0, 1: -1.0, 2: -2.0})
-    dim_test("Pa^2", {0: 2.0, 1: -2.0, 2: -4.0})
-    dim_test("daPa", {0: 1.0, 1: -1.0, 2: -2.0})
-    dim_test("MPa", {0: 1.0, 1: -1.0, 2: -2.0})
-    dim_test("kPa^2", {0: 2.0, 1: -2.0, 2: -4.0})
-    dim_test("slug in^-1 s^-1", {0: 1.0, 1: -1.0, 2: -1.0})
-    dim_test("radian", {5: 1.0})
-    dim_test("ohm", {0: 1.0, 1: 2.0, 2: -3.0, 8: -2.0})
-    dim_test("lb cm s^-2", {0: 1.0, 1: 1.0, 2: -2.0})
+    dim_test("m", {dims.length: 1.0})
+    dim_test("m s^-1", {dims.length: 1.0, dims.time: -1.0})
+    dim_test("kg m s^-2 m^-2", {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0})
+    dim_test("Pa", {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0})
+    dim_test("kPa", {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0})
+    dim_test("Pa^2", {dims.mass: 2.0, dims.length: -2.0, dims.time: -4.0})
+    dim_test("daPa", {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0})
+    dim_test("MPa", {dims.mass: 1.0, dims.length: -1.0, dims.time: -2.0})
+    dim_test("kPa^2", {dims.mass: 2.0, dims.length: -2.0, dims.time: -4.0})
+    dim_test("slug in^-1 s^-1", {dims.mass: 1.0, dims.length: -1.0, dims.time: -1.0})
+    dim_test("radian", {dims.angle: 1.0})
+    dim_test(
+        "ohm", {dims.mass: 1.0, dims.length: 2.0, dims.time: -3.0, dims.current: -2.0}
+    )
+    dim_test("lb cm s^-2", {dims.mass: 1.0, dims.length: 1.0, dims.time: -2.0})
     print("-" * 75)
 
 
@@ -1068,17 +1045,23 @@ def test_instantiate_quantity_with_unrecognized_units_causes_exception():
 
 
 def test_compute_temp_unit():
+    dims = ansunits.BaseDimensions
     kb = ansunits.Quantity(1.382e-23, "J K^-1")
     t = ansunits.Quantity(2.0, "K")
     e = kb * t
-    assert e.type == "Composite"
+    assert e.dimensions == ansunits.Dimensions(
+        {dims.mass: 1.0, dims.length: 2.0, dims.time: -2.0}
+    )
     assert e.units == "kg m^2 s^-2"
 
 
 def test_unit_multiply_quantity():
+    dims = ansunits.BaseDimensions
     ur = ansunits.UnitRegistry()
     mass = ansunits.Quantity(10.0, ur.kg)
     mass_flow_rate = mass / ur.s
     assert mass_flow_rate.units == "kg s^-1"
-    assert mass_flow_rate.type == "Composite"
     assert mass_flow_rate.value == 10
+    assert mass_flow_rate.dimensions == ansunits.Dimensions(
+        {dims.mass: 1.0, dims.time: -1.0}
+    )

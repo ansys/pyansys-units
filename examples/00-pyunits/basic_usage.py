@@ -74,9 +74,9 @@ torque = ansunits.Quantity(value=5, quantity_map=tor_map)
 # 2. units : str
 # 3. si_value : float | int
 # 4. si_units : str
-# 5. dimensions : list
+# 5. dimensions : dict
 # 6. has_dimensions : bool
-# 7. type : strexit()
+
 
 cap_map = {"Capacitance": 1}
 capacitance = ansunits.Quantity(value=50, quantity_map=cap_map)

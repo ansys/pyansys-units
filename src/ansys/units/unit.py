@@ -41,25 +41,23 @@ class Unit:
             self._dimensions = dimensions
             self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
         else:
-            self._name = units or ""
+            self._name = ""
             self._dimensions = ansunits.Dimensions()
 
         if not config:
             config = self._get_config(self._name)
-        if "type" not in config:
-            config.update({"type": self._get_config(self._name)["type"]})
-        for key in config:
-            setattr(self, f"_{key}", config[key])
+        if config:
+            for key in config:
+                setattr(self, f"_{key}", config[key])
 
     def _get_config(self, name: str) -> dict:
         if name in ansunits._fundamental_units:
             return ansunits._fundamental_units[name]
 
         if name in ansunits._derived_units:
-            type = {"type": ansunits._QuantityType.derived}
-            return dict(**type, **ansunits._derived_units[name])
+            return ansunits._derived_units[name]
 
-        return {"type": ansunits._QuantityType.composite}
+        return
 
     def _dim_to_units(
         self,
@@ -140,10 +138,6 @@ class Unit:
     @property
     def name(self):
         return self._name
-
-    @property
-    def type(self):
-        return self._type
 
     @property
     def dimensions(self):

@@ -54,10 +54,10 @@ class UnitSystem:
             if unit.name not in ansunits._fundamental_units:
                 raise UnitSystemError.NOT_FUNDAMENTAL(unit)
 
-            if hasattr(self, f"_{unit.type.lower()}"):
+            if hasattr(self, f"_{unit._type.lower()}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit.type.lower()}", unit)
+            setattr(self, f"_{unit._type.lower()}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -175,7 +175,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def UNIT_TYPE(cls, unit):
         return cls(
-            f"Unit of type: `{unit.type}` already exits in this unit system"
+            f"Unit of type: `{unit._type}` already exits in this unit system"
             f"replace '{unit.name}' with unit of another type"
         )
 
