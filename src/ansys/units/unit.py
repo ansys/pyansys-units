@@ -58,8 +58,7 @@ class Unit:
             return ansunits._fundamental_units[name]
 
         if name in ansunits._derived_units:
-            type = {"type": ansunits._QuantityType.derived}
-            return dict(**type, **ansunits._derived_units[name])
+            return ansunits._derived_units[name]
 
         return
 
@@ -142,10 +141,6 @@ class Unit:
     @property
     def name(self):
         return self._name
-
-    @property
-    def type(self):
-        return self._type
 
     @property
     def dimensions(self):
