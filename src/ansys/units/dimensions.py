@@ -19,7 +19,7 @@ class BaseDimensions(Enum):
 
 class Dimensions:
     """
-    Initializes a ``Dimensions`` object using a dictionary or dimensions list.
+    Initializes a ``Dimensions`` object from a dictionary of BaseDimensions to power.
 
     Parameters
     ----------
