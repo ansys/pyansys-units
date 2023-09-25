@@ -29,8 +29,8 @@ import ansys.units as ansunits
 # Create quantities
 # ~~~~~~~~~~~~~~~~~
 # You can instantiate quantities using one of three methods:
-# - Unit strings : str
-# - Dimensions : list
+# - Unit strings : str, Unit
+# - Dimensions : Dimensions
 # - Quantity maps : dict
 
 # Unit strings
@@ -45,13 +45,13 @@ torque = ansunits.Quantity(value=5, units="N m")
 
 dims = ansunits.BaseDimensions
 
-vol_dims = ansunits.Dimensions({dims.length: 3})
+vol_dims = ansunits.Dimensions({dims.LENGTH: 3})
 volume = ansunits.Quantity(value=1, dimensions=vol_dims)
 
-acc_dims = ansunits.Dimensions({dims.length: 1, dims.time: -2})
+acc_dims = ansunits.Dimensions({dims.LENGTH: 1, dims.TIME: -2})
 acceleration = ansunits.Quantity(value=3, dimensions=acc_dims)
 
-tor_dims = ansunits.Dimensions({dims.mass: 1, dims.length: 2, dims.time: -2})
+tor_dims = ansunits.Dimensions({dims.MASS: 1, dims.LENGTH: 2, dims.TIME: -2})
 torque = ansunits.Quantity(value=5, dimensions=tor_dims)
 
 # Quantity map
@@ -75,7 +75,7 @@ torque = ansunits.Quantity(value=5, quantity_map=tor_map)
 # 3. si_value : float | int
 # 4. si_units : str
 # 5. dimensions : dict
-# 6. has_dimensions : bool
+# 6. is_dimensionless : bool
 
 
 cap_map = {"Capacitance": 1}
