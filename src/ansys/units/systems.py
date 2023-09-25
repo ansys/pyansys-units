@@ -1,6 +1,5 @@
 """Provides the ``UnitSystem`` class."""
 import ansys.units as ansunits
-from ansys.units.utils import si_data
 
 
 class UnitSystem:
@@ -23,8 +22,8 @@ class UnitSystem:
 
     Returns
     -------
-    Quantity
-        Quantity instance.
+    UnitSystem
+        UnitSystem instance.
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
@@ -54,10 +53,12 @@ class UnitSystem:
             if unit.name not in ansunits._fundamental_units:
                 raise UnitSystemError.NOT_FUNDAMENTAL(unit)
 
-            if hasattr(self, f"_{unit._type.lower()}"):
+            if hasattr(self, f"_{unit.type.lower().replace(' ','_')}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit._type.lower()}", unit)
+            setattr(self, f"_{unit.type.lower().replace(' ','_')}", unit)
+            print(self.__dict__)
+
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -71,14 +72,11 @@ class UnitSystem:
         Returns
         -------
         Quantity
-            Quantity object containing the desired unit system conversion.
+            Quantity object converted to the desired unit system.
         """
         new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
 
-        _, si_multiplier, si_offset = si_data(new_unit.name)
-        new_value = (quantity.si_value / si_multiplier) - si_offset
-
-        return ansunits.Quantity(value=new_value, units=new_unit)
+        return quantity.to(to_units=new_unit)
 
     @property
     def name(self):
@@ -91,7 +89,7 @@ class UnitSystem:
         _base_units = []
         dim_order = ansunits._dimension_order
         for order in dim_order:
-            unit = getattr(self, f"_{order.lower()}")
+            unit = getattr(self, f"_{order.lower().replace(' ','_')}")
             _base_units.append(unit.name)
         return _base_units
 
@@ -118,7 +116,7 @@ class UnitSystem:
     @property
     def temperature_difference(self):
         """Temperature unit of the unit system."""
-        return getattr(self, "_temperature difference")
+        return self._temperature_difference
 
     @property
     def angle(self):
@@ -128,7 +126,7 @@ class UnitSystem:
     @property
     def chemical_amount(self):
         """Chemical Amount unit of the unit system."""
-        return getattr(self, "_chemical amount")
+        return self._chemical_amount
 
     @property
     def light(self):
@@ -143,7 +141,7 @@ class UnitSystem:
     @property
     def solid_angle(self):
         """Solid Angle unit of the unit system."""
-        return getattr(self, "_solid angle")
+        return self._solid_angle
 
 
 class UnitSystemError(ValueError):
