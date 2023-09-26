@@ -57,7 +57,6 @@ class UnitSystem:
                 raise UnitSystemError.UNIT_TYPE(unit)
 
             setattr(self, f"_{unit._type.lower().replace(' ','_')}", unit)
-            print(self.__dict__)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
