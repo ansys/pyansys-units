@@ -53,13 +53,24 @@ class Unit:
                 setattr(self, f"_{key}", config[key])
 
     def _get_config(self, name: str) -> dict:
+        """
+        Retrieve unit configuration from '_fundamental_units' or '_derived_units'.
+
+        Parameters
+        ----------
+        name : str
+            Unit string.
+
+        Returns
+        -------
+        dict
+            dictionary of extra unit information.
+        """
         if name in ansunits._fundamental_units:
             return ansunits._fundamental_units[name]
 
         if name in ansunits._derived_units:
             return ansunits._derived_units[name]
-
-        return
 
     def _dim_to_units(
         self,
@@ -139,10 +150,12 @@ class Unit:
 
     @property
     def name(self):
+        """Unit String."""
         return self._name
 
     @property
     def dimensions(self):
+        """Dimensions object."""
         return self._dimensions
 
     def __str__(self):
