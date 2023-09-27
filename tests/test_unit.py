@@ -6,7 +6,7 @@ import ansys.units as ansunits
 def test_fundamental_units():
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
-    assert kg._type == "Mass"
+    assert kg._type == "MASS"
     assert kg._factor == 1
     assert kg._offset == 0
 
@@ -29,7 +29,7 @@ def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C
 _dimensions: {'TEMPERATURE': 1.0}
-_type: Temperature
+_type: TEMPERATURE
 _factor: 1
 _offset: 273.15
 """

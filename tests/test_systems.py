@@ -197,7 +197,7 @@ def test_error_messages():
 
     e4 = ansunits.UnitSystemError.UNIT_TYPE(ansunits.Unit("m"))
     expected_str = (
-        "Unit of type: `Length` already exits in this unit system"
+        "Unit of type: `LENGTH` already exits in this unit system"
         "replace 'm' with unit of another type"
     )
     assert str(e4) == expected_str

@@ -265,11 +265,7 @@ class Quantity(float):
         self._arithmetic_precheck(__value)
         new_units = self.si_units
         new_value = float(self) + float(__value)
-        new_quantity = Quantity(value=new_value, units=new_units)
-        preferred_units = self._temp_precheck(__value.units)
-        if preferred_units and preferred_units != new_units:
-            return new_quantity.to(preferred_units)
-        return new_quantity
+        return Quantity(value=new_value, units=new_units)
 
     def __radd__(self, __value):
         return self.__add__(__value)

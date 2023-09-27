@@ -128,8 +128,7 @@ class Unit:
             unit_term_power *= power
             # retrieve data associated with fundamental unit
             if unit_term in ansunits._fundamental_units:
-                full_string = ansunits._fundamental_units[unit_term]["type"]
-                idx = full_string.upper().replace(" ", "_")
+                idx = ansunits._fundamental_units[unit_term]["type"]
 
                 if ansunits.BaseDimensions[idx] in dimensions:
                     dimensions[ansunits.BaseDimensions[idx]] += unit_term_power

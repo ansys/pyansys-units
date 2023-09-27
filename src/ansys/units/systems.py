@@ -53,10 +53,10 @@ class UnitSystem:
             if unit.name not in ansunits._fundamental_units:
                 raise UnitSystemError.NOT_FUNDAMENTAL(unit)
 
-            if hasattr(self, f"_{unit._type.lower().replace(' ','_')}"):
+            if hasattr(self, f"_{unit._type.lower()}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit._type.lower().replace(' ','_')}", unit)
+            setattr(self, f"_{unit._type.lower()}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -87,7 +87,7 @@ class UnitSystem:
         _base_units = []
         dim_order = ansunits._dimension_order
         for order in dim_order:
-            unit = getattr(self, f"_{order.lower().replace(' ','_')}")
+            unit = getattr(self, f"_{order.lower()}")
             _base_units.append(unit.name)
         return _base_units
 
