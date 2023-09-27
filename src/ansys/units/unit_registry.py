@@ -1,3 +1,4 @@
+"""Provides the ``UnitRegistry`` class."""
 import os
 
 import yaml
@@ -7,21 +8,27 @@ import ansys.units as ansunits
 
 class UnitRegistry:
     """
-    Initializes a Unit Registry. Pre-initalize a configuration of common units for ease
-    of use.
+    Initialize a container of common ``Units`` for ease of use.
 
     Parameters
     ----------
     config: filename.yaml, optional
-        Custom units set up following the 'cfg.yaml' format.
+        Custom .yaml file or `cfg.yaml`. Format must match `cfg.yaml`.
     other: Dict, optional
         Dictionary for extra units.
+
+    Example
+    -------
+    import ansys.units as ansunits
+    ureg = ansunits.UnitRegistry()
+
+    ureg.kg == ansunits.Unit(units= "kg")
 
     Returns
     -------
     UnitRegistry
-        contains all units from the parameters.
-        defaults to 'cfg.yaml'
+        contains all units initialized from the parameters.
+        defaults to all units in '_fundamental_units' and '_derived_units'
     """
 
     def __init__(self, config="cfg.yaml", other: dict = None):

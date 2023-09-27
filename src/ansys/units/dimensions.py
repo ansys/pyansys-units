@@ -1,9 +1,13 @@
-"""Provides the ``Dimension`` class."""
+"""Provides the ``Dimensions`` and ``BaseDimensions`` class."""
 from enum import Enum
 
 
 class BaseDimensions(Enum):
-    """Base dimensions."""
+    """
+    Supplies all valid base dimensions used in dimensional analysis.
+
+    Used as dictionary keys for defining a `Dimensions` object.
+    """
 
     MASS = 0
     LENGTH = 1
@@ -19,16 +23,19 @@ class BaseDimensions(Enum):
 
 class Dimensions:
     """
-    Initializes a ``Dimensions`` object from a dictionary of BaseDimensions to power.
+    Initializes a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
+    power.
 
     Parameters
     ----------
     dimensions_container : dictionary, optional
-        Dictionary of dimensions from the 'BaseDimensions'.
+        Dictionary of {``BaseDimensions``: power, ...}.
 
     Returns
     -------
     Dimensions instance.
+        On which mathematical dimensional analysis is performed.
+        Default is dimensionless.
     """
 
     def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
