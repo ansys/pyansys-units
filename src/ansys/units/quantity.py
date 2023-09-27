@@ -128,9 +128,16 @@ class Quantity(float):
         if not isinstance(__value, Quantity) and not self.is_dimensionless:
             raise QuantityError.INCOMPATIBLE_VALUE(__value)
 
-    def _temp_precheck(self, units) -> Optional[str]:
+    def _temp_precheck(self, units, op: str = None) -> Optional[str]:
         """
         Validate units for temperature differences.
+
+        Parameters
+        ----------
+        units : Unit
+            Unit for comparison against current units.
+        op : str, None
+            Operation conducted on units. "+"|"-"
 
         Returns
         -------
@@ -139,14 +146,10 @@ class Quantity(float):
         """
         temp = ["K", "C", "F", "R"]
         delta_temp = ["delta_K", "delta_C", "delta_F", "delta_R"]
-        if self.units in temp and units in temp:
+        if op == "-" and self.units in temp and units in temp:
             return delta_temp[temp.index(self.units)]
         elif self.units in delta_temp and units in temp:
             return temp[delta_temp.index(self.units)]
-        elif self.units in [temp, delta_temp] and units in delta_temp:
-            return self.units
-        else:
-            return None
 
     @property
     def value(self):
@@ -237,7 +240,7 @@ class Quantity(float):
             return self * base_quantity
 
         if isinstance(__value, (float, int)):
-            return Quantity(value=self.si_value * __value, units=self._unit)
+            return Quantity(value=self.si_value * __value, units=self.si_units)
 
     def __rmul__(self, __value):
         return self.__mul__(__value)
@@ -265,7 +268,11 @@ class Quantity(float):
         self._arithmetic_precheck(__value)
         new_units = self.si_units
         new_value = float(self) + float(__value)
-        return Quantity(value=new_value, units=new_units)
+        new_quantity = Quantity(value=new_value, units=new_units)
+        preferred_units = self._temp_precheck(__value.units)
+        if preferred_units and preferred_units != new_units:
+            return new_quantity.to(preferred_units)
+        return new_quantity.to(self.units)
 
     def __radd__(self, __value):
         return self.__add__(__value)
@@ -275,10 +282,10 @@ class Quantity(float):
         new_units = self.si_units
         new_value = float(self) - float(__value)
         new_quantity = Quantity(value=new_value, units=new_units)
-        preferred_units = self._temp_precheck(__value.units)
+        preferred_units = self._temp_precheck(__value.units, op="-")
         if preferred_units and preferred_units != new_units:
             return new_quantity.to(preferred_units)
-        return new_quantity
+        return new_quantity.to(self.units)
 
     def __rsub__(self, __value):
         return self.__sub__(__value)
