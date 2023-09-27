@@ -17,8 +17,8 @@ class UnitRegistry:
     other: Dict, optional
         Dictionary for extra units.
 
-    Example
-    -------
+    Examples
+    --------
     import ansys.units as ansunits
     ureg = ansunits.UnitRegistry()
 

@@ -18,6 +18,18 @@ new ``Quantity`` object:
 
     meter = ansunits.Quantity(value=1, units="m")
 
+A ``Quantity`` object can also be created with a ``Unit`` object directly or
+through multiplication
+
+.. code:: python
+
+    import ansys.units as ansunits
+
+    m = ansunits.Unit("m")
+
+    meter = ansunits.Quantity(value=1, units=m)
+    meter = 1 * m
+
 All ``Quantity`` objects work intuitively with arithmetic operators. Simply
 insert them within an equation to perform mathematical operations.
 
