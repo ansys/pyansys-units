@@ -17,18 +17,18 @@ class UnitRegistry:
     other: Dict, optional
         Dictionary for extra units.
 
+    Returns
+    -------
+    UnitRegistry
+        contains all units initialized from the parameters.
+        defaults to all units in '_fundamental_units' and '_derived_units'
+
     Examples
     --------
     import ansys.units as ansunits
     ureg = ansunits.UnitRegistry()
 
     ureg.kg == ansunits.Unit(units= "kg")
-
-    Returns
-    -------
-    UnitRegistry
-        contains all units initialized from the parameters.
-        defaults to all units in '_fundamental_units' and '_derived_units'
     """
 
     def __init__(self, config="cfg.yaml", other: dict = None):
