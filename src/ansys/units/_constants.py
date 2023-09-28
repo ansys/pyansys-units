@@ -21,7 +21,6 @@ qc_path = os.path.join(file_dir, "cfg.yaml")
 with open(qc_path, "r") as qc_yaml:
     qc_data = yaml.safe_load(qc_yaml)
 
-_dimension_order: dict = qc_data["dimension_order"]
 _multipliers: dict = qc_data["multipliers"]
 _unit_systems: dict = qc_data["unit_systems"]
 _api_quantity_map: dict = qc_data["api_quantity_map"]

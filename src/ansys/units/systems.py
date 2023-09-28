@@ -85,9 +85,8 @@ class UnitSystem:
     def base_units(self):
         """Units associated with the unit system."""
         _base_units = []
-        dim_order = ansunits._dimension_order
-        for order in dim_order:
-            unit = getattr(self, f"_{order.lower()}")
+        for type in ansunits.BaseDimensions:
+            unit = getattr(self, f"_{type.name.lower()}")
             _base_units.append(unit.name)
         return _base_units
 

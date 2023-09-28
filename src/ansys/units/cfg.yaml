@@ -1,21 +1,4 @@
 ---
-# Dimension Order
-# ---------------
-#
-# Dimension type : Order
-
-dimension_order:
-  MASS: 0
-  LENGTH: 1
-  TIME: 2
-  TEMPERATURE: 3
-  TEMPERATURE_DIFFERENCE: 4
-  ANGLE: 5
-  CHEMICAL_AMOUNT: 6
-  LIGHT: 7
-  CURRENT: 8
-  SOLID_ANGLE: 9
-
 # Multipliers
 # -----------
 #

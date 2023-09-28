@@ -15,7 +15,6 @@ def test_tables():
     assert isinstance(ansunits._derived_units, dict)
     assert isinstance(ansunits._multipliers, dict)
     assert isinstance(ansunits._unit_systems, dict)
-    assert isinstance(ansunits._dimension_order, dict)
 
 
 def test_has_multiplier():

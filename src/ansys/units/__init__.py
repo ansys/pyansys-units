@@ -13,7 +13,6 @@ import os
 from ansys.units._constants import (  # noqa: F401
     _api_quantity_map,
     _derived_units,
-    _dimension_order,
     _fundamental_units,
     _multipliers,
     _QuantityType,
