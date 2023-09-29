@@ -52,10 +52,10 @@ class UnitSystem:
             if unit.name not in ansunits._fundamental_units:
                 raise UnitSystemError.NOT_FUNDAMENTAL(unit)
 
-            if hasattr(self, f"_{unit._type.lower()}"):
+            if hasattr(self, f"_{unit.dimensions.single_dimension}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit._type.lower()}", unit)
+            setattr(self, f"_{unit.dimensions.single_dimension}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -85,59 +85,59 @@ class UnitSystem:
         """Units associated with the unit system."""
         _base_units = []
         for type in ansunits.BaseDimensions:
-            unit = getattr(self, f"_{type.name.lower()}")
+            unit = getattr(self, f"_{type.name}")
             _base_units.append(unit.name)
         return _base_units
 
     @property
-    def mass(self):
+    def MASS(self):
         """Mass unit of the unit system."""
-        return self._mass
+        return self._MASS
 
     @property
-    def length(self):
+    def LENGTH(self):
         """Length unit of the unit system."""
-        return self._length
+        return self._LENGTH
 
     @property
-    def time(self):
+    def TIME(self):
         """Time unit of the unit system."""
-        return self._time
+        return self._TIME
 
     @property
-    def temperature(self):
+    def TEMPERATURE(self):
         """Temperature unit of the unit system."""
-        return self._temperature
+        return self._TEMPERATURE
 
     @property
-    def temperature_difference(self):
+    def TEMPERATURE_DIFFERENCE(self):
         """Temperature unit of the unit system."""
-        return self._temperature_difference
+        return self._TEMPERATURE_DIFFERENCE
 
     @property
-    def angle(self):
+    def ANGLE(self):
         """Angle unit of the unit system."""
-        return self._angle
+        return self._ANGLE
 
     @property
-    def chemical_amount(self):
+    def CHEMICAL_AMOUNT(self):
         """Chemical Amount unit of the unit system."""
-        return self._chemical_amount
+        return self._CHEMICAL_AMOUNT
 
     @property
-    def light(self):
+    def LIGHT(self):
         """Light unit of the unit system."""
-        return self._light
+        return self._LIGHT
 
     @property
-    def current(self):
+    def CURRENT(self):
         """Current unit of the unit system."""
-        return self._current
+        return self._CURRENT
 
     @property
-    def solid_angle(self):
+    def SOLID_ANGLE(self):
         """Solid Angle unit of the unit system."""
-        return self._solid_angle
+        return self._SOLID_ANGLE
 
 
 class UnitSystemError(ValueError):
@@ -168,8 +168,9 @@ class UnitSystemError(ValueError):
 
     @classmethod
     def UNIT_TYPE(cls, unit):
+        dimension = str(unit.dimensions.single_dimension)
         return cls(
-            f"Unit of type: `{unit._type}` already exits in this unit system"
+            f"Unit of type: `{dimension}` already exits in this unit system"
             f"replace '{unit.name}' with unit of another type"
         )
 

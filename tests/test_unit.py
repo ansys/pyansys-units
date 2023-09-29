@@ -6,9 +6,9 @@ import ansys.units as ansunits
 def test_fundamental_units():
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
-    assert kg._type == "MASS"
-    assert kg._factor == 1
-    assert kg._offset == 0
+    assert kg.dimensions.single_dimension == "MASS"
+    assert kg.si_multiplier == 1
+    assert kg.si_offset == 0
 
 
 def test_derived_units():
@@ -29,9 +29,9 @@ def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C
 _dimensions: {'TEMPERATURE': 1.0}
-_type: TEMPERATURE
-_factor: 1
-_offset: 273.15
+_si_units: K
+_si_multiplier: 1.0
+_si_offset: 273.15
 """
     assert str(C) == C_string
 

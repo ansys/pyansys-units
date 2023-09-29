@@ -2,7 +2,6 @@
 from typing import Optional
 
 import ansys.units as ansunits
-from ansys.units.utils import si_data
 
 
 class Quantity(float):
@@ -62,8 +61,7 @@ class Quantity(float):
         if not isinstance(_unit, ansunits.Unit):
             _unit = ansunits.Unit(_unit)
 
-        _, si_multiplier, si_offset = si_data(units=_unit.name)
-        _si_value = (_value + si_offset) * si_multiplier
+        _si_value = (_value + _unit.si_offset) * _unit.si_multiplier
 
         return float.__new__(cls, _si_value)
 
@@ -103,11 +101,7 @@ class Quantity(float):
         ):
             self._unit = ansunits.Unit(f"delta_{self._unit.name}")
 
-        si_units, si_multiplier, si_offset = si_data(units=self._unit.name)
-
-        self._si_units = si_units
-
-        self._si_value = (self.value + si_offset) * si_multiplier
+        self._si_value = (self.value + self._unit.si_offset) * self._unit.si_multiplier
 
     def _arithmetic_precheck(self, __value) -> str:
         """
@@ -172,7 +166,7 @@ class Quantity(float):
     @property
     def si_units(self):
         """SI conversion unit string."""
-        return self._si_units
+        return self._unit._si_units
 
     @property
     def dimensions(self):
@@ -190,7 +184,7 @@ class Quantity(float):
 
         Parameters
         ----------
-        to_units : str, Unit
+        to_units : Unit
             Desired unit to convert to.
 
         Returns
@@ -198,15 +192,12 @@ class Quantity(float):
         Quantity
             Quantity object containing the desired quantity conversion.
         """
-        if isinstance(to_units, ansunits.Unit):
-            to_units = to_units.name
 
-        if not isinstance(to_units, str):
-            raise TypeError("`to_units` should be a `str` type.")
+        if not isinstance(to_units, ansunits.Unit):
+            to_units = ansunits.Unit(units=to_units)
 
         # Retrieve all SI required SI data and perform conversion
-        _, si_multiplier, si_offset = si_data(to_units)
-        new_value = (self.si_value / si_multiplier) - si_offset
+        new_value = (self.si_value / to_units.si_multiplier) - to_units.si_offset
 
         new_obj = Quantity(value=new_value, units=to_units)
 
