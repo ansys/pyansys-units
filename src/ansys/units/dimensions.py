@@ -22,8 +22,7 @@ class BaseDimensions(Enum):
 
 
 class Dimensions:
-    """Create a ``Dimensions`` object on which mathematical dimensional analysis is
-    performed."""
+    """Represents the physical dimensions of a quantity or its units."""
 
     def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
         """
