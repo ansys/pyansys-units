@@ -83,6 +83,7 @@ def test_unit_sys_list():
         ),
     )
     assert slug.name == "slug"
+    assert slug.si_units == "kg"
     assert slug.dimensions == ansunits.Dimensions({dims.MASS: 1})
 
 
