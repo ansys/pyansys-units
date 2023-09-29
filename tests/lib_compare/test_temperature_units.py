@@ -33,18 +33,19 @@ def test_pint_distinguishes_temperature_from_difference():
 
 
 def test_ansunits_distinguishes_temperature_from_difference():
-    from ansys.units.quantity import Quantity
+    import ansys.units as ansunits
 
-    t1 = Quantity(150.0, "C")
-    assert t1.type == "Temperature"
-    t2 = Quantity(100.0, "C")
-    assert t2.type == "Temperature"
+    dims = ansunits.BaseDimensions
+    t1 = ansunits.Quantity(150.0, "C")
+    assert t1.dimensions == ansunits.Dimensions({dims.TEMPERATURE: 1})
+    t2 = ansunits.Quantity(100.0, "C")
+    assert t2.dimensions == ansunits.Dimensions({dims.TEMPERATURE: 1})
     td1 = t1 - t2
-    assert td1.type == "Temperature Difference"
-    t3 = Quantity(1.0, "K")
-    t4 = Quantity(2.0, "K")
+    assert td1.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1})
+    t3 = ansunits.Quantity(1.0, "K")
+    t4 = ansunits.Quantity(2.0, "K")
     td2 = t4 - t3
-    assert td2.type == "Temperature Difference"
+    assert td2.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1})
 
 
 # These next tests are completely debatable.
@@ -54,38 +55,28 @@ def test_ansunits_distinguishes_temperature_from_difference():
 # OTOH if you start asserting that -1 K has to be a temperature difference, you
 # can run into a bunch of other issues.
 def test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value():
-    from util import assert_rightly_but_fail, assert_wrongly
+    import ansys.units as ansunits
 
-    from ansys.units.quantity import Quantity
+    dims = ansunits.BaseDimensions
 
-    t = Quantity(-1.0, "K")
-    assert_wrongly(
-        t.type == "Temperature",
-        "test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value",
-    )
-    assert_rightly_but_fail(
-        t.type == "Temperature Difference",
-        "test_ansunits_automatically_creates_temperature_difference_from_negative_absolute_value",
-    )
+    t = ansunits.Quantity(-1.0, "K")
+    assert t.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1})
+    assert t.units == "delta_K"
+    assert t.value == -1.0
 
 
 # shortened from test_ansunits_automatically_creates_temperature_
 # difference_from_negative_absolute_value_based_on_relative_value
 # to test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value
 def test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value():
-    from util import assert_rightly_but_fail, assert_wrongly
+    import ansys.units as ansunits
 
-    from ansys.units.quantity import Quantity
+    dims = ansunits.BaseDimensions
 
-    t = Quantity(-274.0, "C")
-    assert_wrongly(
-        t.type == "Temperature",
-        "test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value",
-    )
-    assert_rightly_but_fail(
-        t.type == "Temperature Difference",
-        "test_ansunits_temperature_difference_from_negative_absolute_value_to_relative_value",
-    )
+    t = ansunits.Quantity(-274.0, "C")
+    assert t.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1})
+    assert t.units == "delta_C"
+    assert t.value == -274.0
 
 
 def test_ansunits_converts_temperature_correctly():
@@ -106,7 +97,7 @@ def test_ansunits_converts_temperature_difference_correctly():
     assert dK.value == -1.0
     assert dK.units == "delta_K"
 
-    tC = dK.to("C")
+    tC = dK.to("delta_C")
     assert tC.value == -1.0
     assert tC.units == "delta_C"
     assert float(tC) == -1.0
@@ -115,7 +106,7 @@ def test_ansunits_converts_temperature_difference_correctly():
     assert dK.value == 1.0
     assert dK.units == "delta_K"
 
-    tC = dK.to("C")
+    tC = dK.to("delta_C")
     assert tC.value == 1.0
     assert tC.units == "delta_C"
     assert float(tC) == 1.0

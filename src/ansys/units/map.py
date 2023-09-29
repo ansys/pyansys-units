@@ -1,24 +1,17 @@
 """Provides the ``QuantityMap`` class."""
 import ansys.units as ansunits
-from ansys.units.utils import condense, filter_unit_term
 
 
 class QuantityMap(object):
-    """
-    Creates a ``QuantityMap`` object based on a given quantity map.
-
-    Parameters
-    ----------
-    quantity_map : dict
-        Dictionary containing quantity map units and values.
-
-    Returns
-    -------
-    QuantityMap
-        Quantity map instance.
-    """
+    """Creates a ``QuantityMap`` object based on a given quantity map."""
 
     def __init__(self, quantity_map):
+        """
+        Parameters
+        ----------
+        quantity_map : dict
+            Dictionary containing quantity map units and values.
+        """
         for item in quantity_map:
             if item not in ansunits._api_quantity_map:
                 raise QuantityMapError.UNKNOWN_MAP_ITEM(item)
@@ -27,42 +20,27 @@ class QuantityMap(object):
 
     def _map_to_units(self, quantity_map: dict) -> str:
         """
-        Convert a quantity map into a unit string.
+        Convert a quantity map into a Unit.
 
         Parameters
         ----------
         quantity_map : dict
-            Quantity map to convert to a unit string.
+            Quantity map to convert to a Unit.
 
         Returns
         -------
-        str
-            Unit string representation of the quantity map.
+        Unit
+            Unit object representation of the quantity map.
         """
-        unit_dict = {
-            ansunits._api_quantity_map[term]: power
-            for term, power in quantity_map.items()
-        }
+        base_unit = ansunits.Unit()
+        for term, power in quantity_map.items():
+            base_unit *= ansunits.Unit(ansunits._api_quantity_map[term]) ** power
 
-        units = ""
-
-        # Split unit string into terms and parse data associated with individual terms
-        for terms in unit_dict:
-            for term in terms.split(" "):
-                _, unit_term, unit_term_power = filter_unit_term(term)
-
-                unit_term_power *= unit_dict[terms]
-
-                if unit_term_power == 1.0:
-                    units += f" {unit_term}"
-                elif unit_term_power != 0.0:
-                    units += f" {unit_term}^{unit_term_power}"
-
-        return condense(units=units)
+        return base_unit
 
     @property
     def units(self):
-        """Unit string representation of the quantity map."""
+        """Unit representation of the quantity map."""
         return self._units
 
 

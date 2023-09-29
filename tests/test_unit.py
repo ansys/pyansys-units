@@ -1,10 +1,12 @@
+import pytest
+
 import ansys.units as ansunits
 
 
 def test_fundamental_units():
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
-    assert kg.type == "Mass"
+    assert kg._type == "MASS"
     assert kg._factor == 1
     assert kg._offset == 0
 
@@ -16,15 +18,22 @@ def test_derived_units():
     assert N._factor == 1
 
 
+def test_unitless():
+    unit = ansunits.Unit()
+    assert unit.name == ""
+
+    assert unit.dimensions == ansunits.Dimensions()
+
+
 def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C
-_type: Temperature
+_dimensions: {'TEMPERATURE': 1.0}
+_type: TEMPERATURE
 _factor: 1
 _offset: 273.15
-_dimensions: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 """
-    assert C.__str__() == C_string
+    assert str(C) == C_string
 
 
 def test_unit_multiply_by_value():
@@ -37,4 +46,47 @@ def test_unit_multiply_by_value():
 def test_reverse_multiply():
     ur = ansunits.UnitRegistry()
     new_unit = ur.K * ur.kg * ur.J
-    assert new_unit.name == "kg^2 m^2 s^-2 K"
+    assert new_unit.name == "K kg^2 m^2 s^-2"
+
+
+def test_unit_div():
+    K = ansunits.Unit("K")
+    kg = ansunits.Unit("kg")
+    kg_K = kg / K
+    assert kg_K.name == "kg K^-1"
+
+
+def test_unit_pow():
+    kg_K = ansunits.Unit("kg K")
+    kg_K_sq = kg_K**2
+    assert kg_K_sq.name == "kg^2 K^2"
+
+
+def test_unit_sys_list():
+    dims = ansunits.BaseDimensions
+    slug = ansunits.Unit(
+        dimensions=ansunits.Dimensions({dims.MASS: 1}),
+        unit_sys=ansunits.UnitSystem(
+            name="sys",
+            base_units=[
+                "slug",
+                "ft",
+                "s",
+                "R",
+                "delta_R",
+                "radian",
+                "slugmol",
+                "cd",
+                "A",
+                "sr",
+            ],
+        ),
+    )
+    assert slug.name == "slug"
+    assert slug.dimensions == ansunits.Dimensions({dims.MASS: 1})
+
+
+def test_excessive_parameters():
+    dims = ansunits.BaseDimensions
+    with pytest.raises(ansunits.UnitError):
+        C = ansunits.Unit("kg", dimensions=ansunits.Dimensions({dims.LENGTH: 1}))

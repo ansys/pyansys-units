@@ -226,18 +226,6 @@ def get_type(units: str) -> str:
     if units in _derived_units:
         return _QuantityType.derived
 
-    # HACK
-    temperature_units_to_search = ("K", "C", "F", "R")
-    if any([temp in units for temp in temperature_units_to_search]):
-        terms = parse_temperature_units(
-            units,
-            ignore_exponent=False,
-            units_to_search=temperature_units_to_search,
-        )
-        if any(is_diff for (_, is_diff) in terms):
-            return _QuantityType.temperature_difference
-        return _QuantityType.temperature
-
     return _QuantityType.composite
 
 

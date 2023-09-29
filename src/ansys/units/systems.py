@@ -1,38 +1,36 @@
 """Provides the ``UnitSystem`` class."""
 import ansys.units as ansunits
-from ansys.units.utils import si_data
 
 
 class UnitSystem:
     """
-    Initializes a unit system based on user-defined units or a predefined unit system.
-
-    Parameters
-    ----------
-    name: str, None
-        Custom name associated with a user-defined unit system.
-    base_units: list, None
-        Custom units associated with a user-defined unit system.
-    unit_sys: str, None
-        Predefined unit system.
+    Unit systems contain fundamental base units from user-defined units or a predefined
+    unit system.
 
     Methods
     -------
     convert()
         Convert from one unit system to a given unit system.
-
-    Returns
-    -------
-    Quantity
-        Quantity instance.
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
+        """
+        Initialize a unit system.
+
+        Parameters
+        ----------
+        name: str, optional
+            Custom name associated with a user-defined unit system.
+        base_units: list, optional
+            Custom units associated with a user-defined unit system.
+        unit_sys: str, optional
+            Predefined unit system.
+        """
         if name and unit_sys or base_units and unit_sys:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 
         if base_units:
-            if len(base_units) != ansunits.Dimensions.max_dim_len():
+            if len(base_units) != len(ansunits.BaseDimensions):
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
             self._name = name
@@ -54,14 +52,10 @@ class UnitSystem:
             if unit.name not in ansunits._fundamental_units:
                 raise UnitSystemError.NOT_FUNDAMENTAL(unit)
 
-            if hasattr(self, f"_{unit.type.lower()}"):
+            if hasattr(self, f"_{unit._type.lower()}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit.type.lower()}", unit)
-
-            if unit.type == "Temperature":
-                delta_unit = ansunits.Unit(f"delta_{unit.name}")
-                setattr(self, "_temperature difference", delta_unit)
+            setattr(self, f"_{unit._type.lower()}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -75,16 +69,11 @@ class UnitSystem:
         Returns
         -------
         Quantity
-            Quantity object containing the desired unit system conversion.
+            Quantity object converted to the desired unit system.
         """
-        new_dim = ansunits.Dimensions(
-            dimensions=quantity.dimensions, unit_sys=self.base_units
-        )
+        new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
 
-        _, si_multiplier, si_offset = si_data(new_dim.units)
-        new_value = (quantity.si_value / si_multiplier) - si_offset
-
-        return ansunits.Quantity(value=new_value, units=new_dim.units)
+        return quantity.to(to_units=new_unit)
 
     @property
     def name(self):
@@ -95,9 +84,8 @@ class UnitSystem:
     def base_units(self):
         """Units associated with the unit system."""
         _base_units = []
-        dim_order = ansunits._dimension_order
-        for order in dim_order:
-            unit = getattr(self, f"_{order.lower()}")
+        for type in ansunits.BaseDimensions:
+            unit = getattr(self, f"_{type.name.lower()}")
             _base_units.append(unit.name)
         return _base_units
 
@@ -124,7 +112,7 @@ class UnitSystem:
     @property
     def temperature_difference(self):
         """Temperature unit of the unit system."""
-        return getattr(self, "_temperature difference")
+        return self._temperature_difference
 
     @property
     def angle(self):
@@ -134,7 +122,7 @@ class UnitSystem:
     @property
     def chemical_amount(self):
         """Chemical Amount unit of the unit system."""
-        return getattr(self, "_chemical amount")
+        return self._chemical_amount
 
     @property
     def light(self):
@@ -149,7 +137,7 @@ class UnitSystem:
     @property
     def solid_angle(self):
         """Solid Angle unit of the unit system."""
-        return getattr(self, "_solid angle")
+        return self._solid_angle
 
 
 class UnitSystemError(ValueError):
@@ -168,7 +156,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def BASE_UNITS_LENGTH(cls, len):
         return cls(
-            f"The `base_units` argument must contain 9 units, currently there are {len}."
+            f"The `base_units` argument must contain 10 units, currently there are {len}."
         )
 
     @classmethod
@@ -181,7 +169,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def UNIT_TYPE(cls, unit):
         return cls(
-            f"Unit of type: `{unit.type}` already exits in this unit system"
+            f"Unit of type: `{unit._type}` already exits in this unit system"
             f"replace '{unit.name}' with unit of another type"
         )
 

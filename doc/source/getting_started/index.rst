@@ -12,3 +12,4 @@ conversions.
    :maxdepth: 2
 
    installation
+   frequently

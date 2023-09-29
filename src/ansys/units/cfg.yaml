@@ -1,21 +1,4 @@
 ---
-# Dimension Order
-# ---------------
-#
-# Dimension type : Order
-
-dimension_order:
-  Mass: 1
-  Length: 2
-  Time: 3
-  Temperature: 4
-  Temperature Difference: 4
-  Angle: 5
-  Chemical Amount: 6
-  Light: 7
-  Current: 8
-  Solid Angle: 9
-
 # Multipliers
 # -----------
 #
@@ -62,6 +45,7 @@ unit_systems:
     - m
     - s
     - K
+    - delta_K
     - radian
     - mol
     - cd
@@ -72,6 +56,7 @@ unit_systems:
     - cm
     - s
     - K
+    - delta_K
     - radian
     - mol
     - cd
@@ -82,6 +67,7 @@ unit_systems:
     - ft
     - s
     - R
+    - delta_R
     - radian
     - slugmol
     - cd
@@ -101,103 +87,103 @@ unit_systems:
 
 fundamental_units:
   kg:
-    type: Mass
+    type: MASS
     factor: 1
     offset: 0
   g:
-    type: Mass
+    type: MASS
     factor: 0.001
     offset: 0
   lb:
-    type: Mass
+    type: MASS
     factor: 0.45359237
     offset: 0
   lbm:
-    type: Mass
+    type: MASS
     factor: 0.45359237
     offset: 0
   slug:
-    type: Mass
+    type: MASS
     factor: 14.59390293720637
     offset: 0
   m:
-    type: Length
+    type: LENGTH
     factor: 1
     offset: 0
   cm:
-    type: Length
+    type: LENGTH
     factor: 0.01
     offset: 0
   ft:
-    type: Length
+    type: LENGTH
     factor: 0.30479999999999996
     offset: 0
   in:
-    type: Length
+    type: LENGTH
     factor: 0.0254
     offset: 0
   s:
-    type: Time
+    type: TIME
     factor: 1
     offset: 0
   A:
-    type: Current
+    type: CURRENT
     factor: 1
     offset: 0
   mol:
-    type: Chemical Amount
+    type: CHEMICAL_AMOUNT
     factor: 1
     offset: 0
   slugmol:
-    type: Chemical Amount
+    type: CHEMICAL_AMOUNT
     factor: 14593.9
     offset: 0
   cd:
-    type: Light
+    type: LIGHT
     factor: 1
     offset: 0
   sr:
-    type: Solid Angle
+    type: SOLID_ANGLE
     factor: 1
     offset: 0
   radian:
-    type: Angle
+    type: ANGLE
     factor: 1
     offset: 0
   degree:
-    type: Angle
+    type: ANGLE
     factor: 0.017453292519943295
     offset: 0
   K:
-    type: Temperature
+    type: TEMPERATURE
     factor: 1
     offset: 0
   C:
-    type: Temperature
+    type: TEMPERATURE
     factor: 1
     offset: 273.15
   F:
-    type: Temperature
+    type: TEMPERATURE
     factor: 0.55555555555
     offset: 459.67
   R:
-    type: Temperature
+    type: TEMPERATURE
     factor: 0.55555555555
     offset: 0
   delta_K:
-    type: Temperature Difference
+    type: TEMPERATURE_DIFFERENCE
     factor: 1
     offset: 0
   delta_C:
-    type: Temperature Difference
+    type: TEMPERATURE_DIFFERENCE
     factor: 1
     offset: 0
   delta_F:
-    type: Temperature Difference
+    type: TEMPERATURE_DIFFERENCE
     factor: 0.55555555555
     offset: 0
   delta_R:
-    type: Temperature Difference
+    type: TEMPERATURE_DIFFERENCE
     factor: 0.55555555555
     offset: 0
 

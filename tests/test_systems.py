@@ -1,7 +1,6 @@
 import pytest
 
 import ansys.units as ansunits
-from ansys.units.utils import UtilError
 
 
 def test_pre_defined_unit_system():
@@ -30,6 +29,7 @@ def test_custom_unit_system():
             ur.ft,
             ur.s,
             ur.R,
+            ur.delta_R,
             ur.radian,
             ur.slugmol,
             ur.cd,
@@ -61,7 +61,8 @@ def test_conversion():
     assert q2.units == "slug ft s"
 
     us2 = ansunits.UnitSystem(
-        name="sys", base_units=["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
+        name="sys",
+        base_units=["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"],
     )
     q3 = ansunits.Quantity(4, "slug cm s")
 
@@ -97,20 +98,64 @@ def test_errors():
             ],
         )
 
-    with pytest.raises(UtilError) as e_info:
+    with pytest.raises(ansunits.UnitSystemError) as e_info:
         us3 = ansunits.UnitSystem(
             name="sys",
-            base_units=["slug", "ft", "eon", "R", "radian", "slugmol", "cd", "A", "sr"],
+            base_units=[
+                "slug",
+                "ft",
+                "N",
+                "R",
+                "delta_R",
+                "radian",
+                "slugmol",
+                "cd",
+                "A",
+                "sr",
+            ],
         )
 
     with pytest.raises(ansunits.UnitSystemError) as e_info:
         us4 = ansunits.UnitSystem(
             name="sys",
+            base_units=[
+                "slug",
+                "slug",
+                "s",
+                "R",
+                "delta_R",
+                "radian",
+                "slugmol",
+                "cd",
+                "A",
+                "sr",
+            ],
+        )
+
+    with pytest.raises(ansunits.UnitSystemError) as e_info:
+        us5 = ansunits.UnitSystem(
+            name="sys",
             base_units=["m", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
         )
 
     with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us5 = ansunits.UnitSystem(unit_sys="Standard")
+        us6 = ansunits.UnitSystem(unit_sys="Standard")
+
+    with pytest.raises(ansunits.UnitSystemError) as e_info:
+        us7 = ansunits.UnitSystem(
+            name="us6",
+            base_units=[
+                "kg s^-1",
+                "ft",
+                "s",
+                "R",
+                "radian",
+                "slugmol",
+                "cd",
+                "A",
+                "sr",
+            ],
+        )
 
     with pytest.raises(ansunits.UnitSystemError) as e_info:
         us6 = ansunits.UnitSystem(
@@ -137,9 +182,9 @@ def test_error_messages():
     )
     assert str(e1) == expected_str
 
-    e2 = ansunits.UnitSystemError.BASE_UNITS_LENGTH(10)
+    e2 = ansunits.UnitSystemError.BASE_UNITS_LENGTH(11)
     expected_str = (
-        "The `base_units` argument must contain 9 units, currently there are 10."
+        "The `base_units` argument must contain 10 units, currently there are 11."
     )
     assert str(e2) == expected_str
 
@@ -152,7 +197,7 @@ def test_error_messages():
 
     e4 = ansunits.UnitSystemError.UNIT_TYPE(ansunits.Unit("m"))
     expected_str = (
-        "Unit of type: `Length` already exits in this unit system"
+        "Unit of type: `LENGTH` already exits in this unit system"
         "replace 'm' with unit of another type"
     )
     assert str(e4) == expected_str

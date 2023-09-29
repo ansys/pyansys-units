@@ -15,7 +15,6 @@ def test_tables():
     assert isinstance(ansunits._derived_units, dict)
     assert isinstance(ansunits._multipliers, dict)
     assert isinstance(ansunits._unit_systems, dict)
-    assert isinstance(ansunits._dimension_order, dict)
 
 
 def test_has_multiplier():
@@ -78,17 +77,17 @@ def test_condense():
 
 
 def test_get_type():
-    assert get_type(units="kg") == "Mass"
-    assert get_type(units="m") == "Length"
-    assert get_type(units="s") == "Time"
-    assert get_type(units="K") == "Temperature"
-    assert get_type(units="delta_K") == "Temperature Difference"
-    assert get_type(units="radian") == "Angle"
-    assert get_type(units="mol") == "Chemical Amount"
-    assert get_type(units="cd") == "Light"
-    assert get_type(units="A") == "Current"
-    assert get_type(units="sr") == "Solid Angle"
+    assert get_type(units="kg") == "MASS"
+    assert get_type(units="m") == "LENGTH"
+    assert get_type(units="s") == "TIME"
+    assert get_type(units="K") == "TEMPERATURE"
+    assert get_type(units="delta_K") == "TEMPERATURE_DIFFERENCE"
+    assert get_type(units="radian") == "ANGLE"
+    assert get_type(units="mol") == "CHEMICAL_AMOUNT"
+    assert get_type(units="cd") == "LIGHT"
+    assert get_type(units="A") == "CURRENT"
+    assert get_type(units="sr") == "SOLID_ANGLE"
     assert get_type(units="") == "No Type"
     assert get_type(units="farad") == "Derived"
     assert get_type(units="N m s") == "Composite"
-    assert get_type(units="C^2") == "Temperature Difference"
+    assert get_type(units="C^2") == "Composite"

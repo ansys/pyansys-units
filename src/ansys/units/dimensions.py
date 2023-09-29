@@ -1,142 +1,101 @@
-"""Provides the ``Dimension`` class."""
-import ansys.units as ansunits
-from ansys.units.utils import condense, filter_unit_term
+"""Provides the ``Dimensions`` and ``BaseDimensions`` class."""
+from enum import Enum
 
 
-class Dimensions(object):
+class BaseDimensions(Enum):
     """
-    Initializes a ``Dimensions`` object using a dimensions list or a unit string.
+    Supplies all valid base dimensions used in dimensional analysis.
 
-    Parameters
-    ----------
-    units : str, None
-        Unit string of the quantity.
-    dimensions : list, None
-        List of the dimensions.
-    unit_sys : str, None
-        Unit system for creating units.
-
-    Returns
-    -------
-    Dimensions instance.
+    Used as dictionary keys for defining a `Dimensions` object.
     """
 
-    def __init__(
-        self, units: str = None, dimensions: list = None, unit_sys: str = None
-    ):
-        if units and dimensions:
-            raise DimensionsError.EXCESSIVE_PARAMETERS()
+    MASS = 0
+    LENGTH = 1
+    TIME = 2
+    TEMPERATURE = 3
+    TEMPERATURE_DIFFERENCE = 4
+    ANGLE = 5
+    CHEMICAL_AMOUNT = 6
+    LIGHT = 7
+    CURRENT = 8
+    SOLID_ANGLE = 9
 
-        unit_sys = unit_sys or ansunits._unit_systems["SI"]
 
-        if units is not None:
-            self._unit = units
-            self._dimensions = self._units_to_dim(units=units)
+class Dimensions:
+    """Represents the physical dimensions of a quantity or its units."""
 
-        if dimensions:
-            if len(dimensions) > self.max_dim_len():
-                raise DimensionsError.EXCESSIVE_DIMENSIONS(len(dimensions))
-
-            self._dimensions, self._unit = self._dim_to_units(
-                dimensions=dimensions, unit_sys=unit_sys
-            )
-
-    def _dim_to_units(self, dimensions: list, unit_sys: list) -> str:
+    def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
         """
-        Convert a dimensions list into a unit string.
+        Create a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
+        power. Default is dimensionless.
 
         Parameters
         ----------
-        dimensions : list
-            List of unit dimensions.
-
-        unit_sys : list
-            Unit system of the dimensions.
-
-        Returns
-        -------
-        str
-            Unit string representation of the dimensions.
+        dimensions_container : dict, optional
+            Dictionary of {``BaseDimensions``: power, ...}.
         """
-        # Ensure dimensions list contains 9 terms
-        dimensions = [
-            float(dim)
-            for dim in dimensions + ((self.max_dim_len() - len(dimensions)) * [0])
-        ]
-        units = ""
-
-        # Define unit term and associated value from dimension with dimensions list
-        for idx, dim in enumerate(dimensions):
-            if dim == 1.0:
-                units += f" {unit_sys[idx]}"
-            elif dim != 0.0:
-                dim = int(dim) if dim % 1 == 0 else dim
-                units += f" {unit_sys[idx]}^{dim}"
-
-        return dimensions, condense(units=units)
-
-    def _units_to_dim(
-        self, units: str, power: float = None, dimensions: list = None
-    ) -> list:
-        """
-        Convert a unit string into a dimensions list.
-
-        Parameters
-        ----------
-        units : str
-            Unit string of quantity.
-        power : float
-            Power of unit string.
-
-        Returns
-        -------
-        list
-            Dimensions representation of unit string.
-        """
-        power = power or 1.0
-        dimensions = dimensions or [0.0] * self.max_dim_len()
-
-        # Split unit string into terms and parse data associated with individual terms
-        for term in units.split(" "):
-            _, unit_term, unit_term_power = filter_unit_term(term)
-
-            unit_term_power *= power
-
-            # retrieve data associated with fundamental unit
-            if unit_term in ansunits._fundamental_units:
-                idx = (
-                    ansunits._dimension_order[
-                        ansunits._fundamental_units[unit_term]["type"]
-                    ]
-                    - 1
-                )
-                dimensions[idx] += unit_term_power
-
-            # Retrieve derived unit composition unit string and factor.
-            if unit_term in ansunits._derived_units:
-                # Recursively parse composition unit string
-                dimensions = self._units_to_dim(
-                    units=ansunits._derived_units[unit_term]["composition"],
-                    power=unit_term_power,
-                    dimensions=dimensions,
-                )
-
-        return dimensions
-
-    @property
-    def units(self):
-        """Unit string representation of dimensions."""
-        return self._unit
+        dimensions_container = dimensions_container or {}
+        self._dimensions = dimensions_container.copy()
+        for x, y in dimensions_container.items():
+            if not isinstance(x, BaseDimensions):
+                raise DimensionsError.INCORRECT_DIMENSIONS()
+            if y == 0:
+                del self._dimensions[x]
 
     @property
     def dimensions(self):
-        """Dimensions list."""
-        return self._dimensions
+        """Dimensions as a dictionary."""
+        dims = {x.value: y for x, y in self._dimensions.items()}
+        return dict(dims)
 
-    @staticmethod
-    def max_dim_len():
-        """Maximum number of elements within a dimensions list."""
-        return 9
+    def __str__(self):
+        dims = {x.name: y for x, y in self._dimensions.items()}
+        if not dims:
+            dims = ""
+        return str(dims)
+
+    def __repr__(self):
+        dims = {x.name: y for x, y in self._dimensions.items()}
+        if not dims:
+            dims = ""
+        return str(dims)
+
+    def __mul__(self, other):
+        results = self._dimensions.copy()
+        for dim, value in other._dimensions.items():
+            if dim in results:
+                results[dim] += value
+            else:
+                results[dim] = value
+        return Dimensions(results)
+
+    def __truediv__(self, other):
+        results = self._dimensions.copy()
+        for dim, value in other._dimensions.items():
+            if dim in results:
+                results[dim] -= value
+            else:
+                results[dim] = -value
+        return Dimensions(results)
+
+    def __pow__(self, __value):
+        results = self._dimensions.copy()
+        for dim in self._dimensions:
+            results[dim] *= __value
+        return Dimensions(results)
+
+    def __eq__(self, other):
+        temp_dim = self / other
+        temp = BaseDimensions.TEMPERATURE
+        temp_diff = BaseDimensions.TEMPERATURE_DIFFERENCE
+        if temp in temp_dim._dimensions and temp_diff in temp_dim._dimensions:
+            if temp_dim._dimensions[temp] == -temp_dim._dimensions[temp_diff]:
+                del temp_dim._dimensions[temp_diff]
+                del temp_dim._dimensions[temp]
+        return not bool(temp_dim.dimensions)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class DimensionsError(ValueError):
@@ -146,15 +105,6 @@ class DimensionsError(ValueError):
         super().__init__(err)
 
     @classmethod
-    def EXCESSIVE_PARAMETERS(cls):
-        """Return in case of excessive parameters."""
-        return cls(
-            "Dimensions only accepts 1 of the following parameters: (units) or (dimensions)."
-        )
-
-    @classmethod
-    def EXCESSIVE_DIMENSIONS(cls, len):
-        """Return in case of excessive dimensions."""
-        return cls(
-            f"The `dimensions` argument must contain 9 values or less, currently there are {len}."
-        )
+    def INCORRECT_DIMENSIONS(cls):
+        """Return in case of dimensions not in dimension order."""
+        return cls(f"The `dimensions_container` key must be a 'BaseDimensions' object")
