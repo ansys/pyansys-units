@@ -27,7 +27,7 @@ class Dimensions:
     def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
         """
         Create a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
-        power.Default is dimensionless.
+        power. Default is dimensionless.
 
         Parameters
         ----------
