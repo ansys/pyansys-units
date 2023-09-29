@@ -32,7 +32,7 @@ class Dimensions:
 
         Parameters
         ----------
-        dimensions_container : dictionary, optional
+        dimensions_container : dict, optional
             Dictionary of {``BaseDimensions``: power, ...}.
         """
         dimensions_container = dimensions_container or {}

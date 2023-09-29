@@ -25,7 +25,7 @@ class UnitRegistry:
         ----------
         config: filename.yaml, optional
             Custom .yaml file or `cfg.yaml`. Format must match `cfg.yaml`.
-        other: Dict, optional
+        other: dict, optional
             Dictionary for extra units.
         """
         unitdict = other or {}
