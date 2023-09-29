@@ -22,23 +22,19 @@ class BaseDimensions(Enum):
 
 
 class Dimensions:
-    """
-    Initializes a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
-    power.
-
-    Parameters
-    ----------
-    dimensions_container : dictionary, optional
-        Dictionary of {``BaseDimensions``: power, ...}.
-
-    Returns
-    -------
-    Dimensions instance.
-        On which mathematical dimensional analysis is performed.
-        Default is dimensionless.
-    """
+    """Create a ``Dimensions`` object on which mathematical dimensional analysis is
+    performed."""
 
     def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
+        """
+        Create a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
+        power.Default is dimensionless.
+
+        Parameters
+        ----------
+        dimensions_container : dictionary, optional
+            Dictionary of {``BaseDimensions``: power, ...}.
+        """
         dimensions_container = dimensions_container or {}
         self._dimensions = dimensions_container.copy()
         for x, y in dimensions_container.items():

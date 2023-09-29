@@ -3,26 +3,7 @@ from ansys.units.utils import filter_unit_term
 
 
 class Unit:
-    """
-    Initializes a Unit. Contains all the unit information.
-
-    Parameters
-    ----------
-    units: str, optional
-        Name of the unit or string chain of combined units
-    config: dict, optional
-        dictionary of unit properties
-    dimensions: Dimensions, optional
-        An instance of the Dimensions class.
-    unit_sys: str, optional
-        Define the unit system for base units of dimension,
-        default is SI.
-
-    Returns
-    -------
-    Unit
-        Unit instance.
-    """
+    """The unit information of a quantity."""
 
     def __init__(
         self,
@@ -31,6 +12,21 @@ class Unit:
         dimensions: ansunits.Dimensions = None,
         unit_sys: ansunits.UnitSystem = None,
     ):
+        """
+        Create a Unit object. Contains all the unit information.
+
+        Parameters
+        ----------
+        units: str, optional
+            Name of the unit or string chain of combined units
+        config: dict, optional
+            dictionary of unit properties
+        dimensions: Dimensions, optional
+            An instance of the Dimensions class.
+        unit_sys: str, optional
+            Define the unit system for base units of dimension,
+            default is SI.
+        """
         if units:
             self._name = units
             _dimensions = self._units_to_dim(units=units)
@@ -64,7 +60,7 @@ class Unit:
         Returns
         -------
         dict
-            dictionary of extra unit information.
+            Dictionary of extra unit information.
         """
         if name in ansunits._fundamental_units:
             return ansunits._fundamental_units[name]
@@ -83,16 +79,16 @@ class Unit:
         Parameters
         ----------
         dimensions : Dimensions object
-            instance of Dimension class.
+            Instance of Dimension class.
 
         unit_sys : UnitSystem object, optional
             Unit system for dimensions list.
-            default is SI units
+            Default is SI units.
 
         Returns
         -------
         str
-            Unit string representation of the dimensions.
+            Unit string.
         """
         if not unit_sys:
             unit_sys = ansunits.UnitSystem(name="SI")
@@ -115,10 +111,11 @@ class Unit:
         Parameters
         ----------
         units : str
-            Unit string of quantity.
+            Unit string.
         Returns
         -------
-        dimensions list
+        dict
+            Dimensions dictionary
         """
         power = power or 1.0
         dimensions = dimensions or {}

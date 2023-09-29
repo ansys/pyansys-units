@@ -3,21 +3,15 @@ import ansys.units as ansunits
 
 
 class QuantityMap(object):
-    """
-    Creates a ``QuantityMap`` object based on a given quantity map.
-
-    Parameters
-    ----------
-    quantity_map : dict
-        Dictionary containing quantity map units and values.
-
-    Returns
-    -------
-    QuantityMap
-        Quantity map instance.
-    """
+    """Creates a ``QuantityMap`` object based on a given quantity map."""
 
     def __init__(self, quantity_map):
+        """
+        Parameters
+        ----------
+        quantity_map : dict
+            Dictionary containing quantity map units and values.
+        """
         for item in quantity_map:
             if item not in ansunits._api_quantity_map:
                 raise QuantityMapError.UNKNOWN_MAP_ITEM(item)

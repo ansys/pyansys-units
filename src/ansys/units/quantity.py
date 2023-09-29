@@ -7,31 +7,15 @@ from ansys.units.utils import si_data
 
 class Quantity(float):
     """
-    Instantiates a physical quantity using a real value and units.
+    A physical quantity using a real value and units.
 
     All instances of this class are converted to the base SI unit system
     to have consistency in arithmetic operations.
-
-    Parameters
-    ----------
-    value : int | float
-        Real value of the quantity.
-    units : str, Unit, optional
-        Unit string representation of the quantity.
-    quantity_map : dict, optional
-        Quantity map representation of the quantity.
-    dimensions : Dimensions, optional
-        Dimensions representation of the quantity.
 
     Methods
     -------
     to()
         Convert to a given unit string.
-
-    Returns
-    -------
-    Quantity
-        Quantity instance.
     """
 
     def __new__(
@@ -75,6 +59,18 @@ class Quantity(float):
         quantity_map=None,
         dimensions: ansunits.Dimensions = None,
     ):
+        """
+        Parameters
+        ----------
+        value : int | float
+            Real value of the quantity.
+        units : str, Unit, optional
+            Unit string representation of the quantity.
+        quantity_map : dict, optional
+            Quantity map representation of the quantity.
+        dimensions : Dimensions, optional
+            Dimensions representation of the quantity.
+        """
         if (
             (units and quantity_map)
             or (units and dimensions)
