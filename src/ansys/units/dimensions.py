@@ -48,6 +48,12 @@ class Dimensions:
         dims = {x.value: y for x, y in self._dimensions.items()}
         return dict(dims)
 
+    @property
+    def single_dimension(self):
+        """For fundamental units."""
+        dim = [x.name for x in self._dimensions.keys()][0]
+        return dim
+
     def __str__(self):
         dims = {x.name: y for x, y in self._dimensions.items()}
         if not dims:
