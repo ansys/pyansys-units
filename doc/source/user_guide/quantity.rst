@@ -50,7 +50,11 @@ behind conversions is:
 
 .. math::
 
-    value_{\text{new}} = (value_{\text{si}}  / {\text{scaling-factor}}_{\text{new}}) - offset_{\text{new}}
+    value_{\text{new}} = \frac{value_{\text{si}}}{f_{\text{new}}} - c_{\text{new}}
+
+
+Where :math:`f_{new}` is a scaling factor and :math:`c_{new}` is an offset to convert
+from SI units to the requested units.
 
 To define a new unit system or create custom quantities, manually update the
 ``cfg.yaml`` file with your desired data. Once saved, these changes are reflected
