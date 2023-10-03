@@ -7,7 +7,7 @@ def test_fundamental_units():
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
     assert kg.dimensions.single_dimension == "MASS"
-    assert kg.si_multiplier == 1
+    assert kg.si_factor == 1
     assert kg.si_offset == 0
 
 
@@ -30,7 +30,7 @@ def test_string_rep():
     C_string = """_name: C
 _dimensions: {'TEMPERATURE': 1.0}
 _si_units: K
-_si_multiplier: 1.0
+_si_factor: 1.0
 _si_offset: 273.15
 """
     assert str(C) == C_string

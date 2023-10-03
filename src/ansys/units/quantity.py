@@ -46,7 +46,7 @@ class Quantity(float):
         if not isinstance(_unit, ansunits.Unit):
             _unit = ansunits.Unit(_unit)
 
-        _si_value = (_value + _unit.si_offset) * _unit.si_multiplier
+        _si_value = (_value + _unit.si_offset) * _unit.si_factor
 
         return float.__new__(cls, _si_value)
 
@@ -97,8 +97,6 @@ class Quantity(float):
             or (self._unit.name == "F" and value < -459.67)
         ):
             self._unit = ansunits.Unit(f"delta_{self._unit.name}")
-
-        self._si_value = (self.value + self._unit.si_offset) * self._unit.si_multiplier
 
     def _arithmetic_precheck(self, __value) -> str:
         """
@@ -158,7 +156,7 @@ class Quantity(float):
     @property
     def si_value(self):
         """SI conversion value."""
-        return self._si_value
+        return (self.value + self._unit.si_offset) * self._unit.si_factor
 
     @property
     def si_units(self):
@@ -194,7 +192,7 @@ class Quantity(float):
             to_units = ansunits.Unit(units=to_units)
 
         # Retrieve all SI required SI data and perform conversion
-        new_value = (self.si_value / to_units.si_multiplier) - to_units.si_offset
+        new_value = (self.si_value / to_units.si_factor) - to_units.si_offset
 
         new_obj = Quantity(value=new_value, units=to_units)
 

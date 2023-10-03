@@ -11,7 +11,7 @@ class Unit:
     filter_unit_term()
         Separate multiplier, base, and power from a unit term.
     si_data()
-        Compute the SI unit string, SI multiplier, and SI offset.
+        Compute the SI unit string, SI factor, and SI offset.
     """
 
     def __init__(
@@ -58,9 +58,7 @@ class Unit:
             for key in config:
                 setattr(self, f"_{key}", config[key])
 
-        self._si_units, self._si_multiplier, self._si_offset = self.si_data(
-            units=self.name
-        )
+        self._si_units, self._si_factor, self._si_offset = self.si_data(units=self.name)
 
     def _get_config(self, name: str) -> dict:
         """
@@ -282,10 +280,10 @@ class Unit:
         units: str = None,
         power: float = None,
         si_units: str = None,
-        si_multiplier: float = None,
+        si_factor: float = None,
     ) -> tuple:
         """
-        Compute the SI unit string, SI multiplier, and SI offset.
+        Compute the SI unit string, SI factor, and SI offset.
 
         Parameters
         ----------
@@ -295,19 +293,19 @@ class Unit:
             Power of the unit string.
         si_units : str, None
             SI unit string representation of the quantity.
-        si_multiplier : float, None
-            SI multiplier of the unit string.
+        si_factor : float, None
+            SI factor of the unit string.
 
         Returns
         -------
         tuple
-            Tuple containing the SI units, SI multiplier, and SI offset.
+            Tuple containing the SI units, SI factor, and SI offset.
         """
         # Initialize default values
         units = units or " "
         power = power or 1.0
         si_units = si_units or ""
-        si_multiplier = si_multiplier or 1.0
+        si_factor = si_factor or 1.0
         si_offset = (
             _fundamental_units[units]["offset"] if units in _fundamental_units else 0.0
         )
@@ -318,7 +316,7 @@ class Unit:
 
             unit_term_power *= power
 
-            si_multiplier *= (
+            si_factor *= (
                 _multipliers[unit_multiplier] ** unit_term_power
                 if unit_multiplier
                 else 1.0
@@ -331,23 +329,21 @@ class Unit:
                 elif unit_term_power != 0.0:
                     si_units += f" {self._si_map(unit_term)}^{unit_term_power}"
 
-                si_multiplier *= (
-                    _fundamental_units[unit_term]["factor"] ** unit_term_power
-                )
+                si_factor *= _fundamental_units[unit_term]["factor"] ** unit_term_power
 
             # Retrieve derived unit composition unit string and factor
             elif unit_term in _derived_units:
-                si_multiplier *= _derived_units[unit_term]["factor"] ** unit_term_power
+                si_factor *= _derived_units[unit_term]["factor"] ** unit_term_power
 
                 # Recursively parse composition unit string
-                si_units, si_multiplier, _ = self.si_data(
+                si_units, si_factor, _ = self.si_data(
                     units=_derived_units[unit_term]["composition"],
                     power=unit_term_power,
                     si_units=si_units,
-                    si_multiplier=si_multiplier,
+                    si_factor=si_factor,
                 )
 
-        return self._condense(si_units), si_multiplier, si_offset
+        return self._condense(si_units), si_factor, si_offset
 
     @property
     def name(self):
@@ -360,9 +356,9 @@ class Unit:
         return self._si_units
 
     @property
-    def si_multiplier(self):
-        """The multiplier used in SI conversion calculations."""
-        return self._si_multiplier
+    def si_factor(self):
+        """The scaling factor used in SI conversion calculations."""
+        return self._si_factor
 
     @property
     def si_offset(self):
