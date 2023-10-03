@@ -4,9 +4,9 @@
 Temperature & Change of Temperature
 ===================================
 
-The default temperature units are kelvin, celsius, rankine and fahrenheit these are
-used as K, C, R and F. For each temperature unit there is a change of temperature unit
-which is prefixed with ``delta_``.
+PyAnsys Units supports temperature units in Kelvin (K), Celsius (C), Rankine (R)
+and Fahrenheit (F). For each temperature unit there is a change of temperature
+unit which is prefixed with ``delta_``.
 
 Conversion is handled naturally through arithmetic operations:
 
@@ -27,7 +27,8 @@ Conversion is handled naturally through arithmetic operations:
     delta_K_ad_delta_K = delta_K + delta_K  # (10, delta_K)
     delta_K_sb_delta_K = delta_K - delta_K  # (0, delta_K)
 
-A negative absolute value for any temperature will be assumed as a change in temperature.
+Negative absolute values for any temperature are instantiated as a change in
+temperature.
 
 .. code:: python
 
