@@ -198,7 +198,7 @@ class Unit:
 
     def _condense(self, units=str) -> str:
         """
-        Condense a unit string by collecting liketerms.
+        Condense a unit string by collecting like terms.
 
         Parameters
         ----------
