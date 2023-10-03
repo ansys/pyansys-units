@@ -356,17 +356,17 @@ class Unit:
 
     @property
     def si_units(self):
-        """Returns si_units."""
+        """The SI unit."""
         return self._si_units
 
     @property
     def si_multiplier(self):
-        """Returns si_multiplier."""
+        """The multiplier used in SI conversion calculations."""
         return self._si_multiplier
 
     @property
     def si_offset(self):
-        """Returns si_offset."""
+        """The offset used in SI conversion calculations."""
         return self._si_offset
 
     @property

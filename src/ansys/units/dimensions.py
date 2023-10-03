@@ -50,9 +50,11 @@ class Dimensions:
 
     @property
     def single_dimension(self):
-        """For fundamental units."""
-        dim = [x.name for x in self._dimensions.keys()][0]
-        return dim
+        """Get the name of the base dimension."""
+        dims = [x.name for x in self._dimensions.keys()]
+        if len(dims) != 1:
+            raise DimensionsError.MULTIPLE_BASE_DIMENSIONS(dimensions=self)
+        return dims[0]
 
     def __str__(self):
         dims = {x.name: y for x, y in self._dimensions.items()}
@@ -114,3 +116,7 @@ class DimensionsError(ValueError):
     def INCORRECT_DIMENSIONS(cls):
         """Return in case of dimensions not in dimension order."""
         return cls(f"The `dimensions_container` key must be a 'BaseDimensions' object")
+
+    @classmethod
+    def MULTIPLE_BASE_DIMENSIONS(cls, dimensions):
+        return cls(f"`{dimensions}` has more than one base dimension.")
