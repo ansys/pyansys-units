@@ -58,7 +58,9 @@ class Unit:
             for key in config:
                 setattr(self, f"_{key}", config[key])
 
-        self._si_units, self._si_factor, self._si_offset = self.si_data(units=self.name)
+        self._si_units, self._si_scaling_factor, self._si_offset = self.si_data(
+            units=self.name
+        )
 
     def _get_config(self, name: str) -> dict:
         """
@@ -280,7 +282,7 @@ class Unit:
         units: str = None,
         power: float = None,
         si_units: str = None,
-        si_factor: float = None,
+        si_scaling_factor: float = None,
     ) -> tuple:
         """
         Compute the SI unit string, SI factor, and SI offset.
@@ -293,7 +295,7 @@ class Unit:
             Power of the unit string.
         si_units : str, None
             SI unit string representation of the quantity.
-        si_factor : float, None
+        si_scaling_factor : float, None
             SI factor of the unit string.
 
         Returns
@@ -305,7 +307,7 @@ class Unit:
         units = units or " "
         power = power or 1.0
         si_units = si_units or ""
-        si_factor = si_factor or 1.0
+        si_scaling_factor = si_scaling_factor or 1.0
         si_offset = (
             _fundamental_units[units]["offset"] if units in _fundamental_units else 0.0
         )
@@ -316,7 +318,7 @@ class Unit:
 
             unit_term_power *= power
 
-            si_factor *= (
+            si_scaling_factor *= (
                 _multipliers[unit_multiplier] ** unit_term_power
                 if unit_multiplier
                 else 1.0
@@ -329,21 +331,25 @@ class Unit:
                 elif unit_term_power != 0.0:
                     si_units += f" {self._si_map(unit_term)}^{unit_term_power}"
 
-                si_factor *= _fundamental_units[unit_term]["factor"] ** unit_term_power
+                si_scaling_factor *= (
+                    _fundamental_units[unit_term]["factor"] ** unit_term_power
+                )
 
             # Retrieve derived unit composition unit string and factor
             elif unit_term in _derived_units:
-                si_factor *= _derived_units[unit_term]["factor"] ** unit_term_power
+                si_scaling_factor *= (
+                    _derived_units[unit_term]["factor"] ** unit_term_power
+                )
 
                 # Recursively parse composition unit string
-                si_units, si_factor, _ = self.si_data(
+                si_units, si_scaling_factor, _ = self.si_data(
                     units=_derived_units[unit_term]["composition"],
                     power=unit_term_power,
                     si_units=si_units,
-                    si_factor=si_factor,
+                    si_scaling_factor=si_scaling_factor,
                 )
 
-        return self._condense(si_units), si_factor, si_offset
+        return self._condense(si_units), si_scaling_factor, si_offset
 
     @property
     def name(self):
@@ -356,9 +362,9 @@ class Unit:
         return self._si_units
 
     @property
-    def si_factor(self):
+    def si_scaling_factor(self):
         """The scaling factor used in SI conversion calculations."""
-        return self._si_factor
+        return self._si_scaling_factor
 
     @property
     def si_offset(self):
