@@ -48,14 +48,9 @@ insert them within an equation to perform mathematical operations.
 ``Quantity`` objects work intuitively with unit conversion. The arithmetic operation
 behind conversions is:
 
-.. code:: python
+.. math::
 
-    import ansys.units as ansunits
-
-    meter = ansunits.Quantity(value=1, units="m")
-    feet = meter.to(to_units="ft")
-
-    feet.value  # 3.280839895013124 = (meter.si_value / ft.si_factor) - ft.si_offset
+    value_{\text{new}} = (value_{\text{si}}  / {\text{scaling-factor}}_{\text{new}}) - offset_{\text{new}}
 
 To define a new unit system or create custom quantities, manually update the
 ``cfg.yaml`` file with your desired data. Once saved, these changes are reflected
