@@ -9,7 +9,7 @@ The ``cfg.yaml`` file contains these tables predefining quantity data:
 - ``dimension_order``
 - ``multipliers``
 - ``unit_systems``
-- ``fundamental_units``
+- ``base_units``
 - ``derived_units``
 - ``api_quantity_map``
 

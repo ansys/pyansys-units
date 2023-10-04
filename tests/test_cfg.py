@@ -13,5 +13,5 @@ def test_config_import():
     multipliers: dict = qc_data["multipliers"]
     unit_systems: dict = qc_data["unit_systems"]
     api_quantity_map: dict = qc_data["api_quantity_map"]
-    fundamental_units: dict = qc_data["fundamental_units"]
+    base_units: dict = qc_data["base_units"]
     derived_units: dict = qc_data["derived_units"]

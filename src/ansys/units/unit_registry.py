@@ -9,7 +9,7 @@ import ansys.units as ansunits
 class UnitRegistry:
     """
     A container of common ``Units`` for ease of use. Defaults to all units in
-    '_fundamental_units' and '_derived_units'.
+    '_base_units' and '_derived_units'.
 
     Examples
     --------
@@ -37,10 +37,10 @@ class UnitRegistry:
 
             with open(qc_path, "r") as qc_yaml:
                 qc_data = yaml.safe_load(qc_yaml)
-                _fundamental_units: dict = qc_data["fundamental_units"]
+                _base_units: dict = qc_data["base_units"]
                 _derived_units: dict = qc_data["derived_units"]
 
-            unitdict.update(**_fundamental_units, **_derived_units)
+            unitdict.update(**_base_units, **_derived_units)
 
         for unit in unitdict:
             setattr(self, unit, ansunits.Unit(unit, unitdict[unit]))
