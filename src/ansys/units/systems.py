@@ -4,8 +4,7 @@ import ansys.units as ansunits
 
 class UnitSystem:
     """
-    Unit systems contain fundamental base units from user-defined units or a predefined
-    unit system.
+    Unit systems contain base units from user-defined units or a predefined unit system.
 
     Methods
     -------
@@ -49,8 +48,8 @@ class UnitSystem:
             if not isinstance(unit, ansunits.Unit):
                 unit = ansunits.Unit(unit)
 
-            if unit.name not in ansunits._fundamental_units:
-                raise UnitSystemError.NOT_FUNDAMENTAL(unit)
+            if unit.name not in ansunits._base_units:
+                raise UnitSystemError.NOT_BASE_UNIT(unit)
 
             if hasattr(self, f"_{unit.dimensions.single_dimension}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
@@ -160,10 +159,10 @@ class UnitSystemError(ValueError):
         )
 
     @classmethod
-    def NOT_FUNDAMENTAL(cls, unit):
+    def NOT_BASE_UNIT(cls, unit):
         return cls(
             f"`{unit.name}` is not a fundimental unit. To use `{unit.name}`, add it to the "
-            "`fundamental_units` table within the cfg.yaml file."
+            "`base_units` table within the cfg.yaml file."
         )
 
     @classmethod

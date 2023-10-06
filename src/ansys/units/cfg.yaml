@@ -37,7 +37,7 @@ multipliers:
 #
 # Predefined unit system prefix : Unit system units
 #
-# Unit systems must provide the unit for each fundamental unit.
+# Unit systems must provide the unit for each base unit.
 
 unit_systems:
   SI:
@@ -74,7 +74,7 @@ unit_systems:
     - A
     - sr
 
-# Fundamental Units
+# Base Units
 # -----------------
 #
 # Custom units -> Add new units and their associated properties to the list
@@ -85,7 +85,7 @@ unit_systems:
 #   factor: <factor>  SI conversion factor
 #   offset: <offset>  SI conversion offset
 
-fundamental_units:
+base_units:
   kg:
     type: MASS
     factor: 1
@@ -189,9 +189,9 @@ fundamental_units:
 
 # Derived Units
 # -------------
-# Derived units are composed from the fundamental units.  Each derived unit must
+# Derived units are composed from the base units.  Each derived unit must
 # provide a `composition` and `factor`. The `composition` specifies  the
-# fundamental units and their exponents.  The `factor` provides the conversion
+# base units and their exponents.  The `factor` provides the conversion
 # from the composed unit string to the derived unit.
 #
 # Specification format:

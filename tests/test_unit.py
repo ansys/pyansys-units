@@ -3,7 +3,7 @@ import pytest
 import ansys.units as ansunits
 
 
-def test_fundamental_units():
+def test_base_units():
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
     assert kg.dimensions.single_dimension == "MASS"
