@@ -6,7 +6,7 @@ import ansys.units as ansunits
 def test_base_units():
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
-    assert kg.dimensions.single_dimension == "MASS"
+    assert kg.dimensions.base_dimension == "MASS"
     assert kg.si_multiplier == 1
     assert kg.si_offset == 0
 
@@ -14,8 +14,8 @@ def test_base_units():
 def test_derived_units():
     N = ansunits.Unit("N")
     assert N.name == "N"
-    assert N._composition == "kg m s^-2"
-    assert N._factor == 1
+    assert N.si_units == "kg m s^-2"
+    assert N.si_multiplier == 1
 
 
 def test_unitless():
