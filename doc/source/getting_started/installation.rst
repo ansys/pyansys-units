@@ -4,7 +4,7 @@
 Installation
 ============
 
-The ``ansys-units`` package supports Python 3.9 through Python 3.12 on Windows
+The ``ansys-units`` package supports Python 3.9 through Python 3.11 on Windows
 and Linux.
 
 Install the package
