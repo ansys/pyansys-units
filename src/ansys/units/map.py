@@ -3,15 +3,20 @@ import ansys.units as ansunits
 
 
 class QuantityMap(object):
-    """Creates a ``QuantityMap`` object based on a given quantity map."""
+    """
+    A class that contains quantity map and equivalent units.
+
+    Parameters
+    ----------
+    quantity_map : dict
+        Dictionary containing quantity map units and powers.
+
+    Attributes
+    ----------
+    units
+    """
 
     def __init__(self, quantity_map):
-        """
-        Parameters
-        ----------
-        quantity_map : dict
-            Dictionary containing quantity map units and values.
-        """
         for item in quantity_map:
             if item not in ansunits._api_quantity_map:
                 raise QuantityMapError.UNKNOWN_MAP_ITEM(item)
@@ -52,4 +57,5 @@ class QuantityMapError(ValueError):
 
     @classmethod
     def UNKNOWN_MAP_ITEM(cls, item):
+        """Returns in case the given quantity map is not in the yaml."""
         return cls(f"`{item}` is not a valid quantity map item.")

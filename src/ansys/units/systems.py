@@ -4,27 +4,34 @@ import ansys.units as ansunits
 
 class UnitSystem:
     """
-    Unit systems contain base units from user-defined units or a predefined unit system.
+    A class containing base units from user-defined units or a predefined unit system.
 
-    Methods
-    -------
-    convert()
-        Convert from one unit system to a given unit system.
+    Parameters
+    ----------
+    name: str, optional
+        Custom name associated with a user-defined unit system.
+    base_units: list, optional
+        Custom units associated with a user-defined unit system.
+    unit_sys: str, optional
+        Predefined unit system.
+
+    Attributes
+    ----------
+    name
+    base_units
+    MASS
+    LENGTH
+    TIME
+    TEMPERATURE
+    TEMPERATURE_DIFFERENCE
+    ANGLE
+    CHEMICAL_AMOUNT
+    LIGHT
+    CURRENT
+    SOLID_ANGLE
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
-        """
-        Initialize a unit system.
-
-        Parameters
-        ----------
-        name: str, optional
-            Custom name associated with a user-defined unit system.
-        base_units: list, optional
-            Custom units associated with a user-defined unit system.
-        unit_sys: str, optional
-            Predefined unit system.
-        """
         if name and unit_sys or base_units and unit_sys:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 

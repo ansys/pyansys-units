@@ -4,14 +4,27 @@ from ansys.units import _base_units, _derived_units, _multipliers
 
 class Unit:
     """
-    The unit information of a quantity.
+    A class with all unit information for a quantity.
 
-    Methods
-    -------
-    filter_unit_term()
-        Separate multiplier, base, and power from a unit term.
-    si_data()
-        Compute the SI unit string, SI multiplier, and SI offset.
+    Parameters
+    ----------
+    units: str, optional
+        Name of the unit or string chain of combined units
+    config: dict, optional
+        dictionary of unit properties
+    dimensions: Dimensions, optional
+        An instance of the Dimensions class.
+    unit_sys: str, optional
+        Define the unit system for base units of dimension,
+        default is SI.
+
+    Attributes
+    ----------
+    name
+    si_units
+    si_multiplier
+    si_offset
+    dimensions
     """
 
     def __init__(
@@ -21,21 +34,6 @@ class Unit:
         dimensions: ansunits.Dimensions = None,
         unit_sys: ansunits.UnitSystem = None,
     ):
-        """
-        Create a Unit object. Contains all the unit information.
-
-        Parameters
-        ----------
-        units: str, optional
-            Name of the unit or string chain of combined units
-        config: dict, optional
-            dictionary of unit properties
-        dimensions: Dimensions, optional
-            An instance of the Dimensions class.
-        unit_sys: str, optional
-            Define the unit system for base units of dimension,
-            default is SI.
-        """
         if units:
             self._name = units
             _dimensions = self._units_to_dim(units=units)
@@ -51,9 +49,6 @@ class Unit:
             self._name = ""
             self._dimensions = ansunits.Dimensions()
 
-        if not config:
-            config = self._get_config(self._name)
-
         if config:
             for key in config:
                 setattr(self, f"_{key}", config[key])
@@ -61,23 +56,6 @@ class Unit:
         self._si_units, self._si_multiplier, self._si_offset = self.si_data(
             units=self.name
         )
-
-    def _get_config(self, name: str) -> dict:
-        """
-        Retrieve unit configuration from '_base_units' or '_derived_units'.
-
-        Parameters
-        ----------
-        name : str
-            Unit string.
-
-        Returns
-        -------
-        dict
-            Dictionary of extra unit information.
-        """
-        if name in ansunits._derived_units:
-            return ansunits._derived_units[name]
 
     def _dim_to_units(
         self,

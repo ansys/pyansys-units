@@ -49,6 +49,7 @@ class Dimensions:
     Attributes
     ----------
     dimensions
+    base_dimension
     """
 
     def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
@@ -67,8 +68,8 @@ class Dimensions:
         return dict(dims)
 
     @property
-    def single_dimension(self):
-        """Get the name of the base dimension."""
+    def base_dimension(self):
+        """Get the name of the only dimension."""
         dims = [x.name for x in self._dimensions.keys()]
         if len(dims) != 1:
             raise DimensionsError.MULTIPLE_BASE_DIMENSIONS(dimensions=self)
@@ -137,4 +138,5 @@ class DimensionsError(ValueError):
 
     @classmethod
     def MULTIPLE_BASE_DIMENSIONS(cls, dimensions):
+        """Return in case of base_dimension having more than one dimension."""
         return cls(f"`{dimensions}` has more than one base dimension.")

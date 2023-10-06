@@ -11,6 +11,13 @@ class UnitRegistry:
     A container of common ``Units`` for ease of use. Defaults to all units in
     '_base_units' and '_derived_units'.
 
+    Parameters
+    ----------
+    config: filename.yaml, optional
+        Custom .yaml file or `cfg.yaml`. Format must match `cfg.yaml`.
+    other: dict, optional
+        Dictionary for extra units.
+
     Examples
     --------
     import ansys.units as ansunits
@@ -20,14 +27,6 @@ class UnitRegistry:
     """
 
     def __init__(self, config="cfg.yaml", other: dict = None):
-        """
-        Parameters
-        ----------
-        config: filename.yaml, optional
-            Custom .yaml file or `cfg.yaml`. Format must match `cfg.yaml`.
-        other: dict, optional
-            Dictionary for extra units.
-        """
         unitdict = other or {}
 
         if config:
