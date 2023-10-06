@@ -208,13 +208,13 @@ def test_error_messages():
 
 def test_si_properties():
     us = ansunits.UnitSystem()
-    assert us.mass.name == "kg"
-    assert us.angle.name == "radian"
-    assert us.chemical_amount.name == "mol"
-    assert us.length.name == "m"
-    assert us.current.name == "A"
-    assert us.solid_angle.name == "sr"
-    assert us.temperature.name == "K"
-    assert us.temperature_difference.name == "delta_K"
-    assert us.light.name == "cd"
-    assert us.time.name == "s"
+    assert us.MASS.name == "kg"
+    assert us.ANGLE.name == "radian"
+    assert us.CHEMICAL_AMOUNT.name == "mol"
+    assert us.LENGTH.name == "m"
+    assert us.CURRENT.name == "A"
+    assert us.SOLID_ANGLE.name == "sr"
+    assert us.TEMPERATURE.name == "K"
+    assert us.TEMPERATURE_DIFFERENCE.name == "delta_K"
+    assert us.LIGHT.name == "cd"
+    assert us.TIME.name == "s"

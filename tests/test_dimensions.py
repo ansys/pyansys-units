@@ -25,9 +25,11 @@ def test_str_():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions_container={dims.CURRENT: 1})
     assert str(d1) == "{'CURRENT': 1}"
+    assert repr(d1) == "{'CURRENT': 1}"
 
     d2 = ansunits.Dimensions()
     assert str(d2) == ""
+    assert repr(d2) == ""
 
 
 def test_mul():
