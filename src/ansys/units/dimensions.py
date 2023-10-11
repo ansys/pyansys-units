@@ -70,10 +70,10 @@ class Dimensions:
     @property
     def base_dimension(self):
         """Get the name of the only dimension."""
-        dims = [x for x in self._dimensions]
-        if len(dims) != 1 or self._dimensions[dims[0]] != 1:
+        xs = list(self._dimensions.items())
+        if not (len(xs) == 1 and xs[0][1] == 1):
             raise DimensionsError.MULTIPLE_BASE_DIMENSIONS(dimensions=self)
-        return dims[0]
+        return xs[0][0]
 
     def __str__(self):
         dims = {x.name: y for x, y in self._dimensions.items()}
