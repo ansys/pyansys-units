@@ -23,7 +23,7 @@ def test_default_units():
 def test_custom_yaml():
     cwd = os.getcwd()
     custom_file = b"""
-fundamental_units:
+base_units:
   kg:
     type: Mass
     factor: 1

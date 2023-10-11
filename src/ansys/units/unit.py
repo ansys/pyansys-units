@@ -1,17 +1,30 @@
 import ansys.units as ansunits
-from ansys.units import _derived_units, _fundamental_units, _multipliers
+from ansys.units import _base_units, _derived_units, _multipliers
 
 
 class Unit:
     """
-    The unit information of a quantity.
+    A class with all unit information for a quantity.
 
-    Methods
-    -------
-    filter_unit_term()
-        Separate multiplier, base, and power from a unit term.
-    si_data()
-        Compute the SI unit string, SI factor, and SI offset.
+    Parameters
+    ----------
+    units: str, optional
+        Name of the unit or string chain of combined units
+    config: dict, optional
+        dictionary of unit properties
+    dimensions: Dimensions, optional
+        An instance of the Dimensions class.
+    unit_sys: str, optional
+        Define the unit system for base units of dimension,
+        default is SI.
+
+    Attributes
+    ----------
+    name
+    si_units
+    si_multiplier
+    si_offset
+    dimensions
     """
 
     def __init__(
@@ -21,21 +34,6 @@ class Unit:
         dimensions: ansunits.Dimensions = None,
         unit_sys: ansunits.UnitSystem = None,
     ):
-        """
-        Create a Unit object. Contains all the unit information.
-
-        Parameters
-        ----------
-        units: str, optional
-            Name of the unit or string chain of combined units
-        config: dict, optional
-            dictionary of unit properties
-        dimensions: Dimensions, optional
-            An instance of the Dimensions class.
-        unit_sys: str, optional
-            Define the unit system for base units of dimension,
-            default is SI.
-        """
         if units:
             self._name = units
             _dimensions = self._units_to_dim(units=units)
@@ -51,9 +49,6 @@ class Unit:
             self._name = ""
             self._dimensions = ansunits.Dimensions()
 
-        if not config:
-            config = self._get_config(self._name)
-
         if config:
             for key in config:
                 setattr(self, f"_{key}", config[key])
@@ -61,23 +56,6 @@ class Unit:
         self._si_units, self._si_scaling_factor, self._si_offset = self.si_data(
             units=self.name
         )
-
-    def _get_config(self, name: str) -> dict:
-        """
-        Retrieve unit configuration from '_fundamental_units' or '_derived_units'.
-
-        Parameters
-        ----------
-        name : str
-            Unit string.
-
-        Returns
-        -------
-        dict
-            Dictionary of extra unit information.
-        """
-        if name in ansunits._derived_units:
-            return ansunits._derived_units[name]
 
     def _dim_to_units(
         self,
@@ -134,9 +112,9 @@ class Unit:
         for term in units.split(" "):
             _, unit_term, unit_term_power = self.filter_unit_term(term)
             unit_term_power *= power
-            # retrieve data associated with fundamental unit
-            if unit_term in _fundamental_units:
-                idx = _fundamental_units[unit_term]["type"]
+            # retrieve data associated with base unit
+            if unit_term in _base_units:
+                idx = _base_units[unit_term]["type"]
 
                 if ansunits.BaseDimensions[idx] in dimensions:
                     dimensions[ansunits.BaseDimensions[idx]] += unit_term_power
@@ -169,9 +147,9 @@ class Unit:
         bool
             ``True`` if the unit term contains a multiplier, ``False`` otherwise.
         """
-        # Check if the unit term is not an existing fundamental or derived unit.
+        # Check if the unit term is not an existing base or derived unit.
         return unit_term and not (
-            (unit_term in _fundamental_units) or (unit_term in _derived_units)
+            (unit_term in _base_units) or (unit_term in _derived_units)
         )
 
     def _si_map(self, unit_term: str) -> str:
@@ -189,10 +167,10 @@ class Unit:
             SI unit equivalent.
         """
         # Retrieve type associated with unit term
-        unit_term_type = _fundamental_units[unit_term]["type"]
+        unit_term_type = _base_units[unit_term]["type"]
 
         # Find SI unit with same type as unit term
-        for term, term_info in _fundamental_units.items():
+        for term, term_info in _base_units.items():
             if term_info["type"] == unit_term_type and term_info["factor"] == 1.0:
                 return term
 
@@ -308,9 +286,8 @@ class Unit:
         power = power or 1.0
         si_units = si_units or ""
         si_scaling_factor = si_scaling_factor or 1.0
-        si_offset = (
-            _fundamental_units[units]["offset"] if units in _fundamental_units else 0.0
-        )
+        si_offset = _base_units[units]["offset"] if units in _base_units else 0.0
+
 
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
@@ -324,16 +301,14 @@ class Unit:
                 else 1.0
             )
 
-            # Retrieve data associated with fundamental unit
-            if unit_term in _fundamental_units:
+            # Retrieve data associated with base unit
+            if unit_term in _base_units:
                 if unit_term_power == 1.0:
                     si_units += f" {self._si_map(unit_term)}"
                 elif unit_term_power != 0.0:
                     si_units += f" {self._si_map(unit_term)}^{unit_term_power}"
 
-                si_scaling_factor *= (
-                    _fundamental_units[unit_term]["factor"] ** unit_term_power
-                )
+                si_scaling_factor *= _base_units[unit_term]["factor"] ** unit_term_power
 
             # Retrieve derived unit composition unit string and factor
             elif unit_term in _derived_units:
