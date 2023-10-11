@@ -168,9 +168,9 @@ class UnitSystemError(ValueError):
 
     @classmethod
     def UNIT_TYPE(cls, unit):
-        dimension = str(unit.dimensions.single_dimension)
+        dimension = unit.dimensions.single_dimension
         return cls(
-            f"Unit of type: `{dimension}` already exits in this unit system"
+            f"Unit of type: `{dimension.name}` already exits in this unit system"
             f"replace '{unit.name}' with unit of another type"
         )
 
