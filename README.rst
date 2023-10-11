@@ -93,7 +93,7 @@ Getting started
 Basic usage
 ~~~~~~~~~~~
 
-Import the `ansys.units`` package:
+Import the ``ansys.units`` package:
 
 .. code:: python
 
