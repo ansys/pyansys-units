@@ -7,6 +7,19 @@ class BaseDimensions(Enum):
     Supplies all valid base dimensions used in dimensional analysis.
 
     Used as dictionary keys for defining a `Dimensions` object.
+
+    Attributes
+    ----------
+    MASS
+    LENGTH
+    TIME
+    TEMPERATURE
+    TEMPERATURE_DIFFERENCE
+    ANGLE
+    CHEMICAL_AMOUNT
+    LIGHT
+    CURRENT
+    SOLID_ANGLE
     """
 
     MASS = 0
@@ -22,18 +35,24 @@ class BaseDimensions(Enum):
 
 
 class Dimensions:
-    """Represents the physical dimensions of a quantity or its units."""
+    """
+    A class which contains the base unit information.
+
+    A dictionary of ``BaseDimensions`` and power is required
+    for a non-dimensionless object.
+
+    Parameters
+    ----------
+    dimensions_container : dict, optional
+        Dictionary of {``BaseDimensions``: power, ...}.
+
+    Attributes
+    ----------
+    dimensions
+    base_dimension
+    """
 
     def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
-        """
-        Create a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
-        power. Default is dimensionless.
-
-        Parameters
-        ----------
-        dimensions_container : dict, optional
-            Dictionary of {``BaseDimensions``: power, ...}.
-        """
         dimensions_container = dimensions_container or {}
         self._dimensions = dimensions_container.copy()
         for x, y in dimensions_container.items():
@@ -44,13 +63,13 @@ class Dimensions:
 
     @property
     def dimensions(self):
-        """Dimensions as a dictionary."""
+        """An integer dictionary representation."""
         dims = {x.value: y for x, y in self._dimensions.items()}
         return dict(dims)
 
     @property
-    def single_dimension(self):
-        """Get the name of the base dimension."""
+    def base_dimension(self):
+        """Get the name of the only dimension."""
         dims = [x for x in self._dimensions]
         if len(dims) != 1:
             raise DimensionsError.MULTIPLE_BASE_DIMENSIONS(dimensions=self)
@@ -119,4 +138,5 @@ class DimensionsError(ValueError):
 
     @classmethod
     def MULTIPLE_BASE_DIMENSIONS(cls, dimensions):
+        """Return in case of base_dimension having more than one dimension."""
         return cls(f"`{dimensions}` has more than one base dimension.")
