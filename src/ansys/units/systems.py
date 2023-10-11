@@ -4,27 +4,34 @@ import ansys.units as ansunits
 
 class UnitSystem:
     """
-    Unit systems contain base units from user-defined units or a predefined unit system.
+    A class containing base units from user-defined units or a predefined unit system.
 
-    Methods
-    -------
-    convert()
-        Convert from one unit system to a given unit system.
+    Parameters
+    ----------
+    name: str, optional
+        Custom name associated with a user-defined unit system.
+    base_units: list, optional
+        Custom units associated with a user-defined unit system.
+    unit_sys: str, optional
+        Predefined unit system.
+
+    Attributes
+    ----------
+    name
+    base_units
+    MASS
+    LENGTH
+    TIME
+    TEMPERATURE
+    TEMPERATURE_DIFFERENCE
+    ANGLE
+    CHEMICAL_AMOUNT
+    LIGHT
+    CURRENT
+    SOLID_ANGLE
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
-        """
-        Initialize a unit system.
-
-        Parameters
-        ----------
-        name: str, optional
-            Custom name associated with a user-defined unit system.
-        base_units: list, optional
-            Custom units associated with a user-defined unit system.
-        unit_sys: str, optional
-            Predefined unit system.
-        """
         if name and unit_sys or base_units and unit_sys:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 
@@ -51,10 +58,10 @@ class UnitSystem:
             if unit.name not in ansunits._base_units:
                 raise UnitSystemError.NOT_BASE_UNIT(unit)
 
-            if hasattr(self, f"_{unit.dimensions.single_dimension}"):
+            if hasattr(self, f"_{unit.dimensions.single_dimension.name}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit.dimensions.single_dimension}", unit)
+            setattr(self, f"_{unit.dimensions.single_dimension.name}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -167,9 +174,9 @@ class UnitSystemError(ValueError):
 
     @classmethod
     def UNIT_TYPE(cls, unit):
-        dimension = str(unit.dimensions.single_dimension)
+        dimension = unit.dimensions.single_dimension
         return cls(
-            f"Unit of type: `{dimension}` already exits in this unit system"
+            f"Unit of type: `{dimension.name}` already exits in this unit system"
             f"replace '{unit.name}' with unit of another type"
         )
 
