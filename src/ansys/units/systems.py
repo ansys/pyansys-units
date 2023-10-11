@@ -58,10 +58,10 @@ class UnitSystem:
             if unit.name not in ansunits._base_units:
                 raise UnitSystemError.NOT_BASE_UNIT(unit)
 
-            if hasattr(self, f"_{unit.dimensions.single_dimension.name}"):
+            if hasattr(self, f"_{unit.dimensions.base_dimension.name}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit.dimensions.single_dimension.name}", unit)
+            setattr(self, f"_{unit.dimensions.base_dimension.name}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -174,7 +174,7 @@ class UnitSystemError(ValueError):
 
     @classmethod
     def UNIT_TYPE(cls, unit):
-        dimension = unit.dimensions.single_dimension
+        dimension = unit.dimensions.base_dimension
         return cls(
             f"Unit of type: `{dimension.name}` already exits in this unit system"
             f"replace '{unit.name}' with unit of another type"

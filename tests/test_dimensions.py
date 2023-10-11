@@ -78,14 +78,33 @@ def test_ne():
     assert d1 != d2
 
 
+def test_base_dimensions():
+    dims = ansunits.BaseDimensions
+    d1 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 2})
+    d2 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, dims.CURRENT: 1})
+
+
 def test_errors():
     dims = ansunits.BaseDimensions
+    d1 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 2})
+    d2 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, dims.CURRENT: 1})
+
     with pytest.raises(ansunits.DimensionsError) as e_info:
-        d1 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, 11: 1})
+        d3 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, 11: 1})
+
+    with pytest.raises(ansunits.DimensionsError) as e_info:
+        d1.base_dimension
+
+    with pytest.raises(ansunits.DimensionsError) as e_info:
+        d2.base_dimension
 
 
 def test_error_messages():
+    dims = ansunits.BaseDimensions
+    d1 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 2})
     e1 = ansunits.DimensionsError.INCORRECT_DIMENSIONS()
     assert (
         str(e1) == f"The `dimensions_container` key must be a 'BaseDimensions' object"
     )
+    e2 = ansunits.DimensionsError.MULTIPLE_BASE_DIMENSIONS(d1)
+    assert str(e2) == f"`{d1}` has more than one base dimension."
