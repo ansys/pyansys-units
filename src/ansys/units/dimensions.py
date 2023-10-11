@@ -71,7 +71,7 @@ class Dimensions:
     def base_dimension(self):
         """Get the name of the only dimension."""
         dims = [x for x in self._dimensions]
-        if len(dims) != 1:
+        if len(dims) != 1 or self._dimensions[dims[0]] != 1:
             raise DimensionsError.MULTIPLE_BASE_DIMENSIONS(dimensions=self)
         return dims[0]
 
@@ -139,4 +139,4 @@ class DimensionsError(ValueError):
     @classmethod
     def MULTIPLE_BASE_DIMENSIONS(cls, dimensions):
         """Return in case of base_dimension having more than one dimension."""
-        return cls(f"`{dimensions}` has more than one base dimension.")
+        return cls(f"`{str(dimensions)}` has more than one base dimension.")
