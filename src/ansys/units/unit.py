@@ -288,7 +288,6 @@ class Unit:
         si_scaling_factor = si_scaling_factor or 1.0
         si_offset = _base_units[units]["offset"] if units in _base_units else 0.0
 
-
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
             unit_multiplier, unit_term, unit_term_power = self.filter_unit_term(term)
