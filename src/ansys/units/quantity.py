@@ -6,22 +6,37 @@ import ansys.units as ansunits
 
 class Quantity(float):
     """
-    A physical quantity using a real value and units.
+    A class which contains a physical quantity's value and associated units.
 
-    All instances of this class are converted to the base SI unit system
-    to have consistency in arithmetic operations.
+    The value and units provided on initialization are internally converted into
+    SI units to facilitate consistent computation with other quantities.
 
-    Methods
-    -------
-    to()
-        Convert to a given unit string.
+    Parameters
+    ----------
+    value : int | float
+        Real value of the quantity.
+    units : str, Unit, optional
+        Initializes the quantity's units using a string or ``Unit`` instance.
+    quantity_map : dict, optional
+        Initializes the quantity's units using the quantity map.
+    dimensions : Dimensions, optional
+        Initializes the quantity's units in SI using a ``Dimensions`` instance.
+
+    Attributes
+    ----------
+    value
+    units
+    si_value
+    si_units
+    dimensions
+    is_dimensionless
     """
 
     def __new__(
         cls,
         value,
         units=None,
-        quantity_map=None,
+        quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
     ):
         if (
@@ -54,21 +69,9 @@ class Quantity(float):
         self,
         value,
         units=None,
-        quantity_map=None,
+        quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
     ):
-        """
-        Parameters
-        ----------
-        value : int | float
-            Real value of the quantity.
-        units : str, Unit, optional
-            Unit string representation of the quantity.
-        quantity_map : dict, optional
-            Quantity map representation of the quantity.
-        dimensions : Dimensions, optional
-            Dimensions representation of the quantity.
-        """
         if (
             (units and quantity_map)
             or (units and dimensions)
@@ -167,12 +170,12 @@ class Quantity(float):
 
     @property
     def dimensions(self):
-        """Dimensions."""
+        """Base dimensions."""
         return self._unit.dimensions
 
     @property
     def is_dimensionless(self):
-        """Dimensions."""
+        """True if the quantity is dimensionless."""
         return not bool(self._unit.dimensions.dimensions)
 
     def to(self, to_units: [str, any]) -> "Quantity":
