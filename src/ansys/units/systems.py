@@ -52,10 +52,10 @@ class UnitSystem:
             if unit.name not in ansunits._fundamental_units:
                 raise UnitSystemError.NOT_FUNDAMENTAL(unit)
 
-            if hasattr(self, f"_{unit.dimensions.single_dimension}"):
+            if hasattr(self, f"_{unit.dimensions.single_dimension.name}"):
                 raise UnitSystemError.UNIT_TYPE(unit)
 
-            setattr(self, f"_{unit.dimensions.single_dimension}", unit)
+            setattr(self, f"_{unit.dimensions.single_dimension.name}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
