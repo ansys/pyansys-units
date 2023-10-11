@@ -51,7 +51,7 @@ class Dimensions:
     @property
     def single_dimension(self):
         """Get the name of the base dimension."""
-        dims = [x.name for x in self._dimensions.keys()]
+        dims = [x for x in self._dimensions]
         if len(dims) != 1:
             raise DimensionsError.MULTIPLE_BASE_DIMENSIONS(dimensions=self)
         return dims[0]
