@@ -173,7 +173,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def NOT_BASE_UNIT(cls, unit):
         return cls(
-            f"`{unit.name}` is not a fundimental unit. To use `{unit.name}`, add it to the "
+            f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
             "`base_units` table within the cfg.yaml file."
         )
 
