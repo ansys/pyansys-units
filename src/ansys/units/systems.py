@@ -4,7 +4,7 @@ import ansys.units as ansunits
 
 class UnitSystem:
     """
-    A class containing base units from user-defined units or a predefined unit system.
+    A class containing base units for a user-defined or predefined unit system.
 
     Parameters
     ----------
