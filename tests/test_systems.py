@@ -190,7 +190,7 @@ def test_error_messages():
 
     e3 = ansunits.UnitSystemError.NOT_BASE_UNIT(ansunits.Unit("kg s^-1"))
     expected_str = (
-        "`kg s^-1` is not a fundimental unit. To use `kg s^-1`, add it to the "
+        "`kg s^-1` is not a base unit. To use `kg s^-1`, add it to the "
         "`base_units` table within the cfg.yaml file."
     )
     assert str(e3) == expected_str
