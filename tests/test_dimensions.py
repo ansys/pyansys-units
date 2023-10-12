@@ -9,7 +9,7 @@ def test_dimensions():
     assert d1.dimensions == {}
 
     d2 = ansunits.Dimensions(dimensions_container={dims.MASS: 1.0, dims.LENGTH: -2.0})
-    assert d2.dimensions == {0: 1.0, 1: -2.0}
+    assert d2.dimensions == {dims.MASS: 1.0, dims.LENGTH: -2.0}
 
     d3 = ansunits.Dimensions(
         dimensions_container={
@@ -18,7 +18,7 @@ def test_dimensions():
             dims.TIME: -2.0,
         }
     )
-    assert d3.dimensions == {0: 1.0, 1: -1.0, 2: -2.0}
+    assert d3.dimensions == {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
 
 
 def test_str_():
@@ -38,8 +38,8 @@ def test_mul():
     d2 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 1, dims.TIME: -3})
     d3 = d1 * d2
     d4 = d2 * d2
-    assert d3.dimensions == {1: 1.0, 2: -3.0, 8: 1.0}
-    assert d4.dimensions == {1: 2.0, 2: -6.0}
+    assert d3.dimensions == {dims.LENGTH: 1, dims.TIME: -3, dims.CURRENT: 1}
+    assert d4.dimensions == {dims.LENGTH: 2, dims.TIME: -6}
 
 
 def test_truediv():
@@ -48,14 +48,14 @@ def test_truediv():
     d2 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, dims.CURRENT: 1})
 
     d3 = d1 / d2
-    assert d3.dimensions == {0: -1}
+    assert d3.dimensions == {dims.MASS: -1}
 
 
 def test_pow():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, dims.CURRENT: 2})
     d2 = d1**-2
-    assert d2.dimensions == {0: -2, 8: -4}
+    assert d2.dimensions == {dims.MASS: -2, dims.CURRENT: -4}
 
 
 def test_eq():
@@ -92,12 +92,6 @@ def test_errors():
     with pytest.raises(ansunits.DimensionsError) as e_info:
         d3 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, 11: 1})
 
-    with pytest.raises(ansunits.DimensionsError) as e_info:
-        d1.base_dimension
-
-    with pytest.raises(ansunits.DimensionsError) as e_info:
-        d2.base_dimension
-
 
 def test_error_messages():
     dims = ansunits.BaseDimensions
@@ -106,5 +100,3 @@ def test_error_messages():
     assert (
         str(e1) == f"The `dimensions_container` key must be a 'BaseDimensions' object"
     )
-    e2 = ansunits.DimensionsError.MULTIPLE_BASE_DIMENSIONS(d1)
-    assert str(e2) == f"`{d1}` has more than one base dimension."

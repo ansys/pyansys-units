@@ -49,7 +49,6 @@ class Dimensions:
     Attributes
     ----------
     dimensions
-    base_dimension
     """
 
     def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
@@ -63,17 +62,8 @@ class Dimensions:
 
     @property
     def dimensions(self):
-        """An integer dictionary representation."""
-        dims = {x.value: y for x, y in self._dimensions.items()}
-        return dict(dims)
-
-    @property
-    def base_dimension(self):
-        """Get the name of the only dimension."""
-        xs = list(self._dimensions.items())
-        if not (len(xs) == 1 and xs[0][1] == 1):
-            raise DimensionsError.MULTIPLE_BASE_DIMENSIONS(dimensions=self)
-        return xs[0][0]
+        """A dictionary representation."""
+        return self._dimensions
 
     def __str__(self):
         dims = {x.name: y for x, y in self._dimensions.items()}
@@ -135,8 +125,3 @@ class DimensionsError(ValueError):
     def INCORRECT_DIMENSIONS(cls):
         """Return in case of dimensions not in dimension order."""
         return cls(f"The `dimensions_container` key must be a 'BaseDimensions' object")
-
-    @classmethod
-    def MULTIPLE_BASE_DIMENSIONS(cls, dimensions):
-        """Return in case of base_dimension having more than one dimension."""
-        return cls(f"`{str(dimensions)}` has more than one base dimension.")
