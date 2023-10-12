@@ -4,9 +4,10 @@ import ansys.units as ansunits
 
 
 def test_base_units():
+    dims = ansunits.BaseDimensions
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
-    assert kg.dimensions.base_dimension == ansunits.BaseDimensions.MASS
+    assert kg.dimensions.dimensions == {dims.MASS: 1}
     assert kg.si_scaling_factor == 1
     assert kg.si_offset == 0
 

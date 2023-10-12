@@ -86,10 +86,10 @@ class Unit:
         units = ""
         for idx, value in dimensions.dimensions.items():
             if value == 1:
-                units += f"{base_units[idx]} "
+                units += f"{base_units[idx.value]} "
             elif value != 0.0:
                 value = int(value) if value % 1 == 0 else value
-                units += f"{base_units[idx]}^{value} "
+                units += f"{base_units[idx.value]}^{value} "
 
         return units.strip()
 
@@ -257,7 +257,7 @@ class Unit:
 
     def si_data(
         self,
-        units: str = None,
+        units: str,
         power: float = None,
         si_units: str = None,
         si_scaling_factor: float = None,
