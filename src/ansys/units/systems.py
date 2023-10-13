@@ -36,7 +36,7 @@ class UnitSystem:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 
         if base_units:
-            if len(base_units) != len(ansunits.BaseDimensions):
+            if len(set(base_units)) != len(ansunits.BaseDimensions):
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
             self._name = name
@@ -59,9 +59,6 @@ class UnitSystem:
                 raise UnitSystemError.NOT_BASE_UNIT(unit)
 
             unit_type = self._get_type(dimensions=unit.dimensions)
-
-            if hasattr(self, f"_{unit_type}"):
-                raise UnitSystemError.UNIT_TYPE(unit=unit, unit_type=unit_type)
 
             setattr(self, f"_{unit_type}", unit)
 
@@ -167,7 +164,7 @@ class UnitSystemError(ValueError):
     @classmethod
     def BASE_UNITS_LENGTH(cls, len):
         return cls(
-            f"The `base_units` argument must contain 10 units, currently there are {len}."
+            f"The `base_units` argument must contain 10 unique units, currently there are {len}."
         )
 
     @classmethod
@@ -175,13 +172,6 @@ class UnitSystemError(ValueError):
         return cls(
             f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
             "`base_units` table within the cfg.yaml file."
-        )
-
-    @classmethod
-    def UNIT_TYPE(cls, unit, unit_type):
-        return cls(
-            f"Unit of type: `{unit_type}` already exits in this unit system"
-            f"replace '{unit.name}' with unit of another type"
         )
 
     @classmethod

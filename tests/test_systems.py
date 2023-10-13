@@ -183,9 +183,7 @@ def test_error_messages():
     assert str(e1) == expected_str
 
     e2 = ansunits.UnitSystemError.BASE_UNITS_LENGTH(11)
-    expected_str = (
-        "The `base_units` argument must contain 10 units, currently there are 11."
-    )
+    expected_str = "The `base_units` argument must contain 10 unique units, currently there are 11."
     assert str(e2) == expected_str
 
     e3 = ansunits.UnitSystemError.NOT_BASE_UNIT(ansunits.Unit("kg s^-1"))
@@ -195,15 +193,8 @@ def test_error_messages():
     )
     assert str(e3) == expected_str
 
-    e4 = ansunits.UnitSystemError.UNIT_TYPE(unit=ansunits.Unit("m"), unit_type="LENGTH")
-    expected_str = (
-        "Unit of type: `LENGTH` already exits in this unit system"
-        "replace 'm' with unit of another type"
-    )
-    assert str(e4) == expected_str
-
-    e5 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
-    assert str(e5) == "`ham sandwich` is not a supported unit system."
+    e4 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
+    assert str(e4) == "`ham sandwich` is not a supported unit system."
 
 
 def test_si_properties():
