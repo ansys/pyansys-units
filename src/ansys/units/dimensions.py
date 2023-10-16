@@ -19,9 +19,7 @@ class Dimensions:
     dimensions
     """
 
-    def __init__(
-        self, dimensions_container: dict[ansunits.BaseDimensions : int | float] = None
-    ):
+    def __init__(self, dimensions_container: dict[ansunits.BaseDimensions : int | float] = None):
         dimensions_container = dimensions_container or {}
         self._dimensions = dimensions_container.copy()
         for x, y in dimensions_container.items():
@@ -32,6 +30,8 @@ class Dimensions:
 
     @property
     def dimensions(self):
+        """A dictionary representation."""
+        return self._dimensions
         """A dictionary representation."""
         return self._dimensions
 

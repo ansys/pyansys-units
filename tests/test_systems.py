@@ -169,5 +169,26 @@ def test_error_messages():
     )
     assert str(e2) == expected_str
 
-    e3 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
-    assert str(e3) == "`ham sandwich` is not a supported unit system."
+    e3 = ansunits.UnitSystemError.NOT_BASE_UNIT(ansunits.Unit("kg s^-1"))
+    expected_str = (
+        "`kg s^-1` is not a base unit. To use `kg s^-1`, add it to the "
+        "`base_units` table within the cfg.yaml file."
+    )
+    assert str(e3) == expected_str
+
+    e4 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
+    assert str(e4) == "`ham sandwich` is not a supported unit system."
+
+
+def test_si_properties():
+    us = ansunits.UnitSystem()
+    assert us.MASS.name == "kg"
+    assert us.ANGLE.name == "radian"
+    assert us.CHEMICAL_AMOUNT.name == "mol"
+    assert us.LENGTH.name == "m"
+    assert us.CURRENT.name == "A"
+    assert us.SOLID_ANGLE.name == "sr"
+    assert us.TEMPERATURE.name == "K"
+    assert us.TEMPERATURE_DIFFERENCE.name == "delta_K"
+    assert us.LIGHT.name == "cd"
+    assert us.TIME.name == "s"
