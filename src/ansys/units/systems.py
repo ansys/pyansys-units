@@ -8,16 +8,15 @@ class UnitSystem:
 
     Parameters
     ----------
-    name: str, optional
-        Custom name associated with a user-defined unit system.
-    base_units: list, optional
-        Custom units associated with a user-defined unit system.
+    base_units: dict, optional
+        Units mapped to base dimensions types.
     unit_sys: str, optional
         Predefined unit system.
+    copy_from: UnitSystem
+        Make a copy of a unit system.
 
     Attributes
     ----------
-    name
     base_units
     MASS
     LENGTH
@@ -31,34 +30,36 @@ class UnitSystem:
     SOLID_ANGLE
     """
 
-    def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
-        if name and unit_sys or base_units and unit_sys:
-            raise UnitSystemError.EXCESSIVE_PARAMETERS()
-
-        if base_units:
-            if len(set(base_units)) != len(ansunits.BaseDimensions):
-                raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
-
-            self._name = name
-            self._base_units = base_units
-
+    def __init__(
+        self,
+        base_units: dict[ansunits.BaseDimensions : str] = None,
+        unit_sys: str = None,
+        copy_from: any = None,
+    ):
+        if copy_from:
+            self._units = copy_from._units
         else:
             if not unit_sys:
                 unit_sys = "SI"
             if unit_sys not in ansunits._unit_systems:
                 raise UnitSystemError.INVALID_UNIT_SYS(unit_sys)
+            else:
+                self._units = ansunits._unit_systems[unit_sys]
 
-            self._name = unit_sys
-            self._base_units = ansunits._unit_systems[unit_sys]
+        if base_units:
+            for unit_type, unit in base_units.items():
+                self._units[unit_type.name] = unit
 
-        for unit in self._base_units:
+        for unit_type in ansunits.BaseDimensions:
+            unit = self._units[unit_type.name]
+
             if not isinstance(unit, ansunits.Unit):
                 unit = ansunits.Unit(unit)
 
             if unit.name not in ansunits._base_units:
                 raise UnitSystemError.NOT_BASE_UNIT(unit)
 
-            setattr(self, f"_{unit._type}", unit)
+            setattr(self, f"_{unit_type.name}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -78,17 +79,30 @@ class UnitSystem:
 
         return quantity.to(to_units=new_unit)
 
-    @property
-    def name(self):
-        """Name associated with the unit system."""
-        return self._name
+    def update(self, base_units: dict[ansunits.BaseDimensions : str]):
+        """
+        Change the units of the unit system.
+
+        Parameters
+        ----------
+        base_units: dict, Unit
+            Units mapped to base dimensions types.
+        """
+        for unit_type, unit in base_units.items():
+            if not isinstance(unit, ansunits.Unit):
+                unit = ansunits.Unit(unit)
+
+            if unit.name not in ansunits._base_units:
+                raise UnitSystemError.NOT_BASE_UNIT(unit)
+
+            setattr(self, f"_{unit_type.name}", unit)
 
     @property
     def base_units(self):
         """Units associated with the unit system."""
         _base_units = []
-        for type in ansunits.BaseDimensions:
-            unit = getattr(self, f"_{type.name}")
+        for unit_type in ansunits.BaseDimensions:
+            unit = getattr(self, f"_{unit_type.name}")
             _base_units.append(unit.name)
         return _base_units
 
