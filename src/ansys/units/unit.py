@@ -337,7 +337,7 @@ class Unit:
             # Retrieve derived unit composition unit string and SI scaling factor
             elif unit_term in _derived_units:
                 si_scaling_factor *= (
-                    _derived_units[unit_term]["si_scaling_factor"] ** unit_term_power
+                    _derived_units[unit_term]["factor"] ** unit_term_power
                 )
 
                 # Recursively parse composition unit string
