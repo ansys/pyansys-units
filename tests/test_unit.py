@@ -30,9 +30,10 @@ def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C
 _dimensions: {'TEMPERATURE': 1.0}
-_si_units: K
+_type: TEMPERATURE
 _si_scaling_factor: 1.0
 _si_offset: 273.15
+_si_units: K
 """
     assert str(C) == C_string
 
