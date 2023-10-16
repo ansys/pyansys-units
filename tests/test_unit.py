@@ -3,19 +3,20 @@ import pytest
 import ansys.units as ansunits
 
 
-def test_fundamental_units():
+def test_base_units():
+    dims = ansunits.BaseDimensions
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
-    assert kg._type == "MASS"
-    assert kg._factor == 1
-    assert kg._offset == 0
+    assert kg.dimensions.dimensions == {dims.MASS: 1}
+    assert kg.si_scaling_factor == 1
+    assert kg.si_offset == 0
 
 
 def test_derived_units():
     N = ansunits.Unit("N")
     assert N.name == "N"
-    assert N._composition == "kg m s^-2"
-    assert N._factor == 1
+    assert N.si_units == "kg m s^-2"
+    assert N.si_scaling_factor == 1
 
 
 def test_unitless():
@@ -30,8 +31,9 @@ def test_string_rep():
     C_string = """_name: C
 _dimensions: {'TEMPERATURE': 1.0}
 _type: TEMPERATURE
-_factor: 1
-_offset: 273.15
+_si_scaling_factor: 1.0
+_si_offset: 273.15
+_si_units: K
 """
     assert str(C) == C_string
 
@@ -83,6 +85,7 @@ def test_unit_sys_list():
         ),
     )
     assert slug.name == "slug"
+    assert slug.si_units == "kg"
     assert slug.dimensions == ansunits.Dimensions({dims.MASS: 1})
 
 

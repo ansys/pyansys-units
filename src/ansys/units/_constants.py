@@ -24,5 +24,5 @@ with open(qc_path, "r") as qc_yaml:
 _multipliers: dict = qc_data["multipliers"]
 _unit_systems: dict = qc_data["unit_systems"]
 _api_quantity_map: dict = qc_data["api_quantity_map"]
-_fundamental_units: dict = qc_data["fundamental_units"]
+_base_units: dict = qc_data["base_units"]
 _derived_units: dict = qc_data["derived_units"]

@@ -3,7 +3,6 @@ import math
 import pytest
 
 import ansys.units as ansunits
-from ansys.units.utils import UtilError
 
 DELTA = 1.0e-5
 
@@ -296,7 +295,7 @@ def test_to_32():
 
 def test_to_33():
     v = ansunits.Quantity(2.0, "radian")
-    with pytest.raises(TypeError) as e:
+    with pytest.raises(ansunits.QuantityError) as e:
         convert = v.to(0)
 
 
@@ -1036,11 +1035,11 @@ def test_error_messages():
 
 
 def test_instantiate_quantity_with_unrecognized_units_causes_exception():
-    with pytest.raises(UtilError):
+    with pytest.raises(ansunits.UnitError):
         ansunits.Quantity(value=10, units="piggies")
-    with pytest.raises(UtilError):
+    with pytest.raises(ansunits.UnitError):
         ansunits.Quantity(value=10, units="piggies s^-1")
-    with pytest.raises(UtilError):
+    with pytest.raises(ansunits.UnitError):
         ansunits.Quantity(value=10, units="piggies^2 m^-3")
 
 
