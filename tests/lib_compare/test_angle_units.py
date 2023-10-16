@@ -24,14 +24,13 @@ def test_pint_angles_are_dimensionless():
 
 
 def test_pyunits_angles_have_angle_dimensions():
-    from util.pyunit import TestDimension
-
+    from ansys.units.dimensions import BaseDimensions
     from ansys.units.quantity import Quantity
 
     radian = Quantity(1.0, "radian")
-    assert radian.dimensions.dimensions == TestDimension({TestDimension.ANGLE: 1.0})
+    assert radian.dimensions.dimensions == {BaseDimensions.ANGLE: 1}
     degree = Quantity(1.0, "degree")
-    assert degree.dimensions.dimensions == TestDimension({TestDimension.ANGLE: 1.0})
+    assert degree.dimensions.dimensions == {BaseDimensions.ANGLE: 1}
 
 
 # pint is happy to convert between angle and dimensionless because it
