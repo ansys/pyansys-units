@@ -13,7 +13,7 @@ class UnitRegistry:
 
     Parameters
     ----------
-    config: filename.yaml, optional
+    config: str, optional
         Custom .yaml file or `cfg.yaml`. Format must match `cfg.yaml`.
     other: dict, optional
         Dictionary for extra units.
