@@ -190,86 +190,86 @@ base_units:
 # Derived Units
 # -------------
 # Derived units are composed from the base units.  Each derived unit must
-# provide a `composition` and `si_scaling_factor`. The `composition` specifies  the
-# base units and their exponents.  The `si_scaling_factor` provides the conversion
+# provide a `composition` and `factor`. The `composition` specifies  the
+# base units and their exponents.  The `factor` provides the conversion
 # from the composed unit string to the derived unit.
 #
 # Specification format:
 #
 # <unit string>:
 #   composition: <units>
-#   si_scaling_factor: <value>
+#   factor: <value>
 
 derived_units:
   N:
     composition: kg m s^-2
-    si_scaling_factor: 1
+    factor: 1
   Pa:
     composition: N m^-2
-    si_scaling_factor: 1
+    factor: 1
   W:
     composition: N m s^-1
-    si_scaling_factor: 1
+    factor: 1
   J:
     composition: N m
-    si_scaling_factor: 1
+    factor: 1
   V:
     composition: A ohm
-    si_scaling_factor: 1
+    factor: 1
   farad:
     composition: N m V^-2
-    si_scaling_factor: 1
+    factor: 1
   H:
     composition: N m A^-2
-    si_scaling_factor: 1
+    factor: 1
   S:
     composition: ohm^-1
-    si_scaling_factor: 1
+    factor: 1
   Wb:
     composition: N m A^-1
-    si_scaling_factor: 1
+    factor: 1
   T:
     composition: Wb m^-2
-    si_scaling_factor: 1
+    factor: 1
   dyne:
     composition: g cm s^-2
-    si_scaling_factor: 1
+    factor: 1
   erg:
     composition: dyne cm
-    si_scaling_factor: 1
+    factor: 1
   pdl:
     composition: lbm ft s^-2
-    si_scaling_factor: 1
+    factor: 1
   psi:
     composition: lbf in^-2
-    si_scaling_factor: 1
+    factor: 1
   lbf:
     composition: slug ft s^-2
-    si_scaling_factor: 1
+    factor: 1
   psf:
     composition: lbf ft^-2
-    si_scaling_factor: 1
+    factor: 1
   ohm:
     composition: kg m^2 s^-3 A^-2
-    si_scaling_factor: 1
+    factor: 1
   Hz:
     composition: s^-1
-    si_scaling_factor: 1
+    factor: 1
   l:
     composition: m^3
-    si_scaling_factor: 0.001
+    factor: 0.001
   gal:
     composition: m^3
-    si_scaling_factor: 0.0037854117839999993
+    factor: 0.0037854117839999993
   BTU:
     composition: J
-    si_scaling_factor: 1055.056
+    factor: 1055.056
   cal:
     composition: J
-    si_scaling_factor: 4.184
+    factor: 4.184
   coulomb:
     composition: A s
-    si_scaling_factor: 1
+    factor: 1
 
 # Quantity Map
 # ------------
