@@ -58,9 +58,7 @@ class UnitSystem:
             if unit.name not in ansunits._base_units:
                 raise UnitSystemError.NOT_BASE_UNIT(unit)
 
-            unit_type = [x.name for x in unit.dimensions.dimensions.keys()][0]
-
-            setattr(self, f"_{unit_type}", unit)
+            setattr(self, f"_{unit._type}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
