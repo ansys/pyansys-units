@@ -80,196 +80,196 @@ unit_systems:
 # Custom units -> Add new units and their associated properties to the list
 # below to use them within a quantity.
 #
-# <unit name>:        Primitive unit composed of `type`, `factor` and `offset`
+# <unit name>:        Primitive unit composed of `type`, `si_scaling_factor` and `si_offset`
 #   type: <name>      Must be one of the dimension types
-#   factor: <factor>  SI conversion factor
-#   offset: <offset>  SI conversion offset
+#   si_scaling_factor: <si_scaling_factor>  SI scaling factor
+#   si_offset: <si_offset>  SI conversion offset
 
 base_units:
   kg:
     type: MASS
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   g:
     type: MASS
-    factor: 0.001
-    offset: 0
+    si_scaling_factor: 0.001
+    si_offset: 0
   lb:
     type: MASS
-    factor: 0.45359237
-    offset: 0
+    si_scaling_factor: 0.45359237
+    si_offset: 0
   lbm:
     type: MASS
-    factor: 0.45359237
-    offset: 0
+    si_scaling_factor: 0.45359237
+    si_offset: 0
   slug:
     type: MASS
-    factor: 14.59390293720637
-    offset: 0
+    si_scaling_factor: 14.59390293720637
+    si_offset: 0
   m:
     type: LENGTH
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   cm:
     type: LENGTH
-    factor: 0.01
-    offset: 0
+    si_scaling_factor: 0.01
+    si_offset: 0
   ft:
     type: LENGTH
-    factor: 0.30479999999999996
-    offset: 0
+    si_scaling_factor: 0.30479999999999996
+    si_offset: 0
   in:
     type: LENGTH
-    factor: 0.0254
-    offset: 0
+    si_scaling_factor: 0.0254
+    si_offset: 0
   s:
     type: TIME
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   A:
     type: CURRENT
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   mol:
     type: CHEMICAL_AMOUNT
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   slugmol:
     type: CHEMICAL_AMOUNT
-    factor: 14593.9
-    offset: 0
+    si_scaling_factor: 14593.9
+    si_offset: 0
   cd:
     type: LIGHT
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   sr:
     type: SOLID_ANGLE
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   radian:
     type: ANGLE
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   degree:
     type: ANGLE
-    factor: 0.017453292519943295
-    offset: 0
+    si_scaling_factor: 0.017453292519943295
+    si_offset: 0
   K:
     type: TEMPERATURE
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   C:
     type: TEMPERATURE
-    factor: 1
-    offset: 273.15
+    si_scaling_factor: 1
+    si_offset: 273.15
   F:
     type: TEMPERATURE
-    factor: 0.55555555555
-    offset: 459.67
+    si_scaling_factor: 0.55555555555
+    si_offset: 459.67
   R:
     type: TEMPERATURE
-    factor: 0.55555555555
-    offset: 0
+    si_scaling_factor: 0.55555555555
+    si_offset: 0
   delta_K:
     type: TEMPERATURE_DIFFERENCE
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   delta_C:
     type: TEMPERATURE_DIFFERENCE
-    factor: 1
-    offset: 0
+    si_scaling_factor: 1
+    si_offset: 0
   delta_F:
     type: TEMPERATURE_DIFFERENCE
-    factor: 0.55555555555
-    offset: 0
+    si_scaling_factor: 0.55555555555
+    si_offset: 0
   delta_R:
     type: TEMPERATURE_DIFFERENCE
-    factor: 0.55555555555
-    offset: 0
+    si_scaling_factor: 0.55555555555
+    si_offset: 0
 
 # Derived Units
 # -------------
 # Derived units are composed from the base units.  Each derived unit must
-# provide a `composition` and `factor`. The `composition` specifies  the
-# base units and their exponents.  The `factor` provides the conversion
+# provide a `composition` and `si_scaling_factor`. The `composition` specifies  the
+# base units and their exponents.  The `si_scaling_factor` provides the conversion
 # from the composed unit string to the derived unit.
 #
 # Specification format:
 #
 # <unit string>:
 #   composition: <units>
-#   factor: <value>
+#   si_scaling_factor: <value>
 
 derived_units:
   N:
     composition: kg m s^-2
-    factor: 1
+    si_scaling_factor: 1
   Pa:
     composition: N m^-2
-    factor: 1
+    si_scaling_factor: 1
   W:
     composition: N m s^-1
-    factor: 1
+    si_scaling_factor: 1
   J:
     composition: N m
-    factor: 1
+    si_scaling_factor: 1
   V:
     composition: A ohm
-    factor: 1
+    si_scaling_factor: 1
   farad:
     composition: N m V^-2
-    factor: 1
+    si_scaling_factor: 1
   H:
     composition: N m A^-2
-    factor: 1
+    si_scaling_factor: 1
   S:
     composition: ohm^-1
-    factor: 1
+    si_scaling_factor: 1
   Wb:
     composition: N m A^-1
-    factor: 1
+    si_scaling_factor: 1
   T:
     composition: Wb m^-2
-    factor: 1
+    si_scaling_factor: 1
   dyne:
     composition: g cm s^-2
-    factor: 1
+    si_scaling_factor: 1
   erg:
     composition: dyne cm
-    factor: 1
+    si_scaling_factor: 1
   pdl:
     composition: lbm ft s^-2
-    factor: 1
+    si_scaling_factor: 1
   psi:
     composition: lbf in^-2
-    factor: 1
+    si_scaling_factor: 1
   lbf:
     composition: slug ft s^-2
-    factor: 1
+    si_scaling_factor: 1
   psf:
     composition: lbf ft^-2
-    factor: 1
+    si_scaling_factor: 1
   ohm:
     composition: kg m^2 s^-3 A^-2
-    factor: 1
+    si_scaling_factor: 1
   Hz:
     composition: s^-1
-    factor: 1
+    si_scaling_factor: 1
   l:
     composition: m^3
-    factor: 0.001
+    si_scaling_factor: 0.001
   gal:
     composition: m^3
-    factor: 0.0037854117839999993
+    si_scaling_factor: 0.0037854117839999993
   BTU:
     composition: J
-    factor: 1055.056
+    si_scaling_factor: 1055.056
   cal:
     composition: J
-    factor: 4.184
+    si_scaling_factor: 4.184
   coulomb:
     composition: A s
-    factor: 1
+    si_scaling_factor: 1
 
 # Quantity Map
 # ------------

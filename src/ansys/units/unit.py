@@ -49,6 +49,8 @@ class Unit:
             self._name = ""
             self._dimensions = ansunits.Dimensions()
 
+        if not config:
+            config = self._get_config(name=self._name)
         if config:
             for key in config:
                 setattr(self, f"_{key}", config[key])
@@ -56,6 +58,24 @@ class Unit:
         self._si_units, self._si_scaling_factor, self._si_offset = self.si_data(
             units=self.name
         )
+
+    def _get_config(self, name: str) -> dict:
+        """
+        Retrieve unit configuration from '_base_units' or '_derived_units'.
+
+        Parameters
+        ----------
+        name : str
+            Unit string.
+        Returns
+        -------
+        dict
+            Dictionary of extra unit information.
+        """
+        if name in ansunits._base_units:
+            return ansunits._base_units[name]
+        if name in ansunits._derived_units:
+            return ansunits._derived_units[name]
 
     def _dim_to_units(
         self,
@@ -121,7 +141,7 @@ class Unit:
                 else:
                     dimensions[ansunits.BaseDimensions[idx]] = unit_term_power
 
-            # Retrieve derived unit composition unit string and factor.
+            # Retrieve derived unit composition unit string and SI factor.
             if unit_term in _derived_units:
                 # Recursively parse composition unit string
 
@@ -171,7 +191,10 @@ class Unit:
 
         # Find SI unit with same type as unit term
         for term, term_info in _base_units.items():
-            if term_info["type"] == unit_term_type and term_info["factor"] == 1.0:
+            if (
+                term_info["type"] == unit_term_type
+                and term_info["si_scaling_factor"] == 1.0
+            ):
                 return term
 
     def _condense(self, units=str) -> str:
@@ -263,7 +286,7 @@ class Unit:
         si_scaling_factor: float = None,
     ) -> tuple:
         """
-        Compute the SI unit string, SI factor, and SI offset.
+        Compute the SI unit string, SI scaling factor, and SI offset.
 
         Parameters
         ----------
@@ -274,19 +297,19 @@ class Unit:
         si_units : str, None
             SI unit string representation of the quantity.
         si_scaling_factor : float, None
-            SI factor of the unit string.
+            SI scaling factor of the unit string.
 
         Returns
         -------
         tuple
-            Tuple containing the SI units, SI factor, and SI offset.
+            Tuple containing the SI units, SI scaling factor, and SI offset.
         """
         # Initialize default values
         units = units or " "
         power = power or 1.0
         si_units = si_units or ""
         si_scaling_factor = si_scaling_factor or 1.0
-        si_offset = _base_units[units]["offset"] if units in _base_units else 0.0
+        si_offset = _base_units[units]["si_offset"] if units in _base_units else 0.0
 
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
@@ -307,12 +330,14 @@ class Unit:
                 elif unit_term_power != 0.0:
                     si_units += f" {self._si_map(unit_term)}^{unit_term_power}"
 
-                si_scaling_factor *= _base_units[unit_term]["factor"] ** unit_term_power
+                si_scaling_factor *= (
+                    _base_units[unit_term]["si_scaling_factor"] ** unit_term_power
+                )
 
-            # Retrieve derived unit composition unit string and factor
+            # Retrieve derived unit composition unit string and SI scaling factor
             elif unit_term in _derived_units:
                 si_scaling_factor *= (
-                    _derived_units[unit_term]["factor"] ** unit_term_power
+                    _derived_units[unit_term]["si_scaling_factor"] ** unit_term_power
                 )
 
                 # Recursively parse composition unit string
