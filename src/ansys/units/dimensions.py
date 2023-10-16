@@ -27,7 +27,7 @@ class Dimensions:
 
     def __init__(
         self,
-        dimensions_container: Optional[Dict[BaseDimensions : Union[float, int]]] = None,
+        dimensions_container: Optional[BaseDimensions[Dict[Union[float, int]]]] = None,
     ):
         """
         Create a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
