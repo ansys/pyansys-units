@@ -4,33 +4,39 @@ import ansys.units as ansunits
 
 class UnitSystem:
     """
-    Unit systems contain fundamental base units from user-defined units or a predefined
-    unit system.
+    A class containing base units for a user-defined or predefined unit system.
 
-    Methods
-    -------
-    convert()
-        Convert from one unit system to a given unit system.
+    Parameters
+    ----------
+    name: str, optional
+        Custom name associated with a user-defined unit system.
+    base_units: list, optional
+        Custom units associated with a user-defined unit system.
+    unit_sys: str, optional
+        Predefined unit system.
+
+    Attributes
+    ----------
+    name
+    base_units
+    MASS
+    LENGTH
+    TIME
+    TEMPERATURE
+    TEMPERATURE_DIFFERENCE
+    ANGLE
+    CHEMICAL_AMOUNT
+    LIGHT
+    CURRENT
+    SOLID_ANGLE
     """
 
     def __init__(self, name: str = None, base_units: list = None, unit_sys: str = None):
-        """
-        Initialize a unit system.
-
-        Parameters
-        ----------
-        name: str, optional
-            Custom name associated with a user-defined unit system.
-        base_units: list, optional
-            Custom units associated with a user-defined unit system.
-        unit_sys: str, optional
-            Predefined unit system.
-        """
         if name and unit_sys or base_units and unit_sys:
             raise UnitSystemError.EXCESSIVE_PARAMETERS()
 
         if base_units:
-            if len(base_units) != len(ansunits.BaseDimensions):
+            if len(set(base_units)) != len(ansunits.BaseDimensions):
                 raise UnitSystemError.BASE_UNITS_LENGTH(len(base_units))
 
             self._name = name
@@ -49,13 +55,10 @@ class UnitSystem:
             if not isinstance(unit, ansunits.Unit):
                 unit = ansunits.Unit(unit)
 
-            if unit.name not in ansunits._fundamental_units:
-                raise UnitSystemError.NOT_FUNDAMENTAL(unit)
+            if unit.name not in ansunits._base_units:
+                raise UnitSystemError.NOT_BASE_UNIT(unit)
 
-            if hasattr(self, f"_{unit._type.lower()}"):
-                raise UnitSystemError.UNIT_TYPE(unit)
-
-            setattr(self, f"_{unit._type.lower()}", unit)
+            setattr(self, f"_{unit._type}", unit)
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
@@ -85,59 +88,59 @@ class UnitSystem:
         """Units associated with the unit system."""
         _base_units = []
         for type in ansunits.BaseDimensions:
-            unit = getattr(self, f"_{type.name.lower()}")
+            unit = getattr(self, f"_{type.name}")
             _base_units.append(unit.name)
         return _base_units
 
     @property
-    def mass(self):
+    def MASS(self):
         """Mass unit of the unit system."""
-        return self._mass
+        return self._MASS
 
     @property
-    def length(self):
+    def LENGTH(self):
         """Length unit of the unit system."""
-        return self._length
+        return self._LENGTH
 
     @property
-    def time(self):
+    def TIME(self):
         """Time unit of the unit system."""
-        return self._time
+        return self._TIME
 
     @property
-    def temperature(self):
+    def TEMPERATURE(self):
         """Temperature unit of the unit system."""
-        return self._temperature
+        return self._TEMPERATURE
 
     @property
-    def temperature_difference(self):
+    def TEMPERATURE_DIFFERENCE(self):
         """Temperature unit of the unit system."""
-        return self._temperature_difference
+        return self._TEMPERATURE_DIFFERENCE
 
     @property
-    def angle(self):
+    def ANGLE(self):
         """Angle unit of the unit system."""
-        return self._angle
+        return self._ANGLE
 
     @property
-    def chemical_amount(self):
+    def CHEMICAL_AMOUNT(self):
         """Chemical Amount unit of the unit system."""
-        return self._chemical_amount
+        return self._CHEMICAL_AMOUNT
 
     @property
-    def light(self):
+    def LIGHT(self):
         """Light unit of the unit system."""
-        return self._light
+        return self._LIGHT
 
     @property
-    def current(self):
+    def CURRENT(self):
         """Current unit of the unit system."""
-        return self._current
+        return self._CURRENT
 
     @property
-    def solid_angle(self):
+    def SOLID_ANGLE(self):
         """Solid Angle unit of the unit system."""
-        return self._solid_angle
+        return self._SOLID_ANGLE
 
 
 class UnitSystemError(ValueError):
@@ -156,21 +159,14 @@ class UnitSystemError(ValueError):
     @classmethod
     def BASE_UNITS_LENGTH(cls, len):
         return cls(
-            f"The `base_units` argument must contain 10 units, currently there are {len}."
+            f"The `base_units` argument must contain 10 unique units, currently there are {len}."
         )
 
     @classmethod
-    def NOT_FUNDAMENTAL(cls, unit):
+    def NOT_BASE_UNIT(cls, unit):
         return cls(
-            f"`{unit.name}` is not a fundimental unit. To use `{unit.name}`, add it to the "
-            "`fundamental_units` table within the cfg.yaml file."
-        )
-
-    @classmethod
-    def UNIT_TYPE(cls, unit):
-        return cls(
-            f"Unit of type: `{unit._type}` already exits in this unit system"
-            f"replace '{unit.name}' with unit of another type"
+            f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
+            "`base_units` table within the cfg.yaml file."
         )
 
     @classmethod

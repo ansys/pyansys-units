@@ -45,6 +45,17 @@ insert them within an equation to perform mathematical operations.
     m_dv = meter / 2  # 0.5
     m_sq = meter**2  # 1
 
+``Quantity`` objects work intuitively with unit conversion. The arithmetic operation
+behind conversions is:
+
+.. math::
+
+    value_{\text{new}} = \frac{value_{\text{si}}}{f_{\text{new}}} - c_{\text{new}}
+
+
+Where :math:`f_{new}` is a scaling factor and :math:`c_{new}` is an offset to convert
+from SI units to the requested units.
+
 To define a new unit system or create custom quantities, manually update the
 ``cfg.yaml`` file with your desired data. Once saved, these changes are reflected
 throughout PyAnsys Units.
