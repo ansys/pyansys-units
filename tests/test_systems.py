@@ -183,38 +183,29 @@ def test_error_messages():
     assert str(e1) == expected_str
 
     e2 = ansunits.UnitSystemError.BASE_UNITS_LENGTH(11)
-    expected_str = (
-        "The `base_units` argument must contain 10 units, currently there are 11."
-    )
+    expected_str = "The `base_units` argument must contain 10 unique units, currently there are 11."
     assert str(e2) == expected_str
 
-    e3 = ansunits.UnitSystemError.NOT_FUNDAMENTAL(ansunits.Unit("kg s^-1"))
+    e3 = ansunits.UnitSystemError.NOT_BASE_UNIT(ansunits.Unit("kg s^-1"))
     expected_str = (
-        "`kg s^-1` is not a fundimental unit. To use `kg s^-1`, add it to the "
-        "`fundamental_units` table within the cfg.yaml file."
+        "`kg s^-1` is not a base unit. To use `kg s^-1`, add it to the "
+        "`base_units` table within the cfg.yaml file."
     )
     assert str(e3) == expected_str
 
-    e4 = ansunits.UnitSystemError.UNIT_TYPE(ansunits.Unit("m"))
-    expected_str = (
-        "Unit of type: `LENGTH` already exits in this unit system"
-        "replace 'm' with unit of another type"
-    )
-    assert str(e4) == expected_str
-
-    e5 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
-    assert str(e5) == "`ham sandwich` is not a supported unit system."
+    e4 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
+    assert str(e4) == "`ham sandwich` is not a supported unit system."
 
 
 def test_si_properties():
     us = ansunits.UnitSystem()
-    assert us.mass.name == "kg"
-    assert us.angle.name == "radian"
-    assert us.chemical_amount.name == "mol"
-    assert us.length.name == "m"
-    assert us.current.name == "A"
-    assert us.solid_angle.name == "sr"
-    assert us.temperature.name == "K"
-    assert us.temperature_difference.name == "delta_K"
-    assert us.light.name == "cd"
-    assert us.time.name == "s"
+    assert us.MASS.name == "kg"
+    assert us.ANGLE.name == "radian"
+    assert us.CHEMICAL_AMOUNT.name == "mol"
+    assert us.LENGTH.name == "m"
+    assert us.CURRENT.name == "A"
+    assert us.SOLID_ANGLE.name == "sr"
+    assert us.TEMPERATURE.name == "K"
+    assert us.TEMPERATURE_DIFFERENCE.name == "delta_K"
+    assert us.LIGHT.name == "cd"
+    assert us.TIME.name == "s"

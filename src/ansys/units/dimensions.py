@@ -8,6 +8,19 @@ class BaseDimensions(Enum):
     Supplies all valid base dimensions used in dimensional analysis.
 
     Used as dictionary keys for defining a `Dimensions` object.
+
+    Attributes
+    ----------
+    MASS
+    LENGTH
+    TIME
+    TEMPERATURE
+    TEMPERATURE_DIFFERENCE
+    ANGLE
+    CHEMICAL_AMOUNT
+    LIGHT
+    CURRENT
+    SOLID_ANGLE
     """
 
     MASS = 0
@@ -23,7 +36,21 @@ class BaseDimensions(Enum):
 
 
 class Dimensions:
-    """Represents the physical dimensions of a quantity or its units."""
+    """
+    A class which contains the base unit information.
+
+    A dictionary of ``BaseDimensions`` and power is required
+    for a non-dimensionless object.
+
+    Parameters
+    ----------
+    dimensions_container : dict, optional
+        Dictionary of {``BaseDimensions``: power, ...}.
+
+    Attributes
+    ----------
+    dimensions
+    """
 
     def __init__(
         self,
@@ -48,9 +75,8 @@ class Dimensions:
 
     @property
     def dimensions(self):
-        """Dimensions as a dictionary."""
-        dims = {x.value: y for x, y in self._dimensions.items()}
-        return dict(dims)
+        """A dictionary representation."""
+        return self._dimensions
 
     def __str__(self):
         dims = {x.name: y for x, y in self._dimensions.items()}
