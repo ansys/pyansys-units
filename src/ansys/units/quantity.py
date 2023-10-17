@@ -1,4 +1,6 @@
 """Provides the ``Quantity`` class."""
+from __future__ import annotations
+
 from typing import Optional
 
 import ansys.units as ansunits
@@ -119,7 +121,7 @@ class Quantity(float):
         if not isinstance(__value, Quantity) and not self.is_dimensionless:
             raise QuantityError.INCOMPATIBLE_VALUE(__value)
 
-    def _temp_precheck(self, units, op: str = None) -> Optional[str]:
+    def _temp_precheck(self, units: ansunits.Unit, op: str = None) -> Optional[str]:
         """
         Validate units for temperature differences.
 
@@ -176,7 +178,7 @@ class Quantity(float):
         """True if the quantity is dimensionless."""
         return not bool(self._unit.dimensions.dimensions)
 
-    def to(self, to_units: [str, any]) -> "Quantity":
+    def to(self, to_units: [ansunits.Unit | str]) -> "Quantity":
         """
         Perform quantity conversions.
 

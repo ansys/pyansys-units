@@ -5,7 +5,6 @@ import ansys.units as ansunits
 
 def test_pre_defined_unit_system():
     us = ansunits.UnitSystem(unit_sys="SI")
-    assert us.name == "SI"
     assert us.base_units == [
         "kg",
         "m",
@@ -21,23 +20,22 @@ def test_pre_defined_unit_system():
 
 
 def test_custom_unit_system():
+    dims = ansunits.BaseDimensions
     ur = ansunits.UnitRegistry()
     us = ansunits.UnitSystem(
-        name="sys",
-        base_units=[
-            ur.slug,
-            ur.ft,
-            ur.s,
-            ur.R,
-            ur.delta_R,
-            ur.radian,
-            ur.slugmol,
-            ur.cd,
-            ur.A,
-            ur.sr,
-        ],
+        base_units={
+            dims.MASS: ur.slug,
+            dims.LENGTH: ur.ft,
+            dims.TIME: ur.s,
+            dims.TEMPERATURE: ur.R,
+            dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
+            dims.ANGLE: ur.radian,
+            dims.CHEMICAL_AMOUNT: ur.slugmol,
+            dims.LIGHT: ur.cd,
+            dims.CURRENT: ur.A,
+            dims.SOLID_ANGLE: ur.sr,
+        },
     )
-    assert us.name == "sys"
     assert us.base_units == [
         "slug",
         "ft",
@@ -53,6 +51,8 @@ def test_custom_unit_system():
 
 
 def test_conversion():
+    dims = ansunits.BaseDimensions
+    ur = ansunits.UnitRegistry()
     us1 = ansunits.UnitSystem(unit_sys="BT")
     q1 = ansunits.Quantity(10, "kg ft s")
 
@@ -60,10 +60,7 @@ def test_conversion():
     assert q2.value == 0.6852176585679174
     assert q2.units == "slug ft s"
 
-    us2 = ansunits.UnitSystem(
-        name="sys",
-        base_units=["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"],
-    )
+    us2 = ansunits.UnitSystem(unit_sys="SI")
     q3 = ansunits.Quantity(4, "slug cm s")
 
     q4 = us2.convert(q3)
@@ -73,104 +70,42 @@ def test_conversion():
 
 def test_errors():
     with pytest.raises(ansunits.UnitSystemError) as e_info:
+        dims = ansunits.BaseDimensions
+        ur = ansunits.UnitRegistry()
         us1 = ansunits.UnitSystem(
-            name="sys",
-            base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
-            unit_sys="BT",
+            base_units={
+                dims.MASS: ur.slug,
+                dims.LENGTH: ur.N,
+                dims.TIME: ur.s,
+                dims.TEMPERATURE: ur.R,
+                dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
+                dims.ANGLE: ur.radian,
+                dims.CHEMICAL_AMOUNT: ur.slugmol,
+                dims.LIGHT: ur.cd,
+                dims.CURRENT: ur.A,
+                dims.SOLID_ANGLE: ur.sr,
+            },
         )
 
     with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us2 = ansunits.UnitSystem(
-            name="sys",
-            base_units=[
-                "slug",
-                "ft",
-                "s",
-                "R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
+        us2 = ansunits.UnitSystem(unit_sys="Standard")
 
     with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us3 = ansunits.UnitSystem(
-            name="sys",
-            base_units=[
-                "slug",
-                "ft",
-                "N",
-                "R",
-                "delta_R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
-
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
+        dims = ansunits.BaseDimensions
+        ur = ansunits.UnitRegistry()
         us4 = ansunits.UnitSystem(
-            name="sys",
-            base_units=[
-                "slug",
-                "slug",
-                "s",
-                "R",
-                "delta_R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
-
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us5 = ansunits.UnitSystem(
-            name="sys",
-            base_units=["m", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
-        )
-
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us6 = ansunits.UnitSystem(unit_sys="Standard")
-
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us7 = ansunits.UnitSystem(
-            name="us6",
-            base_units=[
-                "kg s^-1",
-                "ft",
-                "s",
-                "R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
-
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us6 = ansunits.UnitSystem(
-            name="us6",
-            base_units=[
-                "kg s^-1",
-                "ft",
-                "s",
-                "R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
+            base_units={
+                dims.MASS: ansunits.Unit("kg s^-1"),
+                dims.LENGTH: ur.ft,
+                dims.TIME: ur.s,
+                dims.TEMPERATURE: ur.R,
+                dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
+                dims.ANGLE: ur.radian,
+                dims.CHEMICAL_AMOUNT: ur.slugmol,
+                dims.LIGHT: ur.cd,
+                dims.CURRENT: ur.A,
+                dims.SOLID_ANGLE: ur.sr,
+            },
         )
 
 
@@ -198,6 +133,7 @@ def test_error_messages():
 
 
 def test_si_properties():
+    ur = ansunits.UnitRegistry()
     us = ansunits.UnitSystem()
     assert us.MASS.name == "kg"
     assert us.ANGLE.name == "radian"
