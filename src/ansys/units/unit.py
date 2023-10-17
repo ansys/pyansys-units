@@ -100,7 +100,7 @@ class Unit:
             Unit string.
         """
         if not unit_sys:
-            unit_sys = ansunits.UnitSystem(name="SI")
+            unit_sys = ansunits.UnitSystem()
 
         base_units = unit_sys.base_units
         units = ""
@@ -376,6 +376,13 @@ class Unit:
         return self._dimensions
 
     def __str__(self):
+        returned_string = ""
+        attrs = self.__dict__
+        for key in attrs:
+            returned_string += f"{key}: {attrs[key]}\n"
+        return returned_string
+
+    def __repr__(self):
         returned_string = ""
         attrs = self.__dict__
         for key in attrs:

@@ -73,8 +73,8 @@ class Dimensions:
 
     def __eq__(self, other):
         temp_dim = self / other
-        temp = ansunits.TEMPERATURE
-        temp_diff = ansunits.TEMPERATURE_DIFFERENCE
+        temp = ansunits.BaseDimensions.TEMPERATURE
+        temp_diff = ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE
         if temp in temp_dim._dimensions and temp_diff in temp_dim._dimensions:
             if temp_dim._dimensions[temp] == -temp_dim._dimensions[temp_diff]:
                 del temp_dim._dimensions[temp_diff]

@@ -1,4 +1,6 @@
 """Provides the ``UnitSystem`` class."""
+from __future__ import annotations
+
 import ansys.units as ansunits
 
 
@@ -32,9 +34,9 @@ class UnitSystem:
 
     def __init__(
         self,
-        base_units: dict[ansunits.BaseDimensions : str] = None,
+        base_units: dict[ansunits.BaseDimensions : ansunits.Unit | str] = None,
         unit_sys: str = None,
-        copy_from: any = None,
+        copy_from: ansunits.UnitSystem = None,
     ):
         if copy_from:
             self._units = copy_from._units
@@ -44,7 +46,7 @@ class UnitSystem:
             if unit_sys not in ansunits._unit_systems:
                 raise UnitSystemError.INVALID_UNIT_SYS(unit_sys)
             else:
-                self._units = ansunits._unit_systems[unit_sys]
+                self._units = ansunits._unit_systems[unit_sys].copy()
 
         if base_units:
             for unit_type, unit in base_units.items():
@@ -79,7 +81,7 @@ class UnitSystem:
 
         return quantity.to(to_units=new_unit)
 
-    def update(self, base_units: dict[ansunits.BaseDimensions : str]):
+    def update(self, base_units: dict[ansunits.BaseDimensions : ansunits.Unit | str]):
         """
         Change the units of the unit system.
 
