@@ -1,5 +1,6 @@
 """Provides the ``Dimensions`` and ``BaseDimensions`` class."""
 from enum import Enum
+from typing import Optional
 
 
 class BaseDimensions(Enum):
@@ -51,7 +52,19 @@ class Dimensions:
     dimensions
     """
 
-    def __init__(self, dimensions_container: dict[BaseDimensions : int | float] = None):
+    def __init__(
+        self,
+        dimensions_container: Optional[BaseDimensions] = None,
+    ):
+        """
+        Create a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
+        power. Default is dimensionless.
+
+        Parameters
+        ----------
+        dimensions_container : dict, optional
+            Dictionary of {``BaseDimensions``: power, ...}.
+        """
         dimensions_container = dimensions_container or {}
         self._dimensions = dimensions_container.copy()
         for x, y in dimensions_container.items():
