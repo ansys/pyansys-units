@@ -409,6 +409,15 @@ class Unit:
         new_dimensions = self.dimensions**__value
         return Unit(dimensions=new_dimensions)
 
+    def __eq__(self, other_unit):
+        for attr, value in self.__dict__.items():
+            try:
+                if getattr(other_unit, attr) != value:
+                    return False
+            except:
+                return False
+        return True
+
 
 class UnitError(ValueError):
     """Custom dimensions errors."""
