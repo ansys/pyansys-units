@@ -211,6 +211,13 @@ class UnitSystem:
     def SOLID_ANGLE(self, new_mass):
         self._set_type(unit_type=ansunits.BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
+    def __repr__(self):
+        units = {}
+        for unit_type in ansunits.BaseDimensions:
+            unit = getattr(self, f"_{unit_type.name}")
+            units.update({unit_type.name: unit.name})
+        return str(units)
+
     def __eq__(self, other_sys):
         for attr, value in self.__dict__.items():
             if getattr(other_sys, attr) != value:
