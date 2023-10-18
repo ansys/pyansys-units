@@ -6,7 +6,7 @@ import ansys.units as ansunits
 
 class Dimensions:
     """
-    A class which contains the base unit information.
+    Tracks the power of all base unit types for dimensional analysis.
 
     A dictionary of ``BaseDimensions`` and power is required
     for a non-dimensionless object.
