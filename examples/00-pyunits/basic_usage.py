@@ -169,32 +169,47 @@ pas.units  # >>> "Pa s"
 ###############################################################################
 # Instantiate unit systems
 # ~~~~~~~~~~~~~~~~~~~~~~~~
-# You can instantiate unit systems using one of two methods:
+# You can instantiate unit systems using a few methods:
 #
 # - Custom units
 # - Predefined unit systems
+# - Copy from a preexisting unit system
+# - Combinations of these
 
 # Custom units
 
-sys_units = ["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
-sys = ansunits.UnitSystem(name="sys", base_units=sys_units)
+dims = ansunits.BaseDimensions
+sys_units = {dims.MASS: "slug", dims.LENGTH: "ft"}
+sys = ansunits.UnitSystem(base_units=sys_units, unit_sys="SI")
 
-sys.name  # >>> "sys"
-sys.base_units  # >>> ["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
+sys.base_units  # >>> ["slug", "ft", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
 
 # Predefined unit systems
 
 cgs = ansunits.UnitSystem(unit_sys="CGS")
 
-cgs.name  # >>> "cgs"
 cgs.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
+
+# Copy from a preexisting unit system
+
+cgs2 = ansunits.UnitSystem(copy_from=cgs)
+
+cgs2.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
+
+# Combinations of these
+
+sys_units = {dims.MASS: "slug", dims.LENGTH: "ft", dims.ANGLE: "degree"}
+cgs_modified = ansunits.UnitSystem(base_units=sys_units, copy_from=cgs)
+
+cgs_modified.base_units  # >>> ['slug', 'ft', 's', 'K', "delta_K", 'degree', 'mol', 'cd', 'A', 'sr']
+
 
 ###############################################################################
 # Create a unit system independently
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # You can create a unit system independently and apply it to quantities.
 
-si = ansunits.UnitSystem(unit_sys="SI")
+si = ansunits.UnitSystem()
 fps = ansunits.Quantity(value=11.2, units="ft s^-1")
 
 mps = si.convert(fps)
