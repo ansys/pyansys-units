@@ -1,4 +1,6 @@
 """Provides the ``Dimensions`` class."""
+from typing import Union
+
 import ansys.units as ansunits
 
 
