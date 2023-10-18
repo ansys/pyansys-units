@@ -115,14 +115,14 @@ class Dimensions:
         return Dimensions(results)
 
     def __eq__(self, other):
-        temp_dim = self / other
-        temp = BaseDimensions.TEMPERATURE
-        temp_diff = BaseDimensions.TEMPERATURE_DIFFERENCE
-        if temp in temp_dim._dimensions and temp_diff in temp_dim._dimensions:
-            if temp_dim._dimensions[temp] == -temp_dim._dimensions[temp_diff]:
-                del temp_dim._dimensions[temp_diff]
-                del temp_dim._dimensions[temp]
-        return not bool(temp_dim.dimensions)
+        dims = other.dimensions.copy()
+        for dim, value in self.dimensions.items():
+            if dim in dims:
+                dims[dim] -= value
+            else:
+                return False
+        if sum(dims.values()) == 0:
+            return True
 
     def __ne__(self, other):
         return not self.__eq__(other)

@@ -101,7 +101,7 @@ class Quantity(float):
         ):
             self._unit = ansunits.Unit(f"delta_{self._unit.name}")
 
-    def _arithmetic_precheck(self, __value) -> str:
+    def _arithmetic_precheck(self, __value, add_or_sub: bool = False) -> str:
         """
         Validate dimensions of the quantity.
 
@@ -109,10 +109,38 @@ class Quantity(float):
         ----------
         __value : Quantity | int | float
             Value for modifying the current ``Quantity`` object.
+        add_or_sub : bool, False
+            If the units are being added or subtracted
         """
 
-        # Cannot perform operations between quantities with incompatible dimensions
-        if isinstance(__value, Quantity) and self.dimensions != __value.dimensions:
+        # Cannot perform operations between quantities with incompatible
+        # dimensions
+        if (
+            isinstance(__value, Quantity)
+            and add_or_sub == True
+            and len(self.dimensions.dimensions) == 1
+            and len(__value.dimensions.dimensions) == 1
+        ):
+            temp = [
+                ansunits.BaseDimensions.TEMPERATURE,
+                ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE,
+            ]
+            self_dims = self.dimensions.dimensions
+            __value_dims = __value.dimensions.dimensions
+            if (
+                any(True for key in self_dims.keys() if key in temp)
+                and any(True for key in __value_dims.keys() if key in temp)
+                and any(
+                    [sum(self_dims.values()) != 1.0, sum(__value_dims.values()) != 1.0]
+                )
+            ):
+                raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
+
+        if (
+            isinstance(__value, Quantity)
+            and self.dimensions != __value.dimensions
+            and add_or_sub == False
+        ):
             raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
         # Cannot perform operations on a non-dimensionless quantity
 
@@ -128,7 +156,7 @@ class Quantity(float):
         units : Unit
             Unit for comparison against current units.
         op : str, None
-            Operation conducted on units. "+"|"-"
+            Operation conducted on units. "-"
 
         Returns
         -------
@@ -176,7 +204,7 @@ class Quantity(float):
         """True if the quantity is dimensionless."""
         return not bool(self._unit.dimensions.dimensions)
 
-    def to(self, to_units: [str, any]) -> "Quantity":
+    def to(self, to_units: [str, any], add_or_sub: bool = False) -> "Quantity":
         """
         Perform quantity conversions.
 
@@ -184,6 +212,8 @@ class Quantity(float):
         ----------
         to_units : Unit
             Desired unit to convert to.
+        add_or_sub : bool, False
+            If the units were added or subtracted
 
         Returns
         -------
@@ -200,7 +230,7 @@ class Quantity(float):
         new_obj = Quantity(value=new_value, units=to_units)
 
         # Confirm conversion compatibility
-        self._arithmetic_precheck(new_obj)
+        self._arithmetic_precheck(new_obj, add_or_sub=add_or_sub)
 
         return new_obj
 
@@ -253,26 +283,26 @@ class Quantity(float):
         return Quantity(__value, "") / self
 
     def __add__(self, __value):
-        self._arithmetic_precheck(__value)
+        self._arithmetic_precheck(__value, add_or_sub=True)
         new_units = self.si_units
         new_value = float(self) + float(__value)
         new_quantity = Quantity(value=new_value, units=new_units)
         preferred_units = self._temp_precheck(__value.units)
         if preferred_units and preferred_units != new_units:
-            return new_quantity.to(preferred_units)
+            return new_quantity.to(preferred_units, add_or_sub=True)
         return new_quantity.to(self.units)
 
     def __radd__(self, __value):
         return self.__add__(__value)
 
     def __sub__(self, __value):
-        self._arithmetic_precheck(__value)
+        self._arithmetic_precheck(__value, add_or_sub=True)
         new_units = self.si_units
         new_value = float(self) - float(__value)
         new_quantity = Quantity(value=new_value, units=new_units)
         preferred_units = self._temp_precheck(__value.units, op="-")
         if preferred_units and preferred_units != new_units:
-            return new_quantity.to(preferred_units)
+            return new_quantity.to(preferred_units, add_or_sub=True)
         return new_quantity.to(self.units)
 
     def __rsub__(self, __value):

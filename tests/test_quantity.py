@@ -345,9 +345,6 @@ def test_complex_temperature_difference_to():
     t2 = ansunits.Quantity(2.0, "K")
     m = ansunits.Quantity(1.0, "kg")
     result = m * (t2 - t1)
-    resultC1 = result.to("kg C")
-    assert resultC1.value == 1.0
-    assert resultC1.units == "kg C"
     resultC2 = result.to("kg delta_C")
     assert resultC2.value == 1.0
     assert resultC2.units == "kg delta_C"

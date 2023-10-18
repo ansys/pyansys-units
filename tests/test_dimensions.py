@@ -68,7 +68,7 @@ def test_eq():
         dimensions_container={dims.LENGTH: 1, dims.TEMPERATURE_DIFFERENCE: 1}
     )
 
-    assert d1 == d2
+    assert d1 != d2
 
 
 def test_ne():
