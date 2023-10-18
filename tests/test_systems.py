@@ -172,6 +172,7 @@ def test_error_messages():
     e3 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
     assert str(e3) == "`ham sandwich` is not a supported unit system."
 
+
 def test_si_properties():
     us = ansunits.UnitSystem()
     assert us.MASS.name == "kg"
