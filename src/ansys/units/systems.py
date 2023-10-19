@@ -36,7 +36,7 @@ class UnitSystem:
 
     def __init__(
         self,
-        base_units: dict[ansunits.BaseDimensions : Union[ansunits.Unit, str]] = None,
+        base_units: dict[ansunits.BaseDimensions, Union[ansunits.Unit, str]] = None,
         unit_sys: str = None,
         copy_from: ansunits.UnitSystem = None,
     ):
