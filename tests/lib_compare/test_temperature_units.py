@@ -61,7 +61,7 @@ def test_ansunits_automatically_creates_temperature_difference_from_negative_abs
 
     t = ansunits.Quantity(-1.0, "K")
     assert t.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1})
-    assert t.units == "delta_K"
+    assert t.units == ansunits.Unit("delta_K")
     assert t.value == -1.0
 
 
@@ -75,7 +75,7 @@ def test_ansunits_temperature_difference_from_negative_absolute_value_to_relativ
 
     t = ansunits.Quantity(-274.0, "C")
     assert t.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1})
-    assert t.units == "delta_C"
+    assert t.units == ansunits.Unit("delta_C")
     assert t.value == -274.0
 
 
@@ -91,22 +91,22 @@ def test_ansunits_converts_temperature_correctly():
 # We will need to do some extra work such that when type is a difference
 # then the offset is zero in conversions.
 def test_ansunits_converts_temperature_difference_correctly():
-    from ansys.units.quantity import Quantity
+    from ansys.units import Quantity, Unit
 
     dK = Quantity(1.0, "K") - Quantity(2.0, "K")
     assert dK.value == -1.0
-    assert dK.units == "delta_K"
+    assert dK.units == Unit("delta_K")
 
     tC = dK.to("delta_C")
     assert tC.value == -1.0
-    assert tC.units == "delta_C"
+    assert tC.units == Unit("delta_C")
     assert float(tC) == -1.0
 
     dK = Quantity(2.0, "K") - Quantity(1.0, "K")
     assert dK.value == 1.0
-    assert dK.units == "delta_K"
+    assert dK.units == Unit("delta_K")
 
     tC = dK.to("delta_C")
     assert tC.value == 1.0
-    assert tC.units == "delta_C"
+    assert tC.units == Unit("delta_C")
     assert float(tC) == 1.0

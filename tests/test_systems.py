@@ -25,16 +25,16 @@ def test_custom_unit_system():
     us = ansunits.UnitSystem(
         name="sys",
         base_units=[
-            ur.slug,
-            ur.ft,
-            ur.s,
-            ur.R,
-            ur.delta_R,
-            ur.radian,
-            ur.slugmol,
-            ur.cd,
-            ur.A,
-            ur.sr,
+            "slug",
+            "ft",
+            "s",
+            "R",
+            "delta_R",
+            "radian",
+            "slugmol",
+            "cd",
+            "A",
+            "sr",
         ],
     )
     assert us.name == "sys"
@@ -58,7 +58,7 @@ def test_conversion():
 
     q2 = us1.convert(q1)
     assert q2.value == 0.6852176585679174
-    assert q2.units == "slug ft s"
+    assert q2.units == ansunits.Unit("slug ft s")
 
     us2 = ansunits.UnitSystem(
         name="sys",
@@ -68,7 +68,7 @@ def test_conversion():
 
     q4 = us2.convert(q3)
     assert q4.value == 0.5837561174882547
-    assert q4.units == "kg m s"
+    assert q4.units == ansunits.Unit("kg m s")
 
 
 def test_errors():

@@ -1,5 +1,4 @@
 """Provides the ``Quantity`` class."""
-from typing import Optional
 
 import ansys.units as ansunits
 
@@ -48,20 +47,16 @@ class Quantity(float):
 
         _value = float(value)
 
-        if units is not None:
-            _unit = units
-
         if quantity_map:
             units = ansunits.QuantityMap(quantity_map).units
-            _unit = units
 
         if dimensions:
-            _unit = ansunits.Unit(dimensions=dimensions)
+            units = ansunits.Unit(dimensions=dimensions)
 
-        if not isinstance(_unit, ansunits.Unit):
-            _unit = ansunits.Unit(_unit)
+        if not isinstance(units, ansunits.Unit):
+            units = ansunits.Unit(units)
 
-        _si_value = (_value + _unit.si_offset) * _unit.si_scaling_factor
+        _si_value = (_value + units.si_offset) * units.si_scaling_factor
 
         return float.__new__(cls, _si_value)
 
@@ -81,94 +76,23 @@ class Quantity(float):
 
         self._value = float(value)
 
-        if units is not None:
-            self._unit = units
-
         if quantity_map:
             units = ansunits.QuantityMap(quantity_map).units
-            self._unit = units
 
         if dimensions:
-            self._unit = ansunits.Unit(dimensions=dimensions)
+            units = ansunits.Unit(dimensions=dimensions)
 
-        if not isinstance(self._unit, ansunits.Unit):
-            self._unit = ansunits.Unit(self._unit)
-
-        if (
-            (self._unit.name in ["K", "R"] and value < 0)
-            or (self._unit.name == "C" and value < -273.15)
-            or (self._unit.name == "F" and value < -459.67)
-        ):
-            self._unit = ansunits.Unit(f"delta_{self._unit.name}")
-
-    def _arithmetic_precheck(self, __value, add_or_sub: bool = False) -> str:
-        """
-        Validate dimensions of the quantity.
-
-        Parameters
-        ----------
-        __value : Quantity | int | float
-            Value for modifying the current ``Quantity`` object.
-        add_or_sub : bool, False
-            If the units are being added or subtracted
-        """
-
-        # Cannot perform operations between quantities with incompatible
-        # dimensions
-        if (
-            isinstance(__value, Quantity)
-            and add_or_sub == True
-            and len(self.dimensions.dimensions) == 1
-            and len(__value.dimensions.dimensions) == 1
-        ):
-            temp = [
-                ansunits.BaseDimensions.TEMPERATURE,
-                ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE,
-            ]
-            self_dims = self.dimensions.dimensions
-            __value_dims = __value.dimensions.dimensions
-            if (
-                any(True for key in self_dims.keys() if key in temp)
-                and any(True for key in __value_dims.keys() if key in temp)
-                and any(
-                    [sum(self_dims.values()) != 1.0, sum(__value_dims.values()) != 1.0]
-                )
-            ):
-                raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
+        if not isinstance(units, ansunits.Unit):
+            units = ansunits.Unit(units)
 
         if (
-            isinstance(__value, Quantity)
-            and self.dimensions != __value.dimensions
-            and add_or_sub == False
+            (units.name in ["K", "R"] and value < 0)
+            or (units.name == "C" and value < -273.15)
+            or (units.name == "F" and value < -459.67)
         ):
-            raise QuantityError.INCOMPATIBLE_DIMENSIONS(self.units, __value.units)
-        # Cannot perform operations on a non-dimensionless quantity
+            units = ansunits.Unit(f"delta_{units.name}")
 
-        if not isinstance(__value, Quantity) and not self.is_dimensionless:
-            raise QuantityError.INCOMPATIBLE_VALUE(__value)
-
-    def _temp_precheck(self, units, op: str = None) -> Optional[str]:
-        """
-        Validate units for temperature differences.
-
-        Parameters
-        ----------
-        units : Unit
-            Unit for comparison against current units.
-        op : str, None
-            Operation conducted on units. "-"
-
-        Returns
-        -------
-        str | None
-            Units of temperature difference.
-        """
-        temp = ["K", "C", "F", "R"]
-        delta_temp = ["delta_K", "delta_C", "delta_F", "delta_R"]
-        if op == "-" and self.units in temp and units in temp:
-            return delta_temp[temp.index(self.units)]
-        elif self.units in delta_temp and units in temp:
-            return temp[delta_temp.index(self.units)]
+        self._unit = units
 
     @property
     def value(self):
@@ -181,8 +105,8 @@ class Quantity(float):
 
     @property
     def units(self):
-        """Unit string."""
-        return self._unit.name
+        """Unit Object."""
+        return self._unit
 
     @property
     def si_value(self):
@@ -196,15 +120,15 @@ class Quantity(float):
 
     @property
     def dimensions(self):
-        """Base dimensions."""
+        """Dimensions Object."""
         return self._unit.dimensions
 
     @property
     def is_dimensionless(self):
         """True if the quantity is dimensionless."""
-        return not bool(self._unit.dimensions.dimensions)
+        return not bool(self.dimensions)
 
-    def to(self, to_units: [str, any], add_or_sub: bool = False) -> "Quantity":
+    def to(self, to_units: [str, any]) -> "Quantity":
         """
         Perform quantity conversions.
 
@@ -212,8 +136,6 @@ class Quantity(float):
         ----------
         to_units : Unit
             Desired unit to convert to.
-        add_or_sub : bool, False
-            If the units were added or subtracted
 
         Returns
         -------
@@ -227,18 +149,18 @@ class Quantity(float):
         # Retrieve all SI required SI data and perform conversion
         new_value = (self.si_value / to_units.si_scaling_factor) - to_units.si_offset
 
-        new_obj = Quantity(value=new_value, units=to_units)
+        if self.dimensions != to_units.dimensions:
+            raise QuantityError.INCOMPATIBLE_DIMENSIONS(
+                from_unit=self.units, to_unit=to_units
+            )
 
-        # Confirm conversion compatibility
-        self._arithmetic_precheck(new_obj, add_or_sub=add_or_sub)
-
-        return new_obj
+        return Quantity(value=new_value, units=to_units)
 
     def __str__(self):
-        return f'({self.value}, "{self.units}")'
+        return f'({self.value}, "{self._unit.name}")'
 
     def __repr__(self):
-        return f'Quantity ({self.value}, "{self.units}")'
+        return f'Quantity ({self.value}, "{self._unit.name}")'
 
     def __pow__(self, __value):
         new_si_value = self.si_value**__value
@@ -283,27 +205,21 @@ class Quantity(float):
         return Quantity(__value, "") / self
 
     def __add__(self, __value):
-        self._arithmetic_precheck(__value, add_or_sub=True)
-        new_units = self.si_units
+        if not isinstance(__value, ansunits.Quantity):
+            __value = ansunits.Quantity(__value)
+        new_units = (self._unit + __value._unit) or self.si_units
         new_value = float(self) + float(__value)
-        new_quantity = Quantity(value=new_value, units=new_units)
-        preferred_units = self._temp_precheck(__value.units)
-        if preferred_units and preferred_units != new_units:
-            return new_quantity.to(preferred_units, add_or_sub=True)
-        return new_quantity.to(self.units)
+        return Quantity(value=new_value, units=new_units)
 
     def __radd__(self, __value):
         return self.__add__(__value)
 
     def __sub__(self, __value):
-        self._arithmetic_precheck(__value, add_or_sub=True)
-        new_units = self.si_units
+        if not isinstance(__value, ansunits.Quantity):
+            __value = ansunits.Quantity(__value)
+        new_units = (self._unit - __value._unit) or self.si_units
         new_value = float(self) - float(__value)
-        new_quantity = Quantity(value=new_value, units=new_units)
-        preferred_units = self._temp_precheck(__value.units, op="-")
-        if preferred_units and preferred_units != new_units:
-            return new_quantity.to(preferred_units, add_or_sub=True)
-        return new_quantity.to(self.units)
+        return Quantity(value=new_value, units=new_units)
 
     def __rsub__(self, __value):
         return self.__sub__(__value)
@@ -312,28 +228,24 @@ class Quantity(float):
         return Quantity(-self.value, self._unit)
 
     def __gt__(self, __value):
-        self._arithmetic_precheck(__value)
+        if self.dimensions and (self.dimensions != __value.dimensions):
+            QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
         return float(self) > float(__value)
 
     def __ge__(self, __value):
-        self._arithmetic_precheck(__value)
+        if self.dimensions and (self.dimensions != __value.dimensions):
+            QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
         return float(self) >= float(__value)
 
     def __lt__(self, __value):
-        self._arithmetic_precheck(__value)
+        if self.dimensions and (self.dimensions != __value.dimensions):
+            QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
         return float(self) < float(__value)
 
     def __le__(self, __value):
-        self._arithmetic_precheck(__value)
+        if self.dimensions and (self.dimensions != __value.dimensions):
+            QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
         return float(self) <= float(__value)
-
-    def __eq__(self, __value):
-        self._arithmetic_precheck(__value)
-        return float(self) == float(__value)
-
-    def __neq__(self, __value):
-        self._arithmetic_precheck(__value)
-        return float(self) != float(__value)
 
 
 class QuantityError(ValueError):
@@ -351,12 +263,14 @@ class QuantityError(ValueError):
 
     @classmethod
     def INCOMPATIBLE_DIMENSIONS(cls, from_unit, to_unit):
-        return cls(f"`{from_unit}` and `{to_unit}` have incompatible dimensions.")
+        return cls(
+            f"`{from_unit.name}` and `{to_unit.name}` have incompatible dimensions."
+        )
 
     @classmethod
     def INCOMPATIBLE_VALUE(cls, value):
         return cls(f"`{value}` is incompatible with the current quantity object.")
 
     @classmethod
-    def UNKNOWN_UNITS(cls, unit: str):
-        return cls(f"`{unit}` is an unknown or unconfigured unit.")
+    def INCOMPARABLE_QUANTITIES(cls, q1, q2):
+        return cls(f"'{q1}' cannot be compared to '{q2}' in this manner.")

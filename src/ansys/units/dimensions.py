@@ -2,6 +2,8 @@
 from enum import Enum
 from typing import Optional
 
+import ansys.units as ansunits
+
 
 class BaseDimensions(Enum):
     """
@@ -73,6 +75,33 @@ class Dimensions:
             if y == 0:
                 del self._dimensions[x]
 
+    def _temp_precheck(self, dims2, op: str = None) -> Optional[str]:
+        """
+        Validate units for temperature differences.
+
+        Parameters
+        ----------
+        units : Unit
+            Unit for comparison against current units.
+        op : str, None
+            Operation conducted on units. "-"
+
+        Returns
+        -------
+        str | None
+            Units of temperature difference.
+        """
+        dims1 = self.dimensions
+        if len(dims1) == 1.0 and len(dims2) == 1.0:
+            temp = {BaseDimensions.TEMPERATURE: 1.0}
+            delta_temp = {BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
+            if (dims1 == temp and dims2 == delta_temp) or (
+                dims1 == delta_temp and dims2 == temp
+            ):
+                return ansunits.Dimensions(dimensions_container=temp)
+            if (dims1 == temp and dims2 == temp) and op == "-":
+                return ansunits.Dimensions(dimensions_container=delta_temp)
+
     @property
     def dimensions(self):
         """A dictionary representation."""
@@ -90,6 +119,9 @@ class Dimensions:
             dims = ""
         return str(dims)
 
+    def __add__(self, __value):
+        return self._temp_precheck(dims2=__value.dimensions)
+
     def __mul__(self, other):
         results = self._dimensions.copy()
         for dim, value in other._dimensions.items():
@@ -98,6 +130,9 @@ class Dimensions:
             else:
                 results[dim] = value
         return Dimensions(results)
+
+    def __sub__(self, __value):
+        return self._temp_precheck(dims2=__value.dimensions, op="-")
 
     def __truediv__(self, other):
         results = self._dimensions.copy()
@@ -126,6 +161,9 @@ class Dimensions:
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __bool__(self):
+        return bool(self.dimensions)
 
 
 class DimensionsError(ValueError):
