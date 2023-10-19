@@ -9,7 +9,7 @@ class QuantityMap(object):
     Parameters
     ----------
     quantity_map : dict
-        Dictionary containing quantity map units and powers.
+        Dictionary containing quantity map units and exponents.
 
     Attributes
     ----------
@@ -38,8 +38,8 @@ class QuantityMap(object):
             Unit object representation of the quantity map.
         """
         base_unit = ansunits.Unit()
-        for term, power in quantity_map.items():
-            base_unit *= ansunits.Unit(ansunits._api_quantity_map[term]) ** power
+        for term, exponent in quantity_map.items():
+            base_unit *= ansunits.Unit(ansunits._api_quantity_map[term]) ** exponent
 
         return base_unit
 
