@@ -100,7 +100,7 @@ class Unit:
             Unit string.
         """
         if not unit_sys:
-            unit_sys = ansunits.UnitSystem(name="SI")
+            unit_sys = ansunits.UnitSystem()
 
         base_units = unit_sys.base_units
         units = ""
@@ -113,7 +113,9 @@ class Unit:
 
         return units.strip()
 
-    def _units_to_dim(self, units: str, power: float = None, dimensions: dict = None):
+    def _units_to_dim(
+        self, units: str, exponent: float = None, dimensions: dict = None
+    ):
         """
         Convert a unit string into a Dimensions instance.
 
@@ -126,20 +128,20 @@ class Unit:
         dict
             Dimensions dictionary
         """
-        power = power or 1.0
+        exponent = exponent or 1.0
         dimensions = dimensions or {}
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
-            _, unit_term, unit_term_power = self.filter_unit_term(term)
-            unit_term_power *= power
+            _, unit_term, unit_term_exponent = self.filter_unit_term(term)
+            unit_term_exponent *= exponent
             # retrieve data associated with base unit
             if unit_term in _base_units:
                 idx = _base_units[unit_term]["type"]
 
                 if ansunits.BaseDimensions[idx] in dimensions:
-                    dimensions[ansunits.BaseDimensions[idx]] += unit_term_power
+                    dimensions[ansunits.BaseDimensions[idx]] += unit_term_exponent
                 else:
-                    dimensions[ansunits.BaseDimensions[idx]] = unit_term_power
+                    dimensions[ansunits.BaseDimensions[idx]] = unit_term_exponent
 
             # Retrieve derived unit composition unit string and SI factor.
             if unit_term in _derived_units:
@@ -147,7 +149,7 @@ class Unit:
 
                 dimensions = self._units_to_dim(
                     units=_derived_units[unit_term]["composition"],
-                    power=unit_term_power,
+                    exponent=unit_term_exponent,
                     dimensions=dimensions,
                 )
 
@@ -211,35 +213,35 @@ class Unit:
         str
             Simplified unit string.
         """
-        terms_and_powers = {}
+        terms_and_exponents = {}
         units = units.strip()
 
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
-            _, unit_term, unit_term_power = self.filter_unit_term(term)
+            _, unit_term, unit_term_exponent = self.filter_unit_term(term)
 
-            if unit_term in terms_and_powers:
-                terms_and_powers[unit_term] += unit_term_power
+            if unit_term in terms_and_exponents:
+                terms_and_exponents[unit_term] += unit_term_exponent
             else:
-                terms_and_powers[unit_term] = unit_term_power
+                terms_and_exponents[unit_term] = unit_term_exponent
 
         units = ""
 
         # Concatenate unit string
-        for term, power in terms_and_powers.items():
-            if not (power):
+        for term, exponent in terms_and_exponents.items():
+            if not (exponent):
                 continue
-            if power == 1.0:
+            if exponent == 1.0:
                 units += f"{term} "
             else:
-                power = int(power) if power % 1 == 0 else power
-                units += f"{term}^{power} "
+                exponent = int(exponent) if exponent % 1 == 0 else exponent
+                units += f"{term}^{exponent} "
 
         return units.rstrip()
 
     def filter_unit_term(self, unit_term: str) -> tuple:
         """
-        Separate multiplier, base, and power from a unit term.
+        Separate multiplier, base, and exponent from a unit term.
 
         Parameters
         ----------
@@ -249,14 +251,14 @@ class Unit:
         Returns
         -------
         tuple
-            Tuple containing the multiplier, base, and power of the unit term.
+            Tuple containing the multiplier, base, and exponent of the unit term.
         """
         multiplier = ""
-        power = 1.0
+        exponent = 1.0
 
-        # strip power from unit term
+        # strip exponent from unit term
         if "^" in unit_term:
-            power = float(unit_term[unit_term.index("^") + 1 :])
+            exponent = float(unit_term[unit_term.index("^") + 1 :])
             unit_term = unit_term[: unit_term.index("^")]
 
         base = unit_term
@@ -276,12 +278,12 @@ class Unit:
         # this string is an invalid unit string
         if has_multiplier and not multiplier:
             raise UnitError.UNKNOWN_UNITS(unit_term)
-        return multiplier, base, power
+        return multiplier, base, exponent
 
     def si_data(
         self,
         units: str,
-        power: float = None,
+        exponent: float = None,
         si_units: str = None,
         si_scaling_factor: float = None,
     ) -> tuple:
@@ -292,8 +294,8 @@ class Unit:
         ----------
         units : str
             Unit string representation of the quantity.
-        power : float, None
-            Power of the unit string.
+        exponent : float, None
+            exponent of the unit string.
         si_units : str, None
             SI unit string representation of the quantity.
         si_scaling_factor : float, None
@@ -306,44 +308,44 @@ class Unit:
         """
         # Initialize default values
         units = units or " "
-        power = power or 1.0
+        exponent = exponent or 1.0
         si_units = si_units or ""
         si_scaling_factor = si_scaling_factor or 1.0
         si_offset = _base_units[units]["si_offset"] if units in _base_units else 0.0
 
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
-            unit_multiplier, unit_term, unit_term_power = self.filter_unit_term(term)
+            unit_multiplier, unit_term, unit_term_exponent = self.filter_unit_term(term)
 
-            unit_term_power *= power
+            unit_term_exponent *= exponent
 
             si_scaling_factor *= (
-                _multipliers[unit_multiplier] ** unit_term_power
+                _multipliers[unit_multiplier] ** unit_term_exponent
                 if unit_multiplier
                 else 1.0
             )
 
             # Retrieve data associated with base unit
             if unit_term in _base_units:
-                if unit_term_power == 1.0:
+                if unit_term_exponent == 1.0:
                     si_units += f" {self._si_map(unit_term)}"
-                elif unit_term_power != 0.0:
-                    si_units += f" {self._si_map(unit_term)}^{unit_term_power}"
+                elif unit_term_exponent != 0.0:
+                    si_units += f" {self._si_map(unit_term)}^{unit_term_exponent}"
 
                 si_scaling_factor *= (
-                    _base_units[unit_term]["si_scaling_factor"] ** unit_term_power
+                    _base_units[unit_term]["si_scaling_factor"] ** unit_term_exponent
                 )
 
             # Retrieve derived unit composition unit string and SI scaling factor
             elif unit_term in _derived_units:
                 si_scaling_factor *= (
-                    _derived_units[unit_term]["factor"] ** unit_term_power
+                    _derived_units[unit_term]["factor"] ** unit_term_exponent
                 )
 
                 # Recursively parse composition unit string
                 si_units, si_scaling_factor, _ = self.si_data(
                     units=_derived_units[unit_term]["composition"],
-                    power=unit_term_power,
+                    exponent=unit_term_exponent,
                     si_units=si_units,
                     si_scaling_factor=si_scaling_factor,
                 )
@@ -382,6 +384,13 @@ class Unit:
             returned_string += f"{key}: {attrs[key]}\n"
         return returned_string
 
+    def __repr__(self):
+        returned_string = ""
+        attrs = self.__dict__
+        for key in attrs:
+            returned_string += f"{key}: {attrs[key]}\n"
+        return returned_string
+
     def __mul__(self, __value):
         if isinstance(__value, Unit):
             new_dimensions = self.dimensions * __value.dimensions
@@ -401,6 +410,15 @@ class Unit:
     def __pow__(self, __value):
         new_dimensions = self.dimensions**__value
         return Unit(dimensions=new_dimensions)
+
+    def __eq__(self, other_unit):
+        for attr, value in self.__dict__.items():
+            try:
+                if getattr(other_unit, attr) != value:
+                    return False
+            except:
+                return False
+        return True
 
 
 class UnitError(ValueError):

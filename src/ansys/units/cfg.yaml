@@ -41,38 +41,38 @@ multipliers:
 
 unit_systems:
   SI:
-    - kg
-    - m
-    - s
-    - K
-    - delta_K
-    - radian
-    - mol
-    - cd
-    - A
-    - sr
+    MASS: kg
+    LENGTH: m
+    TIME: s
+    TEMPERATURE: K
+    TEMPERATURE_DIFFERENCE: delta_K
+    ANGLE: radian
+    CHEMICAL_AMOUNT: mol
+    LIGHT: cd
+    CURRENT: A
+    SOLID_ANGLE: sr
   CGS:
-    - g
-    - cm
-    - s
-    - K
-    - delta_K
-    - radian
-    - mol
-    - cd
-    - A
-    - sr
+    MASS: g
+    LENGTH: cm
+    TIME: s
+    TEMPERATURE: K
+    TEMPERATURE_DIFFERENCE: delta_K
+    ANGLE: radian
+    CHEMICAL_AMOUNT: mol
+    LIGHT: cd
+    CURRENT: A
+    SOLID_ANGLE: sr
   BT:
-    - slug
-    - ft
-    - s
-    - R
-    - delta_R
-    - radian
-    - slugmol
-    - cd
-    - A
-    - sr
+    MASS: slug
+    LENGTH: ft
+    TIME: s
+    TEMPERATURE: R
+    TEMPERATURE_DIFFERENCE: delta_R
+    ANGLE: radian
+    CHEMICAL_AMOUNT: slugmol
+    LIGHT: cd
+    CURRENT: A
+    SOLID_ANGLE: sr
 
 # Base Units
 # -----------------
