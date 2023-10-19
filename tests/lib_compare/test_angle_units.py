@@ -29,9 +29,7 @@ def test_pyunits_angles_have_angle_dimensions():
 
     radian = Quantity(1.0, "radian")
     assert radian.dimensions.dimensions == {BaseDimensions.ANGLE: 1}
-    assert radian.dimensions.dimensions == {BaseDimensions.ANGLE: 1}
     degree = Quantity(1.0, "degree")
-    assert degree.dimensions.dimensions == {BaseDimensions.ANGLE: 1}
     assert degree.dimensions.dimensions == {BaseDimensions.ANGLE: 1}
 
 

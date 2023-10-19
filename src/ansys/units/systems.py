@@ -7,7 +7,6 @@ import ansys.units as ansunits
 class UnitSystem:
     """
     A class containing base units for a user-defined or predefined unit system.
-    A class containing base units for a user-defined or predefined unit system.
 
     Parameters
     ----------
@@ -237,13 +236,12 @@ class UnitSystemError(ValueError):
         return cls(
             f"The `base_units` argument must contain 10 unique units, currently there are {len}."
             f"The `base_units` argument must contain 10 unique units, currently there are {len}."
+            f"The `base_units` argument must contain 10 unique units, currently there are {len}."
         )
 
     @classmethod
     def NOT_BASE_UNIT(cls, unit):
         return cls(
-            f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
-            "`base_units` table within the cfg.yaml file."
             f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
             "`base_units` table within the cfg.yaml file."
         )

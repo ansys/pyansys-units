@@ -21,7 +21,10 @@ class Dimensions:
     dimensions
     """
 
-    def __init__(self, dimensions_container: dict[ansunits.BaseDimensions : int | float] = None):
+    def __init__(
+        self,
+        dimensions_container: dict[ansunits.BaseDimensions : Union[int, float]] = None,
+    ):
         dimensions_container = dimensions_container or {}
         self._dimensions = dimensions_container.copy()
         for x, y in dimensions_container.items():
@@ -32,8 +35,6 @@ class Dimensions:
 
     @property
     def dimensions(self):
-        """A dictionary representation."""
-        return self._dimensions
         """A dictionary representation."""
         return self._dimensions
 
@@ -75,6 +76,8 @@ class Dimensions:
 
     def __eq__(self, other):
         temp_dim = self / other
+        temp = ansunits.BaseDimensions.TEMPERATURE
+        temp_diff = ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE
         temp = ansunits.BaseDimensions.TEMPERATURE
         temp_diff = ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE
         if temp in temp_dim._dimensions and temp_diff in temp_dim._dimensions:
