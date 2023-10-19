@@ -1,4 +1,5 @@
 """Provides the ``Dimensions`` class."""
+from typing import Union
 
 import ansys.units as ansunits
 
@@ -24,7 +25,7 @@ class Dimensions:
 
     def __init__(
         self,
-        dimensions_container: dict[ansunits.BaseDimensions : int | float] = None,
+        dimensions_container: dict[ansunits.BaseDimensions, Union[int, float]] = None,
     ):
         dimensions_container = dimensions_container or {}
         self._dimensions = dimensions_container.copy()
