@@ -5,7 +5,9 @@ import ansys.units as ansunits
 
 class Dimensions:
     """
-    A composite dimension (or simply dimensions) composed from an arbitrary number of fundamental dimensions, where each fundamental dimension is a pair consisting of base dimension and exponent.
+    A composite dimension (or simply dimensions) composed from an arbitrary number of
+    fundamental dimensions, where each fundamental dimension is a pair consisting of
+    base dimension and exponent.
 
     A dictionary of ``BaseDimensions`` and power is required
     for a non-dimensionless object.
