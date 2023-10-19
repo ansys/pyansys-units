@@ -165,6 +165,22 @@ class Dimensions:
     def __bool__(self):
         return bool(self.dimensions)
 
+    def __gt__(self, __value):
+        if self != __value:
+            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+
+    def __ge__(self, __value):
+        if self != __value:
+            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+
+    def __lt__(self, __value):
+        if self != __value:
+            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+
+    def __le__(self, __value):
+        if self != __value:
+            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+
 
 class DimensionsError(ValueError):
     """Custom dimensions errors."""
@@ -176,3 +192,8 @@ class DimensionsError(ValueError):
     def INCORRECT_DIMENSIONS(cls):
         """Return in case of dimensions not in dimension order."""
         return cls(f"The `dimensions_container` key must be a 'BaseDimensions' object")
+
+    @classmethod
+    def INCOMPARABLE_DIMENSIONS(cls, dim1, dim2):
+        """Return in case of dimensions not being equal."""
+        return cls(f"The dimensions`{dim1}` cannot be compared to '{dim2}'")

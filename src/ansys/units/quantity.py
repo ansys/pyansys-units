@@ -228,24 +228,45 @@ class Quantity(float):
         return Quantity(-self.value, self._unit)
 
     def __gt__(self, __value):
-        if self.dimensions and (self.dimensions != __value.dimensions):
-            QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+        if isinstance(__value, ansunits.Quantity):
+            self.dimensions > __value.dimensions
+        elif not self.is_dimensionless:
+            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
         return float(self) > float(__value)
 
     def __ge__(self, __value):
-        if self.dimensions and (self.dimensions != __value.dimensions):
-            QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+        if isinstance(__value, ansunits.Quantity):
+            self.dimensions >= __value.dimensions
+        elif not self.is_dimensionless:
+            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
         return float(self) >= float(__value)
 
     def __lt__(self, __value):
-        if self.dimensions and (self.dimensions != __value.dimensions):
-            QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+        if isinstance(__value, ansunits.Quantity):
+            self.dimensions < __value.dimensions
+        elif not self.is_dimensionless:
+            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
         return float(self) < float(__value)
 
     def __le__(self, __value):
-        if self.dimensions and (self.dimensions != __value.dimensions):
-            QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+        if isinstance(__value, ansunits.Quantity):
+            self.dimensions <= __value.dimensions
+        elif not self.is_dimensionless:
+            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
         return float(self) <= float(__value)
+
+    def __eq__(self, __value):
+        if not self.is_dimensionless and not isinstance(__value, ansunits.Quantity):
+            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+        elif float(self) != float(__value):
+            return False
+        elif isinstance(__value, ansunits.Quantity):
+            if self.dimensions != __value.dimensions:
+                return False
+        return True
+
+    def __ne__(self, __value):
+        return not self.__eq__(__value)
 
 
 class QuantityError(ValueError):

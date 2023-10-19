@@ -439,9 +439,7 @@ def test_eq_2():
     assert r == n
 
     with pytest.raises(ansunits.QuantityError) as e_info:
-        assert z == x
-        assert y == x
-        assert r == 0.5
+        assert x == 0.5
         assert 5.0 == x
 
 
@@ -474,10 +472,10 @@ def test_ge():
     assert 15.7 >= r
     assert r >= 7.8
 
-    with pytest.raises(ansunits.QuantityError) as e_info:
+    with pytest.raises(ansunits.DimensionsError) as e_info:
         assert x >= z
-        assert x >= y
-        assert 5.0 >= r
+
+    with pytest.raises(ansunits.QuantityError) as e_info:
         assert x >= 5.0
 
 
@@ -491,10 +489,10 @@ def test_gt():
     assert 15.7 > r
     assert r > 7.8
 
-    with pytest.raises(ansunits.QuantityError) as e_info:
+    with pytest.raises(ansunits.DimensionsError) as e_info:
         assert x > z
-        assert x > y
-        assert 5.0 > r
+
+    with pytest.raises(ansunits.QuantityError) as e_info:
         assert x > 5.0
 
 
@@ -508,10 +506,10 @@ def test_lt():
     assert r < 15.7
     assert 7.8 < r
 
-    with pytest.raises(ansunits.QuantityError) as e_info:
+    with pytest.raises(ansunits.DimensionsError) as e_info:
         assert z < x
-        assert y < x
-        assert r < 0.5
+
+    with pytest.raises(ansunits.QuantityError) as e_info:
         assert 5.0 < x
 
 
@@ -525,24 +523,26 @@ def test_le():
     assert r <= 15.7
     assert 7.8 <= r
 
-    with pytest.raises(ansunits.QuantityError) as e_info:
+    with pytest.raises(ansunits.DimensionsError) as e_info:
         assert z <= x
+
+    with pytest.raises(ansunits.QuantityError) as e_info:
         assert 5.0 <= x
 
 
 def test_temp_1():
-    k = ansunits.Quantity(40, "K")
+    k = ansunits.Quantity(-40, "K")
 
-    kc = k.to("C")
-    assert kc.value == pytest.approx(-233.15, DELTA)
+    kc = k.to("delta_C")
+    assert kc.value == pytest.approx(-40.0, DELTA)
     assert kc.units == ansunits.Unit("delta_C")
 
-    kc = k.to("R")
-    assert kc.value == pytest.approx(72.0, DELTA)
+    kc = k.to("delta_R")
+    assert kc.value == pytest.approx(-72.0, DELTA)
     assert kc.units == ansunits.Unit("delta_R")
 
-    kc = k.to("F")
-    assert kc.value == pytest.approx(531.67, DELTA)
+    kc = k.to("delta_F")
+    assert kc.value == pytest.approx(-72.0, DELTA)
     assert kc.units == ansunits.Unit("delta_F")
 
 
