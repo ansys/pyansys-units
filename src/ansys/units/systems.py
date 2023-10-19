@@ -1,6 +1,8 @@
 """Provides the ``UnitSystem`` class."""
 from __future__ import annotations
 
+from typing import Union
+
 import ansys.units as ansunits
 
 
@@ -34,7 +36,7 @@ class UnitSystem:
 
     def __init__(
         self,
-        base_units: dict[ansunits.BaseDimensions : ansunits.Unit | str] = None,
+        base_units: dict[ansunits.BaseDimensions : Union[ansunits.Unit, str]] = None,
         unit_sys: str = None,
         copy_from: ansunits.UnitSystem = None,
     ):
@@ -74,7 +76,9 @@ class UnitSystem:
 
         return quantity.to(to_units=new_unit)
 
-    def update(self, base_units: dict[ansunits.BaseDimensions : ansunits.Unit | str]):
+    def update(
+        self, base_units: dict[ansunits.BaseDimensions : Union[ansunits.Unit, str]]
+    ):
         """
         Change the units of the unit system.
 
@@ -87,7 +91,7 @@ class UnitSystem:
             self._set_type(unit_type=unit_type, unit=unit)
 
     def _set_type(
-        self, unit_type: ansunits.BaseDimensions, unit: [ansunits.Unit | str]
+        self, unit_type: ansunits.BaseDimensions, unit: Union[ansunits.Unit, str]
     ):
         """
         Checks that the unit is compatible with the unit type before being set.
@@ -230,14 +234,6 @@ class UnitSystemError(ValueError):
 
     def __init__(self, err):
         super().__init__(err)
-
-    @classmethod
-    def BASE_UNITS_LENGTH(cls, len):
-        return cls(
-            f"The `base_units` argument must contain 10 unique units, currently there are {len}."
-            f"The `base_units` argument must contain 10 unique units, currently there are {len}."
-            f"The `base_units` argument must contain 10 unique units, currently there are {len}."
-        )
 
     @classmethod
     def NOT_BASE_UNIT(cls, unit):
