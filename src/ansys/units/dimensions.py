@@ -1,4 +1,6 @@
 """Provides the ``Dimensions`` class."""
+from __future__ import annotations
+
 from typing import Optional, Union
 
 import ansys.units as ansunits
@@ -35,7 +37,7 @@ class Dimensions:
             if y == 0:
                 del self._dimensions[x]
 
-    def _temp_precheck(self, dims2, op: str = None) -> Optional[str]:
+    def _temp_precheck(self, dims2, op: str = None) -> Optional[ansunits.Dimensions]:
         """
         Validate units for temperature differences.
 

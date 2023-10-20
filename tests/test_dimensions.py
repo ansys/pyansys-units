@@ -21,6 +21,39 @@ def test_dimensions():
     assert d3._dimensions == {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
 
 
+def test_add():
+    temp = ansunits.Dimensions(
+        dimensions_container={ansunits.BaseDimensions.TEMPERATURE: 1.0}
+    )
+    delta_temp = ansunits.Dimensions(
+        dimensions_container={ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
+    )
+    not_temp = ansunits.Dimensions(
+        dimensions_container={ansunits.BaseDimensions.MASS: 1.0}
+    )
+
+    assert temp + delta_temp == temp
+    assert temp + temp == None
+    assert temp + not_temp == None
+
+
+def test_sub():
+    temp = ansunits.Dimensions(
+        dimensions_container={ansunits.BaseDimensions.TEMPERATURE: 1.0}
+    )
+    delta_temp = ansunits.Dimensions(
+        dimensions_container={ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
+    )
+    not_temp = ansunits.Dimensions(
+        dimensions_container={ansunits.BaseDimensions.MASS: 1.0}
+    )
+
+    assert temp - temp == delta_temp
+    assert temp - delta_temp == temp
+    assert delta_temp - delta_temp == None
+    assert temp - not_temp == None
+
+
 def test_str_():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions_container={dims.CURRENT: 1})
@@ -76,6 +109,35 @@ def test_ne():
     d1 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 1, dims.TIME: -3})
     d2 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, dims.CURRENT: -3})
     assert d1 != d2
+
+
+def test_bool():
+    dims = ansunits.BaseDimensions
+    d1 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 1, dims.TIME: -3})
+    d2 = ansunits.Dimensions()
+
+    assert bool(d1) == True
+    assert bool(d2) == False
+
+
+def test_comparison_operations():
+    dims = ansunits.BaseDimensions
+    d1 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 1, dims.TIME: -3})
+    d2 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 1})
+
+    assert (d1 > d1) == None
+    assert (d1 >= d1) == None
+    assert (d1 < d1) == None
+    assert (d1 <= d1) == None
+
+    with pytest.raises(ansunits.DimensionsError):
+        d1 > d2
+    with pytest.raises(ansunits.DimensionsError):
+        d1 >= d2
+    with pytest.raises(ansunits.DimensionsError):
+        d1 < d2
+    with pytest.raises(ansunits.DimensionsError):
+        d1 <= d2
 
 
 def test_base_dimensions():
