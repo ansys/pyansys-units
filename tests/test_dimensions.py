@@ -6,10 +6,10 @@ import ansys.units as ansunits
 def test_dimensions():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions_container={})
-    assert d1.dimensions == {}
+    assert d1._dimensions == {}
 
     d2 = ansunits.Dimensions(dimensions_container={dims.MASS: 1.0, dims.LENGTH: -2.0})
-    assert d2.dimensions == {dims.MASS: 1.0, dims.LENGTH: -2.0}
+    assert d2._dimensions == {dims.MASS: 1.0, dims.LENGTH: -2.0}
 
     d3 = ansunits.Dimensions(
         dimensions_container={
@@ -18,7 +18,7 @@ def test_dimensions():
             dims.TIME: -2.0,
         }
     )
-    assert d3.dimensions == {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
+    assert d3._dimensions == {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
 
 
 def test_str_():
@@ -38,8 +38,8 @@ def test_mul():
     d2 = ansunits.Dimensions(dimensions_container={dims.LENGTH: 1, dims.TIME: -3})
     d3 = d1 * d2
     d4 = d2 * d2
-    assert d3.dimensions == {dims.LENGTH: 1, dims.TIME: -3, dims.CURRENT: 1}
-    assert d4.dimensions == {dims.LENGTH: 2, dims.TIME: -6}
+    assert d3._dimensions == {dims.LENGTH: 1, dims.TIME: -3, dims.CURRENT: 1}
+    assert d4._dimensions == {dims.LENGTH: 2, dims.TIME: -6}
 
 
 def test_truediv():
@@ -48,14 +48,14 @@ def test_truediv():
     d2 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, dims.CURRENT: 1})
 
     d3 = d1 / d2
-    assert d3.dimensions == {dims.MASS: -1}
+    assert d3._dimensions == {dims.MASS: -1}
 
 
 def test_pow():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions_container={dims.MASS: 1, dims.CURRENT: 2})
     d2 = d1**-2
-    assert d2.dimensions == {dims.MASS: -2, dims.CURRENT: -4}
+    assert d2._dimensions == {dims.MASS: -2, dims.CURRENT: -4}
 
 
 def test_eq():

@@ -51,7 +51,7 @@ class Dimensions:
         str | None
             Units of temperature difference.
         """
-        dims1 = self.dimensions
+        dims1 = self._dimensions
         if len(dims1) == 1.0 and len(dims2) == 1.0:
             temp = {ansunits.BaseDimensions.TEMPERATURE: 1.0}
             delta_temp = {ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
@@ -79,7 +79,7 @@ class Dimensions:
             yield item
 
     def __add__(self, __value):
-        return self._temp_precheck(dims2=__value.dimensions)
+        return self._temp_precheck(dims2=__value._dimensions)
 
     def __mul__(self, other):
         results = self._dimensions.copy()
@@ -91,7 +91,7 @@ class Dimensions:
         return Dimensions(results)
 
     def __sub__(self, __value):
-        return self._temp_precheck(dims2=__value.dimensions, op="-")
+        return self._temp_precheck(dims2=__value._dimensions, op="-")
 
     def __truediv__(self, other):
         results = self._dimensions.copy()
@@ -108,8 +108,8 @@ class Dimensions:
             results[item[0]] *= __value
         return Dimensions(results)
 
-    def __eq__(self, other):
-        dims = other.dimensions.copy()
+    def __eq__(self, __value):
+        dims = __value._dimensions.copy()
         for dim, value in self:
             if dim in dims:
                 dims[dim] -= value
