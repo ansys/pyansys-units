@@ -40,7 +40,7 @@ class Unit:
             self._dimensions = ansunits.Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise UnitError.INCONSISTENT_DIMENSIONS()
-            if not self._dimensions.dimensions:
+            if not self._dimensions:
                 self._name = ""
         elif dimensions:
             self._dimensions = dimensions
@@ -104,12 +104,12 @@ class Unit:
 
         base_units = unit_sys.base_units
         units = ""
-        for idx, value in dimensions.dimensions.items():
+        for key, value in dimensions:
             if value == 1:
-                units += f"{base_units[idx.value]} "
+                units += f"{base_units[key.value]} "
             elif value != 0.0:
                 value = int(value) if value % 1 == 0 else value
-                units += f"{base_units[idx.value]}^{value} "
+                units += f"{base_units[key.value]}^{value} "
 
         return units.strip()
 

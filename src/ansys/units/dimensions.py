@@ -1,5 +1,5 @@
 """Provides the ``Dimensions`` class."""
-from typing import Union
+from typing import Optional, Union
 
 import ansys.units as ansunits
 
@@ -53,8 +53,8 @@ class Dimensions:
         """
         dims1 = self.dimensions
         if len(dims1) == 1.0 and len(dims2) == 1.0:
-            temp = {BaseDimensions.TEMPERATURE: 1.0}
-            delta_temp = {BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
+            temp = {ansunits.BaseDimensions.TEMPERATURE: 1.0}
+            delta_temp = {ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
             if (dims1 == temp and dims2 == delta_temp) or (
                 dims1 == delta_temp and dims2 == temp
             ):
@@ -62,29 +62,28 @@ class Dimensions:
             if (dims1 == temp and dims2 == temp) and op == "-":
                 return ansunits.Dimensions(dimensions_container=delta_temp)
 
-    @property
-    def dimensions(self):
-        """A dictionary representation."""
-        return self._dimensions
-
     def __str__(self):
-        dims = {x.name: y for x, y in self._dimensions.items()}
+        dims = {x.name: y for x, y in self}
         if not dims:
             dims = ""
         return str(dims)
 
     def __repr__(self):
-        dims = {x.name: y for x, y in self._dimensions.items()}
+        dims = {x.name: y for x, y in self}
         if not dims:
             dims = ""
         return str(dims)
+
+    def __iter__(self):
+        for item in self._dimensions.items():
+            yield item
 
     def __add__(self, __value):
         return self._temp_precheck(dims2=__value.dimensions)
 
     def __mul__(self, other):
         results = self._dimensions.copy()
-        for dim, value in other._dimensions.items():
+        for dim, value in other:
             if dim in results:
                 results[dim] += value
             else:
@@ -96,7 +95,7 @@ class Dimensions:
 
     def __truediv__(self, other):
         results = self._dimensions.copy()
-        for dim, value in other._dimensions.items():
+        for dim, value in other:
             if dim in results:
                 results[dim] -= value
             else:
@@ -105,13 +104,13 @@ class Dimensions:
 
     def __pow__(self, __value):
         results = self._dimensions.copy()
-        for dim in self._dimensions:
-            results[dim] *= __value
+        for item in self:
+            results[item[0]] *= __value
         return Dimensions(results)
 
     def __eq__(self, other):
         dims = other.dimensions.copy()
-        for dim, value in self.dimensions.items():
+        for dim, value in self:
             if dim in dims:
                 dims[dim] -= value
             else:
@@ -123,7 +122,7 @@ class Dimensions:
         return not self.__eq__(other)
 
     def __bool__(self):
-        return bool(self.dimensions)
+        return bool(self._dimensions)
 
     def __gt__(self, __value):
         if self != __value:
