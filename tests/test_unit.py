@@ -66,22 +66,22 @@ def test_unit_pow():
 
 def test_unit_sys_list():
     dims = ansunits.BaseDimensions
+    ur = ansunits.UnitRegistry()
     slug = ansunits.Unit(
         dimensions=ansunits.Dimensions({dims.MASS: 1}),
         unit_sys=ansunits.UnitSystem(
-            name="sys",
-            base_units=[
-                "slug",
-                "ft",
-                "s",
-                "R",
-                "delta_R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
+            base_units={
+                dims.MASS: ur.slug,
+                dims.LENGTH: ur.ft,
+                dims.TIME: ur.s,
+                dims.TEMPERATURE: ur.R,
+                dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
+                dims.ANGLE: ur.radian,
+                dims.CHEMICAL_AMOUNT: ur.slugmol,
+                dims.LIGHT: ur.cd,
+                dims.CURRENT: ur.A,
+                dims.SOLID_ANGLE: ur.sr,
+            },
         ),
     )
     assert slug.name == "slug"
