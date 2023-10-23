@@ -101,6 +101,7 @@ class Unit:
         """
         if not unit_sys:
             unit_sys = ansunits.UnitSystem()
+            unit_sys = ansunits.UnitSystem()
 
         base_units = unit_sys.base_units
         units = ""
