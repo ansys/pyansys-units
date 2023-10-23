@@ -453,7 +453,7 @@ def test_rdiv():
     assert 2.0 / float(q1) == 0.2
 
 
-def test_power():
+def test_exponent():
     qt = ansunits.Quantity(5.0, "m^0")
     qtm = qt * 2
 

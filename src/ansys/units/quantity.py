@@ -1,4 +1,7 @@
 """Provides the ``Quantity`` class."""
+from __future__ import annotations
+
+from typing import Optional, Union
 
 import ansys.units as ansunits
 
@@ -90,6 +93,7 @@ class Quantity(float):
             or (units.name == "C" and value < -273.15)
             or (units.name == "F" and value < -459.67)
         ):
+
             units = ansunits.Unit(f"delta_{units.name}")
 
         self._unit = units
@@ -128,7 +132,7 @@ class Quantity(float):
         """True if the quantity is dimensionless."""
         return not bool(self.dimensions)
 
-    def to(self, to_units: [str, any]) -> "Quantity":
+    def to(self, to_units: Union[ansunits.Unit, str]) -> "Quantity":
         """
         Perform quantity conversions.
 

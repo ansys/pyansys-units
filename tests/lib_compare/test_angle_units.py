@@ -24,7 +24,7 @@ def test_pint_angles_are_dimensionless():
 
 
 def test_pyunits_angles_have_angle_dimensions():
-    from ansys.units.dimensions import BaseDimensions
+    from ansys.units import BaseDimensions
     from ansys.units.quantity import Quantity
 
     radian = Quantity(1.0, "radian")
