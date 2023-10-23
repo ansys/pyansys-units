@@ -1,7 +1,7 @@
 """Provides the ``Quantity`` class."""
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import Union
 
 import ansys.units as ansunits
 

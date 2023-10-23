@@ -1,5 +1,5 @@
 """Provides the ``Dimensions`` class."""
-from typing import Union
+from typing import Optional, Union
 
 import ansys.units as ansunits
 
@@ -53,8 +53,8 @@ class Dimensions:
         """
         dims1 = self.dimensions
         if len(dims1) == 1.0 and len(dims2) == 1.0:
-            temp = {BaseDimensions.TEMPERATURE: 1.0}
-            delta_temp = {BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
+            temp = {ansunits.BaseDimensions.TEMPERATURE: 1.0}
+            delta_temp = {ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
             if (dims1 == temp and dims2 == delta_temp) or (
                 dims1 == delta_temp and dims2 == temp
             ):
