@@ -113,14 +113,14 @@ def test_conversion():
 
     q2 = us1.convert(q1)
     assert q2.value == 0.6852176585679174
-    assert q2.units == "slug ft s"
+    assert q2.units == ansunits.Unit("slug ft s")
 
     us2 = ansunits.UnitSystem(unit_sys="SI")
     q3 = ansunits.Quantity(4, "slug cm s")
 
     q4 = us2.convert(q3)
     assert q4.value == 0.5837561174882547
-    assert q4.units == "kg m s"
+    assert q4.units == ansunits.Unit("kg m s")
 
 
 def test_not_base_unit_init():

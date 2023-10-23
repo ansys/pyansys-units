@@ -384,6 +384,13 @@ class Unit:
             returned_string += f"{key}: {attrs[key]}\n"
         return returned_string
 
+    def __add__(self, __value):
+        new_dimensions = self.dimensions + __value.dimensions
+        if new_dimensions:
+            return ansunits.Unit(dimensions=new_dimensions)
+        if self.dimensions != __value.dimensions:
+            raise UnitError.INCORRECT_UNITS(self, __value)
+
     def __repr__(self):
         returned_string = ""
         attrs = self.__dict__
@@ -401,6 +408,13 @@ class Unit:
 
     def __rmul__(self, __value):
         return self.__mul__(__value)
+
+    def __sub__(self, __value):
+        new_dimensions = self.dimensions - __value.dimensions
+        if new_dimensions:
+            return ansunits.Unit(dimensions=new_dimensions)
+        if self.dimensions != __value.dimensions:
+            raise UnitError.INCORRECT_UNITS(self, __value)
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):
@@ -420,6 +434,9 @@ class Unit:
                 return False
         return True
 
+    def __ne__(self, other_unit):
+        return not self.__eq__(other_unit=other_unit)
+
 
 class UnitError(ValueError):
     """Custom dimensions errors."""
@@ -428,12 +445,16 @@ class UnitError(ValueError):
         super().__init__(err)
 
     @classmethod
-    def INCONSISTENT_DIMENSIONS(
-        cls,
-    ):
+    def INCONSISTENT_DIMENSIONS(cls):
         """Return in case of excessive parameters."""
         return cls("Units dimensions do not match given dimensions.")
 
     @classmethod
     def UNKNOWN_UNITS(cls, unit: str):
         return cls(f"`{unit}` is an unknown or unconfigured unit.")
+
+    @classmethod
+    def INCORRECT_UNITS(cls, unit1, unit2):
+        return cls(
+            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this oporation"
+        )

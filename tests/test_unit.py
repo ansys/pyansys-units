@@ -42,7 +42,7 @@ def test_unit_multiply_by_value():
     C = ansunits.Unit("C")
     seven_C = 7 * C
     assert seven_C.value == 7
-    assert seven_C.units == "C"
+    assert seven_C.units == ansunits.Unit("C")
 
 
 def test_reverse_multiply():

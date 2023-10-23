@@ -1,5 +1,5 @@
 """Provides the ``Dimensions`` class."""
-from typing import Union
+from typing import Optional, Union
 
 import ansys.units as ansunits
 
@@ -35,6 +35,33 @@ class Dimensions:
             if y == 0:
                 del self._dimensions[x]
 
+    def _temp_precheck(self, dims2, op: str = None) -> Optional[str]:
+        """
+        Validate units for temperature differences.
+
+        Parameters
+        ----------
+        units : Unit
+            Unit for comparison against current units.
+        op : str, None
+            Operation conducted on units. "-"
+
+        Returns
+        -------
+        str | None
+            Units of temperature difference.
+        """
+        dims1 = self.dimensions
+        if len(dims1) == 1.0 and len(dims2) == 1.0:
+            temp = {ansunits.BaseDimensions.TEMPERATURE: 1.0}
+            delta_temp = {ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
+            if (dims1 == temp and dims2 == delta_temp) or (
+                dims1 == delta_temp and dims2 == temp
+            ):
+                return ansunits.Dimensions(dimensions_container=temp)
+            if (dims1 == temp and dims2 == temp) and op == "-":
+                return ansunits.Dimensions(dimensions_container=delta_temp)
+
     @property
     def dimensions(self):
         """A dictionary representation."""
@@ -52,6 +79,9 @@ class Dimensions:
             dims = ""
         return str(dims)
 
+    def __add__(self, __value):
+        return self._temp_precheck(dims2=__value.dimensions)
+
     def __mul__(self, other):
         results = self._dimensions.copy()
         for dim, value in other._dimensions.items():
@@ -60,6 +90,9 @@ class Dimensions:
             else:
                 results[dim] = value
         return Dimensions(results)
+
+    def __sub__(self, __value):
+        return self._temp_precheck(dims2=__value.dimensions, op="-")
 
     def __truediv__(self, other):
         results = self._dimensions.copy()
@@ -77,17 +110,36 @@ class Dimensions:
         return Dimensions(results)
 
     def __eq__(self, other):
-        temp_dim = self / other
-        temp = ansunits.BaseDimensions.TEMPERATURE
-        temp_diff = ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE
-        if temp in temp_dim._dimensions and temp_diff in temp_dim._dimensions:
-            if temp_dim._dimensions[temp] == -temp_dim._dimensions[temp_diff]:
-                del temp_dim._dimensions[temp_diff]
-                del temp_dim._dimensions[temp]
-        return not bool(temp_dim.dimensions)
+        dims = other.dimensions.copy()
+        for dim, value in self.dimensions.items():
+            if dim in dims:
+                dims[dim] -= value
+            else:
+                return False
+        if sum(dims.values()) == 0:
+            return True
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __bool__(self):
+        return bool(self.dimensions)
+
+    def __gt__(self, __value):
+        if self != __value:
+            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+
+    def __ge__(self, __value):
+        if self != __value:
+            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+
+    def __lt__(self, __value):
+        if self != __value:
+            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+
+    def __le__(self, __value):
+        if self != __value:
+            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
 
 
 class DimensionsError(ValueError):
@@ -100,3 +152,8 @@ class DimensionsError(ValueError):
     def INCORRECT_DIMENSIONS(cls):
         """Return in case of dimensions not in dimension order."""
         return cls(f"The `dimensions_container` key must be a 'BaseDimensions' object")
+
+    @classmethod
+    def INCOMPARABLE_DIMENSIONS(cls, dim1, dim2):
+        """Return in case of dimensions not being equal."""
+        return cls(f"The dimensions`{dim1}` cannot be compared to '{dim2}'")
