@@ -93,7 +93,6 @@ class Quantity(float):
             or (units.name == "C" and value < -273.15)
             or (units.name == "F" and value < -459.67)
         ):
-
             units = ansunits.Unit(f"delta_{units.name}")
 
         self._unit = units

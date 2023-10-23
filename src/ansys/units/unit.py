@@ -437,6 +437,7 @@ class Unit:
     def __ne__(self, other_unit):
         return not self.__eq__(other_unit=other_unit)
 
+
 class UnitError(ValueError):
     """Custom dimensions errors."""
 
