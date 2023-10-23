@@ -4,52 +4,107 @@ import ansys.units as ansunits
 
 
 def test_pre_defined_unit_system():
+    ur = ansunits.UnitRegistry()
     us = ansunits.UnitSystem(unit_sys="SI")
-    assert us.name == "SI"
-    assert us.base_units == [
-        "kg",
-        "m",
-        "s",
-        "K",
-        "delta_K",
-        "radian",
-        "mol",
-        "cd",
-        "A",
-        "sr",
-    ]
+    assert us.MASS == ur.kg
+    assert us.LENGTH == ur.m
+    assert us.TIME == ur.s
+    assert us.TEMPERATURE == ur.K
+    assert us.TEMPERATURE_DIFFERENCE == ur.delta_K
+    assert us.ANGLE == ur.radian
+    assert us.CHEMICAL_AMOUNT == ur.mol
+    assert us.LIGHT == ur.cd
+    assert us.CURRENT == ur.A
+    assert us.SOLID_ANGLE == ur.sr
+
+
+def test_copy():
+    us = ansunits.UnitSystem(unit_sys="BT")
+    us1 = ansunits.UnitSystem(copy_from=us)
+    assert us1 == us
+
+
+def test_update():
+    dims = ansunits.BaseDimensions
+    ur = ansunits.UnitRegistry()
+    us = ansunits.UnitSystem(unit_sys="SI")
+    base_units = {
+        dims.MASS: "slug",
+        dims.LENGTH: ur.ft,
+        dims.TIME: ur.s,
+        dims.TEMPERATURE: ur.R,
+        dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
+        dims.ANGLE: ur.degree,
+        dims.CHEMICAL_AMOUNT: ur.slugmol,
+        dims.LIGHT: ur.cd,
+        dims.CURRENT: ur.A,
+        dims.SOLID_ANGLE: ur.sr,
+    }
+    us.update(base_units=base_units)
+    assert us.MASS == ur.slug
+    assert us.LENGTH == ur.ft
+    assert us.TIME == ur.s
+    assert us.TEMPERATURE == ur.R
+    assert us.TEMPERATURE_DIFFERENCE == ur.delta_R
+    assert us.ANGLE == ur.degree
+    assert us.CHEMICAL_AMOUNT == ur.slugmol
+    assert us.LIGHT == ur.cd
+    assert us.CURRENT == ur.A
+    assert us.SOLID_ANGLE == ur.sr
+
+
+def test_eq():
+    us1 = ansunits.UnitSystem(unit_sys="BT")
+    us2 = ansunits.UnitSystem()
+    us3 = ansunits.UnitSystem(unit_sys="SI")
+    assert (us1 == us2) == False
+    assert us2 == us3
+
+
+def test_single_set():
+    ur = ansunits.UnitRegistry()
+    us = ansunits.UnitSystem(unit_sys="SI")
+    us.MASS = ur.slug
+    us.LENGTH = ur.ft
+    us.TEMPERATURE = ur.R
+    us.TEMPERATURE_DIFFERENCE = ur.delta_R
+    us.ANGLE = ur.degree
+    us.CHEMICAL_AMOUNT = ur.slugmol
+    assert us.MASS == ur.slug
+    assert us.LENGTH == ur.ft
+    assert us.TEMPERATURE == ur.R
+    assert us.TEMPERATURE_DIFFERENCE == ur.delta_R
+    assert us.ANGLE == ur.degree
+    assert us.CHEMICAL_AMOUNT == ur.slugmol
 
 
 def test_custom_unit_system():
+    dims = ansunits.BaseDimensions
     ur = ansunits.UnitRegistry()
     us = ansunits.UnitSystem(
-        name="sys",
-        base_units=[
-            ur.slug,
-            ur.ft,
-            ur.s,
-            ur.R,
-            ur.delta_R,
-            ur.radian,
-            ur.slugmol,
-            ur.cd,
-            ur.A,
-            ur.sr,
-        ],
+        base_units={
+            dims.MASS: ur.slug,
+            dims.LENGTH: ur.ft,
+            dims.TIME: ur.s,
+            dims.TEMPERATURE: ur.R,
+            dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
+            dims.ANGLE: ur.radian,
+            dims.CHEMICAL_AMOUNT: ur.slugmol,
+            dims.LIGHT: ur.cd,
+            dims.CURRENT: ur.A,
+            dims.SOLID_ANGLE: ur.sr,
+        }
     )
-    assert us.name == "sys"
-    assert us.base_units == [
-        "slug",
-        "ft",
-        "s",
-        "R",
-        "delta_R",
-        "radian",
-        "slugmol",
-        "cd",
-        "A",
-        "sr",
-    ]
+    assert us.MASS == ur.slug
+    assert us.LENGTH == ur.ft
+    assert us.TIME == ur.s
+    assert us.TEMPERATURE == ur.R
+    assert us.TEMPERATURE_DIFFERENCE == ur.delta_R
+    assert us.ANGLE == ur.radian
+    assert us.CHEMICAL_AMOUNT == ur.slugmol
+    assert us.LIGHT == ur.cd
+    assert us.CURRENT == ur.A
+    assert us.SOLID_ANGLE == ur.sr
 
 
 def test_conversion():
@@ -60,10 +115,7 @@ def test_conversion():
     assert q2.value == 0.6852176585679174
     assert q2.units == "slug ft s"
 
-    us2 = ansunits.UnitSystem(
-        name="sys",
-        base_units=["kg", "m", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"],
-    )
+    us2 = ansunits.UnitSystem(unit_sys="SI")
     q3 = ansunits.Quantity(4, "slug cm s")
 
     q4 = us2.convert(q3)
@@ -71,130 +123,51 @@ def test_conversion():
     assert q4.units == "kg m s"
 
 
-def test_errors():
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us1 = ansunits.UnitSystem(
-            name="sys",
-            base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
-            unit_sys="BT",
-        )
+def test_not_base_unit_init():
+    with pytest.raises(ansunits.UnitSystemError):
+        dims = ansunits.BaseDimensions
+        ur = ansunits.UnitRegistry()
+        us1 = ansunits.UnitSystem(base_units={dims.LENGTH: ur.N})
 
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us2 = ansunits.UnitSystem(
-            name="sys",
-            base_units=[
-                "slug",
-                "ft",
-                "s",
-                "R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
 
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us3 = ansunits.UnitSystem(
-            name="sys",
-            base_units=[
-                "slug",
-                "ft",
-                "N",
-                "R",
-                "delta_R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
+def test_not_base_unit_update():
+    with pytest.raises(ansunits.UnitSystemError):
+        dims = ansunits.BaseDimensions
+        ur = ansunits.UnitRegistry()
+        us = ansunits.UnitSystem(unit_sys="SI")
+        base_units = {dims.MASS: ur.N}
+        us.update(base_units=base_units)
 
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us4 = ansunits.UnitSystem(
-            name="sys",
-            base_units=[
-                "slug",
-                "slug",
-                "s",
-                "R",
-                "delta_R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
 
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us5 = ansunits.UnitSystem(
-            name="sys",
-            base_units=["m", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
-        )
+def test_not_base_unit_update():
+    with pytest.raises(ansunits.UnitSystemError):
+        dims = ansunits.BaseDimensions
+        ur = ansunits.UnitRegistry()
+        us = ansunits.UnitSystem(unit_sys="SI")
+        base_units = {dims.MASS: ur.N}
+        us.update(base_units=base_units)
 
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us6 = ansunits.UnitSystem(unit_sys="Standard")
 
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us7 = ansunits.UnitSystem(
-            name="us6",
-            base_units=[
-                "kg s^-1",
-                "ft",
-                "s",
-                "R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
-
-    with pytest.raises(ansunits.UnitSystemError) as e_info:
-        us6 = ansunits.UnitSystem(
-            name="us6",
-            base_units=[
-                "kg s^-1",
-                "ft",
-                "s",
-                "R",
-                "radian",
-                "slugmol",
-                "cd",
-                "A",
-                "sr",
-            ],
-        )
+def test_invalid_unit_sys():
+    with pytest.raises(ansunits.UnitSystemError):
+        us2 = ansunits.UnitSystem(unit_sys="Standard")
 
 
 def test_error_messages():
-    e1 = ansunits.UnitSystemError.EXCESSIVE_PARAMETERS()
-    expected_str = (
-        "UnitSystem only accepts one of the following parameters: "
-        "(name, base_units) or (unit_sys)."
-    )
-    assert str(e1) == expected_str
-
-    e2 = ansunits.UnitSystemError.BASE_UNITS_LENGTH(11)
-    expected_str = "The `base_units` argument must contain 10 unique units, currently there are 11."
-    assert str(e2) == expected_str
-
-    e3 = ansunits.UnitSystemError.NOT_BASE_UNIT(ansunits.Unit("kg s^-1"))
+    e1 = ansunits.UnitSystemError.NOT_BASE_UNIT(ansunits.Unit("kg s^-1"))
     expected_str = (
         "`kg s^-1` is not a base unit. To use `kg s^-1`, add it to the "
         "`base_units` table within the cfg.yaml file."
     )
-    assert str(e3) == expected_str
+    assert str(e1) == expected_str
 
-    e4 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
-    assert str(e4) == "`ham sandwich` is not a supported unit system."
+    e2 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
+    assert str(e2) == "`ham sandwich` is not a supported unit system."
+
+    e3 = ansunits.UnitSystemError.WRONG_UNIT_TYPE(
+        unit=ansunits.Unit("ft"), unit_type=ansunits.BaseDimensions.MASS
+    )
+    assert str(e3) == "The unit `ft` is incompatible with unit system type: `MASS`"
 
 
 def test_si_properties():

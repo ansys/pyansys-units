@@ -1,51 +1,22 @@
-"""Provides the ``Dimensions`` and ``BaseDimensions`` class."""
-from enum import Enum
-from typing import Optional
+"""Provides the ``Dimensions`` class."""
+from typing import Union
 
-
-class BaseDimensions(Enum):
-    """
-    Supplies all valid base dimensions used in dimensional analysis.
-
-    Used as dictionary keys for defining a `Dimensions` object.
-
-    Attributes
-    ----------
-    MASS
-    LENGTH
-    TIME
-    TEMPERATURE
-    TEMPERATURE_DIFFERENCE
-    ANGLE
-    CHEMICAL_AMOUNT
-    LIGHT
-    CURRENT
-    SOLID_ANGLE
-    """
-
-    MASS = 0
-    LENGTH = 1
-    TIME = 2
-    TEMPERATURE = 3
-    TEMPERATURE_DIFFERENCE = 4
-    ANGLE = 5
-    CHEMICAL_AMOUNT = 6
-    LIGHT = 7
-    CURRENT = 8
-    SOLID_ANGLE = 9
+import ansys.units as ansunits
 
 
 class Dimensions:
     """
-    A class which contains the base unit information.
+    A composite dimension (or simply dimensions) composed from an arbitrary number of
+    fundamental dimensions, where each fundamental dimension is a pair consisting of
+    base dimension and exponent.
 
-    A dictionary of ``BaseDimensions`` and power is required
+    A dictionary of ``BaseDimensions`` and exponent is required
     for a non-dimensionless object.
 
     Parameters
     ----------
     dimensions_container : dict, optional
-        Dictionary of {``BaseDimensions``: power, ...}.
+        Dictionary of {``BaseDimensions``: exponent, ...}.
 
     Attributes
     ----------
@@ -54,21 +25,12 @@ class Dimensions:
 
     def __init__(
         self,
-        dimensions_container: Optional[BaseDimensions] = None,
+        dimensions_container: dict[ansunits.BaseDimensions, Union[int, float]] = None,
     ):
-        """
-        Create a ``Dimensions`` object from a dictionary of ``BaseDimensions`` and
-        power. Default is dimensionless.
-
-        Parameters
-        ----------
-        dimensions_container : dict, optional
-            Dictionary of {``BaseDimensions``: power, ...}.
-        """
         dimensions_container = dimensions_container or {}
         self._dimensions = dimensions_container.copy()
         for x, y in dimensions_container.items():
-            if not isinstance(x, BaseDimensions):
+            if not isinstance(x, ansunits.BaseDimensions):
                 raise DimensionsError.INCORRECT_DIMENSIONS()
             if y == 0:
                 del self._dimensions[x]
@@ -116,8 +78,8 @@ class Dimensions:
 
     def __eq__(self, other):
         temp_dim = self / other
-        temp = BaseDimensions.TEMPERATURE
-        temp_diff = BaseDimensions.TEMPERATURE_DIFFERENCE
+        temp = ansunits.BaseDimensions.TEMPERATURE
+        temp_diff = ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE
         if temp in temp_dim._dimensions and temp_diff in temp_dim._dimensions:
             if temp_dim._dimensions[temp] == -temp_dim._dimensions[temp_diff]:
                 del temp_dim._dimensions[temp_diff]
