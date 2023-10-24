@@ -161,7 +161,7 @@ class DimensionsError(ValueError):
     @classmethod
     def INCOMPARABLE_DIMENSIONS(cls, dim1, dim2):
         """Return in case of dimensions not being equal."""
-        return cls(f"The dimensions`{dim1}` cannot be compared to '{dim2}'")
+        return cls(f"The dimensions `{dim1}` cannot be compared to `{dim2}`")
 
     @classmethod
     def INCOMPARABLE_DIMENSIONS(cls, dim1, dim2):
