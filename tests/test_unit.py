@@ -26,6 +26,16 @@ def test_unitless():
     assert unit.dimensions == ansunits.Dimensions()
 
 
+def test_copy():
+    ureg = ansunits.UnitRegistry()
+    kg = ansunits.Unit(copy_from=ureg.kg)
+    ft = ansunits.Unit(copy_from=ureg.ft)
+    slug = ansunits.Unit(copy_from=ureg.slug)
+    assert kg == ureg.kg
+    assert ft == ureg.ft
+    assert slug == ureg.slug
+
+
 def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C

@@ -1,4 +1,6 @@
 """Provides the ``Dimensions`` class."""
+from __future__ import annotations
+
 from typing import Optional, Union
 
 import ansys.units as ansunits
@@ -17,6 +19,8 @@ class Dimensions:
     ----------
     dimensions_container : dict, optional
         Dictionary of {``BaseDimensions``: exponent, ...}.
+    copy_from : Dimensions, optional
+        A previous dimension to copy.
 
     Attributes
     ----------
@@ -26,8 +30,13 @@ class Dimensions:
     def __init__(
         self,
         dimensions_container: dict[ansunits.BaseDimensions, Union[int, float]] = None,
+        copy_from: ansunits.Dimensions = None,
     ):
         dimensions_container = dimensions_container or {}
+
+        if copy_from:
+            dimensions_container = {**copy_from._dimensions, **dimensions_container}
+
         self._dimensions = dimensions_container.copy()
         for x, y in dimensions_container.items():
             if not isinstance(x, ansunits.BaseDimensions):

@@ -21,6 +21,18 @@ def test_dimensions():
     assert d3.dimensions == {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
 
 
+def test_copy():
+    dims = ansunits.BaseDimensions
+    d1 = ansunits.Dimensions(dimensions_container={dims.MASS: 1.0, dims.LENGTH: -2.0})
+    d2 = ansunits.Dimensions(copy_from=d1)
+    d3 = ansunits.Dimensions(
+        dimensions_container={dims.LENGTH: -1.0, dims.TIME: -2.0}, copy_from=d1
+    )
+
+    assert d1 == d2
+    assert d3.dimensions == {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
+
+
 def test_str_():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions_container={dims.CURRENT: 1})
