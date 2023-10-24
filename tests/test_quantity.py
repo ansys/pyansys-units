@@ -415,7 +415,7 @@ def test_neq():
 def test_eq_1():
     q1 = ansunits.Quantity(10.0, "m s^-1")
     q2 = ansunits.Quantity(5.0, "m s^-1")
-    q3 = ansunits.Quantity(10.0, "m s^-1")
+    q3 = ansunits.Quantity(copy_from=q1)
     q4 = ansunits.Quantity(10.0, "")
 
     assert q1 != q2
@@ -431,7 +431,7 @@ def test_eq_2():
     r = ansunits.Quantity(10.5, "")
 
     l = ansunits.Quantity(10.5, "cm")
-    m = ansunits.Quantity(10.5, "m")
+    m = ansunits.Quantity(copy_from=y)
     n = ansunits.Quantity(10.5, "")
 
     assert x == l
@@ -1012,6 +1012,8 @@ def test_errors():
             dimensions=ansunits.Dimensions({dims.MASS: 1}),
             quantity_map={"Velocity": 3},
         )
+    with pytest.raises(ansunits.QuantityError):
+        e2 = ansunits.Quantity()
 
 
 def test_error_messages():
@@ -1022,13 +1024,16 @@ def test_error_messages():
             (units) or (quantity_map) or (dimensions)."
     )
 
-    e2 = ansunits.QuantityError.INCOMPATIBLE_DIMENSIONS(
+    e2 = ansunits.QuantityError.MISSING_REQUIREMENT()
+    assert str(e2) == "Requires at least one 'value' or 'copy_from' argument."
+
+    e3 = ansunits.QuantityError.INCOMPATIBLE_DIMENSIONS(
         ansunits.Unit("mm"), ansunits.Unit("K")
     )
-    assert str(e2) == "`mm` and `K` have incompatible dimensions."
+    assert str(e3) == "`mm` and `K` have incompatible dimensions."
 
-    e3 = ansunits.QuantityError.INCOMPATIBLE_VALUE("radian")
-    assert str(e3) == "`radian` is incompatible with the current quantity object."
+    e4 = ansunits.QuantityError.INCOMPATIBLE_VALUE("radian")
+    assert str(e4) == "`radian` is incompatible with the current quantity object."
 
 
 def test_instantiate_quantity_with_unrecognized_units_causes_exception():

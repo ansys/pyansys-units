@@ -38,7 +38,7 @@ class Quantity(float):
 
     def __new__(
         cls,
-        value,
+        value: Union[int, float] = None,
         units: Union[ansunits.Unit, str] = None,
         quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
@@ -50,6 +50,16 @@ class Quantity(float):
             or (quantity_map and dimensions)
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
+
+        if value == None and not copy_from:
+            raise QuantityError.MISSING_REQUIREMENT()
+
+        if copy_from:
+            if value:
+                units = copy_from.units
+            else:
+                units = copy_from.units
+                value = copy_from.value
 
         _value = float(value)
 
@@ -68,7 +78,7 @@ class Quantity(float):
 
     def __init__(
         self,
-        value,
+        value: Union[int, float] = None,
         units: Union[ansunits.Unit, str] = None,
         quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
@@ -80,6 +90,9 @@ class Quantity(float):
             or (quantity_map and dimensions)
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
+
+        if value == None and not copy_from:
+            raise QuantityError.MISSING_REQUIREMENT()
 
         if copy_from:
             if value:
@@ -295,6 +308,10 @@ class QuantityError(ValueError):
             "Quantity only accepts one of the following parameters: \
             (units) or (quantity_map) or (dimensions)."
         )
+
+    @classmethod
+    def MISSING_REQUIREMENT(cls):
+        return cls("Requires at least one 'value' or 'copy_from' argument.")
 
     @classmethod
     def INCOMPATIBLE_DIMENSIONS(cls, from_unit, to_unit):
