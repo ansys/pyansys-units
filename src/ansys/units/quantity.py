@@ -23,6 +23,8 @@ class Quantity(float):
         Initializes the quantity's units using the quantity map.
     dimensions : Dimensions, optional
         Initializes the quantity's units in SI using a ``Dimensions`` instance.
+    copy_from : Quantity, optional
+        Make a copy from a previous instance.
 
     Attributes
     ----------
