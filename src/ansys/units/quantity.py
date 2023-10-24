@@ -39,9 +39,10 @@ class Quantity(float):
     def __new__(
         cls,
         value,
-        units=None,
+        units: Union[ansunits.Unit, str] = None,
         quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
+        copy_from: ansunits.Quantity = None,
     ):
         if (
             (units and quantity_map)
@@ -68,9 +69,10 @@ class Quantity(float):
     def __init__(
         self,
         value,
-        units=None,
+        units: Union[ansunits.Unit, str] = None,
         quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
+        copy_from: ansunits.Quantity = None,
     ):
         if (
             (units and quantity_map)
@@ -78,6 +80,13 @@ class Quantity(float):
             or (quantity_map and dimensions)
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
+
+        if copy_from:
+            if value:
+                units = copy_from.units
+            else:
+                units = copy_from.units
+                value = copy_from.value
 
         self._value = float(value)
 
