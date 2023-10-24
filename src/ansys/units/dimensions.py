@@ -17,17 +17,17 @@ class Dimensions:
 
     Parameters
     ----------
-    dimensions_dict : dict, optional
+    dimensions : dict, optional
         Dictionary of {``BaseDimensions``: exponent, ...}.
     """
 
     def __init__(
         self,
-        dimensions_dict: dict[ansunits.BaseDimensions, Union[int, float]] = None,
+        dimensions: dict[ansunits.BaseDimensions, Union[int, float]] = None,
     ):
-        dimensions_dict = dimensions_dict or {}
-        self._dimensions = dimensions_dict.copy()
-        for x, y in dimensions_dict.items():
+        dimensions = dimensions or {}
+        self._dimensions = dimensions.copy()
+        for x, y in dimensions.items():
             if not isinstance(x, ansunits.BaseDimensions):
                 raise DimensionsError.INCORRECT_DIMENSIONS()
             if y == 0:
@@ -56,9 +56,9 @@ class Dimensions:
             if (dims1 == temp and dims2 == delta_temp) or (
                 dims1 == delta_temp and dims2 == temp
             ):
-                return ansunits.Dimensions(dimensions_dict=temp)
+                return ansunits.Dimensions(dimensions=temp)
             if (dims1 == temp and dims2 == temp) and op == "-":
-                return ansunits.Dimensions(dimensions_dict=delta_temp)
+                return ansunits.Dimensions(dimensions=delta_temp)
 
     def _to_string(self):
         """
@@ -156,7 +156,7 @@ class DimensionsError(ValueError):
     @classmethod
     def INCORRECT_DIMENSIONS(cls):
         """Return in case of dimensions not in dimension order."""
-        return cls(f"The `dimensions_dict` key must be a 'BaseDimensions' object")
+        return cls(f"The `dimensions` key must be a 'BaseDimensions' object")
 
     @classmethod
     def INCOMPARABLE_DIMENSIONS(cls, dim1, dim2):
