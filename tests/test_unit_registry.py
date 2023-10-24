@@ -62,3 +62,9 @@ def test_default_units():
     )
     assert str(ur) == "kg, "
     assert ur.kg._factor == 1
+
+
+def test_immutability():
+    ur = ansunits.UnitRegistry()
+    with pytest.raises(ansunits.RegistryError):
+        ur.m = ansunits.Unit("ft")
