@@ -9,29 +9,25 @@ import ansys.units as ansunits
 class Dimensions:
     """
     A composite dimension (or simply dimensions) composed from an arbitrary number of
-    fundamental dimensions, where each fundamental dimension is a pair consisting of
-    base dimension and exponent.
+    dimensions, where each dimension is a pair consisting of base dimension and
+    exponent.
 
     A dictionary of ``BaseDimensions`` and exponent is required
     for a non-dimensionless object.
 
     Parameters
     ----------
-    dimensions_container : dict, optional
+    dimensions_dict : dict, optional
         Dictionary of {``BaseDimensions``: exponent, ...}.
-
-    Attributes
-    ----------
-    dimensions
     """
 
     def __init__(
         self,
-        dimensions_container: dict[ansunits.BaseDimensions, Union[int, float]] = None,
+        dimensions_dict: dict[ansunits.BaseDimensions, Union[int, float]] = None,
     ):
-        dimensions_container = dimensions_container or {}
-        self._dimensions = dimensions_container.copy()
-        for x, y in dimensions_container.items():
+        dimensions_dict = dimensions_dict or {}
+        self._dimensions = dimensions_dict.copy()
+        for x, y in dimensions_dict.items():
             if not isinstance(x, ansunits.BaseDimensions):
                 raise DimensionsError.INCORRECT_DIMENSIONS()
             if y == 0:
@@ -39,19 +35,19 @@ class Dimensions:
 
     def _temp_precheck(self, dims2, op: str = None) -> Optional[ansunits.Dimensions]:
         """
-        Validate units for temperature differences.
+        Validate dimensions for temperature differences.
 
         Parameters
         ----------
-        units : Unit
-            Unit for comparison against current units.
-        op : str, None
-            Operation conducted on units. "-"
+        dims2 : dimensions
+            Dimensions for comparison against current dimensions.
+        op : str, optional
+            Operation conducted on dimensions. "-"
 
         Returns
         -------
-        str | None
-            Units of temperature difference.
+        Dimensions | None
+            Dimensions object for a unit of temperature difference or temperature.
         """
         dims1 = self._dimensions
         if len(dims1) == 1.0 and len(dims2) == 1.0:
@@ -60,21 +56,29 @@ class Dimensions:
             if (dims1 == temp and dims2 == delta_temp) or (
                 dims1 == delta_temp and dims2 == temp
             ):
-                return ansunits.Dimensions(dimensions_container=temp)
+                return ansunits.Dimensions(dimensions_dict=temp)
             if (dims1 == temp and dims2 == temp) and op == "-":
-                return ansunits.Dimensions(dimensions_container=delta_temp)
+                return ansunits.Dimensions(dimensions_dict=delta_temp)
+
+    def _to_string(self):
+        """
+        Creates a string representation of the dimensions.
+
+        Returns
+        -------
+        str
+            A string version of the dimensions.
+        """
+        dims = {x.name: y for x, y in self}
+        if not dims:
+            dims = ""
+        return str(dims)
 
     def __str__(self):
-        dims = {x.name: y for x, y in self}
-        if not dims:
-            dims = ""
-        return str(dims)
+        return self._to_string()
 
     def __repr__(self):
-        dims = {x.name: y for x, y in self}
-        if not dims:
-            dims = ""
-        return str(dims)
+        return self._to_string()
 
     def __iter__(self):
         for item in self._dimensions.items():
@@ -152,7 +156,7 @@ class DimensionsError(ValueError):
     @classmethod
     def INCORRECT_DIMENSIONS(cls):
         """Return in case of dimensions not in dimension order."""
-        return cls(f"The `dimensions_container` key must be a 'BaseDimensions' object")
+        return cls(f"The `dimensions_dict` key must be a 'BaseDimensions' object")
 
     @classmethod
     def INCOMPARABLE_DIMENSIONS(cls, dim1, dim2):

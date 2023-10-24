@@ -23,6 +23,8 @@ class Quantity(float):
         Initializes the quantity's units using the quantity map.
     dimensions : Dimensions, optional
         Initializes the quantity's units in SI using a ``Dimensions`` instance.
+    copy_from : Quantity, optional
+        Make a copy from a previous instance.
 
     Attributes
     ----------
@@ -40,6 +42,7 @@ class Quantity(float):
         units=None,
         quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
+        copy_from: ansunits.Quantity = None,
     ):
         if (
             (units and quantity_map)
@@ -69,6 +72,7 @@ class Quantity(float):
         units=None,
         quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
+        copy_from: ansunits.Quantity = None,
     ):
         if (
             (units and quantity_map)

@@ -457,5 +457,5 @@ class UnitError(ValueError):
     @classmethod
     def INCORRECT_UNITS(cls, unit1, unit2):
         return cls(
-            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this oporation"
+            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this operation"
         )
