@@ -50,3 +50,20 @@ class UnitRegistry:
         for key in attrs:
             returned_string += f"{key}, "
         return returned_string
+
+    def __setattr__(self, __name: str, unit: any) -> None:
+        if hasattr(self, __name):
+            raise RegistryError.UNIT_ALREADY_REGISTERED(__name)
+        self.__dict__[__name] = unit
+
+
+class RegistryError(ValueError):
+    """Custom dimensions errors."""
+
+    def __init__(self, err):
+        super().__init__(err)
+
+    @classmethod
+    def UNIT_ALREADY_REGISTERED(cls, name):
+        """Return in case of trying to override a registered unit."""
+        return cls(f"Unable to override `{name}` it has already been registered.")
