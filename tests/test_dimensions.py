@@ -23,14 +23,14 @@ def test_dimensions():
 
 def test_copy():
     dims = ansunits.BaseDimensions
-    d1 = ansunits.Dimensions(dimensions_container={dims.MASS: 1.0, dims.LENGTH: -2.0})
+    d1 = ansunits.Dimensions(dimensions={dims.MASS: 1.0, dims.LENGTH: -2.0})
     d2 = ansunits.Dimensions(copy_from=d1)
     d3 = ansunits.Dimensions(
-        dimensions_container={dims.LENGTH: -1.0, dims.TIME: -2.0}, copy_from=d1
+        dimensions={dims.LENGTH: -1.0, dims.TIME: -2.0}, copy_from=d1
     )
 
     assert d1 == d2
-    assert d3.dimensions == {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
+    assert {k: v for k, v in d3} == {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
 
 
 def test_to_string():

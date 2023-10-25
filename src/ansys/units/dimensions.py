@@ -25,16 +25,16 @@ class Dimensions:
 
     def __init__(
         self,
-        dimensions_container: dict[ansunits.BaseDimensions, Union[int, float]] = None,
+        dimensions: dict[ansunits.BaseDimensions, Union[int, float]] = None,
         copy_from: ansunits.Dimensions = None,
     ):
-        dimensions_container = dimensions_container or {}
+        dimensions = dimensions or {}
 
         if copy_from:
-            dimensions_container = {**copy_from._dimensions, **dimensions_container}
+            dimensions = {**copy_from._dimensions, **dimensions}
 
-        self._dimensions = dimensions_container.copy()
-        for x, y in dimensions_container.items():
+        self._dimensions = dimensions.copy()
+        for x, y in dimensions.items():
             if not isinstance(x, ansunits.BaseDimensions):
                 raise DimensionsError.INCORRECT_DIMENSIONS()
             if y == 0:
