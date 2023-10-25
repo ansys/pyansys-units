@@ -7,7 +7,7 @@ def test_base_units():
     dims = ansunits.BaseDimensions
     kg = ansunits.Unit("kg")
     assert kg.name == "kg"
-    assert kg.dimensions.dimensions == {dims.MASS: 1}
+    assert kg.dimensions == ansunits.Dimensions({dims.MASS: 1})
     assert kg.si_scaling_factor == 1
     assert kg.si_offset == 0
 

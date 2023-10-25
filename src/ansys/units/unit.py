@@ -40,7 +40,7 @@ class Unit:
             self._dimensions = ansunits.Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise UnitError.INCONSISTENT_DIMENSIONS()
-            if not self._dimensions.dimensions:
+            if not self._dimensions:
                 self._name = ""
         elif dimensions:
             self._dimensions = dimensions
@@ -101,15 +101,16 @@ class Unit:
         """
         if not unit_sys:
             unit_sys = ansunits.UnitSystem()
+            unit_sys = ansunits.UnitSystem()
 
         base_units = unit_sys.base_units
         units = ""
-        for idx, value in dimensions.dimensions.items():
+        for key, value in dimensions:
             if value == 1:
-                units += f"{base_units[idx.value]} "
+                units += f"{base_units[key.value]} "
             elif value != 0.0:
                 value = int(value) if value % 1 == 0 else value
-                units += f"{base_units[idx.value]}^{value} "
+                units += f"{base_units[key.value]}^{value} "
 
         return units.strip()
 
@@ -384,19 +385,19 @@ class Unit:
             returned_string += f"{key}: {attrs[key]}\n"
         return returned_string
 
-    def __add__(self, __value):
-        new_dimensions = self.dimensions + __value.dimensions
-        if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
-        if self.dimensions != __value.dimensions:
-            raise UnitError.INCORRECT_UNITS(self, __value)
-
     def __repr__(self):
         returned_string = ""
         attrs = self.__dict__
         for key in attrs:
             returned_string += f"{key}: {attrs[key]}\n"
         return returned_string
+
+    def __add__(self, __value):
+        new_dimensions = self.dimensions + __value.dimensions
+        if new_dimensions:
+            return ansunits.Unit(dimensions=new_dimensions)
+        if self.dimensions != __value.dimensions:
+            raise UnitError.INCORRECT_UNITS(self, __value)
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
@@ -456,5 +457,5 @@ class UnitError(ValueError):
     @classmethod
     def INCORRECT_UNITS(cls, unit1, unit2):
         return cls(
-            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this oporation"
+            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this operation"
         )
