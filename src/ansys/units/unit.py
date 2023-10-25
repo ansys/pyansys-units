@@ -20,7 +20,7 @@ class Unit:
         Define the unit system for base units of dimension,
         default is SI.
     copy_from: Unit, optional
-        Make a copy of a previous unit.
+        A previous instance of Unit.
 
     Attributes
     ----------

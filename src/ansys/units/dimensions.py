@@ -20,7 +20,7 @@ class Dimensions:
     dimensions : dict, optional
         Dictionary of {``BaseDimensions``: exponent, ...}.
     copy_from : Dimensions, optional
-        A previous dimension to copy.
+        A previous instance of Dimensions.
     """
 
     def __init__(

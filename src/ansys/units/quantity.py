@@ -24,7 +24,7 @@ class Quantity(float):
     dimensions : Dimensions, optional
         Initializes the quantity's units in SI using a ``Dimensions`` instance.
     copy_from : Quantity, optional
-        Make a copy from a previous instance.
+        A previous instance of Quantity.
 
     Attributes
     ----------
