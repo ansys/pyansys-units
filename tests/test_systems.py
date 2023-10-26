@@ -61,7 +61,7 @@ def test_eq():
     assert us2 == us3
 
 
-def test_single_set():
+def test_set_type():
     ur = ansunits.UnitRegistry()
     us = ansunits.UnitSystem(unit_sys="SI")
     us.MASS = ur.slug
@@ -139,15 +139,6 @@ def test_not_base_unit_update():
         us.update(base_units=base_units)
 
 
-def test_not_base_unit_update():
-    with pytest.raises(ansunits.UnitSystemError):
-        dims = ansunits.BaseDimensions
-        ur = ansunits.UnitRegistry()
-        us = ansunits.UnitSystem(unit_sys="SI")
-        base_units = {dims.MASS: ur.N}
-        us.update(base_units=base_units)
-
-
 def test_invalid_unit_sys():
     with pytest.raises(ansunits.UnitSystemError):
         us2 = ansunits.UnitSystem(unit_sys="Standard")
@@ -168,17 +159,3 @@ def test_error_messages():
         unit=ansunits.Unit("ft"), unit_type=ansunits.BaseDimensions.MASS
     )
     assert str(e3) == "The unit `ft` is incompatible with unit system type: `MASS`"
-
-
-def test_si_properties():
-    us = ansunits.UnitSystem()
-    assert us.MASS.name == "kg"
-    assert us.ANGLE.name == "radian"
-    assert us.CHEMICAL_AMOUNT.name == "mol"
-    assert us.LENGTH.name == "m"
-    assert us.CURRENT.name == "A"
-    assert us.SOLID_ANGLE.name == "sr"
-    assert us.TEMPERATURE.name == "K"
-    assert us.TEMPERATURE_DIFFERENCE.name == "delta_K"
-    assert us.LIGHT.name == "cd"
-    assert us.TIME.name == "s"

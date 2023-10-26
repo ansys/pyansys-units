@@ -1003,7 +1003,7 @@ def testing_arithmetic_operators():
         print(f"{2} - {qt1} =  {result8}")
 
 
-def test_errors():
+def test_excessive_parameters_errors():
     dims = ansunits.BaseDimensions
     with pytest.raises(ansunits.QuantityError):
         e1 = ansunits.Quantity(
@@ -1040,7 +1040,7 @@ def test_instantiate_quantity_with_unrecognized_units_causes_exception():
         ansunits.Quantity(value=10, units="piggies^2 m^-3")
 
 
-def test_compute_temp_unit():
+def test_arithmetic_with_temp_unit():
     dims = ansunits.BaseDimensions
     kb = ansunits.Quantity(1.382e-23, "J K^-1")
     t = ansunits.Quantity(2.0, "K")
@@ -1051,7 +1051,7 @@ def test_compute_temp_unit():
     assert e.units == ansunits.Unit("kg m^2 s^-2")
 
 
-def test_unit_multiply_quantity():
+def test_quantity_divided_by_unit():
     dims = ansunits.BaseDimensions
     ur = ansunits.UnitRegistry()
     mass = ansunits.Quantity(10.0, ur.kg)
