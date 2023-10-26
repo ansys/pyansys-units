@@ -124,18 +124,20 @@ def test_conversion():
 
 
 def test_not_base_unit_init():
+    dims = ansunits.BaseDimensions
+    ur = ansunits.UnitRegistry()
+
     with pytest.raises(ansunits.UnitSystemError):
-        dims = ansunits.BaseDimensions
-        ur = ansunits.UnitRegistry()
         us1 = ansunits.UnitSystem(base_units={dims.LENGTH: ur.N})
 
 
 def test_not_base_unit_update():
+    dims = ansunits.BaseDimensions
+    ur = ansunits.UnitRegistry()
+    us = ansunits.UnitSystem(unit_sys="SI")
+    base_units = {dims.MASS: ur.N}
+
     with pytest.raises(ansunits.UnitSystemError):
-        dims = ansunits.BaseDimensions
-        ur = ansunits.UnitRegistry()
-        us = ansunits.UnitSystem(unit_sys="SI")
-        base_units = {dims.MASS: ur.N}
         us.update(base_units=base_units)
 
 

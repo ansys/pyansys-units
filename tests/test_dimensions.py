@@ -3,7 +3,7 @@ import pytest
 import ansys.units as ansunits
 
 
-def test_dimensions():
+def test_dimensions_init():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions={})
     assert {k: v for k, v in d1} == {}

@@ -8,14 +8,17 @@ DELTA = 1.0e-5
 
 
 def test_properties():
+    dims = ansunits.BaseDimensions
     v = ansunits.Quantity(10.6, "m")
     assert v.value == 10.6
     assert v.units == ansunits.Unit("m")
     assert v.si_value == 10.6
     assert v.si_units == "m"
+    assert v.is_dimensionless == False
+    assert v.dimensions == ansunits.Dimensions({dims.LENGTH: 1.0})
 
 
-def test_value():
+def test_value_setter():
     v = ansunits.Quantity(1, "m")
     v.value = 20
     assert v.value == 20
@@ -72,11 +75,10 @@ def test_subtraction():
 
     assert float(q1 - q2) == 5.0
     assert float(q2 - q1) == -5.0
-    assert float(q1) - 2.0 == 8.0
-    assert 2.0 - float(q1) == -8.0
-    assert float(q1) - 3 == 7.0
-    assert 3 - float(q1) == -7.0
     assert q4.value == 3
+
+    with pytest.raises(ansunits.UnitError) as e_info:
+        assert q1 - q3
 
 
 def test_reverse_subtraction():
@@ -227,10 +229,14 @@ def test_exponent():
 
 def test_addition():
     q1 = ansunits.Quantity(5.0, "m^0")
+    q3 = ansunits.Quantity(52, "N")
 
     q2 = q1 + 5
     assert q2.units.name == ""
     assert q2.value == 10
+
+    with pytest.raises(ansunits.UnitError) as e_info:
+        assert q1 - q3
 
 
 def test_reverse_addition():
@@ -366,8 +372,8 @@ def test_quantity_map():
     assert api_test.units == ansunits.Unit("kg^3 m^-1.5 s^-6.5 A^3 cd")
 
 
-def testing_dimensions():
-    print(f"{'*' * 25} {testing_dimensions.__name__} {'*' * 25}")
+def testing_units_to_dimensions():
+    print(f"{'*' * 25} {testing_units_to_dimensions.__name__} {'*' * 25}")
     dims = ansunits.BaseDimensions
 
     def dim_test(units, dim_dict):

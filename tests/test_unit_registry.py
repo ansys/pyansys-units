@@ -67,3 +67,9 @@ def test_immutability():
     ur = ansunits.UnitRegistry()
     with pytest.raises(ansunits.RegistryError):
         ur.m = ansunits.Unit("ft")
+
+
+def test_error_message():
+    e1 = ansunits.RegistryError.UNIT_ALREADY_REGISTERED("kg")
+    expected_str = "Unable to override `kg` it has already been registered."
+    assert str(e1) == expected_str
