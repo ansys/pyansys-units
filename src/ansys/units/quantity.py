@@ -70,13 +70,6 @@ class Quantity(float):
         quantity_map: dict = None,
         dimensions: ansunits.Dimensions = None,
     ):
-        if (
-            (units and quantity_map)
-            or (units and dimensions)
-            or (quantity_map and dimensions)
-        ):
-            raise QuantityError.EXCESSIVE_PARAMETERS()
-
         self._value = float(value)
 
         if quantity_map:
