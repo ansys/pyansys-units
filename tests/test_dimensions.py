@@ -3,7 +3,7 @@ import pytest
 import ansys.units as ansunits
 
 
-def test_dimensions():
+def test_dimensions_init():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions={})
     assert {k: v for k, v in d1} == {}
@@ -93,7 +93,7 @@ def test_eq():
         dimensions={dims.LENGTH: 1, dims.TEMPERATURE_DIFFERENCE: 1}
     )
 
-    assert d1 != d2
+    assert (d1 == d2) == False
 
 
 def test_ne():
@@ -130,12 +130,6 @@ def test_comparison_operations():
         d1 < d2
     with pytest.raises(ansunits.DimensionsError):
         d1 <= d2
-
-
-def test_base_dimensions():
-    dims = ansunits.BaseDimensions
-    d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 2})
-    d2 = ansunits.Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: 1})
 
 
 def test_errors():

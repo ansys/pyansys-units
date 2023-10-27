@@ -404,8 +404,13 @@ class Unit:
             new_dimensions = self.dimensions * __value.dimensions
             return Unit(dimensions=new_dimensions)
 
-        if isinstance(__value, (float, int)):
+        elif isinstance(__value, (float, int)) and not isinstance(
+            __value, ansunits.Quantity
+        ):
             return ansunits.Quantity(value=__value, units=self)
+
+        else:
+            return NotImplemented
 
     def __rmul__(self, __value):
         return self.__mul__(__value)
@@ -422,17 +427,18 @@ class Unit:
             new_dimensions = self.dimensions / __value.dimensions
             return Unit(dimensions=new_dimensions)
 
+        else:
+            return NotImplemented
+
     def __pow__(self, __value):
         new_dimensions = self.dimensions**__value
         return Unit(dimensions=new_dimensions)
 
     def __eq__(self, other_unit):
-        for attr, value in self.__dict__.items():
-            try:
-                if getattr(other_unit, attr) != value:
-                    return False
-            except:
-                return False
+        if not isinstance(other_unit, ansunits.Unit) and self.name:
+            return False
+        if isinstance(other_unit, ansunits.Unit):
+            return self.dimensions == other_unit.dimensions
         return True
 
     def __ne__(self, other_unit):
