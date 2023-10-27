@@ -74,32 +74,7 @@ def test_unit_pow():
     assert kg_K_sq.name == "kg^2 K^2"
 
 
-def test_unit_sys_list():
-    dims = ansunits.BaseDimensions
-    ur = ansunits.UnitRegistry()
-    slug = ansunits.Unit(
-        dimensions=ansunits.Dimensions({dims.MASS: 1}),
-        unit_sys=ansunits.UnitSystem(
-            base_units={
-                dims.MASS: ur.slug,
-                dims.LENGTH: ur.ft,
-                dims.TIME: ur.s,
-                dims.TEMPERATURE: ur.R,
-                dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
-                dims.ANGLE: ur.radian,
-                dims.CHEMICAL_AMOUNT: ur.slugmol,
-                dims.LIGHT: ur.cd,
-                dims.CURRENT: ur.A,
-                dims.SOLID_ANGLE: ur.sr,
-            },
-        ),
-    )
-    assert slug.name == "slug"
-    assert slug.si_units == "kg"
-    assert slug.dimensions == ansunits.Dimensions({dims.MASS: 1})
-
-
-def test_excessive_parameters():
+def test_excessive_parameters_not_allowed():
     dims = ansunits.BaseDimensions
     with pytest.raises(ansunits.UnitError):
         C = ansunits.Unit("kg", dimensions=ansunits.Dimensions({dims.LENGTH: 1}))

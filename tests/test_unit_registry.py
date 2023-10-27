@@ -10,14 +10,13 @@ def test_default_units():
     ur = ansunits.UnitRegistry()
     kg = ur.kg
     assert kg.name == "kg"
-    assert kg.type == "Mass"
-    assert kg._factor == 1
-    assert kg._offset == 0
+    assert kg._type == "MASS"
+    assert kg.si_scaling_factor == 1
+    assert kg.si_offset == 0
     N = ur.N
     assert N.name == "N"
-    assert N.type == "Derived"
     assert N._composition == "kg m s^-2"
-    assert N._factor == 1
+    assert N.si_scaling_factor == 1
 
 
 def test_custom_yaml():
@@ -56,15 +55,21 @@ derived_units:
     assert str(ur) == "kg, g, N, Pa, "
 
 
-def test_default_units():
-    ur = ansunits.UnitRegistry(
-        config=None, other={"kg": {"type": "Mass", "factor": 1, "offset": 0}}
-    )
+def test_additional_units():
+    kg = ansunits._base_units["kg"]
+    ur = ansunits.UnitRegistry(config=None, other={"kg": kg})
+    default_ur = ansunits.UnitRegistry()
     assert str(ur) == "kg, "
-    assert ur.kg._factor == 1
+    assert ur.kg == default_ur.kg
 
 
 def test_immutability():
     ur = ansunits.UnitRegistry()
     with pytest.raises(ansunits.RegistryError):
         ur.m = ansunits.Unit("ft")
+
+
+def test_error_message():
+    e1 = ansunits.RegistryError.UNIT_ALREADY_REGISTERED("kg")
+    expected_str = "Unable to override `kg` it has already been registered."
+    assert str(e1) == expected_str

@@ -84,12 +84,6 @@ class Quantity(float):
         dimensions: ansunits.Dimensions = None,
         copy_from: ansunits.Quantity = None,
     ):
-        if (
-            (units and quantity_map)
-            or (units and dimensions)
-            or (quantity_map and dimensions)
-        ):
-            raise QuantityError.EXCESSIVE_PARAMETERS()
 
         if value == None and not copy_from:
             raise QuantityError.MISSING_REQUIREMENT()

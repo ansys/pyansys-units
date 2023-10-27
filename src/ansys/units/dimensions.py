@@ -128,8 +128,9 @@ class Dimensions:
                 dims[dim] -= value
             else:
                 return False
-        if sum(dims.values()) == 0:
-            return True
+        if [False for v in dims.values() if v != 0]:
+            return False
+        return True
 
     def __ne__(self, other):
         return not self.__eq__(other)
