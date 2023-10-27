@@ -84,7 +84,6 @@ class Quantity(float):
         dimensions: ansunits.Dimensions = None,
         copy_from: ansunits.Quantity = None,
     ):
-
         if value == None and not copy_from:
             raise QuantityError.MISSING_REQUIREMENT()
 

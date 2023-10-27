@@ -173,7 +173,6 @@ def test_ne():
 
 
 def test_eq():
-
     x = ansunits.Quantity(10.5, "cm")
     y = ansunits.Quantity(10.5, "m")
     r = ansunits.Quantity(10.5, "")
