@@ -240,6 +240,21 @@ class Unit:
 
         return units.rstrip()
 
+    def _to_string(self):
+        """
+        Creates a string representation of the unit.
+
+        Returns
+        -------
+        str
+            A string version of the unit.
+        """
+        returned_string = ""
+        attrs = self.__dict__
+        for key in attrs:
+            returned_string += f"{key}: {attrs[key]}\n"
+        return returned_string
+
     def filter_unit_term(self, unit_term: str) -> tuple:
         """
         Separate multiplier, base, and exponent from a unit term.
@@ -379,18 +394,10 @@ class Unit:
         return self._dimensions
 
     def __str__(self):
-        returned_string = ""
-        attrs = self.__dict__
-        for key in attrs:
-            returned_string += f"{key}: {attrs[key]}\n"
-        return returned_string
+        return self._to_string()
 
     def __repr__(self):
-        returned_string = ""
-        attrs = self.__dict__
-        for key in attrs:
-            returned_string += f"{key}: {attrs[key]}\n"
-        return returned_string
+        return self._to_string()
 
     def __add__(self, __value):
         new_dimensions = self.dimensions + __value.dimensions

@@ -123,7 +123,7 @@ def test_comparison_operations():
     assert (d1 <= d1) == None
 
     with pytest.raises(ansunits.DimensionsError):
-        d1 > d2
+        d2 > d1
     with pytest.raises(ansunits.DimensionsError):
         d1 >= d2
     with pytest.raises(ansunits.DimensionsError):

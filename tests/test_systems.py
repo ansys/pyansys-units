@@ -18,6 +18,23 @@ def test_pre_defined_unit_system():
     assert us.SOLID_ANGLE == ur.sr
 
 
+def test_repr():
+    us = ansunits.UnitSystem()
+    us_dict = {
+        "MASS": "kg",
+        "LENGTH": "m",
+        "TIME": "s",
+        "TEMPERATURE": "K",
+        "TEMPERATURE_DIFFERENCE": "delta_K",
+        "ANGLE": "radian",
+        "CHEMICAL_AMOUNT": "mol",
+        "LIGHT": "cd",
+        "CURRENT": "A",
+        "SOLID_ANGLE": "sr",
+    }
+    assert repr(us) == str(us_dict)
+
+
 def test_copy():
     us = ansunits.UnitSystem(unit_sys="BT")
     us1 = ansunits.UnitSystem(copy_from=us)
@@ -144,6 +161,20 @@ def test_not_base_unit_update():
 def test_invalid_unit_sys():
     with pytest.raises(ansunits.UnitSystemError):
         us2 = ansunits.UnitSystem(unit_sys="Standard")
+
+
+def test_wrong_unit_type():
+    ur = ansunits.UnitRegistry()
+    us = ansunits.UnitSystem()
+
+    with pytest.raises(ansunits.UnitSystemError):
+        us.TIME = ur.m
+    with pytest.raises(ansunits.UnitSystemError):
+        us.LIGHT = ur.sr
+    with pytest.raises(ansunits.UnitSystemError):
+        us.CURRENT = ur.ft
+    with pytest.raises(ansunits.UnitSystemError):
+        us.SOLID_ANGLE = ur.radian
 
 
 def test_error_messages():
