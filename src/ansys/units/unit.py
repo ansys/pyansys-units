@@ -39,6 +39,11 @@ class Unit:
         unit_sys: ansunits.UnitSystem = None,
         copy_from: ansunits.Unit = None,
     ):
+        if copy_from:
+            if (units) and units != copy_from.name:
+                raise UnitError.INCONSISTENT_DIMENSIONS()
+            units = copy_from.name
+
         if units:
             self._name = units
             _dimensions = self._units_to_dim(units=units)
@@ -47,10 +52,7 @@ class Unit:
                 raise UnitError.INCONSISTENT_DIMENSIONS()
             if not self._dimensions:
                 self._name = ""
-        elif copy_from:
-            self._name = copy_from.name
-            if (dimensions or units) and self._dimensions != copy_from.dimensions:
-                raise UnitError.INCONSISTENT_DIMENSIONS()
+
         elif dimensions:
             self._dimensions = dimensions
             self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)

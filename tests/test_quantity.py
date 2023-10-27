@@ -178,7 +178,7 @@ def test_eq():
     r = ansunits.Quantity(10.5, "")
 
     l = ansunits.Quantity(10.5, "cm")
-    m = ansunits.Quantity(copy_from=y)
+    m = ansunits.Quantity(10.5, "kg")
 
     n = ansunits.Quantity(10.5, "")
 
