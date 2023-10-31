@@ -219,15 +219,13 @@ class Unit:
 
         # Split unit string into terms and parse data associated with individual terms
         for term in units.split(" "):
-            _, unit_term, unit_term_exponent = self.filter_unit_term(term)
-
-            if unit_term in terms_and_exponents:
-                terms_and_exponents[unit_term] += unit_term_exponent
+            multiplier, unit_term, unit_term_exponent = self.filter_unit_term(term)
+            full_term = f"{multiplier}{unit_term}"
+            if full_term in terms_and_exponents:
+                terms_and_exponents[full_term] += unit_term_exponent
             else:
-                terms_and_exponents[unit_term] = unit_term_exponent
-
+                terms_and_exponents[full_term] = unit_term_exponent
         units = ""
-
         # Concatenate unit string
         for term, exponent in terms_and_exponents.items():
             if not (exponent):
@@ -239,6 +237,38 @@ class Unit:
                 units += f"{term}^{exponent} "
 
         return units.rstrip()
+
+    def _new_units(self, __value, op):
+        """
+        Generate a new units depending on mathematical operation.
+
+        Parameters
+        ----------
+        __value : int | float | Unit
+            The given operand.
+        op : str
+            '*', '/', '**'.
+
+        Returns
+        -------
+        Unit
+            New unit instance.
+        """
+        new_units = ""
+        if op == "**":
+            for term in self.name.split(" "):
+                multiplier, base, exponent = self.filter_unit_term(term)
+                exponent *= __value
+                new_units += f"{multiplier}{base}^{exponent} "
+        if op == "/":
+            new_units = self.name
+            for term in __value.name.split(" "):
+                multiplier, base, exponent = self.filter_unit_term(term)
+                new_units += f" {multiplier}{base}^-{exponent}"
+        if op == "*":
+            new_units = f"{self.name} {__value.name}"
+
+        return Unit(self._condense(new_units))
 
     def filter_unit_term(self, unit_term: str) -> tuple:
         """
@@ -401,8 +431,7 @@ class Unit:
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
-            new_dimensions = self.dimensions * __value.dimensions
-            return Unit(dimensions=new_dimensions)
+            return self._new_units(__value, op="*")
 
         elif isinstance(__value, (float, int)) and not isinstance(
             __value, ansunits.Quantity
@@ -424,15 +453,13 @@ class Unit:
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):
-            new_dimensions = self.dimensions / __value.dimensions
-            return Unit(dimensions=new_dimensions)
+            return self._new_units(__value, op="/")
 
         else:
             return NotImplemented
 
     def __pow__(self, __value):
-        new_dimensions = self.dimensions**__value
-        return Unit(dimensions=new_dimensions)
+        return self._new_units(__value, op="**")
 
     def __eq__(self, other_unit):
         if not isinstance(other_unit, ansunits.Unit) and self.name:
