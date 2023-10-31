@@ -264,7 +264,7 @@ class Unit:
             new_units = self.name
             for term in __value.name.split(" "):
                 multiplier, base, exponent = self.filter_unit_term(term)
-                new_units += f" {multiplier}{base}^-{exponent}"
+                new_units += f" {multiplier}{base}^{exponent*-1}"
         if op == "*":
             new_units = f"{self.name} {__value.name}"
 
