@@ -15,6 +15,9 @@ class Dimensions:
     A dictionary of ``BaseDimensions`` and exponent is required
     for a non-dimensionless object.
 
+    Using both dimensions and copy_from arguments will result in overriding the
+    copy with the new dimensions.
+
     Parameters
     ----------
     dimensions : dict, optional
@@ -29,11 +32,11 @@ class Dimensions:
         copy_from: ansunits.Dimensions = None,
     ):
         dimensions = dimensions or {}
+        self._dimensions = {
+            **(copy_from._dimensions if copy_from else {}),
+            **(dimensions),
+        }
 
-        if copy_from:
-            dimensions = {**copy_from._dimensions, **dimensions}
-
-        self._dimensions = dimensions.copy()
         for x, y in dimensions.items():
             if not isinstance(x, ansunits.BaseDimensions):
                 raise DimensionsError.INCORRECT_DIMENSIONS()
