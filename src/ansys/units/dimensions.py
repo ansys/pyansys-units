@@ -15,8 +15,8 @@ class Dimensions:
     A dictionary of ``BaseDimensions`` and exponent is required
     for a non-dimensionless object.
 
-    Using both dimensions and copy_from arguments will result in overriding the
-    copy with the new dimensions.
+    If any keys are duplicated in ``copy_from`` and ``dimensions`` then the
+    associated values from ``dimensions`` are used.
 
     Parameters
     ----------
