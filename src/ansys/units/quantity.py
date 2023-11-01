@@ -140,7 +140,7 @@ class Quantity:
         return Quantity(value=new_value, units=to_units)
 
     def __float__(self):
-        return float(self.si_value)
+        return float(self.value)
 
     def __array__(self):
         if "numpy" in sys.modules:
