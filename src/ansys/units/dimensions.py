@@ -15,18 +15,28 @@ class Dimensions:
     A dictionary of ``BaseDimensions`` and exponent is required
     for a non-dimensionless object.
 
+    If any keys are duplicated in ``copy_from`` and ``dimensions`` then the
+    associated values from ``dimensions`` are used.
+
     Parameters
     ----------
     dimensions : dict, optional
         Dictionary of {``BaseDimensions``: exponent, ...}.
+    copy_from : Dimensions, optional
+        A previous instance of Dimensions.
     """
 
     def __init__(
         self,
         dimensions: dict[ansunits.BaseDimensions, Union[int, float]] = None,
+        copy_from: ansunits.Dimensions = None,
     ):
         dimensions = dimensions or {}
-        self._dimensions = dimensions.copy()
+        self._dimensions = {
+            **(copy_from._dimensions if copy_from else {}),
+            **(dimensions),
+        }
+
         for x, y in dimensions.items():
             if not isinstance(x, ansunits.BaseDimensions):
                 raise DimensionsError.INCORRECT_DIMENSIONS()
