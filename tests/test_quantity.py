@@ -179,6 +179,7 @@ def test_eq():
 
     l = ansunits.Quantity(10.5, "cm")
     m = ansunits.Quantity(10.5, "kg")
+
     n = ansunits.Quantity(10.5, "")
 
     assert x == l
@@ -438,6 +439,8 @@ def test_excessive_parameters_error():
             dimensions=ansunits.Dimensions({dims.MASS: 1}),
             quantity_map={"Velocity": 3},
         )
+    with pytest.raises(ansunits.QuantityError):
+        e2 = ansunits.Quantity()
 
 
 def test_incompatable_dimensions_error():
