@@ -1,7 +1,6 @@
 """Provides the ``Quantity`` class."""
 from __future__ import annotations
 
-import sys
 from typing import Union
 
 import ansys.units as ansunits
@@ -153,7 +152,7 @@ class Quantity:
         return self.value
 
     def __array__(self):
-        if "numpy" in sys.modules:
+        if _array:
             if isinstance(self.value, (float)):
                 return np.array([self.value])
             return self.value
@@ -161,7 +160,7 @@ class Quantity:
             raise QuantityError.REQUIRES_NUMPY()
 
     def __getitem__(self, idx):
-        if "numpy" in sys.modules:
+        if _array:
             value = self.__array__()[idx]
             return Quantity(value, self.units)
         else:
