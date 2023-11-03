@@ -9,7 +9,7 @@ try:
     import numpy as np
 
     _array = np.array
-except:
+except ImportError:
     _array = None
 
 
