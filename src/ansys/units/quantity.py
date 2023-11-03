@@ -6,6 +6,13 @@ from typing import Union
 
 import ansys.units as ansunits
 
+try:
+    import numpy as np
+
+    _array = np.array
+except:
+    _array = None
+
 
 class Quantity:
     """
@@ -55,15 +62,12 @@ class Quantity:
                 units = copy_from.units
                 value = copy_from.value
 
-        if isinstance(value, list):
-            try:
-                import numpy as np
-
-                self._value = np.array(value)
-            except:
-                raise QuantityError.REQUIRES_NUMPY()
+        if _array and not isinstance(value, (float, int)):
+            self._value = np.array(value)
+        elif not _array and not isinstance(value, (float, int)):
+            raise QuantityError.REQUIRES_NUMPY()
         else:
-            self._value = value
+            self._value = float(value)
 
         if quantity_map:
             units = ansunits.QuantityMap(quantity_map).units
@@ -146,17 +150,20 @@ class Quantity:
         return Quantity(value=new_value, units=to_units)
 
     def __float__(self):
-        return float(self.value)
+        return self.value
 
     def __array__(self):
         if "numpy" in sys.modules:
+            if isinstance(self.value, (float)):
+                return np.array([self.value])
             return self.value
         else:
             raise QuantityError.REQUIRES_NUMPY()
 
     def __getitem__(self, idx):
         if "numpy" in sys.modules:
-            return Quantity(self.value[idx], self.units)
+            value = self.__array__()[idx]
+            return Quantity(value, self.units)
         else:
             raise QuantityError.REQUIRES_NUMPY()
 
