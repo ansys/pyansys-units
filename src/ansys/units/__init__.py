@@ -1,6 +1,10 @@
 """Pyunits is a pythonic interface for units, unit systems, and unit conversions."""
 
-
+try:
+    import importlib.metadata as importlib_metadata
+except ModuleNotFoundError:
+    import importlib_metadata
+    
 import os
 
 from ansys.units._constants import (  # noqa: F401
