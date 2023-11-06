@@ -1,13 +1,6 @@
 """Pyunits is a pythonic interface for units, unit systems, and unit conversions."""
 
 
-try:
-    import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
-    import importlib_metadata
-
-__version__ = importlib_metadata.version(__name__.replace(".", "-"))
-
 import os
 
 from ansys.units._constants import (  # noqa: F401
@@ -18,6 +11,7 @@ from ansys.units._constants import (  # noqa: F401
     _QuantityType,
     _unit_systems,
 )
+from ansys.units._version import __version__  # noqa: F401
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions, DimensionsError  # noqa: F401
 from ansys.units.map import QuantityMap, QuantityMapError  # noqa: F401
