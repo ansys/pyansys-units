@@ -19,11 +19,19 @@ def test_derived_units():
     assert N.si_scaling_factor == 1
 
 
-def test_unitless():
-    unit = ansunits.Unit()
-    assert unit.name == ""
+def test_multiple_multipliers():
+    ten_meter = ansunits.Unit("kcm")
+    dam = ansunits.Unit("dam")
 
-    assert unit.dimensions == ansunits.Dimensions()
+    assert ten_meter == dam
+
+
+def test_unitless():
+    u_1 = ansunits.Unit()
+    u_2 = ansunits.Unit("m^0")
+
+    assert u_1.name == ""
+    assert u_1.dimensions == ansunits.Dimensions()
 
 
 def test_copy():
@@ -46,19 +54,60 @@ _si_offset: 273.15
 _si_units: K
 """
     assert str(C) == C_string
+    assert str(C) == repr(C)
+
+
+def test_add():
+    C = ansunits.Unit("C")
+    delta_C = ansunits.Unit("delta_C")
+    kg = ansunits.Unit("kg")
+    temp_C = C + delta_C
+
+    assert temp_C == ansunits.Unit("C")
+    assert kg + kg == None
+
+    with pytest.raises(ansunits.UnitError):
+        C + kg
 
 
 def test_unit_multiply_by_value():
     C = ansunits.Unit("C")
     seven_C = 7 * C
+
     assert seven_C.value == 7
     assert seven_C.units == ansunits.Unit("C")
+
+
+def test_unit_multiply_by_quantity():
+    q = ansunits.Quantity(7, "kg")
+    C = ansunits.Unit("C")
+
+    assert C.__mul__(q) == NotImplemented
 
 
 def test_reverse_multiply():
     ur = ansunits.UnitRegistry()
     new_unit = ur.K * ur.kg * ur.J
     assert new_unit.name == "K kg^2 m^2 s^-2"
+
+
+def test_sub():
+    C = ansunits.Unit("C")
+    kg = ansunits.Unit("kg")
+    delta_C = C - C
+
+    assert delta_C == ansunits.Unit("delta_C")
+    assert kg - kg == None
+
+    with pytest.raises(ansunits.UnitError):
+        C - kg
+
+
+def test_unit_divide_by_quantity():
+    q = ansunits.Quantity(7, "kg")
+    C = ansunits.Unit("C")
+
+    assert C.__truediv__(q) == NotImplemented
 
 
 def test_unit_div():
@@ -74,7 +123,24 @@ def test_unit_pow():
     assert kg_K_sq.name == "kg^2 K^2"
 
 
+def test_eq():
+    kg = ansunits.Unit("kg")
+    unitless = ansunits.Unit()
+    assert kg == kg
+    assert 7 == unitless
+
+
+def test_ne():
+    kg = ansunits.Unit("kg")
+    assert 7 != kg
+
+
 def test_excessive_parameters_not_allowed():
     dims = ansunits.BaseDimensions
     with pytest.raises(ansunits.UnitError):
         C = ansunits.Unit("kg", dimensions=ansunits.Dimensions({dims.LENGTH: 1}))
+
+
+def test_incorrect_unit_with_multiplier():
+    with pytest.raises(ansunits.UnitError):
+        ansunits.Unit("kbeans")
