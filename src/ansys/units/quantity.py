@@ -68,13 +68,14 @@ class Quantity:
         elif value is None:
             raise QuantityError.MISSING_REQUIREMENT()
 
-        if _array and not isinstance(value, (float, int)):
-            if isinstance(value, np.ndarray):
-                self._value = value
-            else:
-                self._value = np.array(value)
-        elif not _array and not isinstance(value, (float, int)):
-            raise QuantityError.REQUIRES_NUMPY()
+        if not isinstance(value, (float, int)):
+            if _array:
+                if isinstance(value, np.ndarray):
+                    self._value = value
+                else:
+                    self._value = np.array(value)
+            elif not _array:
+                raise QuantityError.REQUIRES_NUMPY()
         else:
             self._value = float(value)
 
