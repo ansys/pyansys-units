@@ -251,7 +251,7 @@ class Unit:
 
     def _new_units(self, __value, op):
         """
-        Generate a new units depending on mathematical operation.
+        Generate a new units instance depending on mathematical operation.
 
         Parameters
         ----------
