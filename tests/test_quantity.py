@@ -37,15 +37,23 @@ def test_copy():
 
 
 def test_array():
-    import numpy as np
+    try:
+        import numpy as np
 
-    arr = np.array([7, 6, 5])
-    meter = ansunits.Quantity(arr, "m")
+        arr = np.array([7, 6, 5])
+        meter = ansunits.Quantity(arr, "m")
 
-    assert np.array_equal(meter.value, arr)
-    list_meter = ansunits.Quantity([7, 6, 5], "m")
+        assert np.array_equal(meter.value, arr)
+        list_meter = ansunits.Quantity([7, 6, 5], "m")
 
-    assert np.array_equal(list_meter.value, arr)
+        assert np.array_equal(list_meter.value, arr)
+
+    except ImportError:
+        with pytest.raises(ansunits.QuantityError):
+            e1 = ansunits.Quantity(7, "kg").__array__()
+
+        with pytest.raises(ansunits.QuantityError):
+            e2 = ansunits.Quantity([7, 8, 9], "kg")
 
 
 def test_to():
