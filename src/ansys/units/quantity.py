@@ -58,18 +58,18 @@ class Quantity:
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        if value == None and not copy_from:
-            raise QuantityError.MISSING_REQUIREMENT()
-
         if copy_from:
             if value:
+                self.value = value
                 units = copy_from.units
             else:
                 units = copy_from.units
                 value = copy_from.value
+        elif value is None:
+            raise QuantityError.MISSING_REQUIREMENT()
 
         if _array and not isinstance(value, (float, int)):
-            if isinstance(value, np.array):
+            if isinstance(value, np.ndarray):
                 self._value = value
             else:
                 self._value = np.array(value)

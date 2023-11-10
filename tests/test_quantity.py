@@ -36,6 +36,18 @@ def test_copy():
     assert two_meter == ansunits.Quantity(2.0, "m")
 
 
+def test_array():
+    import numpy as np
+
+    arr = np.array([7, 6, 5])
+    meter = ansunits.Quantity(arr, "m")
+
+    assert np.array_equal(meter.value, arr)
+    list_meter = ansunits.Quantity([7, 6, 5], "m")
+
+    assert np.array_equal(list_meter.value, arr)
+
+
 def test_to():
     v = ansunits.Quantity(1.0, "m")
     to = v.to("ft")
