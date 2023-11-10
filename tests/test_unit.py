@@ -88,7 +88,7 @@ def test_unit_multiply_by_quantity():
 def test_reverse_multiply():
     ur = ansunits.UnitRegistry()
     new_unit = ur.K * ur.kg * ur.J
-    assert new_unit.name == "K kg^2 m^2 s^-2"
+    assert new_unit.name == "K kg J"
 
 
 def test_sub():

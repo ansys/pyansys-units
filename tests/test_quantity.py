@@ -25,6 +25,17 @@ def test_value_setter():
     assert v.units == ansunits.Unit("m")
 
 
+def test_copy():
+    meter = ansunits.Quantity(1.0, "m")
+    copy_meter = ansunits.Quantity(copy_from=meter)
+
+    assert meter == copy_meter
+
+    two_meter = ansunits.Quantity(2, copy_from=meter)
+
+    assert two_meter == ansunits.Quantity(2.0, "m")
+
+
 def test_to():
     v = ansunits.Quantity(1.0, "m")
     to = v.to("ft")
@@ -120,7 +131,7 @@ def test_pow():
     assert q1_sq.value == 100
     q2_sq = q2**2
     assert q2_sq.units == ansunits.Unit("m^2")
-    assert q2_sq.value == pytest.approx(2.3225759999999993, DELTA)
+    assert q2_sq.si_value == pytest.approx(2.3225759999999993, DELTA)
 
     assert float(q1) ** 2 == 100.0
     assert float(q2) ** 2 == pytest.approx(2.3225759999999993, DELTA)
@@ -133,7 +144,7 @@ def test_mul():
 
     q3 = q1 * q2
     assert q3.units == ansunits.Unit("m^2 s^-1")
-    assert q3.value == pytest.approx(15.239999999999998, DELTA)
+    assert float(q3) == pytest.approx(15.239999999999998, DELTA)
 
     q4 = q1 * u1
     assert q4.units == ansunits.Unit("kg m s^-1")
@@ -141,7 +152,7 @@ def test_mul():
 
     q5 = q2 * 3
     assert q5.units == ansunits.Unit("m")
-    assert q5.value == pytest.approx(4.571999999999999, DELTA)
+    assert float(q5) == pytest.approx(4.571999999999999, DELTA)
 
 
 def test_reverse_mul():

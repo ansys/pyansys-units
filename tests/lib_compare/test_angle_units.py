@@ -92,7 +92,7 @@ def test_pyunits_angle_works_with_trigonometry():
     sixty_degrees = Quantity(60.0, "degree")
     assert math.sin(float(half_pi_rads)) == pytest.approx(1.0)
     # see that PyUnits goes to radians for the float conversion, which is nice
-    assert math.cos(sixty_degrees.si_value) == pytest.approx(0.5)
+    assert math.cos(float(sixty_degrees)) == pytest.approx(0.5)
 
 
 @pytest.mark.developer_only

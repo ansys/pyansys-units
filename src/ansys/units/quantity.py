@@ -51,6 +51,13 @@ class Quantity:
         dimensions: ansunits.Dimensions = None,
         copy_from: ansunits.Quantity = None,
     ):
+        if (
+            (units and quantity_map)
+            or (units and dimensions)
+            or (quantity_map and dimensions)
+        ):
+            raise QuantityError.EXCESSIVE_PARAMETERS()
+
         if value == None and not copy_from:
             raise QuantityError.MISSING_REQUIREMENT()
 
@@ -62,7 +69,10 @@ class Quantity:
                 value = copy_from.value
 
         if _array and not isinstance(value, (float, int)):
-            self._value = np.array(value)
+            if isinstance(value, np.array):
+                self._value = value
+            else:
+                self._value = np.array(value)
         elif not _array and not isinstance(value, (float, int)):
             raise QuantityError.REQUIRES_NUMPY()
         else:
@@ -149,7 +159,7 @@ class Quantity:
         return Quantity(value=new_value, units=to_units)
 
     def __float__(self):
-        return self.value
+        return self.si_value
 
     def __array__(self):
         if _array:

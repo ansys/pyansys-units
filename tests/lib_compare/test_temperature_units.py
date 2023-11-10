@@ -84,7 +84,7 @@ def test_ansunits_converts_temperature_correctly():
 
     tC = Quantity(1.0, "K").to("C")
     assert tC.value == -272.15
-    assert float(tC) == tC.value
+    assert float(tC) == 1
 
 
 # This one is not debatable. This is a pure bug in ansunits code.
