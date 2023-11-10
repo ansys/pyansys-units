@@ -8,7 +8,7 @@ import ansys.units as ansunits
 try:
     import numpy as np
 
-    _array = np.array
+    _array = np
 except ImportError:
     _array = None
 
@@ -70,10 +70,10 @@ class Quantity:
 
         if not isinstance(value, (float, int)):
             if _array:
-                if isinstance(value, np.ndarray):
+                if isinstance(value, _array.ndarray):
                     self._value = value
                 else:
-                    self._value = np.array(value)
+                    self._value = _array.array(value)
             elif not _array:
                 raise QuantityError.REQUIRES_NUMPY()
         else:
@@ -162,7 +162,7 @@ class Quantity:
     def __array__(self):
         if _array:
             if isinstance(self.value, (float)):
-                return np.array([self.value])
+                return _array.array([self.value])
             return self.value
         else:
             raise QuantityError.REQUIRES_NUMPY()
