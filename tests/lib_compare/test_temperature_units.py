@@ -84,7 +84,7 @@ def test_ansunits_converts_temperature_correctly():
 
     tC = Quantity(1.0, "K").to("C")
     assert tC.value == -272.15
-    assert float(tC) == 1
+    assert tC.si_value == 1
 
 
 # This one is not debatable. This is a pure bug in ansunits code.
@@ -100,7 +100,7 @@ def test_ansunits_converts_temperature_difference_correctly():
     tC = dK.to("delta_C")
     assert tC.value == -1.0
     assert tC.units == Unit("delta_C")
-    assert float(tC) == -1.0
+    assert tC.si_value == -1.0
 
     dK = Quantity(2.0, "K") - Quantity(1.0, "K")
     assert dK.value == 1.0
@@ -109,4 +109,4 @@ def test_ansunits_converts_temperature_difference_correctly():
     tC = dK.to("delta_C")
     assert tC.value == 1.0
     assert tC.units == Unit("delta_C")
-    assert float(tC) == 1.0
+    assert tC.si_value == 1.0
