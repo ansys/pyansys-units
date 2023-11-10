@@ -159,9 +159,6 @@ class Quantity:
 
         return Quantity(value=new_value, units=to_units)
 
-    def __float__(self):
-        return self.si_value
-
     def __array__(self):
         if _array:
             if isinstance(self.value, (float)):
