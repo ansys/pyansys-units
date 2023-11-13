@@ -15,10 +15,10 @@ Clone and install
 Clone and install the latest PyAnsys Units release in development mode with
 these commands:
 
-.. code::
+.. code:: console
 
     git clone https://github.com/ansys/pyansys-units.git
-    cd ansunits
+    cd pyansys-units
     pip install pip -U
     pip install -e .
 
@@ -27,9 +27,9 @@ Build documentation
 Build the PyAnsys Units documentation locally by running these commands in the
 root directory of the repository:
 
-.. code::
+.. code:: console
 
-    pip install -r requirements/requirements_doc.txt
+    pip install -e .[doc]
     cd doc
     make html
 
@@ -40,7 +40,7 @@ directory into a web browser.
 You can clear all HTML files from the ``_builds/html`` directory with
 this command:
 
-.. code::
+.. code:: console
 
     make clean
 
@@ -57,13 +57,13 @@ PyAnsys Units is compliant with the `PyAnsys coding style
 `pre-commit <https://pre-commit.com/>`_ to check the code style. You can install
 and activate this tool with these commands:
 
-.. code:: bash
+.. code:: console
 
    python -m pip install pre-commit
    pre-commit install
 
 You can then directly execute ``pre-commit`` with this command:
 
-.. code:: bash
+.. code:: console
 
     pre-commit run --all-files --show-diff-on-failure

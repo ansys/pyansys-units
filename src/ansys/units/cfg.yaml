@@ -1,21 +1,4 @@
 ---
-# Dimension Order
-# ---------------
-#
-# Dimension type : Order
-
-dimension_order:
-  Mass: 1
-  Length: 2
-  Time: 3
-  Temperature: 4
-  Temperature Difference: 4
-  Angle: 5
-  Chemical Amount: 6
-  Light: 7
-  Current: 8
-  Solid Angle: 9
-
 # Multipliers
 # -----------
 #
@@ -54,158 +37,161 @@ multipliers:
 #
 # Predefined unit system prefix : Unit system units
 #
-# Unit systems must provide the unit for each fundamental unit.
+# Unit systems must provide the unit for each base unit.
 
 unit_systems:
   SI:
-    - kg
-    - m
-    - s
-    - K
-    - radian
-    - mol
-    - cd
-    - A
-    - sr
+    MASS: kg
+    LENGTH: m
+    TIME: s
+    TEMPERATURE: K
+    TEMPERATURE_DIFFERENCE: delta_K
+    ANGLE: radian
+    CHEMICAL_AMOUNT: mol
+    LIGHT: cd
+    CURRENT: A
+    SOLID_ANGLE: sr
   CGS:
-    - g
-    - cm
-    - s
-    - K
-    - radian
-    - mol
-    - cd
-    - A
-    - sr
+    MASS: g
+    LENGTH: cm
+    TIME: s
+    TEMPERATURE: K
+    TEMPERATURE_DIFFERENCE: delta_K
+    ANGLE: radian
+    CHEMICAL_AMOUNT: mol
+    LIGHT: cd
+    CURRENT: A
+    SOLID_ANGLE: sr
   BT:
-    - slug
-    - ft
-    - s
-    - R
-    - radian
-    - slugmol
-    - cd
-    - A
-    - sr
+    MASS: slug
+    LENGTH: ft
+    TIME: s
+    TEMPERATURE: R
+    TEMPERATURE_DIFFERENCE: delta_R
+    ANGLE: radian
+    CHEMICAL_AMOUNT: slugmol
+    LIGHT: cd
+    CURRENT: A
+    SOLID_ANGLE: sr
 
-# Fundamental Units
+# Base Units
 # -----------------
 #
 # Custom units -> Add new units and their associated properties to the list
 # below to use them within a quantity.
 #
-# <unit name>:        Primitive unit composed of `type`, `factor` and `offset`
+# <unit name>:        Primitive unit composed of `type`, `si_scaling_factor` and `si_offset`
 #   type: <name>      Must be one of the dimension types
-#   factor: <factor>  SI conversion factor
-#   offset: <offset>  SI conversion offset
+#   si_scaling_factor: <si_scaling_factor>  SI scaling factor
+#   si_offset: <si_offset>  SI conversion offset
 
-fundamental_units:
+base_units:
   kg:
-    type: Mass
-    factor: 1
-    offset: 0
+    type: MASS
+    si_scaling_factor: 1
+    si_offset: 0
   g:
-    type: Mass
-    factor: 0.001
-    offset: 0
+    type: MASS
+    si_scaling_factor: 0.001
+    si_offset: 0
   lb:
-    type: Mass
-    factor: 0.45359237
-    offset: 0
+    type: MASS
+    si_scaling_factor: 0.45359237
+    si_offset: 0
   lbm:
-    type: Mass
-    factor: 0.45359237
-    offset: 0
+    type: MASS
+    si_scaling_factor: 0.45359237
+    si_offset: 0
   slug:
-    type: Mass
-    factor: 14.59390293720637
-    offset: 0
+    type: MASS
+    si_scaling_factor: 14.59390293720637
+    si_offset: 0
   m:
-    type: Length
-    factor: 1
-    offset: 0
+    type: LENGTH
+    si_scaling_factor: 1
+    si_offset: 0
   cm:
-    type: Length
-    factor: 0.01
-    offset: 0
+    type: LENGTH
+    si_scaling_factor: 0.01
+    si_offset: 0
   ft:
-    type: Length
-    factor: 0.30479999999999996
-    offset: 0
+    type: LENGTH
+    si_scaling_factor: 0.30479999999999996
+    si_offset: 0
   in:
-    type: Length
-    factor: 0.0254
-    offset: 0
+    type: LENGTH
+    si_scaling_factor: 0.0254
+    si_offset: 0
   s:
-    type: Time
-    factor: 1
-    offset: 0
+    type: TIME
+    si_scaling_factor: 1
+    si_offset: 0
   A:
-    type: Current
-    factor: 1
-    offset: 0
+    type: CURRENT
+    si_scaling_factor: 1
+    si_offset: 0
   mol:
-    type: Chemical Amount
-    factor: 1
-    offset: 0
+    type: CHEMICAL_AMOUNT
+    si_scaling_factor: 1
+    si_offset: 0
   slugmol:
-    type: Chemical Amount
-    factor: 14593.9
-    offset: 0
+    type: CHEMICAL_AMOUNT
+    si_scaling_factor: 14593.9
+    si_offset: 0
   cd:
-    type: Light
-    factor: 1
-    offset: 0
+    type: LIGHT
+    si_scaling_factor: 1
+    si_offset: 0
   sr:
-    type: Solid Angle
-    factor: 1
-    offset: 0
+    type: SOLID_ANGLE
+    si_scaling_factor: 1
+    si_offset: 0
   radian:
-    type: Angle
-    factor: 1
-    offset: 0
+    type: ANGLE
+    si_scaling_factor: 1
+    si_offset: 0
   degree:
-    type: Angle
-    factor: 0.017453292519943295
-    offset: 0
+    type: ANGLE
+    si_scaling_factor: 0.017453292519943295
+    si_offset: 0
   K:
-    type: Temperature
-    factor: 1
-    offset: 0
+    type: TEMPERATURE
+    si_scaling_factor: 1
+    si_offset: 0
   C:
-    type: Temperature
-    factor: 1
-    offset: 273.15
+    type: TEMPERATURE
+    si_scaling_factor: 1
+    si_offset: 273.15
   F:
-    type: Temperature
-    factor: 0.55555555555
-    offset: 459.67
+    type: TEMPERATURE
+    si_scaling_factor: 0.55555555555
+    si_offset: 459.67
   R:
-    type: Temperature
-    factor: 0.55555555555
-    offset: 0
+    type: TEMPERATURE
+    si_scaling_factor: 0.55555555555
+    si_offset: 0
   delta_K:
-    type: Temperature Difference
-    factor: 1
-    offset: 0
+    type: TEMPERATURE_DIFFERENCE
+    si_scaling_factor: 1
+    si_offset: 0
   delta_C:
-    type: Temperature Difference
-    factor: 1
-    offset: 0
+    type: TEMPERATURE_DIFFERENCE
+    si_scaling_factor: 1
+    si_offset: 0
   delta_F:
-    type: Temperature Difference
-    factor: 0.55555555555
-    offset: 0
+    type: TEMPERATURE_DIFFERENCE
+    si_scaling_factor: 0.55555555555
+    si_offset: 0
   delta_R:
-    type: Temperature Difference
-    factor: 0.55555555555
-    offset: 0
+    type: TEMPERATURE_DIFFERENCE
+    si_scaling_factor: 0.55555555555
+    si_offset: 0
 
 # Derived Units
 # -------------
-# Derived units are composed from the fundamental units.  Each derived unit must
+# Derived units are composed from the base units.  Each derived unit must
 # provide a `composition` and `factor`. The `composition` specifies  the
-# fundamental units and their exponents.  The `factor` provides the conversion
+# base units and their exponents.  The `factor` provides the conversion
 # from the composed unit string to the derived unit.
 #
 # Specification format:

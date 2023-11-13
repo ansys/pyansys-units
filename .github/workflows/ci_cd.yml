@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAIN_PYTHON_VERSION: '3.10'
+  MAIN_PYTHON_VERSION: '3.9'
   DOCUMENTATION_CNAME: 'units.docs.pyansys.com'
   LIBRARY_NAME: 'ansys-units'
   LIBRARY_NAMESPACE: 'ansys.units'
@@ -47,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: ansys/actions/build-wheelhouse@v4
         with:
@@ -62,7 +62,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11']
       fail-fast: false
     steps:
       - uses: ansys/actions/tests-pytest@v4

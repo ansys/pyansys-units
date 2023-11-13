@@ -3,9 +3,9 @@ import math
 import pytest
 import util
 
-# pint and pyfluent disagree about whether angles are dimensionless.
+# pint and PyUnits disagree about whether angles are dimensionless.
 # Yes, angles are dimensionless, and this is pint's point of view.
-# PyFluent follows CFX by saying that angle is a dimension, or it's
+# PyUnits follows CFX by saying that angle is a dimension, or it's
 # convenient to treat it as a dimension. It adds a constraints that
 # avoid some tricky business, as shown later.
 
@@ -23,19 +23,18 @@ def test_pint_angles_are_dimensionless():
     assert str(angle_in_radians_dimensions) == "dimensionless"
 
 
-def test_pyfluent_angles_have_angle_dimensions():
-    from lib_compare.util.pyunit import TestDimension
-
+def test_pyunits_angles_have_angle_dimensions():
+    from ansys.units import BaseDimensions, Dimensions
     from ansys.units.quantity import Quantity
 
     radian = Quantity(1.0, "radian")
-    assert radian.dimensions == TestDimension({TestDimension.ANGLE: 1})
+    assert radian.dimensions == Dimensions({BaseDimensions.ANGLE: 1})
     degree = Quantity(1.0, "degree")
-    assert degree.dimensions == TestDimension({TestDimension.ANGLE: 1})
+    assert degree.dimensions == Dimensions({BaseDimensions.ANGLE: 1})
 
 
 # pint is happy to convert between angle and dimensionless because it
-# sees them as equivalent. PyFluent naturally doesn't allow it.
+# sees them as equivalent. PyUnits naturally doesn't allow it.
 
 
 @pytest.mark.developer_only
@@ -58,7 +57,7 @@ def test_pint_angle_and_dimensionless_are_convertible():
     assert num_deg_rom_rad == util.one_degree_in_radians
 
 
-def test_pyfluent_angle_and_dimensionless_are_not_convertible():
+def test_pyunits_angle_and_dimensionless_are_not_convertible():
     from ansys.units.quantity import Quantity, QuantityError
 
     no_dim = Quantity(1.0, "")
@@ -86,13 +85,13 @@ def test_pint_angle_works_with_trigonometry():
     assert math.cos(float(sixty_degrees)) == pytest.approx(0.5)
 
 
-def test_pyfluent_angle_works_with_trigonometry():
+def test_pyunits_angle_works_with_trigonometry():
     from ansys.units.quantity import Quantity
 
     half_pi_rads = Quantity(0.5 * math.pi, "radian")
     sixty_degrees = Quantity(60.0, "degree")
     assert math.sin(float(half_pi_rads)) == pytest.approx(1.0)
-    # see that PyFluent goes to radians for the float conversion, which is nice
+    # see that PyUnits goes to radians for the float conversion, which is nice
     assert math.cos(float(sixty_degrees)) == pytest.approx(0.5)
 
 
