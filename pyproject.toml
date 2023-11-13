@@ -5,10 +5,10 @@ build-backend = "flit_core.buildapi"
 [project]
 # Check https://flit.readthedocs.io/en/latest/pyproject_toml.html for all available sections
 name = "ansys-units"
-version = "0.1.dev0"
+version = "0.2.dev0"
 description = "Pythonic interface for units, unit systems, and unit conversions."
 readme = "README.rst"
-requires-python = ">=3.8,<4"
+requires-python = ">=3.9,<4"
 license = {file = "LICENSE"}
 authors = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
 maintainers = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
@@ -18,7 +18,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -31,20 +30,12 @@ dependencies = [
 
 [project.optional-dependencies]
 doc = [
-    "ansys-sphinx-theme==0.10.3",
-    "jupyter_sphinx==0.4.0",
+    "ansys-sphinx-theme==0.12.5",
     "matplotlib==3.7.2",
-    "numpydoc==1.5.0",
-    "pypandoc==1.11",
-    "pytest-sphinx==0.5.0",
-    "Sphinx==7.2.5",
-    "sphinx-autobuild==2021.3.14",
-    "sphinx-autodoc-typehints==1.24.0",
+    "numpydoc==1.6.0",
+    "Sphinx==7.2.6",
     "sphinx-copybutton==0.5.2",
     "sphinx-gallery==0.13.0",
-    "sphinx-notfound-page==1.0.0",
-    "sphinxcontrib-websupport==1.2.6",
-    "sphinxemoji==0.2.0",
 ]
 tests = [
     "pytest==7.4.0",
@@ -53,10 +44,10 @@ tests = [
 ]
 
 [project.urls]
-Source = "https://github.com/ansys/pyunits"
-Issues = "https://github.com/ansys/pyunits/issues"
-Documentation = "https://pyunits.docs.pyansys.com"
-Releases = "https://github.com/ansys/pyunits/releases"
+Source = "https://github.com/ansys/pyansys-units"
+Issues = "https://github.com/ansys/pyansys-units/issues"
+Documentation = "https://ansunits.docs.pyansys.com"
+Releases = "https://github.com/ansys/pyansys-units/releases"
 
 [tool.flit.module]
 name = "ansys.units"
@@ -64,6 +55,9 @@ name = "ansys.units"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --cov=ansys.units --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term --durations 0 --show-capture=all"
+markers = [
+    "developer_only: tests that must not run on github",
+]
 
 [tool.black]
 line-length = 88

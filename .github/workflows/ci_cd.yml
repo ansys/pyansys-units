@@ -2,6 +2,7 @@ name: Github Actions
 
 on:
   pull_request:
+  workflow_dispatch:
   push:
     tags:
       - "*"
@@ -13,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAIN_PYTHON_VERSION: '3.10'
-  DOCUMENTATION_CNAME: 'pyunits.docs.pyansys.com'
+  MAIN_PYTHON_VERSION: '3.9'
+  DOCUMENTATION_CNAME: 'units.docs.pyansys.com'
   LIBRARY_NAME: 'ansys-units'
   LIBRARY_NAMESPACE: 'ansys.units'
 
@@ -46,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11']
     steps:
       - uses: ansys/actions/build-wheelhouse@v4
         with:
@@ -61,10 +62,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11']
       fail-fast: false
     steps:
       - uses: ansys/actions/tests-pytest@v4
+        with:
+          pytest-markers: '-m "not developer_only"'
 
   doc-build:
     name: "Build documentation"
@@ -98,11 +101,18 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   release:
-    name: "Release project to public PyPI and GitHub"
+    name: "Release project to private, public PyPI and GitHub"
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     needs: [build-library]
     runs-on: ubuntu-latest
     steps:
+      - name: "Release to the private PyPI repository"
+        uses: ansys/actions/release-pypi-private@v4
+        with:
+          library-name: ${{ env.LIBRARY_NAME }}
+          twine-username: "__token__"
+          twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
+
       - name: "Release to the public PyPI repository"
         uses: ansys/actions/release-pypi-public@v4
         with:

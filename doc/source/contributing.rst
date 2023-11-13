@@ -6,30 +6,30 @@ Contribute
 Overall guidance on contributing to a PyAnsys library appears in the
 `Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic in
 the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar with
-this guide before attempting to contribute to PyUnits.
+this guide before attempting to contribute to PyAnsys Units.
 
-The following contribution information is specific to PyUnits.
+The following contribution information is specific to PyAnsys Units.
 
 Clone and install
 -----------------
-Clone and install the latest PyUnits release in development mode with
+Clone and install the latest PyAnsys Units release in development mode with
 these commands:
 
-.. code::
+.. code:: console
 
-    git clone https://github.com/ansys/pyunits.git
-    cd pyunits
+    git clone https://github.com/ansys/pyansys-units.git
+    cd pyansys-units
     pip install pip -U
     pip install -e .
 
 Build documentation
 -------------------
-Build the PyUnits documentation locally by running these commands in the
+Build the PyAnsys Units documentation locally by running these commands in the
 root directory of the repository:
 
-.. code::
+.. code:: console
 
-    pip install -r requirements/requirements_doc.txt
+    pip install -e .[doc]
     cd doc
     make html
 
@@ -40,30 +40,30 @@ directory into a web browser.
 You can clear all HTML files from the ``_builds/html`` directory with
 this command:
 
-.. code::
+.. code:: console
 
     make clean
 
 Post issues
 -----------
-Use the `PyUnits Issues <https://github.com/ansys/pyunits/issues>`_ page to
+Use the `PyAnsys Units Issues <https://github.com/ansys/pyansys-units/issues>`_ page to
 report bugs and request new features.
 
 
 Adhere to code style
 --------------------
-PyUnits is compliant with the `PyAnsys coding style
+PyAnsys Units is compliant with the `PyAnsys coding style
 <https://dev.docs.pyansys.com/coding-style/index.html>`_. It uses
 `pre-commit <https://pre-commit.com/>`_ to check the code style. You can install
 and activate this tool with these commands:
 
-.. code:: bash
+.. code:: console
 
    python -m pip install pre-commit
    pre-commit install
 
 You can then directly execute ``pre-commit`` with this command:
 
-.. code:: bash
+.. code:: console
 
     pre-commit run --all-files --show-diff-on-failure
