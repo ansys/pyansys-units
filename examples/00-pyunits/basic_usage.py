@@ -29,8 +29,8 @@ import ansys.units as ansunits
 # Create quantities
 # ~~~~~~~~~~~~~~~~~
 # You can instantiate quantities using one of three methods:
-# - Unit strings : str
-# - Dimensions : list
+# - Unit strings : str, Unit
+# - Dimensions : Dimensions
 # - Quantity maps : dict
 
 # Unit strings
@@ -43,13 +43,15 @@ torque = ansunits.Quantity(value=5, units="N m")
 
 # Dimensions
 
-vol_dims = [0, 3]
+dims = ansunits.BaseDimensions
+
+vol_dims = ansunits.Dimensions({dims.LENGTH: 3})
 volume = ansunits.Quantity(value=1, dimensions=vol_dims)
 
-acc_dims = [0, 1, -2]
+acc_dims = ansunits.Dimensions({dims.LENGTH: 1, dims.TIME: -2})
 acceleration = ansunits.Quantity(value=3, dimensions=acc_dims)
 
-tor_dims = [1, 2, -2]
+tor_dims = ansunits.Dimensions({dims.MASS: 1, dims.LENGTH: 2, dims.TIME: -2})
 torque = ansunits.Quantity(value=5, dimensions=tor_dims)
 
 # Quantity map
@@ -72,20 +74,19 @@ torque = ansunits.Quantity(value=5, quantity_map=tor_map)
 # 2. units : str
 # 3. si_value : float | int
 # 4. si_units : str
-# 5. dimensions : list
+# 5. dimensions : dict
 # 6. is_dimensionless : bool
-# 7. type : str
+
 
 cap_map = {"Capacitance": 1}
 capacitance = ansunits.Quantity(value=50, quantity_map=cap_map)
 
 capacitance.value  # >>> 50.0
-capacitance.units  # >>> "farad"
+capacitance.units  # >>> "kg^-1 m^-2 s^4 A^2"
 capacitance.si_value  # >>> 50.0
 capacitance.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
-capacitance.dimensions  # >>> [-1.0, -2.0, 4.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0]
+capacitance.dimensions  # >>> {'MASS': -1.0, 'LENGTH': -2.0, 'TIME': 4.0, 'CURRENT': 2.0}
 capacitance.is_dimensionless  # >>> False
-capacitance.type  # >>> "Derived"
 
 ###############################################################################
 # Perform arithmetic operations
@@ -168,32 +169,47 @@ pas.units  # >>> "Pa s"
 ###############################################################################
 # Instantiate unit systems
 # ~~~~~~~~~~~~~~~~~~~~~~~~
-# You can instantiate unit systems using one of two methods:
+# You can instantiate unit systems using a few methods:
 #
 # - Custom units
 # - Predefined unit systems
+# - Copy from a preexisting unit system
+# - Combinations of these
 
 # Custom units
 
-sys_units = ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
-sys = ansunits.UnitSystem(name="sys", base_units=sys_units)
+dims = ansunits.BaseDimensions
+sys_units = {dims.MASS: "slug", dims.LENGTH: "ft"}
+sys = ansunits.UnitSystem(base_units=sys_units, unit_sys="SI")
 
-sys.name  # >>> "sys"
-sys.base_units  # >>> ["kg", "m", "s", "K", "radian", "mol", "cd", "A", "sr"]
+sys.base_units  # >>> ["slug", "ft", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
 
 # Predefined unit systems
 
 cgs = ansunits.UnitSystem(unit_sys="CGS")
 
-cgs.name  # >>> "cgs"
-cgs.base_units  # >>> ['g', 'cm', 's', 'K', 'radian', 'mol', 'cd', 'A', 'sr']
+cgs.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
+
+# Copy from a preexisting unit system
+
+cgs2 = ansunits.UnitSystem(copy_from=cgs)
+
+cgs2.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
+
+# Combinations of these
+
+sys_units = {dims.MASS: "slug", dims.LENGTH: "ft", dims.ANGLE: "degree"}
+cgs_modified = ansunits.UnitSystem(base_units=sys_units, copy_from=cgs)
+
+cgs_modified.base_units  # >>> ['slug', 'ft', 's', 'K', "delta_K", 'degree', 'mol', 'cd', 'A', 'sr']
+
 
 ###############################################################################
 # Create a unit system independently
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # You can create a unit system independently and apply it to quantities.
 
-si = ansunits.UnitSystem(unit_sys="SI")
+si = ansunits.UnitSystem()
 fps = ansunits.Quantity(value=11.2, units="ft s^-1")
 
 mps = si.convert(fps)

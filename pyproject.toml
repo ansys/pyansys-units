@@ -5,10 +5,10 @@ build-backend = "flit_core.buildapi"
 [project]
 # Check https://flit.readthedocs.io/en/latest/pyproject_toml.html for all available sections
 name = "ansys-units"
-version = "0.1.0"
+version = "0.2.dev0"
 description = "Pythonic interface for units, unit systems, and unit conversions."
 readme = "README.rst"
-requires-python = ">=3.8,<4"
+requires-python = ">=3.9,<4"
 license = {file = "LICENSE"}
 authors = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
 maintainers = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
@@ -18,7 +18,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -31,7 +30,7 @@ dependencies = [
 
 [project.optional-dependencies]
 doc = [
-    "ansys-sphinx-theme==0.10.3",
+    "ansys-sphinx-theme==0.12.5",
     "matplotlib==3.7.2",
     "numpydoc==1.6.0",
     "Sphinx==7.2.5",
