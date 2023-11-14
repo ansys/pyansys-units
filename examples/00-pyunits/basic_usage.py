@@ -136,7 +136,9 @@ q8.units  # >>> "m^2 s^-2"
 
 # Roots
 
-math.sqrt(q2)  # >>> 2.2360679775
+q9 = ansunits.Quantity(5.0, "")
+
+math.sqrt(q9)  # >>> 2.2360679775
 
 # Trigonometry
 
