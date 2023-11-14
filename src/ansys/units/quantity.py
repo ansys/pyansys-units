@@ -60,7 +60,6 @@ class Quantity:
 
         if copy_from:
             if value:
-                self.value = value
                 units = copy_from.units
             else:
                 units = copy_from.units
@@ -158,6 +157,17 @@ class Quantity:
             )
 
         return Quantity(value=new_value, units=to_units)
+
+    def __float__(self):
+        base_dims = ansunits.BaseDimensions
+        dims = ansunits.Dimensions
+        if self.dimensions in [
+            dims(),
+            dims(dimensions={base_dims.ANGLE: 1.0}),
+            dims(dimensions={base_dims.SOLID_ANGLE: 1.0}),
+        ]:
+            return self.si_value
+        raise QuantityError.FLOAT()
 
     def __array__(self):
         if _array:
@@ -332,3 +342,7 @@ class QuantityError(ValueError):
     @classmethod
     def REQUIRES_NUMPY(cls):
         return cls(f"To use arrays and lists install numpy.")
+
+    @classmethod
+    def FLOAT(cls):
+        return cls(f"Only dimensionless quantities and angles can be used as a float.")
