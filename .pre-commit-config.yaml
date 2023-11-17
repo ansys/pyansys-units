@@ -1,7 +1,7 @@
 repos:
 
 - repo: https://github.com/psf/black
-  rev: 23.7.0
+  rev: 23.10.1
   hooks:
   - id: black
 
@@ -22,7 +22,7 @@ repos:
   - id: flake8
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.5
+  rev: v2.2.6
   hooks:
   - id: codespell
 
@@ -33,7 +33,7 @@ repos:
     additional_dependencies: [tomli]
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
     - id: check-merge-conflict
     - id: debug-statements
@@ -42,6 +42,6 @@ repos:
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.24.1
+  rev: 0.27.1
   hooks:
     - id: check-github-workflows
