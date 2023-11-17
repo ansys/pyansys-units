@@ -18,8 +18,8 @@ class Quantity:
     A class which contains a physical quantity's value and associated units.
 
     A Quantity instance will contain both SI units and the SI value to
-    facilitate consistent computation with other quantities. ``numpy`` is
-    required to use lists or arrays. Value is not required when using
+    facilitate consistent computation with other quantities. ``NumPy`` is
+    required to use lists or NumPy arrays. Value is not required when using
     ``copy_from``.
 
     Float conversion will only work for angles or dimensionless quantities.
@@ -345,7 +345,7 @@ class QuantityError(ValueError):
 
     @classmethod
     def REQUIRES_NUMPY(cls):
-        return cls(f"To use arrays and lists install numpy.")
+        return cls(f"To use NumPy arrays and lists install NumPy.")
 
     @classmethod
     def FLOAT(cls):
