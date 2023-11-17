@@ -17,8 +17,12 @@ class Quantity:
     """
     A class which contains a physical quantity's value and associated units.
 
-    The value and units provided on initialization are internally converted into
-    SI units to facilitate consistent computation with other quantities.
+    A Quantity instance will contain both SI units and the SI value to
+    facilitate consistent computation with other quantities. ``numpy`` is
+    required to use lists or arrays. Value is not required when using
+    ``copy_from``.
+
+    Float conversion will only work for angles or dimensionless quantities.
 
     Parameters
     ----------

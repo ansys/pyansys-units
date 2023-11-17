@@ -82,7 +82,7 @@ cap_map = {"Capacitance": 1}
 capacitance = ansunits.Quantity(value=50, quantity_map=cap_map)
 
 capacitance.value  # >>> 50.0
-capacitance.units  # >>> "kg^-1 m^-2 s^4 A^2"
+capacitance.units.name  # >>> "farad"
 capacitance.si_value  # >>> 50.0
 capacitance.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
 capacitance.dimensions  # >>> {'MASS': -1.0, 'LENGTH': -2.0, 'TIME': 4.0, 'CURRENT': 2.0}
@@ -102,37 +102,37 @@ q2 = ansunits.Quantity(5.0, "m s^-1")
 
 q3 = q2 - q1
 q3.value  # >>> 5.0
-q3.units  # >>> "m s^-1"
+q3.units.name  # >>> "m s^-1"
 
 # Addition
 
 q4 = q2 + q1
 q4.value  # >>> 15.0
-q4.units  # >>> "m s^-1"
+q4.units.name  # >>> "m s^-1"
 
 # Division
 
 q5 = q2 / q1
 q5.value  # >>> 2.0
-q5.units  # >>> None
+q5.units.name  # >>> None
 
 # Multiplication
 
 q6 = q2 * q1
 q6.value  # >>> 50.0
-q6.units  # >>> "m^2 s^-2"
+q6.units.name  # >>> "m^2 s^-2"
 
 # Negation
 
 q7 = -q2
 q7.value  # >>> -5.0
-q7.units  # >>> "m s^-1"
+q7.units.name  # >>> "m s^-1"
 
 # Exponents
 
 q8 = q1**2
 q8.value  # >>> 100.0
-q8.units  # >>> "m^2 s^-2"
+q8.units.name  # >>> "m^2 s^-2"
 
 # Roots
 
@@ -154,19 +154,19 @@ slug = ansunits.Quantity(value=5, units="slug")
 kg = slug.to("kg")
 
 kg.value  # >>> 72.96951468603184
-kg.units  # >>> "kg"
+kg.units.name  # >>> "kg"
 
 m = ansunits.Quantity(value=25, units="m")
 cm = m.to("cm")
 
 cm.value  # >>> 2500
-cm.units  # >>> "cm"
+cm.units.name  # >>> "cm"
 
 dvis = ansunits.Quantity(1.0, "lb ft^-1 s^-1")
 pas = dvis.to("Pa s")
 
 pas.value  # >>> 1.4881639435695542
-pas.units  # >>> "Pa s"
+pas.units.name  # >>> "Pa s"
 
 ###############################################################################
 # Instantiate unit systems
@@ -194,9 +194,9 @@ cgs.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A
 
 # Copy from a preexisting unit system
 
-cgs2 = ansunits.UnitSystem(copy_from=cgs)
+cgs_copy = ansunits.UnitSystem(copy_from=cgs)
 
-cgs2.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
+cgs_copy.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
 
 # Combinations of these
 
