@@ -29,7 +29,7 @@ through multiplication
     meter = ansunits.Quantity(value=1, units=ureg.m)
     meter = 1 * ureg.m
 
-With ``numpy`` installed, a ``Quantity`` can be created using lists or np.array.
+With ``NumPy`` installed, a ``Quantity`` can be created using either a list of floats or a NumPy array.
 
 .. code:: python
 
