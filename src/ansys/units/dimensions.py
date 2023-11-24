@@ -6,6 +6,20 @@ from typing import Optional, Union
 import ansys.units as ansunits
 
 
+class IncorrectDimensions(ValueError):
+    """Provides the error when dimensions are not in dimension order."""
+
+    def __init__(self):
+        super().__init__("The `dimensions` key must be a 'BaseDimensions' object")
+
+
+class IncomparableDimensions(ValueError):
+    """Provides the error when dimensions are unequal."""
+
+    def __init__(self, dim1, dim2):
+        super().__init__(f"The dimensions `{dim1}` cannot be compared to `{dim2}`")
+
+
 class Dimensions:
     """
     A composite dimension (or simply dimensions) composed from an arbitrary number of
@@ -39,7 +53,7 @@ class Dimensions:
 
         for x, y in dimensions.items():
             if not isinstance(x, ansunits.BaseDimensions):
-                raise DimensionsError.INCORRECT_DIMENSIONS()
+                raise IncorrectDimensions()
             if y == 0:
                 del self._dimensions[x]
 
@@ -143,33 +157,16 @@ class Dimensions:
 
     def __gt__(self, __value):
         if self != __value:
-            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+            raise IncomparableDimensions(self, __value)
 
     def __ge__(self, __value):
         if self != __value:
-            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+            raise IncomparableDimensions(self, __value)
 
     def __lt__(self, __value):
         if self != __value:
-            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
+            raise IncomparableDimensions(self, __value)
 
     def __le__(self, __value):
         if self != __value:
-            raise DimensionsError.INCOMPARABLE_DIMENSIONS(self, __value)
-
-
-class DimensionsError(ValueError):
-    """Custom dimensions errors."""
-
-    def __init__(self, err):
-        super().__init__(err)
-
-    @classmethod
-    def INCORRECT_DIMENSIONS(cls):
-        """Return in case of dimensions not in dimension order."""
-        return cls(f"The `dimensions` key must be a 'BaseDimensions' object")
-
-    @classmethod
-    def INCOMPARABLE_DIMENSIONS(cls, dim1, dim2):
-        """Return in case of dimensions not being equal."""
-        return cls(f"The dimensions `{dim1}` cannot be compared to `{dim2}`")
+            raise IncomparableDimensions(self, __value)

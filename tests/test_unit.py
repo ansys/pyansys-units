@@ -1,6 +1,7 @@
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.unit import InconsistentDimensions, IncorrectUnits, UnconfiguredUnit
 
 
 def test_base_units():
@@ -66,7 +67,7 @@ def test_add():
     assert temp_C == ansunits.Unit("C")
     assert kg + kg == None
 
-    with pytest.raises(ansunits.UnitError):
+    with pytest.raises(IncorrectUnits):
         C + kg
 
 
@@ -99,7 +100,7 @@ def test_sub():
     assert delta_C == ansunits.Unit("delta_C")
     assert kg - kg == None
 
-    with pytest.raises(ansunits.UnitError):
+    with pytest.raises(IncorrectUnits):
         C - kg
 
 
@@ -137,10 +138,10 @@ def test_ne():
 
 def test_excessive_parameters_not_allowed():
     dims = ansunits.BaseDimensions
-    with pytest.raises(ansunits.UnitError):
+    with pytest.raises(InconsistentDimensions):
         C = ansunits.Unit("kg", dimensions=ansunits.Dimensions({dims.LENGTH: 1}))
 
 
 def test_incorrect_unit_with_multiplier():
-    with pytest.raises(ansunits.UnitError):
+    with pytest.raises(UnconfiguredUnit):
         ansunits.Unit("kbeans")

@@ -2,6 +2,13 @@
 import ansys.units as ansunits
 
 
+class UnknownMapItem(ValueError):
+    """Provides the error when the specified quantity map is undefined in the yaml."""
+
+    def __init__(self, item):
+        super().__init__(f"`{item}` is not a valid quantity map item.")
+
+
 class QuantityMap(object):
     """
     A class that contains quantity map and equivalent units.
@@ -19,7 +26,7 @@ class QuantityMap(object):
     def __init__(self, quantity_map):
         for item in quantity_map:
             if item not in ansunits._api_quantity_map:
-                raise QuantityMapError.UNKNOWN_MAP_ITEM(item)
+                raise UnknownMapItem(item)
 
         self._units = self._map_to_units(quantity_map)
 
@@ -47,15 +54,3 @@ class QuantityMap(object):
     def units(self):
         """Unit representation of the quantity map."""
         return self._units
-
-
-class QuantityMapError(ValueError):
-    """Provides custom quantity map errors."""
-
-    def __init__(self, err):
-        super().__init__(err)
-
-    @classmethod
-    def UNKNOWN_MAP_ITEM(cls, item):
-        """Returns in case the given quantity map is not in the yaml."""
-        return cls(f"`{item}` is not a valid quantity map item.")

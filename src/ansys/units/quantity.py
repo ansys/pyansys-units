@@ -6,6 +6,46 @@ from typing import Union
 import ansys.units as ansunits
 
 
+class ExcessiveParameters(ValueError):
+    """Provides the error when excessive parameters are provided."""
+
+    def __init__(self):
+        super().__init__(
+            "Quantity only accepts one of the following parameters: \
+            (units) or (quantity_map) or (dimensions)."
+        )
+
+
+class InsufficientArguments(ValueError):
+    """Provides the error when insufficient arguments are provided."""
+
+    def __init__(self):
+        super().__init__("Requires at least one 'value' or 'copy_from' argument.")
+
+
+class IncompatibleDimensions(ValueError):
+    """Provides the error when dimensions are incompatible."""
+
+    def __init__(self, from_unit, to_unit):
+        super().__init__(
+            f"`{from_unit.name}` and `{to_unit.name}` have incompatible dimensions."
+        )
+
+
+class IncompatibleValue(ValueError):
+    """Provides the error when an incompatible value is provided."""
+
+    def __init__(self, value):
+        super().__init__(f"`{value}` is incompatible with the current quantity object.")
+
+
+class IncomparableQuantities(ValueError):
+    """Provides the error when quantities are incompatible."""
+
+    def __init__(self, q1, q2):
+        super().__init__(f"'{q1}' cannot be compared to '{q2}' in this manner.")
+
+
 class Quantity(float):
     """
     A class which contains a physical quantity's value and associated units.
@@ -49,10 +89,10 @@ class Quantity(float):
             or (units and dimensions)
             or (quantity_map and dimensions)
         ):
-            raise QuantityError.EXCESSIVE_PARAMETERS()
+            raise ExcessiveParameters()
 
         if value == None and not copy_from:
-            raise QuantityError.MISSING_REQUIREMENT()
+            raise InsufficientArguments()
 
         if copy_from:
             if value:
@@ -85,7 +125,7 @@ class Quantity(float):
         copy_from: ansunits.Quantity = None,
     ):
         if value == None and not copy_from:
-            raise QuantityError.MISSING_REQUIREMENT()
+            raise InsufficientArguments()
 
         if copy_from:
             if value:
@@ -170,9 +210,7 @@ class Quantity(float):
         new_value = (self.si_value / to_units.si_scaling_factor) - to_units.si_offset
 
         if self.dimensions != to_units.dimensions:
-            raise QuantityError.INCOMPATIBLE_DIMENSIONS(
-                from_unit=self.units, to_unit=to_units
-            )
+            raise IncompatibleDimensions(from_unit=self.units, to_unit=to_units)
 
         return Quantity(value=new_value, units=to_units)
 
@@ -251,33 +289,33 @@ class Quantity(float):
         if isinstance(__value, ansunits.Quantity):
             self.dimensions > __value.dimensions
         elif not self.is_dimensionless:
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncomparableQuantities(self, __value)
         return float(self) > float(__value)
 
     def __ge__(self, __value):
         if isinstance(__value, ansunits.Quantity):
             self.dimensions >= __value.dimensions
         elif not self.is_dimensionless:
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncomparableQuantities(self, __value)
         return float(self) >= float(__value)
 
     def __lt__(self, __value):
         if isinstance(__value, ansunits.Quantity):
             self.dimensions < __value.dimensions
         elif not self.is_dimensionless:
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncomparableQuantities(self, __value)
         return float(self) < float(__value)
 
     def __le__(self, __value):
         if isinstance(__value, ansunits.Quantity):
             self.dimensions <= __value.dimensions
         elif not self.is_dimensionless:
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncomparableQuantities(self, __value)
         return float(self) <= float(__value)
 
     def __eq__(self, __value):
         if not self.is_dimensionless and not isinstance(__value, ansunits.Quantity):
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncomparableQuantities(self, __value)
         elif float(self) != float(__value):
             return False
         elif isinstance(__value, ansunits.Quantity):
@@ -287,35 +325,3 @@ class Quantity(float):
 
     def __ne__(self, __value):
         return not self.__eq__(__value)
-
-
-class QuantityError(ValueError):
-    """Custom quantity errors."""
-
-    def __init__(self, err):
-        super().__init__(err)
-
-    @classmethod
-    def EXCESSIVE_PARAMETERS(cls):
-        return cls(
-            "Quantity only accepts one of the following parameters: \
-            (units) or (quantity_map) or (dimensions)."
-        )
-
-    @classmethod
-    def MISSING_REQUIREMENT(cls):
-        return cls("Requires at least one 'value' or 'copy_from' argument.")
-
-    @classmethod
-    def INCOMPATIBLE_DIMENSIONS(cls, from_unit, to_unit):
-        return cls(
-            f"`{from_unit.name}` and `{to_unit.name}` have incompatible dimensions."
-        )
-
-    @classmethod
-    def INCOMPATIBLE_VALUE(cls, value):
-        return cls(f"`{value}` is incompatible with the current quantity object.")
-
-    @classmethod
-    def INCOMPARABLE_QUANTITIES(cls, q1, q2):
-        return cls(f"'{q1}' cannot be compared to '{q2}' in this manner.")

@@ -1,6 +1,7 @@
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.map import UnknownMapItem
 
 
 def test_quantity_map():
@@ -25,10 +26,10 @@ def test_quantity_map():
 
 def test_errors():
     qm_map = {"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
-    with pytest.raises(ansunits.QuantityMapError) as e_info:
+    with pytest.raises(UnknownMapItem) as e_info:
         qm = ansunits.QuantityMap(quantity_map=qm_map)
 
 
 def test_error_messages():
-    e1 = ansunits.QuantityMapError.UNKNOWN_MAP_ITEM("Risk")
+    e1 = UnknownMapItem("Risk")
     assert str(e1) == "`Risk` is not a valid quantity map item."

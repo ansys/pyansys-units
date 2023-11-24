@@ -1,6 +1,7 @@
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.dimensions import IncomparableDimensions, IncorrectDimensions
 
 
 def test_dimensions_init():
@@ -134,13 +135,13 @@ def test_comparison_operations():
     assert (d1 < d1) == None
     assert (d1 <= d1) == None
 
-    with pytest.raises(ansunits.DimensionsError):
+    with pytest.raises(IncomparableDimensions):
         d2 > d1
-    with pytest.raises(ansunits.DimensionsError):
+    with pytest.raises(IncomparableDimensions):
         d1 >= d2
-    with pytest.raises(ansunits.DimensionsError):
+    with pytest.raises(IncomparableDimensions):
         d1 < d2
-    with pytest.raises(ansunits.DimensionsError):
+    with pytest.raises(IncomparableDimensions):
         d1 <= d2
 
 
@@ -149,12 +150,12 @@ def test_errors():
     d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 2})
     d2 = ansunits.Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: 1})
 
-    with pytest.raises(ansunits.DimensionsError) as e_info:
+    with pytest.raises(IncorrectDimensions) as e_info:
         d3 = ansunits.Dimensions(dimensions={dims.MASS: 1, 11: 1})
 
 
 def test_error_messages():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 2})
-    e1 = ansunits.DimensionsError.INCORRECT_DIMENSIONS()
+    e1 = IncorrectDimensions()
     assert str(e1) == f"The `dimensions` key must be a 'BaseDimensions' object"

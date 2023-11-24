@@ -10,7 +10,7 @@ def test_pint_raises_exception_for_multiplying_relative_temperature():
     with pytest.raises(OffsetUnitCalculusError):
         # this is ambiguous - relative value!
         tc = 150.0 * ur.degC
-    # this is well defined
+    # this is well-defined
     tk = 50.0 * ur.kelvin
 
 
