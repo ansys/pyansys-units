@@ -11,6 +11,7 @@ from ansys.units.quantity import (
     IncompatibleValue,
     InsufficientArguments,
 )
+from ansys.units.unit import IncorrectUnits
 
 DELTA = 1.0e-5
 
@@ -85,7 +86,7 @@ def test_subtraction():
     assert float(q2 - q1) == -5.0
     assert q4.value == 3
 
-    with pytest.raises(ansunits.UnitError) as e_info:
+    with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
 
 
@@ -244,7 +245,7 @@ def test_addition():
     assert q2.units.name == ""
     assert q2.value == 10
 
-    with pytest.raises(ansunits.UnitError) as e_info:
+    with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
 
 
