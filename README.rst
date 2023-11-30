@@ -99,7 +99,7 @@ Import the ``ansys.units`` package:
 
    import ansys.units as ansunits
 
-You can instantiate quantities with one of 4 methods:
+You can instantiate quantities with one of four methods:
 
 .. code:: python
 
