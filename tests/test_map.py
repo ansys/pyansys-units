@@ -21,7 +21,7 @@ def test_quantity_map():
         "Volume": 1,
     }
     qm2 = ansunits.QuantityMap(quantity_map=qm2_map)
-    assert qm2.units.name == "K kg m^2 s^-2"
+    assert qm2.units.name == "K Pa m^3"
 
 
 def test_errors():
