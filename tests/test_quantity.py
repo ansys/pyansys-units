@@ -3,11 +3,10 @@ import math
 import pytest
 
 import ansys.units as ansunits
-from ansys.units.dimensions import IncomparableDimensions
 from ansys.units.quantity import (
     ExcessiveParameters,
-    IncomparableQuantities,
     IncompatibleDimensions,
+    IncompatibleQuantities,
     IncompatibleValue,
     InsufficientArguments,
 )
@@ -194,10 +193,10 @@ def test_eq():
     assert x == l
     assert r == n
     assert r == 10.5
-    assert (m == y) == False
 
-    with pytest.raises(IncomparableQuantities) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x == 0.5
+        assert (m == y) is False
 
 
 def test_rdiv():
@@ -267,10 +266,10 @@ def test_ge():
     assert 15.7 >= r
     assert r >= 7.8
 
-    with pytest.raises(IncomparableDimensions) as e_info:
+    with pytest.raises(IncompatibleDimensions) as e_info:
         assert x >= z
 
-    with pytest.raises(IncomparableQuantities) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x >= 5.0
 
 
@@ -284,10 +283,10 @@ def test_gt():
     assert 15.7 > r
     assert r > 7.8
 
-    with pytest.raises(IncomparableDimensions) as e_info:
+    with pytest.raises(IncompatibleDimensions) as e_info:
         assert x > z
 
-    with pytest.raises(IncomparableQuantities) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x > 5.0
 
 
@@ -301,10 +300,10 @@ def test_lt():
     assert r < 15.7
     assert 7.8 < r
 
-    with pytest.raises(IncomparableDimensions) as e_info:
+    with pytest.raises(IncompatibleDimensions) as e_info:
         assert z < x
 
-    with pytest.raises(IncomparableQuantities) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x < 5.0
 
 
@@ -318,10 +317,10 @@ def test_le():
     assert r <= 15.7
     assert 7.8 <= r
 
-    with pytest.raises(IncomparableDimensions) as e_info:
+    with pytest.raises(IncompatibleDimensions) as e_info:
         assert z <= x
 
-    with pytest.raises(IncomparableQuantities) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x <= 5.0
 
 

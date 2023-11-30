@@ -13,13 +13,6 @@ class IncorrectDimensions(ValueError):
         super().__init__("The `dimensions` key must be a 'BaseDimensions' object")
 
 
-class IncomparableDimensions(ValueError):
-    """Provides the error when dimensions are unequal."""
-
-    def __init__(self, dim1, dim2):
-        super().__init__(f"The dimensions `{dim1}` cannot be compared to `{dim2}`")
-
-
 class Dimensions:
     """
     A composite dimension (or simply dimensions) composed from an arbitrary number of
@@ -154,19 +147,3 @@ class Dimensions:
 
     def __bool__(self):
         return bool(self._dimensions)
-
-    def __gt__(self, __value):
-        if self != __value:
-            raise IncomparableDimensions(self, __value)
-
-    def __ge__(self, __value):
-        if self != __value:
-            raise IncomparableDimensions(self, __value)
-
-    def __lt__(self, __value):
-        if self != __value:
-            raise IncomparableDimensions(self, __value)
-
-    def __le__(self, __value):
-        if self != __value:
-            raise IncomparableDimensions(self, __value)

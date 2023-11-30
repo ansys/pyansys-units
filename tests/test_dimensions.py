@@ -1,7 +1,7 @@
 import pytest
 
 import ansys.units as ansunits
-from ansys.units.dimensions import IncomparableDimensions, IncorrectDimensions
+from ansys.units.dimensions import IncorrectDimensions
 
 
 def test_dimensions_init():
@@ -121,28 +121,8 @@ def test_dimensional():
     d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     d2 = ansunits.Dimensions()
 
-    assert bool(d1) == True
-    assert bool(d2) == False
-
-
-def test_comparison_operations():
-    dims = ansunits.BaseDimensions
-    d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
-    d2 = ansunits.Dimensions(dimensions={dims.LENGTH: 1})
-
-    assert (d1 > d1) == None
-    assert (d1 >= d1) == None
-    assert (d1 < d1) == None
-    assert (d1 <= d1) == None
-
-    with pytest.raises(IncomparableDimensions):
-        d2 > d1
-    with pytest.raises(IncomparableDimensions):
-        d1 >= d2
-    with pytest.raises(IncomparableDimensions):
-        d1 < d2
-    with pytest.raises(IncomparableDimensions):
-        d1 <= d2
+    assert bool(d1) is True
+    assert bool(d2) is False
 
 
 def test_errors():
