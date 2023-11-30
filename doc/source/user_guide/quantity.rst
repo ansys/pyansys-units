@@ -44,8 +44,8 @@ With ``NumPy`` installed, a ``Quantity`` can be created using either a list of f
     meter[1]  # Quantity (6.0, "m")
 
     second = ansunits.Quantity(value=2, units="s")
-    mps = meter / second
-    mps  # Quantity ([0.5 3.  3.5], "m s^-1")
+    speed = meter / second
+    speed  # Quantity ([0.5 3.  3.5], "m s^-1")
 
 All ``Quantity`` objects work intuitively with arithmetic operators. Simply
 insert them within an equation to perform mathematical operations.
