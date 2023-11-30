@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ansys.units as ansunits
-from ansys.units import _base_units, _derived_units, _multipliers
+from ansys.units import _api_quantity_map, _base_units, _derived_units, _multipliers
 
 
 class Unit:
@@ -295,6 +295,27 @@ class Unit:
             new_units = f"{self.name} {__value.name}"
 
         return Unit(self._condense(new_units))
+
+    def compatible_units(self):
+        """
+        Get a set of units with the same dimensions.
+
+        Returns
+        -------
+        set
+            A set of unit objects.
+        """
+        ureg = ansunits.UnitRegistry()
+        compatible_units = set()
+        for unit in ureg:
+            if self.dimensions == unit.dimensions:
+                compatible_units.add(unit.name)
+        for unit in _api_quantity_map:
+            unit = ansunits.QuantityMap({unit: 1}).units
+            if self.dimensions == unit.dimensions:
+                compatible_units.add(unit.name)
+        compatible_units.discard(self.name)
+        return compatible_units
 
     def filter_unit_term(self, unit_term: str) -> tuple:
         """

@@ -56,6 +56,10 @@ class UnitRegistry:
             raise RegistryError.UNIT_ALREADY_REGISTERED(__name)
         self.__dict__[__name] = unit
 
+    def __iter__(self):
+        for item in self.__dict__:
+            yield getattr(self, item)
+
 
 class RegistryError(ValueError):
     """Custom dimensions errors."""
