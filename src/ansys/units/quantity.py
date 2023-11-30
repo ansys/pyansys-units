@@ -162,6 +162,18 @@ class Quantity:
 
         return Quantity(value=new_value, units=to_units)
 
+    def compatible_units(self):
+        """
+        Get a set of units with the same dimensions.
+
+        Returns
+        -------
+        set
+            A set of unit objects.
+        """
+
+        return self.units.compatible_units()
+
     def __float__(self):
         base_dims = ansunits.BaseDimensions
         dims = ansunits.Dimensions
