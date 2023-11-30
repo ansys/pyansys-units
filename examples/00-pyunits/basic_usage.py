@@ -148,9 +148,13 @@ math.cos(ansunits.Quantity(math.pi, "radian"))  # >>> -1.0
 ###############################################################################
 # Perform conversions
 # ~~~~~~~~~~~~~~~~~~~
-# You can perform conversions on quantities with compatible units.
+# To check the compatible units use the 'compatible_units' method.
 
 slug = ansunits.Quantity(value=5, units="slug")
+slug.compatible_units()  # >>> {'lbm', 'g', 'lb', 'kg'}
+
+# You can perform conversions on quantities with compatible units.
+
 kg = slug.to("kg")
 
 kg.value  # >>> 72.96951468603184
