@@ -44,6 +44,15 @@ def test_copy():
     assert slug == ureg.slug
 
 
+def test_compatibility():
+    ureg = ansunits.UnitRegistry()
+
+    for each in (ureg.ft, ureg.N, ureg.delta_K):
+        unit_comp = each.compatible_units()
+        for unit in unit_comp:
+            assert each.dimensions == ansunits.Unit(unit).dimensions
+
+
 def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C

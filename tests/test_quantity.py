@@ -489,7 +489,9 @@ def test_error_messages():
     e2 = ansunits.QuantityError.INCOMPATIBLE_DIMENSIONS(
         ansunits.Unit("mm"), ansunits.Unit("K")
     )
-    assert str(e2) == "`mm` and `K` have incompatible dimensions."
+    assert str(e2).startswith(
+        "`mm` and `K` have incompatible dimensions.`mm` can only be converted to "
+    )
 
     e3 = ansunits.QuantityError.INCOMPATIBLE_VALUE("radian")
     assert str(e3) == "`radian` is incompatible with the current quantity object."

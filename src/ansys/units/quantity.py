@@ -345,6 +345,7 @@ class QuantityError(ValueError):
     def INCOMPATIBLE_DIMENSIONS(cls, from_unit, to_unit):
         return cls(
             f"`{from_unit.name}` and `{to_unit.name}` have incompatible dimensions."
+            f"`{from_unit.name}` can only be converted to {from_unit.compatible_units()}."
         )
 
     @classmethod
