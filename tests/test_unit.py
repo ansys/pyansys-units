@@ -88,7 +88,7 @@ def test_unit_multiply_by_quantity():
 def test_reverse_multiply():
     ur = ansunits.UnitRegistry()
     new_unit = ur.K * ur.kg * ur.J
-    assert new_unit.name == "K kg^2 m^2 s^-2"
+    assert new_unit.name == "K kg J"
 
 
 def test_sub():
@@ -144,3 +144,9 @@ def test_excessive_parameters_not_allowed():
 def test_incorrect_unit_with_multiplier():
     with pytest.raises(ansunits.UnitError):
         ansunits.Unit("kbeans")
+
+
+def test_copy_units_with_incompatable_dimensions():
+    kg = ansunits.Unit("kg")
+    with pytest.raises(ansunits.UnitError):
+        ansunits.Unit(units="m", copy_from=kg)

@@ -5,17 +5,28 @@ from typing import Union
 
 import ansys.units as ansunits
 
+try:
+    import numpy as np
 
-class Quantity(float):
+    _array = np
+except ImportError:
+    _array = None
+
+
+class Quantity:
     """
     A class which contains a physical quantity's value and associated units.
 
-    The value and units provided on initialization are internally converted into
-    SI units to facilitate consistent computation with other quantities.
+    A Quantity instance will contain both SI units and the SI value to
+    facilitate consistent computation with other quantities. ``NumPy`` is
+    required to use lists or NumPy arrays. Value is not required when using
+    ``copy_from``.
+
+    Float conversion will only work for angles or dimensionless quantities.
 
     Parameters
     ----------
-    value : int | float
+    value : int | float | list | np.array
         Real value of the quantity.
     units : str, Unit, optional
         Initializes the quantity's units using a string or ``Unit`` instance.
@@ -36,8 +47,8 @@ class Quantity(float):
     is_dimensionless
     """
 
-    def __new__(
-        cls,
+    def __init__(
+        self,
         value: Union[int, float] = None,
         units: Union[ansunits.Unit, str] = None,
         quantity_map: dict = None,
@@ -51,50 +62,25 @@ class Quantity(float):
         ):
             raise QuantityError.EXCESSIVE_PARAMETERS()
 
-        if value == None and not copy_from:
-            raise QuantityError.MISSING_REQUIREMENT()
-
         if copy_from:
             if value:
                 units = copy_from.units
             else:
                 units = copy_from.units
                 value = copy_from.value
-
-        _value = float(value)
-
-        if quantity_map:
-            units = ansunits.QuantityMap(quantity_map).units
-
-        if dimensions:
-            units = ansunits.Unit(dimensions=dimensions)
-
-        if not isinstance(units, ansunits.Unit):
-            units = ansunits.Unit(units)
-
-        _si_value = (_value + units.si_offset) * units.si_scaling_factor
-
-        return float.__new__(cls, _si_value)
-
-    def __init__(
-        self,
-        value: Union[int, float] = None,
-        units: Union[ansunits.Unit, str] = None,
-        quantity_map: dict = None,
-        dimensions: ansunits.Dimensions = None,
-        copy_from: ansunits.Quantity = None,
-    ):
-        if value == None and not copy_from:
+        elif value is None:
             raise QuantityError.MISSING_REQUIREMENT()
 
-        if copy_from:
-            if value:
-                units = copy_from.units
-            else:
-                units = copy_from.units
-                value = copy_from.value
-
-        self._value = float(value)
+        if not isinstance(value, (float, int)):
+            if _array:
+                if isinstance(value, _array.ndarray):
+                    self._value = value
+                else:
+                    self._value = _array.array(value)
+            elif not _array:
+                raise QuantityError.REQUIRES_NUMPY()
+        else:
+            self._value = float(value)
 
         if quantity_map:
             units = ansunits.QuantityMap(quantity_map).units
@@ -176,6 +162,32 @@ class Quantity(float):
 
         return Quantity(value=new_value, units=to_units)
 
+    def __float__(self):
+        base_dims = ansunits.BaseDimensions
+        dims = ansunits.Dimensions
+        if self.dimensions in [
+            dims(),
+            dims(dimensions={base_dims.ANGLE: 1.0}),
+            dims(dimensions={base_dims.SOLID_ANGLE: 1.0}),
+        ]:
+            return self.si_value
+        raise QuantityError.FLOAT()
+
+    def __array__(self):
+        if _array:
+            if isinstance(self.value, (float)):
+                return _array.array([self.value])
+            return self.value
+        else:
+            raise QuantityError.REQUIRES_NUMPY()
+
+    def __getitem__(self, idx):
+        if _array:
+            value = self.__array__()[idx]
+            return Quantity(value, self.units)
+        else:
+            raise QuantityError.REQUIRES_NUMPY()
+
     def __str__(self):
         return f'({self.value}, "{self._unit.name}")'
 
@@ -183,16 +195,16 @@ class Quantity(float):
         return f'Quantity ({self.value}, "{self._unit.name}")'
 
     def __pow__(self, __value):
-        new_si_value = self.si_value**__value
+        new_value = self.value**__value
         new_units = self._unit**__value
-        return Quantity(value=new_si_value, units=new_units)
+        return Quantity(value=new_value, units=new_units)
 
     def __mul__(self, __value):
         if isinstance(__value, Quantity):
-            new_si_value = self.si_value * __value.si_value
+            new_value = self.value * __value.value
             new_units = self._unit * __value._unit
             return Quantity(
-                value=new_si_value,
+                value=new_value,
                 units=new_units,
             )
         if isinstance(__value, ansunits.Unit):
@@ -200,17 +212,17 @@ class Quantity(float):
             return self * base_quantity
 
         if isinstance(__value, (float, int)):
-            return Quantity(value=self.si_value * __value, units=self.si_units)
+            return Quantity(value=self.value * __value, units=self.units)
 
     def __rmul__(self, __value):
         return self.__mul__(__value)
 
     def __truediv__(self, __value):
         if isinstance(__value, Quantity):
-            new_si_value = self.si_value / __value.si_value
+            new_value = self.value / __value.value
             new_units = self._unit / __value._unit
             return Quantity(
-                value=new_si_value,
+                value=new_value,
                 units=new_units,
             )
 
@@ -219,7 +231,7 @@ class Quantity(float):
             return self / base_quantity
 
         if isinstance(__value, (float, int)):
-            return Quantity(value=self.si_value / __value, units=self._unit)
+            return Quantity(value=self.value / __value, units=self._unit)
 
     def __rtruediv__(self, __value):
         return Quantity(__value, "") / self
@@ -227,8 +239,8 @@ class Quantity(float):
     def __add__(self, __value):
         if not isinstance(__value, ansunits.Quantity):
             __value = ansunits.Quantity(__value)
-        new_units = (self._unit + __value._unit) or self.si_units
-        new_value = float(self) + float(__value)
+        new_units = (self._unit + __value._unit) or self.units
+        new_value = self.value + __value.value
         return Quantity(value=new_value, units=new_units)
 
     def __radd__(self, __value):
@@ -237,8 +249,8 @@ class Quantity(float):
     def __sub__(self, __value):
         if not isinstance(__value, ansunits.Quantity):
             __value = ansunits.Quantity(__value)
-        new_units = (self._unit - __value._unit) or self.si_units
-        new_value = float(self) - float(__value)
+        new_units = (self._unit - __value._unit) or self.units
+        new_value = self.value - __value.value
         return Quantity(value=new_value, units=new_units)
 
     def __rsub__(self, __value):
@@ -250,40 +262,51 @@ class Quantity(float):
     def __gt__(self, __value):
         if isinstance(__value, ansunits.Quantity):
             self.dimensions > __value.dimensions
+            return self.si_value > __value.si_value
         elif not self.is_dimensionless:
             raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
-        return float(self) > float(__value)
+        else:
+            return self.si_value > __value
 
     def __ge__(self, __value):
         if isinstance(__value, ansunits.Quantity):
             self.dimensions >= __value.dimensions
+            return self.si_value >= __value.si_value
         elif not self.is_dimensionless:
             raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
-        return float(self) >= float(__value)
+        else:
+            return self.si_value >= __value
 
     def __lt__(self, __value):
         if isinstance(__value, ansunits.Quantity):
             self.dimensions < __value.dimensions
+            return self.si_value < __value.si_value
         elif not self.is_dimensionless:
             raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
-        return float(self) < float(__value)
+        else:
+            return self.si_value < __value
 
     def __le__(self, __value):
+        print(self)
         if isinstance(__value, ansunits.Quantity):
             self.dimensions <= __value.dimensions
+            return self.si_value <= __value.si_value
         elif not self.is_dimensionless:
             raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
-        return float(self) <= float(__value)
+        else:
+            return self.si_value <= __value
 
     def __eq__(self, __value):
         if not self.is_dimensionless and not isinstance(__value, ansunits.Quantity):
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
-        elif float(self) != float(__value):
             return False
-        elif isinstance(__value, ansunits.Quantity):
-            if self.dimensions != __value.dimensions:
-                return False
-        return True
+        if isinstance(__value, ansunits.Quantity):
+            if (
+                self.si_value == __value.si_value
+                and self.dimensions == __value.dimensions
+            ):
+                return True
+            return False
+        return self.si_value == __value
 
     def __ne__(self, __value):
         return not self.__eq__(__value)
@@ -319,3 +342,11 @@ class QuantityError(ValueError):
     @classmethod
     def INCOMPARABLE_QUANTITIES(cls, q1, q2):
         return cls(f"'{q1}' cannot be compared to '{q2}' in this manner.")
+
+    @classmethod
+    def REQUIRES_NUMPY(cls):
+        return cls(f"To use NumPy arrays and lists install NumPy.")
+
+    @classmethod
+    def FLOAT(cls):
+        return cls(f"Only dimensionless quantities and angles can be used as a float.")

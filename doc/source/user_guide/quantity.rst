@@ -29,6 +29,21 @@ through multiplication
     meter = ansunits.Quantity(value=1, units=ureg.m)
     meter = 1 * ureg.m
 
+With ``NumPy`` installed, a ``Quantity`` can be created using either a list of floats or a NumPy array.
+
+.. code:: python
+
+    import ansys.units as ansunits
+    import numpy as np
+
+    meter = ansunits.Quantity(value=[1.0, 6.0, 7.0], units="m")
+
+    values = np.array([1.0, 6.0, 7.0])
+    meter = meter = ansunits.Quantity(value=values, units="m")
+
+    meter[1]  # Quantity (6.0, "m")
+
+
 All ``Quantity`` objects work intuitively with arithmetic operators. Simply
 insert them within an equation to perform mathematical operations.
 
