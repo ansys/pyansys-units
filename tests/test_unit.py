@@ -46,11 +46,13 @@ def test_copy():
 
 def test_compatibility():
     ureg = ansunits.UnitRegistry()
+    ft = {"cm", "in", "m"}
+    newton = {"dyne", "lbf", "pdl"}
+    delta_K = {"delta_C", "delta_R", "delta_F"}
 
-    for each in (ureg.ft, ureg.N, ureg.delta_K):
-        unit_comp = each.compatible_units()
-        for unit in unit_comp:
-            assert each.dimensions == ansunits.Unit(unit).dimensions
+    assert ureg.ft.compatible_units() == ft
+    assert ureg.N.compatible_units() == newton
+    assert ureg.delta_K.compatible_units() == delta_K
 
 
 def test_string_rep():
