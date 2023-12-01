@@ -8,7 +8,11 @@ import ansys.units as ansunits
 
 class UnitSystem:
     """
-    A class containing base units for a user-defined or predefined unit system.
+    A class containing base units for a unit system.
+
+    Predefined unit systems work automatically and are configured when the
+    package is initialized. User defined unit systems can be dynamically
+    constructed by providing the selected base units on initialization.
 
     Parameters
     ----------
@@ -60,17 +64,24 @@ class UnitSystem:
 
     def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
         """
-        Perform unit system conversions.
+        Convert a quantity into the unit system.
 
         Parameters
         ----------
         quantity : Quantity
-            Desired quantity object to convert.
+            Quantity to convert.
 
         Returns
         -------
         Quantity
-            Quantity object converted to the desired unit system.
+            Quantity object converted into the unit system.
+
+        Examples
+        --------
+        >>> ur = UnitRegistry()
+        >>> speed_si = Quantity(value=5, units= ur.m / ur.s)
+        >>> bt = UnitSystem(unit_sys="BT")
+        >>> speed_bt = bt.convert(speed_si)
         """
         new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
 
@@ -115,8 +126,8 @@ class UnitSystem:
         setattr(self, f"_{unit_type.name}", unit)
 
     @property
-    def base_units(self):
-        """Units associated with the unit system."""
+    def base_units(self) -> list[str]:
+        """Base units of the unit system."""
         _base_units = []
         for unit_type in ansunits.BaseDimensions:
             unit = getattr(self, f"_{unit_type.name}")

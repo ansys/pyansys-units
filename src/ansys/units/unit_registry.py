@@ -8,22 +8,27 @@ import ansys.units as ansunits
 
 class UnitRegistry:
     """
-    A container of common ``Units`` for ease of use. Defaults to all units in
-    '_base_units' and '_derived_units'.
+    A container of valid ``Unit`` instances.
+
+    All base and derived units loaded from the configuration file, `cfg.yaml`,
+    on package initialization are provided by default.
 
     Parameters
     ----------
     config: str, optional
-        Custom .yaml file or `cfg.yaml`. Format must match `cfg.yaml`.
+        Custom ``.yaml`` file or the default configuration in ``cfg.yaml``.
+        Custom configuration files must match the format of the default
+        configuration file.
     other: dict, optional
-        Dictionary for extra units.
+        Dictionary for additional units.
 
     Examples
     --------
-    import ansys.units as ansunits
-    ureg = ansunits.UnitRegistry()
-
-    ureg.kg == ansunits.Unit(units= "kg")
+    >>> from ansys.units import UnitRegistry, Unit
+    >>> ureg = UnitRegistry()
+    >>> assert ureg.kg == Unit(units="kg")
+    >>> fps = Unit("ft s^-1")
+    >>> ureg.foot_per_sec = fps
     """
 
     def __init__(self, config="cfg.yaml", other: dict = None):

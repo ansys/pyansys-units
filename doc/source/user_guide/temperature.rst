@@ -1,8 +1,8 @@
 .. _temperature:
 
-===================================
-Temperature & Change of Temperature
-===================================
+==================================
+Temperature and temperature change
+==================================
 
 PyAnsys Units supports temperature units in Kelvin (K), Celsius (C), Rankine (R)
 and Fahrenheit (F). For each temperature unit there is a change of temperature

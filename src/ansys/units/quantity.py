@@ -15,7 +15,7 @@ except ImportError:
 
 class Quantity:
     """
-    A class which contains a physical quantity's value and associated units.
+    A class containing a physical quantity's value and associated units.
 
     A Quantity instance will contain both SI units and the SI value to
     facilitate consistent computation with other quantities. ``NumPy`` is
@@ -102,7 +102,7 @@ class Quantity:
 
     @property
     def value(self):
-        """Real value."""
+        """Value in contained units."""
         return self._value
 
     @value.setter
@@ -110,23 +110,23 @@ class Quantity:
         self._value = new_value
 
     @property
-    def units(self):
-        """Unit Object."""
+    def units(self) -> ansunits.Unit:
+        """The quantity's units."""
         return self._unit
 
     @property
     def si_value(self):
-        """SI conversion value."""
+        """The value in SI units."""
         return (self.value + self._unit.si_offset) * self._unit.si_scaling_factor
 
     @property
     def si_units(self):
-        """SI conversion unit string."""
+        """The unit string in SI units."""
         return self._unit._si_units
 
     @property
     def dimensions(self):
-        """Dimensions Object."""
+        """The quantity's dimensions."""
         return self._unit.dimensions
 
     @property
@@ -140,13 +140,18 @@ class Quantity:
 
         Parameters
         ----------
-        to_units : Unit
+        to_units : Unit or str
             Desired unit to convert to.
 
         Returns
         -------
         Quantity
-            Quantity object containing the desired quantity conversion.
+            Quantity instance in the desired units.
+
+        Examples
+        --------
+        >>> speed_si = Quantity(value=5, units="m s^-1")
+        >>> speed_bt = speed_si.to("ft s^-1")
         """
 
         if not isinstance(to_units, ansunits.Unit):
