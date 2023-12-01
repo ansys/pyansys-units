@@ -48,7 +48,6 @@ Finally, numpy arrays and lists can also be used with ``Quantity``
 
    >>> import numpy as np
    >>> from ansys.units import UnitRegistry, Quantity
-   >>> import numpy as np
    >>> values = np.array([1.0, 6.0, 7.0])
    >>> lengths = Quantity(value=values, units=ur.m)
    >>> time = Quantity(value=2, units=ur.s)
