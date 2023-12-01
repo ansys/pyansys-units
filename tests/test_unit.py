@@ -48,7 +48,7 @@ def test_compatibility():
     ureg = ansunits.UnitRegistry()
     ft = {"cm", "in", "m"}
     newton = {"dyne", "lbf", "pdl"}
-    delta_K = {"delta_C", "delta_R", "delta_F"}
+    temperature_difference_units = {"delta_C", "delta_R", "delta_F"}
 
     assert ureg.ft.compatible_units() == ft
     assert ureg.N.compatible_units() == newton
