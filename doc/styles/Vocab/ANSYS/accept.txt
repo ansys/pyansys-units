@@ -4,5 +4,6 @@ ansys
 API
 PyAnsys
 pyansys
+PyAnsys Units
 Pythonic
 
