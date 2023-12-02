@@ -13,7 +13,7 @@ operations and conversions in between.
 
 What unit systems are provided by default?
 """"""""""""""""""""""""""""""""""""""""""
-PyAnsys Units provides the following unit sytstems by default:
+PyAnsys Units provides the following unit systems by default:
 
 - `International System of Units <https://en.wikipedia.org/wiki/International_System_of_Units>`_ (SI)
 - `Centimetre gram second <https://en.wikipedia.org/wiki/Centimetre–gram–second_system_of_units>`_ (CGS)
@@ -25,9 +25,8 @@ force units. You can introduce your own unit systems either dynamically at run
 time or by providing a custom configuration file.
 
 PyAnsys Units defines a unit system as a `unique selection` of base units. For
-instance, the SI unit system is a unique choice of units for the base units of
-mass, length, time, temperature, temperature difference, angle, chemical amount,
-light intensity, current and solid angle.
+instance, the SI unit system is a unique choice of units for the default base
+units.
 
 How is PyAnsys Units different from pint?
 """""""""""""""""""""""""""""""""""""""""

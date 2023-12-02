@@ -5,7 +5,7 @@ Getting started
 ===============
 
 PyAnsys Units provides a Pythonic interface for units, unit systems, and unit
-conversions. On import the package is preconfigured with units and unit systems
+conversions. On import the package is initialized with units and unit systems
 for you to use, and is fully customizable if something you need is not present.
 
 The package supports defining quantities and their units in a intuitive way
@@ -42,7 +42,7 @@ including unit conversions
    >>> speedms
    Quantity (0.30479999999999996, "m s^-1")
 
-Finally, numpy arrays and lists can also be used with ``Quantity``
+Finally, NumPy arrays and lists can also be used with ``Quantity``
 
 .. code::
 
