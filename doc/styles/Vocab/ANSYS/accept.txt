@@ -2,8 +2,6 @@ ANSYS
 Ansys
 ansys
 API
-PyAnsys
-pyansys
-PyAnsys Units
+[Pp]y[Aa]nsys
 Pythonic
 
