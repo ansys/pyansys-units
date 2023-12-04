@@ -70,7 +70,6 @@ class InvalidFloatUsage(FloatingPointError):
 
 
 class Quantity:
-
     """
     A class which contains a physical quantity's value and associated units.
 
