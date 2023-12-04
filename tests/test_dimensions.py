@@ -1,6 +1,7 @@
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.dimensions import IncorrectDimensions
 
 
 def test_dimensions_init():
@@ -120,28 +121,8 @@ def test_dimensional():
     d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     d2 = ansunits.Dimensions()
 
-    assert bool(d1) == True
-    assert bool(d2) == False
-
-
-def test_comparison_operations():
-    dims = ansunits.BaseDimensions
-    d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
-    d2 = ansunits.Dimensions(dimensions={dims.LENGTH: 1})
-
-    assert (d1 > d1) == None
-    assert (d1 >= d1) == None
-    assert (d1 < d1) == None
-    assert (d1 <= d1) == None
-
-    with pytest.raises(ansunits.DimensionsError):
-        d2 > d1
-    with pytest.raises(ansunits.DimensionsError):
-        d1 >= d2
-    with pytest.raises(ansunits.DimensionsError):
-        d1 < d2
-    with pytest.raises(ansunits.DimensionsError):
-        d1 <= d2
+    assert bool(d1) is True
+    assert bool(d2) is False
 
 
 def test_errors():
@@ -149,12 +130,12 @@ def test_errors():
     d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 2})
     d2 = ansunits.Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: 1})
 
-    with pytest.raises(ansunits.DimensionsError) as e_info:
+    with pytest.raises(IncorrectDimensions) as e_info:
         d3 = ansunits.Dimensions(dimensions={dims.MASS: 1, 11: 1})
 
 
 def test_error_messages():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions={dims.LENGTH: 2})
-    e1 = ansunits.DimensionsError.INCORRECT_DIMENSIONS()
+    e1 = IncorrectDimensions()
     assert str(e1) == f"The `dimensions` key must be a 'BaseDimensions' object"

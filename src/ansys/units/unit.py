@@ -4,6 +4,29 @@ import ansys.units as ansunits
 from ansys.units import _base_units, _derived_units, _multipliers
 
 
+class InconsistentDimensions(ValueError):
+    """Provides the error when dimensions are inconsistent."""
+
+    def __init__(self):
+        super().__init__("Unit dimensions do not match given dimensions.")
+
+
+class UnconfiguredUnit(ValueError):
+    """Provides the error when the specified unit is unconfigured."""
+
+    def __init__(self, unit):
+        super().__init__(f"`{unit}` is an unconfigured unit.")
+
+
+class IncorrectUnits(ValueError):
+    """Provides the error when the specified units are incorrect."""
+
+    def __init__(self, unit1, unit2):
+        super().__init__(
+            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this operation."
+        )
+
+
 class Unit:
     """
     A class with all unit information for a quantity.
@@ -41,7 +64,7 @@ class Unit:
     ):
         if copy_from:
             if (units) and units != copy_from.name:
-                raise UnitError.INCONSISTENT_DIMENSIONS()
+                raise InconsistentDimensions()
             units = copy_from.name
 
         if units:
@@ -49,7 +72,7 @@ class Unit:
             _dimensions = self._units_to_dim(units=units)
             self._dimensions = ansunits.Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
-                raise UnitError.INCONSISTENT_DIMENSIONS()
+                raise InconsistentDimensions()
             if not self._dimensions:
                 self._name = ""
 
@@ -334,7 +357,7 @@ class Unit:
         # a known unit on its own. So if we can't actually find its multiplier then
         # this string is an invalid unit string
         if has_multiplier and not multiplier:
-            raise UnitError.UNKNOWN_UNITS(unit_term)
+            raise UnconfiguredUnit(unit_term)
         return multiplier, base, exponent
 
     def si_data(
@@ -445,7 +468,7 @@ class Unit:
         if new_dimensions:
             return ansunits.Unit(dimensions=new_dimensions)
         if self.dimensions != __value.dimensions:
-            raise UnitError.INCORRECT_UNITS(self, __value)
+            raise IncorrectUnits(self, __value)
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
@@ -467,7 +490,7 @@ class Unit:
         if new_dimensions:
             return ansunits.Unit(dimensions=new_dimensions)
         if self.dimensions != __value.dimensions:
-            raise UnitError.INCORRECT_UNITS(self, __value)
+            raise IncorrectUnits(self, __value)
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):
@@ -488,25 +511,3 @@ class Unit:
 
     def __ne__(self, other_unit):
         return not self.__eq__(other_unit=other_unit)
-
-
-class UnitError(ValueError):
-    """Custom dimensions errors."""
-
-    def __init__(self, err):
-        super().__init__(err)
-
-    @classmethod
-    def INCONSISTENT_DIMENSIONS(cls):
-        """Return in case of excessive parameters."""
-        return cls("Units dimensions do not match given dimensions.")
-
-    @classmethod
-    def UNKNOWN_UNITS(cls, unit: str):
-        return cls(f"`{unit}` is an unknown or unconfigured unit.")
-
-    @classmethod
-    def INCORRECT_UNITS(cls, unit1, unit2):
-        return cls(
-            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this operation"
-        )
