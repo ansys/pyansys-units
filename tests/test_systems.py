@@ -1,6 +1,7 @@
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.systems import IncorrectUnitType, InvalidUnitSystem, NotBaseUnit
 
 
 def test_pre_defined_unit_system():
@@ -144,7 +145,7 @@ def test_not_base_unit_init():
     dims = ansunits.BaseDimensions
     ur = ansunits.UnitRegistry()
 
-    with pytest.raises(ansunits.UnitSystemError):
+    with pytest.raises(NotBaseUnit):
         us1 = ansunits.UnitSystem(base_units={dims.LENGTH: ur.N})
 
 
@@ -154,12 +155,12 @@ def test_not_base_unit_update():
     us = ansunits.UnitSystem(unit_sys="SI")
     base_units = {dims.MASS: ur.N}
 
-    with pytest.raises(ansunits.UnitSystemError):
+    with pytest.raises(NotBaseUnit):
         us.update(base_units=base_units)
 
 
 def test_invalid_unit_sys():
-    with pytest.raises(ansunits.UnitSystemError):
+    with pytest.raises(InvalidUnitSystem):
         us2 = ansunits.UnitSystem(unit_sys="Standard")
 
 
@@ -167,28 +168,28 @@ def test_wrong_unit_type():
     ur = ansunits.UnitRegistry()
     us = ansunits.UnitSystem()
 
-    with pytest.raises(ansunits.UnitSystemError):
+    with pytest.raises(IncorrectUnitType):
         us.TIME = ur.m
-    with pytest.raises(ansunits.UnitSystemError):
+    with pytest.raises(IncorrectUnitType):
         us.LIGHT = ur.sr
-    with pytest.raises(ansunits.UnitSystemError):
+    with pytest.raises(IncorrectUnitType):
         us.CURRENT = ur.ft
-    with pytest.raises(ansunits.UnitSystemError):
+    with pytest.raises(IncorrectUnitType):
         us.SOLID_ANGLE = ur.radian
 
 
 def test_error_messages():
-    e1 = ansunits.UnitSystemError.NOT_BASE_UNIT(ansunits.Unit("kg s^-1"))
+    e1 = NotBaseUnit(ansunits.Unit("kg s^-1"))
     expected_str = (
         "`kg s^-1` is not a base unit. To use `kg s^-1`, add it to the "
         "`base_units` table within the cfg.yaml file."
     )
     assert str(e1) == expected_str
 
-    e2 = ansunits.UnitSystemError.INVALID_UNIT_SYS("ham sandwich")
+    e2 = InvalidUnitSystem("ham sandwich")
     assert str(e2) == "`ham sandwich` is not a supported unit system."
 
-    e3 = ansunits.UnitSystemError.WRONG_UNIT_TYPE(
+    e3 = IncorrectUnitType(
         unit=ansunits.Unit("ft"), unit_type=ansunits.BaseDimensions.MASS
     )
     assert str(e3) == "The unit `ft` is incompatible with unit system type: `MASS`"

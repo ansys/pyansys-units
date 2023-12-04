@@ -6,6 +6,32 @@ from typing import Union
 import ansys.units as ansunits
 
 
+class NotBaseUnit(ValueError):
+    """Provides the error when the provided unit is unavailable in base units."""
+
+    def __init__(self, unit):
+        super().__init__(
+            f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
+            "`base_units` table within the cfg.yaml file."
+        )
+
+
+class InvalidUnitSystem(ValueError):
+    """Provides the error when the provided unit system is unsupported."""
+
+    def __init__(self, sys):
+        super().__init__(f"`{sys}` is not a supported unit system.")
+
+
+class IncorrectUnitType(ValueError):
+    """Provides the error when the type of provided unit is incorrect."""
+
+    def __init__(self, unit, unit_type):
+        super().__init__(
+            f"The unit `{unit.name}` is incompatible with unit system type: `{unit_type.name}`"
+        )
+
+
 class UnitSystem:
     """
     A class containing base units for a user-defined or predefined unit system.
@@ -46,7 +72,7 @@ class UnitSystem:
             if not unit_sys:
                 unit_sys = "SI"
             if unit_sys not in ansunits._unit_systems:
-                raise UnitSystemError.INVALID_UNIT_SYS(unit_sys)
+                raise InvalidUnitSystem(unit_sys)
             else:
                 self._units = ansunits._unit_systems[unit_sys].copy()
 
@@ -107,10 +133,10 @@ class UnitSystem:
             unit = ansunits.Unit(unit)
 
         if unit.name not in ansunits._base_units:
-            raise UnitSystemError.NOT_BASE_UNIT(unit)
+            raise NotBaseUnit(unit)
 
         if unit._type != unit_type.name:
-            raise UnitSystemError.WRONG_UNIT_TYPE(unit, unit_type)
+            raise IncorrectUnitType(unit, unit_type)
 
         setattr(self, f"_{unit_type.name}", unit)
 
@@ -227,27 +253,3 @@ class UnitSystem:
             if getattr(other_sys, attr) != value:
                 return False
         return True
-
-
-class UnitSystemError(ValueError):
-    """Provides custom unit system errors."""
-
-    def __init__(self, err):
-        super().__init__(err)
-
-    @classmethod
-    def NOT_BASE_UNIT(cls, unit):
-        return cls(
-            f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
-            "`base_units` table within the cfg.yaml file."
-        )
-
-    @classmethod
-    def INVALID_UNIT_SYS(cls, sys):
-        return cls(f"`{sys}` is not a supported unit system.")
-
-    @classmethod
-    def WRONG_UNIT_TYPE(cls, unit, unit_type):
-        return cls(
-            f"The unit `{unit.name}` is incompatible with unit system type: `{unit_type.name}`"
-        )

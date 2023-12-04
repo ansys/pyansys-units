@@ -6,6 +6,14 @@ import yaml
 import ansys.units as ansunits
 
 
+class UnitAlreadyRegistered(ValueError):
+    """Provides the error when the specified unit is trying to override a registered
+    unit."""
+
+    def __init__(self, name):
+        super().__init__(f"Unable to override `{name}` it has already been registered.")
+
+
 class UnitRegistry:
     """
     A container of common ``Units`` for ease of use. Defaults to all units in
@@ -53,21 +61,6 @@ class UnitRegistry:
 
     def __setattr__(self, __name: str, unit: any) -> None:
         if hasattr(self, __name):
-            raise RegistryError.UNIT_ALREADY_REGISTERED(__name)
+            raise UnitAlreadyRegistered(__name)
         self.__dict__[__name] = unit
 
-    def __iter__(self):
-        for item in self.__dict__:
-            yield getattr(self, item)
-
-
-class RegistryError(ValueError):
-    """Custom dimensions errors."""
-
-    def __init__(self, err):
-        super().__init__(err)
-
-    @classmethod
-    def UNIT_ALREADY_REGISTERED(cls, name):
-        """Return in case of trying to override a registered unit."""
-        return cls(f"Unable to override `{name}` it has already been registered.")

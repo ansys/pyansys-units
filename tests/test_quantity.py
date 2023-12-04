@@ -3,6 +3,15 @@ import math
 import pytest
 
 import ansys.units as ansunits
+from ansys.units.quantity import (  # InvalidFloatUsage,
+    ExcessiveParameters,
+    IncompatibleDimensions,
+    IncompatibleQuantities,
+    IncompatibleValue,
+    InsufficientArguments,
+    NumPyRequired,
+)
+from ansys.units.unit import IncorrectUnits
 
 DELTA = 1.0e-5
 
@@ -49,10 +58,10 @@ def test_array():
         assert np.array_equal(list_meter.value, arr)
 
     except ImportError:
-        with pytest.raises(ansunits.QuantityError):
+        with pytest.raises(NumPyRequired):
             e1 = ansunits.Quantity(7, "kg").__array__()
 
-        with pytest.raises(ansunits.QuantityError):
+        with pytest.raises(NumPyRequired):
             e2 = ansunits.Quantity([7, 8, 9], "kg")
 
 
@@ -108,7 +117,7 @@ def test_subtraction():
     assert (q2 - q1).si_value == -5.0
     assert q4.value == 3
 
-    with pytest.raises(ansunits.UnitError) as e_info:
+    with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
 
 
@@ -216,8 +225,13 @@ def test_eq():
     assert x == l
     assert r == n
     assert r == 10.5
-    assert (m == y) == False
-    assert (x == 0.5) == False
+
+    with pytest.raises(IncompatibleQuantities):
+        assert x == 0.5
+
+    with pytest.raises(IncompatibleDimensions):
+        assert m == y
+        assert x == 0.5
 
 
 def test_rdiv():
@@ -265,7 +279,7 @@ def test_addition():
     assert q2.units.name == ""
     assert q2.value == 10
 
-    with pytest.raises(ansunits.UnitError) as e_info:
+    with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
 
 
@@ -287,10 +301,10 @@ def test_ge():
     assert 15.7 >= r
     assert r >= 7.8
 
-    with pytest.raises(ansunits.DimensionsError) as e_info:
+    with pytest.raises(IncompatibleDimensions) as e_info:
         assert x >= z
 
-    with pytest.raises(ansunits.QuantityError) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x >= 5.0
 
 
@@ -304,10 +318,10 @@ def test_gt():
     assert 15.7 > r
     assert r > 7.8
 
-    with pytest.raises(ansunits.DimensionsError) as e_info:
+    with pytest.raises(IncompatibleDimensions) as e_info:
         assert x > z
 
-    with pytest.raises(ansunits.QuantityError) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x > 5.0
 
 
@@ -321,10 +335,10 @@ def test_lt():
     assert r < 15.7
     assert 7.8 < r
 
-    with pytest.raises(ansunits.DimensionsError) as e_info:
+    with pytest.raises(IncompatibleDimensions) as e_info:
         assert z < x
 
-    with pytest.raises(ansunits.QuantityError) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x < 5.0
 
 
@@ -338,10 +352,10 @@ def test_le():
     assert r <= 15.7
     assert 7.8 <= r
 
-    with pytest.raises(ansunits.DimensionsError) as e_info:
+    with pytest.raises(IncompatibleDimensions) as e_info:
         assert z <= x
 
-    with pytest.raises(ansunits.QuantityError) as e_info:
+    with pytest.raises(IncompatibleQuantities) as e_info:
         assert x <= 5.0
 
 
@@ -461,37 +475,35 @@ def testing_multipliers():
 
 def test_excessive_parameters_error():
     dims = ansunits.BaseDimensions
-    with pytest.raises(ansunits.QuantityError):
+    with pytest.raises(ExcessiveParameters):
         e1 = ansunits.Quantity(
             value=10,
             units="farad",
             dimensions=ansunits.Dimensions({dims.MASS: 1}),
             quantity_map={"Velocity": 3},
         )
-    with pytest.raises(ansunits.QuantityError):
+    with pytest.raises(InsufficientArguments):
         e2 = ansunits.Quantity()
 
 
-def test_incompatable_dimensions_error():
+def test_incompatible_dimensions_error():
     ur = ansunits.UnitRegistry()
-    with pytest.raises(ansunits.QuantityError):
+    with pytest.raises(IncompatibleDimensions):
         e1 = ansunits.Quantity(7, ur.kg).to(ur.ft)
 
 
 def test_error_messages():
-    e1 = ansunits.QuantityError.EXCESSIVE_PARAMETERS()
+    e1 = ExcessiveParameters()
     assert (
         str(e1)
         == "Quantity only accepts one of the following parameters: \
             (units) or (quantity_map) or (dimensions)."
     )
 
-    e2 = ansunits.QuantityError.INCOMPATIBLE_DIMENSIONS(
-        ansunits.Unit("mm"), ansunits.Unit("K")
-    )
-    assert str(e2).startswith(
-        "`mm` and `K` have incompatible dimensions.`mm` can only be converted to "
-    )
 
-    e3 = ansunits.QuantityError.INCOMPATIBLE_VALUE("radian")
+    e2 = IncompatibleDimensions(ansunits.Unit("mm"), ansunits.Unit("K"))
+    assert str(e2) == "`mm` and `K` have incompatible dimensions."
+
+
+    e3 = IncompatibleValue("radian")
     assert str(e3) == "`radian` is incompatible with the current quantity object."
