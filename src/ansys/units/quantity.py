@@ -325,53 +325,44 @@ class Quantity:
             raise IncompatibleQuantities(self, other)
 
     def __gt__(self, __value):
-        if isinstance(__value, ansunits.Quantity):
-            self.dimensions > __value.dimensions
-            return self.si_value > __value.si_value
-        elif not self.is_dimensionless:
-            raise IncompatibleQuantities(self, __value)
-        else:
-            return self.si_value > __value
+        self.validate_matching_dimensions(__value)
+        return (
+            self.si_value > __value
+            if self.is_dimensionless
+            else self.si_value > __value.si_value
+        )
 
     def __ge__(self, __value):
-        if isinstance(__value, ansunits.Quantity):
-            self.dimensions >= __value.dimensions
-            return self.si_value >= __value.si_value
-        elif not self.is_dimensionless:
-            raise IncompatibleQuantities(self, __value)
-        else:
-            return self.si_value >= __value
+        self.validate_matching_dimensions(__value)
+        return (
+            self.si_value >= __value
+            if self.is_dimensionless
+            else self.si_value >= __value.si_value
+        )
 
     def __lt__(self, __value):
-        if isinstance(__value, ansunits.Quantity):
-            self.dimensions < __value.dimensions
-            return self.si_value < __value.si_value
-        elif not self.is_dimensionless:
-            raise IncompatibleQuantities(self, __value)
-        else:
-            return self.si_value < __value
+        self.validate_matching_dimensions(__value)
+        return (
+            self.si_value < __value
+            if self.is_dimensionless
+            else self.si_value < __value.si_value
+        )
 
     def __le__(self, __value):
-        print(self)
-        if isinstance(__value, ansunits.Quantity):
-            self.dimensions <= __value.dimensions
-            return self.si_value <= __value.si_value
-        elif not self.is_dimensionless:
-            raise IncompatibleQuantities(self, __value)
-        else:
-            return self.si_value <= __value
+        self.validate_matching_dimensions(__value)
+        return (
+            self.si_value <= __value
+            if self.is_dimensionless
+            else self.si_value <= __value.si_value
+        )
 
     def __eq__(self, __value):
-        if not self.is_dimensionless and not isinstance(__value, ansunits.Quantity):
-            return False
-        if isinstance(__value, ansunits.Quantity):
-            if (
-                self.si_value == __value.si_value
-                and self.dimensions == __value.dimensions
-            ):
-                return True
-            return False
-        return self.si_value == __value
+        self.validate_matching_dimensions(__value)
+        return (
+            self.si_value == __value
+            if self.is_dimensionless
+            else self.si_value == __value.si_value
+        )
 
     def __ne__(self, __value):
         return not self.__eq__(__value)

@@ -226,10 +226,12 @@ def test_eq():
     assert r == n
     assert r == 10.5
 
-    assert (x == 0.5) is False
-    assert (m == y) is False
-    assert (m == y) == False
-    assert (x == 0.5) == False
+    with pytest.raises(IncompatibleQuantities):
+        assert x == 0.5
+
+    with pytest.raises(IncompatibleDimensions):
+        assert m == y
+        assert x == 0.5
 
 
 def test_rdiv():
