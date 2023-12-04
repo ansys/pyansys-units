@@ -149,5 +149,5 @@ def test_incorrect_unit_with_multiplier():
 
 def test_copy_units_with_incompatable_dimensions():
     kg = ansunits.Unit("kg")
-    with pytest.raises(ansunits.UnitError):
+    with pytest.raises(InconsistentDimensions):
         ansunits.Unit(units="m", copy_from=kg)

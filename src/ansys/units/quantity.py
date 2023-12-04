@@ -53,6 +53,18 @@ class IncompatibleQuantities(ValueError):
         super().__init__(f"'{q1}' and '{q2}' are incompatible.")
 
 
+class NumpyRequired(ModuleNotFoundError):
+    def __init__(self):
+        super().__init__("To use NumPy arrays and lists install NumPy.")
+
+
+class InvalidFloatUsage(FloatingPointError):
+    def __init__(self):
+        super().__init__(
+            "Only dimensionless quantities and angles can be used as a float."
+        )
+
+
 class Quantity:
     """
     A class which contains a physical quantity's value and associated units.
@@ -109,7 +121,7 @@ class Quantity:
                 units = copy_from.units
                 value = copy_from.value
         elif value is None:
-            raise QuantityError.MISSING_REQUIREMENT()
+            raise InsufficientArguments()
 
         if not isinstance(value, (float, int)):
             if _array:
@@ -118,7 +130,7 @@ class Quantity:
                 else:
                     self._value = _array.array(value)
             elif not _array:
-                raise QuantityError.REQUIRES_NUMPY()
+                raise NumpyRequired()
         else:
             self._value = float(value)
 
@@ -209,7 +221,7 @@ class Quantity:
             dims(dimensions={base_dims.SOLID_ANGLE: 1.0}),
         ]:
             return self.si_value
-        raise QuantityError.FLOAT()
+        raise InvalidFloatUsage()
 
     def __array__(self):
         if _array:
@@ -217,14 +229,14 @@ class Quantity:
                 return _array.array([self.value])
             return self.value
         else:
-            raise QuantityError.REQUIRES_NUMPY()
+            raise NumpyRequired()
 
     def __getitem__(self, idx):
         if _array:
             value = self.__array__()[idx]
             return Quantity(value, self.units)
         else:
-            raise QuantityError.REQUIRES_NUMPY()
+            raise NumpyRequired()
 
     def __str__(self):
         return f'({self.value}, "{self._unit.name}")'
@@ -313,7 +325,7 @@ class Quantity:
             self.dimensions > __value.dimensions
             return self.si_value > __value.si_value
         elif not self.is_dimensionless:
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncompatibleQuantities(self, __value)
         else:
             return self.si_value > __value
 
@@ -322,7 +334,7 @@ class Quantity:
             self.dimensions >= __value.dimensions
             return self.si_value >= __value.si_value
         elif not self.is_dimensionless:
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncompatibleQuantities(self, __value)
         else:
             return self.si_value >= __value
 
@@ -331,7 +343,7 @@ class Quantity:
             self.dimensions < __value.dimensions
             return self.si_value < __value.si_value
         elif not self.is_dimensionless:
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncompatibleQuantities(self, __value)
         else:
             return self.si_value < __value
 
@@ -341,7 +353,7 @@ class Quantity:
             self.dimensions <= __value.dimensions
             return self.si_value <= __value.si_value
         elif not self.is_dimensionless:
-            raise QuantityError.INCOMPARABLE_QUANTITIES(self, __value)
+            raise IncompatibleQuantities(self, __value)
         else:
             return self.si_value <= __value
 
@@ -359,43 +371,3 @@ class Quantity:
 
     def __ne__(self, __value):
         return not self.__eq__(__value)
-
-
-class QuantityError(ValueError):
-    """Custom quantity errors."""
-
-    def __init__(self, err):
-        super().__init__(err)
-
-    @classmethod
-    def EXCESSIVE_PARAMETERS(cls):
-        return cls(
-            "Quantity only accepts one of the following parameters: \
-            (units) or (quantity_map) or (dimensions)."
-        )
-
-    @classmethod
-    def MISSING_REQUIREMENT(cls):
-        return cls("Requires at least one 'value' or 'copy_from' argument.")
-
-    @classmethod
-    def INCOMPATIBLE_DIMENSIONS(cls, from_unit, to_unit):
-        return cls(
-            f"`{from_unit.name}` and `{to_unit.name}` have incompatible dimensions."
-        )
-
-    @classmethod
-    def INCOMPATIBLE_VALUE(cls, value):
-        return cls(f"`{value}` is incompatible with the current quantity object.")
-
-    @classmethod
-    def INCOMPARABLE_QUANTITIES(cls, q1, q2):
-        return cls(f"'{q1}' cannot be compared to '{q2}' in this manner.")
-
-    @classmethod
-    def REQUIRES_NUMPY(cls):
-        return cls(f"To use NumPy arrays and lists install NumPy.")
-
-    @classmethod
-    def FLOAT(cls):
-        return cls(f"Only dimensionless quantities and angles can be used as a float.")

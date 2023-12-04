@@ -3,12 +3,13 @@ import math
 import pytest
 
 import ansys.units as ansunits
-from ansys.units.quantity import (
+from ansys.units.quantity import (  # InvalidFloatUsage,
     ExcessiveParameters,
     IncompatibleDimensions,
     IncompatibleQuantities,
     IncompatibleValue,
     InsufficientArguments,
+    NumpyRequired,
 )
 from ansys.units.unit import IncorrectUnits
 
@@ -57,10 +58,10 @@ def test_array():
         assert np.array_equal(list_meter.value, arr)
 
     except ImportError:
-        with pytest.raises(ansunits.QuantityError):
+        with pytest.raises(NumpyRequired):
             e1 = ansunits.Quantity(7, "kg").__array__()
 
-        with pytest.raises(ansunits.QuantityError):
+        with pytest.raises(NumpyRequired):
             e2 = ansunits.Quantity([7, 8, 9], "kg")
 
 
@@ -225,9 +226,8 @@ def test_eq():
     assert r == n
     assert r == 10.5
 
-    with pytest.raises(IncompatibleQuantities) as e_info:
-        assert x == 0.5
-        assert (m == y) is False
+    assert (x == 0.5) is False
+    assert (m == y) is False
     assert (m == y) == False
     assert (x == 0.5) == False
 
