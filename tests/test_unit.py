@@ -50,9 +50,9 @@ def test_compatibility():
     force_units = {"dyne", "lbf", "pdl"}
     temperature_difference_units = {"delta_C", "delta_R", "delta_F"}
 
-    assert ureg.ft.compatible_units() == ft
-    assert ureg.N.compatible_units() == newton
-    assert ureg.delta_K.compatible_units() == delta_K
+    assert ureg.ft.compatible_units() == length_units
+    assert ureg.N.compatible_units() == force_units
+    assert ureg.delta_K.compatible_units() == temperature_difference_units
 
 
 def test_string_rep():
