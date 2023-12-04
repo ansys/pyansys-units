@@ -67,7 +67,7 @@ You can instantiate unit systems with one of two methods:
    si.base_units  # ['kg', 'm', 's', 'K', 'delta_K', 'radian', 'mol', 'cd', 'A', 'sr']
 
    # Custom unit systems are defined by passing selected base units. Any unit
-   # type that is not given will be filled with the SI equivalent.
+   # type that is not given defaults to SI.
 
    ureg = ansunits.UnitRegistry()
    dims = ansunits.BaseDimensions
