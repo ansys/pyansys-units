@@ -54,11 +54,15 @@ class IncompatibleQuantities(ValueError):
 
 
 class NumpyRequired(ModuleNotFoundError):
+    """Provides the error when Numpy is unavailable."""
+
     def __init__(self):
         super().__init__("To use NumPy arrays and lists install NumPy.")
 
 
 class InvalidFloatUsage(FloatingPointError):
+    """Provides the error when unsupported quantities are being used as a float."""
+
     def __init__(self):
         super().__init__(
             "Only dimensionless quantities and angles can be used as a float."
