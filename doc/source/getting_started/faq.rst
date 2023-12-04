@@ -9,7 +9,7 @@ What is PyAnsys Units?
 PyAnsys units is a Python package that allows you to introduce the concept of
 physical quantities into your Python environment. You can define your own units,
 unit systems and quantities and work with them in a natural way using arithmetic
-operations and conversions in between.
+operations and conversions.
 
 What unit systems are provided by default?
 """"""""""""""""""""""""""""""""""""""""""
