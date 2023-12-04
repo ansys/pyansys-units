@@ -6,7 +6,7 @@ Unit string format
 
 PyAnsys Units supports specifying units as strings for many input parameters and
 can also provide string representations of units. The basic form of a unit
-string is follows this convention:
+string follows this convention:
 
 .. code::
 
