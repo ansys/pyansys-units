@@ -21,7 +21,7 @@ where
 - ``exponent`` is optional and must be preceded by the caret ``^`` symbol followed
   by the numerical exponent.
 
-More complex unit strings can built up by concatenation of these basic strings
+More complex unit strings can be built up by concatenation of these basic strings
 with spaces in between. Spaces between the sub-strings indicate that the units
 are multiplied together. Some examples are as follows:
 
