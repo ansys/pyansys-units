@@ -378,4 +378,3 @@ class Quantity:
 
     def __ne__(self, __value):
         return not self.__eq__(__value)
-

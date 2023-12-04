@@ -63,4 +63,3 @@ class UnitRegistry:
         if hasattr(self, __name):
             raise UnitAlreadyRegistered(__name)
         self.__dict__[__name] = unit
-

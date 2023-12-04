@@ -500,10 +500,8 @@ def test_error_messages():
             (units) or (quantity_map) or (dimensions)."
     )
 
-
     e2 = IncompatibleDimensions(ansunits.Unit("mm"), ansunits.Unit("K"))
     assert str(e2) == "`mm` and `K` have incompatible dimensions."
-
 
     e3 = IncompatibleValue("radian")
     assert str(e3) == "`radian` is incompatible with the current quantity object."
