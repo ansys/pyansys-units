@@ -10,7 +10,7 @@ string follows this convention:
 
 .. code::
 
-    <multiplier prefix>[unit]<^power>
+    <multiplier prefix>[unit]<^exponent>
 
 where
 
@@ -18,7 +18,7 @@ where
   package initialization such as ``k``, ``M`` or ``c``.
 - ``unit`` must be one of the base or derived units as defined in the
   ``UnitRegistry``.
-- ``power`` is optional and must be preceded by the caret ``^`` symbol followed
+- ``exponent`` is optional and must be preceded by the caret ``^`` symbol followed
   by the numerical exponent.
 
 More complex unit strings can built up by concatenation of these basic strings
