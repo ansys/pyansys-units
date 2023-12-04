@@ -22,7 +22,7 @@ You can instantiate quantities with one of four methods:
 
 .. code:: python
 
-   # Using unit strings
+   # Using supported unit strings
 
    volume = ansunits.Quantity(value=1, units="m^3")
 
