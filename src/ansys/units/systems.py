@@ -11,8 +11,7 @@ class UnitSystem:
     A class containing base units for a unit system.
 
     Predefined unit systems work automatically and are configured when the
-    package is initialized. User defined unit systems are dynamically
-    constructed by providing the selected base units on initialization.
+    package is initialized, whereas you can add user-defined systems at any time.
 
     Parameters
     ----------
