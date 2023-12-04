@@ -16,7 +16,7 @@ class UnitRegistry:
     Parameters
     ----------
     config: str, optional
-        Custom ``.yaml`` file or the default configuration in ``cfg.yaml``.
+        Path of a ``YAML`` configuration file, which can be a custom file, and defaults to the provided file, ``cfg.yaml``.
         Custom configuration files must match the format of the default
         configuration file.
     other: dict, optional
