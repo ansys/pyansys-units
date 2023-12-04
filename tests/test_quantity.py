@@ -9,7 +9,7 @@ from ansys.units.quantity import (  # InvalidFloatUsage,
     IncompatibleQuantities,
     IncompatibleValue,
     InsufficientArguments,
-    NumpyRequired,
+    NumPyRequired,
 )
 from ansys.units.unit import IncorrectUnits
 
@@ -58,10 +58,10 @@ def test_array():
         assert np.array_equal(list_meter.value, arr)
 
     except ImportError:
-        with pytest.raises(NumpyRequired):
+        with pytest.raises(NumPyRequired):
             e1 = ansunits.Quantity(7, "kg").__array__()
 
-        with pytest.raises(NumpyRequired):
+        with pytest.raises(NumPyRequired):
             e2 = ansunits.Quantity([7, 8, 9], "kg")
 
 

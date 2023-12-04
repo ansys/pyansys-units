@@ -53,15 +53,15 @@ class IncompatibleQuantities(ValueError):
         super().__init__(f"'{q1}' and '{q2}' are incompatible.")
 
 
-class NumpyRequired(ModuleNotFoundError):
-    """Provides the error when Numpy is unavailable."""
+class NumPyRequired(ModuleNotFoundError):
+    """Provides the error when NumPy is unavailable."""
 
     def __init__(self):
         super().__init__("To use NumPy arrays and lists install NumPy.")
 
 
 class InvalidFloatUsage(FloatingPointError):
-    """Provides the error when unsupported quantities are being used as a float."""
+    """Provides the error when float is unsupported for given type of quantity."""
 
     def __init__(self):
         super().__init__(
@@ -134,7 +134,7 @@ class Quantity:
                 else:
                     self._value = _array.array(value)
             elif not _array:
-                raise NumpyRequired()
+                raise NumPyRequired()
         else:
             self._value = float(value)
 
@@ -233,14 +233,14 @@ class Quantity:
                 return _array.array([self.value])
             return self.value
         else:
-            raise NumpyRequired()
+            raise NumPyRequired()
 
     def __getitem__(self, idx):
         if _array:
             value = self.__array__()[idx]
             return Quantity(value, self.units)
         else:
-            raise NumpyRequired()
+            raise NumPyRequired()
 
     def __str__(self):
         return f'({self.value}, "{self._unit.name}")'
