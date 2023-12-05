@@ -350,12 +350,11 @@ class Unit:
 
         temp = Unit("K")
         delta_temp = Unit("delta_K")
-        if (self == delta_temp and other_unit == temp) or (
-            self == temp and other_unit == delta_temp
-        ):
-            return Unit(self.name[-1])
-        if (self == temp and other_unit == temp) and op == "-":
-            return Unit(f"delta_{self.name}")
+        if (self and other_unit) in (temp, delta_temp):
+            if self != other_unit:
+                return Unit(self.name[-1])
+            if self == other_unit and op == "-":
+                return Unit(f"delta_{self.name[-1]}")
 
     def filter_unit_term(self, unit_term: str) -> tuple:
         """

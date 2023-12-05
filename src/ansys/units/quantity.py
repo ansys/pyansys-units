@@ -299,7 +299,7 @@ class Quantity:
         if not isinstance(__value, ansunits.Quantity):
             __value = ansunits.Quantity(__value)
         new_units = (self._unit + __value._unit) or self.units
-        if new_units != self.units or new_units != __value.units:
+        if __value.units != self.units:
             new_value = (
                 self.value
                 + __value.to(__value.units.name[:-1] + self.units.name[-1]).value
@@ -315,7 +315,7 @@ class Quantity:
         if not isinstance(__value, ansunits.Quantity):
             __value = ansunits.Quantity(__value)
         new_units = (self._unit - __value._unit) or self.units
-        if new_units != self.units or new_units != __value.units:
+        if self.units != __value.units:
             new_value = (
                 self.value
                 - __value.to(__value.units.name[:-1] + self.units.name[-1]).value
