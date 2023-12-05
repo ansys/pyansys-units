@@ -12,5 +12,6 @@ code to work with physical quantities.
    :maxdepth: 2
 
    quantity
+   strings
    temperature
 
