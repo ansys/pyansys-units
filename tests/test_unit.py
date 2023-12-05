@@ -45,6 +45,23 @@ def test_copy():
     assert slug == ureg.slug
 
 
+def test_units_from_dimensions():
+    dims = ansunits.BaseDimensions
+    kg = ansunits.Unit(dimensions=ansunits.Dimensions({dims.MASS: 1}))
+    assert kg.name == "kg"
+    assert kg.dimensions == ansunits.Dimensions({dims.MASS: 1})
+    assert kg.si_scaling_factor == 1
+    assert kg.si_offset == 0
+    slug_squared = ansunits.Unit(
+        dimensions=ansunits.Dimensions({dims.MASS: 2}),
+        unit_sys=ansunits.UnitSystem(unit_sys="BT"),
+    )
+    assert slug_squared.name == "slug^2"
+    assert slug_squared.dimensions == ansunits.Dimensions({dims.MASS: 2})
+    assert slug_squared.si_scaling_factor == 212.9820029406007
+    assert slug_squared.si_offset == 0
+
+
 def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C
