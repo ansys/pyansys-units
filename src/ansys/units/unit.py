@@ -432,6 +432,34 @@ class Unit:
 
         return self._condense(si_units), si_scaling_factor, si_offset
 
+    def _temp_precheck(self, other_unit, op: str = None):
+        """
+        Validate dimensions for temperature differences.
+
+        Parameters
+        ----------
+        other_unit : Unit
+            Unit for comparison against current unit.
+        op : str, optional
+            Operation conducted on the units. "-"
+
+        Returns
+        -------
+        Unit | None
+            unit object for a quantity of temperature difference or temperature.
+        """
+
+        print("her")
+
+        temp = Unit("K")
+        delta_temp = Unit("delta_K")
+        if (self == delta_temp and other_unit == temp) or (
+            self == temp and other_unit == delta_temp
+        ):
+            return Unit(self.name[-1])
+        if (self == temp and other_unit == temp) and op == "-":
+            return Unit(f"delta_{self.name}")
+
     @property
     def name(self):
         """Unit String."""
@@ -464,9 +492,9 @@ class Unit:
         return self._to_string()
 
     def __add__(self, __value):
-        new_dimensions = self.dimensions + __value.dimensions
-        if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
+        new_units = self._temp_precheck(__value)
+        if new_units:
+            return new_units
         if self.dimensions != __value.dimensions:
             raise IncorrectUnits(self, __value)
 
@@ -486,9 +514,9 @@ class Unit:
         return self.__mul__(__value)
 
     def __sub__(self, __value):
-        new_dimensions = self.dimensions - __value.dimensions
-        if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
+        new_units = self._temp_precheck(__value, op="-")
+        if new_units:
+            return new_units
         if self.dimensions != __value.dimensions:
             raise IncorrectUnits(self, __value)
 

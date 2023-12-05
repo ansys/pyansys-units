@@ -159,6 +159,10 @@ def test_temp_subtraction():
     assert dt2.si_value == 1.0
     assert dt2.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
 
+    t5 = ansunits.Quantity(10.0, "delta_F")
+    t6 = t5 - t4
+    assert t6 == ansunits.Quantity(13.6000004, "F")
+
 
 def test_pow():
     q1 = ansunits.Quantity(10.0, "m s^-1")
@@ -394,19 +398,19 @@ def test_temp():
 
 
 def test_temp_addition():
-    t1 = ansunits.Quantity(150.0, "C")
-    t2 = ansunits.Quantity(50.0, "C")
-
-    td = t1 - t2
-    assert td.units == ansunits.Unit("delta_K")
-    assert td.si_value == 100.0
-
     df = ansunits.Quantity(50.0, "delta_F")
     k = ansunits.Quantity(50.0, "K")
 
-    t = k + df
-    assert t.value == pytest.approx(77.7777777775, DELTA)
-    assert t.units == ansunits.Unit("K")
+    t1 = df + k
+    assert t1.value == pytest.approx(-319.6699999991, DELTA)
+    assert t1.units.name == "F"
+
+    t2 = k + df
+    assert t2.value == pytest.approx(77.7777777775, DELTA)
+    assert t2.units.name == "K"
+
+    t3 = df + df
+    assert t3 == ansunits.Quantity(100, "delta_F")
 
 
 def test_quantity_from_dimensions():
