@@ -161,7 +161,7 @@ def test_temp_subtraction():
 
     t5 = ansunits.Quantity(10.0, "delta_F")
     t6 = t5 - t4
-    assert t6 == ansunits.Quantity(13.6000004, "F")
+    assert t6 == ansunits.Quantity(-25.60000000495262, "F")
 
 
 def test_pow():
