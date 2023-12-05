@@ -321,7 +321,7 @@ class Unit:
 
     def _temp_precheck(self, other_unit, op: str = None):
         """
-        Validate dimensions for temperature differences.
+        Validate units for temperature differences.
 
         Parameters
         ----------
