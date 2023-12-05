@@ -348,8 +348,6 @@ class Unit:
             unit object for a quantity of temperature difference or temperature.
         """
 
-        print("her")
-
         temp = Unit("K")
         delta_temp = Unit("delta_K")
         if (self == delta_temp and other_unit == temp) or (
