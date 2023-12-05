@@ -1,12 +1,12 @@
 .. _temperature:
 
-==================================
+======================================
 Temperature and temperature difference
-==================================
+======================================
 
-PyAnsys Units supports temperature units in Kelvin (K), Celsius (C), Rankine (R)
-and Fahrenheit (F). For each temperature unit there is a change of temperature
-unit which is prefixed with ``delta_``.
+PyAnsys Units supports temperature units in kelvin (K), celsius (C), rankine (R)
+and fahrenheit (F). For each temperature unit there is a corresponding
+temperature difference unit which is prefixed with ``delta_``.
 
 Conversion is handled naturally through arithmetic operations:
 
@@ -27,8 +27,8 @@ Conversion is handled naturally through arithmetic operations:
     delta_K_ad_delta_K = delta_K + delta_K  # (10, delta_K)
     delta_K_sb_delta_K = delta_K - delta_K  # (0, delta_K)
 
-Negative absolute values for any temperature are instantiated as a change in
-temperature.
+Negative absolute values for any temperature are instantiated as a temperature
+difference.
 
 .. code:: python
 
