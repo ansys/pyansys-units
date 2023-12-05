@@ -29,7 +29,7 @@ class IncorrectUnits(ValueError):
 
 class Unit:
     """
-    A class with all unit information for a quantity.
+    A class containing the string name and dimensions of a unit.
 
     Parameters
     ----------
@@ -49,9 +49,21 @@ class Unit:
     ----------
     name
     si_units
-    si_multiplier
+    si_scaling_factor
     si_offset
     dimensions
+
+    Examples
+    --------
+    >>> from ansys.units import Unit, Quantity
+    >>> fps = Unit("ft s^-1")
+    >>> fps.name
+    'ft s^-1'
+    >>> fps.dimensions
+    {'LENGTH': 1.0, 'TIME': -1.0}
+    >>> speed = Quantity(value=5, units=fps)
+    >>> speed
+    Quantity (5.0, "ft s^-1")
     """
 
     def __init__(
@@ -461,28 +473,28 @@ class Unit:
         return self._condense(si_units), si_scaling_factor, si_offset
 
     @property
-    def name(self):
-        """Unit String."""
+    def name(self) -> str:
+        """The unit string."""
         return self._name
 
     @property
-    def si_units(self):
-        """The SI unit."""
+    def si_units(self) -> str:
+        """The unit string in SI units."""
         return self._si_units
 
     @property
-    def si_scaling_factor(self):
-        """The scaling factor used in SI conversion calculations."""
+    def si_scaling_factor(self) -> float:
+        """The scaling factor used to convert to SI units."""
         return self._si_scaling_factor
 
     @property
-    def si_offset(self):
-        """The offset used in SI conversion calculations."""
+    def si_offset(self) -> float:
+        """The offset used to convert to SI units."""
         return self._si_offset
 
     @property
-    def dimensions(self):
-        """Dimensions object."""
+    def dimensions(self) -> ansunits.Dimensions:
+        """Then units base dimensions."""
         return self._dimensions
 
     def __str__(self):
