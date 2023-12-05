@@ -318,9 +318,9 @@ class Unit:
 
         return Unit(self._condense(new_units))
 
-    def compatible_units(self):
+    def compatible_units(self) -> set[str]:
         """
-        Get a set of units with the same dimensions.
+        Get all units with the same dimensions.
 
         Returns
         -------
