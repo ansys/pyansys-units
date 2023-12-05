@@ -92,8 +92,8 @@ Getting started
 
 Basic usage
 ~~~~~~~~~~~
-
-Import the ``ansys.units`` package:
+PyAnsys Units supports defining quantities and their units in a intuitive way.
+Start by importing the ``ansys.units`` package:
 
 .. code:: python
 
@@ -103,14 +103,14 @@ You can instantiate quantities with one of four methods:
 
 .. code:: python
 
-   # unit string
+   # Using unit strings
 
    volume = ansunits.Quantity(value=1, units="m^3")
 
    volume.value  # 1.0
    volume.units.name  # "m^3"
 
-   # unit instance
+   # Using Unit instances
 
    ureg = ansunits.UnitRegistry()
 
@@ -119,7 +119,7 @@ You can instantiate quantities with one of four methods:
    volume.value  # 1.0
    volume.units.name  # "kg"
 
-   # dimensions
+   # Using base dimensions
 
    dims = ansunits.BaseDimensions
    dimensions = ansunits.Dimensions({dims.LENGTH: 1, dims.TIME: -2})
@@ -129,7 +129,7 @@ You can instantiate quantities with one of four methods:
    acceleration.value  # 3.0
    acceleration.units.name  # "m s^-2"
 
-   # quantity map
+   # Using the quantity map
 
    torque = ansunits.Quantity(5, quantity_map={"Torque": 1})
 
@@ -141,8 +141,14 @@ You can instantiate unit systems with one of two methods:
 
 .. code:: python
 
-   # custom unit systems, any unit type that is not given will be filled with SI
-   # equivalent.
+   # Use a pre-defined unit system
+
+   si = ansunits.UnitSystem(unit_sys="SI")
+
+   si.base_units  # ['kg', 'm', 's', 'K', 'delta_K', 'radian', 'mol', 'cd', 'A', 'sr']
+
+   # Custom unit systems are defined by passing selected base units. Any unit
+   # type that is not given will be filled with the SI equivalent.
 
    ureg = ansunits.UnitRegistry()
    dims = ansunits.BaseDimensions
@@ -158,12 +164,6 @@ You can instantiate unit systems with one of two methods:
    )
 
    sys.base_units  # ['slug', 'ft', 's', 'R', 'delta_R', 'radian', 'slugmol', 'cd', 'A', 'sr']
-
-   # pre-defined unit systems
-
-   si = ansunits.UnitSystem(unit_sys="SI")
-
-   si.base_units  # ['kg', 'm', 's', 'K', 'delta_K', 'radian', 'mol', 'cd', 'A', 'sr']
 
 Examples
 ~~~~~~~~

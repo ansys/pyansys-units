@@ -75,15 +75,15 @@ unit_systems:
     SOLID_ANGLE: sr
 
 # Base Units
-# -----------------
+# ----------
 #
 # Custom units -> Add new units and their associated properties to the list
 # below to use them within a quantity.
 #
-# <unit name>:        Primitive unit composed of `type`, `si_scaling_factor` and `si_offset`
-#   type: <name>      Must be one of the dimension types
+# <unit name>:         Primitive unit composed of `type`, `si_scaling_factor` and `si_offset`
+#   type: <name>       Must be one of the dimension types
 #   si_scaling_factor: <si_scaling_factor>  SI scaling factor
-#   si_offset: <si_offset>  SI conversion offset
+#   si_offset:         <si_offset>  SI conversion offset
 
 base_units:
   kg:
@@ -189,10 +189,10 @@ base_units:
 
 # Derived Units
 # -------------
-# Derived units are composed from the base units.  Each derived unit must
-# provide a `composition` and `factor`. The `composition` specifies  the
-# base units and their exponents.  The `factor` provides the conversion
-# from the composed unit string to the derived unit.
+# Derived units are composed from base units.  Each derived unit must provide a
+# `composition` and `factor`. The `composition` specifies the base units and
+# their exponents. The `factor` provides the conversion from the composed unit
+# string to the derived unit.
 #
 # Specification format:
 #

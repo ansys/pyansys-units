@@ -1,7 +1,7 @@
 .. _quantity:
 
 ===================
-Defining a Quantity
+Defining a quantity
 ===================
 
 The default unit system used when performing quantity operations is SI. This
