@@ -30,7 +30,7 @@ class Quantity:
         Real value of the quantity.
     units : str, Unit, optional
         Initializes the quantity's units using a string or ``Unit`` instance.
-    quantity_map : dict, optional
+    quantity_map : dict[str, int], optional
         Initializes the quantity's units using the quantity map.
     dimensions : Dimensions, optional
         Initializes the quantity's units in SI using a ``Dimensions`` instance.

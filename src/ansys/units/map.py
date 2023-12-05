@@ -8,8 +8,8 @@ class QuantityMap(object):
 
     Parameters
     ----------
-    quantity_map : dict
-        Dictionary containing quantity map units and exponents.
+    quantity_map : dict[str, int]
+        Dictionary containing quantity map units and their exponents.
 
     Attributes
     ----------
@@ -29,7 +29,7 @@ class QuantityMap(object):
 
         Parameters
         ----------
-        quantity_map : dict
+        quantity_map : dict[str, int]
             Quantity map to convert to a Unit.
 
         Returns
