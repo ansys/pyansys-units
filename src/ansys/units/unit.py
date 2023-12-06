@@ -358,6 +358,13 @@ class Unit:
         -------
         Unit | None
             unit object for a quantity of temperature difference or temperature.
+
+        Raises
+        ------
+        IncorrectTemperatureUnits
+            Cannot add two absolute temperatures.
+        IncorrectUnits
+            Cannot add or subtract different units.
         """
 
         temp = Unit("K")
@@ -372,6 +379,8 @@ class Unit:
             if self == other_unit == temp and op == "-":
                 # Adds the delta_ prefix.
                 return Unit(f"delta_{self.name}")
+        if self != other_unit:
+            raise IncorrectUnits(self, other_unit)
 
     def filter_unit_term(self, unit_term: str) -> tuple:
         """
@@ -518,11 +527,7 @@ class Unit:
         return self._to_string()
 
     def __add__(self, __value):
-        new_units = self._temp_precheck(__value)
-        if new_units:
-            return new_units
-        if self.dimensions != __value.dimensions:
-            raise IncorrectUnits(self, __value)
+        return self._temp_precheck(__value)
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
@@ -540,11 +545,7 @@ class Unit:
         return self.__mul__(__value)
 
     def __sub__(self, __value):
-        new_units = self._temp_precheck(__value, op="-")
-        if new_units:
-            return new_units
-        if self.dimensions != __value.dimensions:
-            raise IncorrectUnits(self, __value)
+        return self._temp_precheck(__value, op="-")
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):
