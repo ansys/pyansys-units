@@ -21,18 +21,17 @@ def test_pre_defined_unit_system():
 
 def test_repr():
     us = ansunits.UnitSystem()
-    us_dict = {
-        "MASS": "kg",
-        "LENGTH": "m",
-        "TIME": "s",
-        "TEMPERATURE": "K",
-        "TEMPERATURE_DIFFERENCE": "delta_K",
-        "ANGLE": "radian",
-        "CHEMICAL_AMOUNT": "mol",
-        "LIGHT": "cd",
-        "CURRENT": "A",
-        "SOLID_ANGLE": "sr",
-    }
+    us_dict = """MASS: kg
+LENGTH: m
+TIME: s
+TEMPERATURE: K
+TEMPERATURE_DIFFERENCE: delta_K
+ANGLE: radian
+CHEMICAL_AMOUNT: mol
+LIGHT: cd
+CURRENT: A
+SOLID_ANGLE: sr
+"""
     assert repr(us) == str(us_dict)
 
 

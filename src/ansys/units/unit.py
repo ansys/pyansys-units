@@ -149,14 +149,14 @@ class Unit:
             unit_sys = ansunits.UnitSystem()
             unit_sys = ansunits.UnitSystem()
 
-        base_units = unit_sys.base_units
         units = ""
         for key, value in dimensions:
+            unit_name = getattr(unit_sys, key.name).name
             if value == 1:
-                units += f"{base_units[key.value]} "
+                units += f"{unit_name} "
             elif value != 0.0:
                 value = int(value) if value % 1 == 0 else value
-                units += f"{base_units[key.value]}^{value} "
+                units += f"{unit_name}^{value} "
 
         return units.strip()
 

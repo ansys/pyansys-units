@@ -183,28 +183,71 @@ pas.units.name  # >>> "Pa s"
 dims = ansunits.BaseDimensions
 sys_units = {dims.MASS: "slug", dims.LENGTH: "ft"}
 sys = ansunits.UnitSystem(base_units=sys_units, unit_sys="SI")
-
-sys.base_units  # >>> ["slug", "ft", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
+sys
+"""
+MASS: slug
+LENGTH: ft
+TIME: s
+TEMPERATURE: K
+TEMPERATURE_DIFFERENCE: delta_K
+ANGLE: radian
+CHEMICAL_AMOUNT: mol
+LIGHT: cd
+CURRENT: A
+SOLID_ANGLE: sr
+"""
 
 # Predefined unit systems
 
 cgs = ansunits.UnitSystem(unit_sys="CGS")
-
-cgs.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
+cgs
+"""
+MASS: g
+LENGTH: cm
+TIME: s
+TEMPERATURE: K
+TEMPERATURE_DIFFERENCE: delta_K
+ANGLE: radian
+CHEMICAL_AMOUNT: mol
+LIGHT: cd
+CURRENT: A
+SOLID_ANGLE: sr
+"""
 
 # Copy from a preexisting unit system
 
 cgs_copy = ansunits.UnitSystem(copy_from=cgs)
-
-cgs_copy.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
+cgs_copy
+"""
+MASS: g
+LENGTH: cm
+TIME: s
+TEMPERATURE: K
+TEMPERATURE_DIFFERENCE: delta_K
+ANGLE: radian
+CHEMICAL_AMOUNT: mol
+LIGHT: cd
+CURRENT: A
+SOLID_ANGLE: sr
+"""
 
 # Combinations of these
 
 sys_units = {dims.MASS: "slug", dims.LENGTH: "ft", dims.ANGLE: "degree"}
 cgs_modified = ansunits.UnitSystem(base_units=sys_units, copy_from=cgs)
-
-cgs_modified.base_units  # >>> ['slug', 'ft', 's', 'K', "delta_K", 'degree', 'mol', 'cd', 'A', 'sr']
-
+cgs_modified
+"""
+MASS: slug
+LENGTH: ft
+TIME: s
+TEMPERATURE: K
+TEMPERATURE_DIFFERENCE: delta_K
+ANGLE: degree
+CHEMICAL_AMOUNT: mol
+LIGHT: cd
+CURRENT: A
+SOLID_ANGLE: sr
+"""
 
 ###############################################################################
 # Create a unit system independently

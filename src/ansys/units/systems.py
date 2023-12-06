@@ -151,15 +151,6 @@ class UnitSystem:
         setattr(self, f"_{unit_type.name}", unit)
 
     @property
-    def base_units(self) -> list[str]:
-        """Base units of the unit system."""
-        _base_units = []
-        for unit_type in ansunits.BaseDimensions:
-            unit = getattr(self, f"_{unit_type.name}")
-            _base_units.append(unit.name)
-        return _base_units
-
-    @property
     def MASS(self):
         """Mass unit of the unit system."""
         return self._MASS
@@ -252,11 +243,11 @@ class UnitSystem:
         self._set_type(unit_type=ansunits.BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
     def __repr__(self):
-        units = {}
+        units = ""
         for unit_type in ansunits.BaseDimensions:
             unit = getattr(self, f"_{unit_type.name}")
-            units.update({unit_type.name: unit.name})
-        return str(units)
+            units += f"{unit_type.name}: {unit.name}\n"
+        return units
 
     def __eq__(self, other_sys):
         for attr, value in self.__dict__.items():
