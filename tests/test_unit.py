@@ -1,7 +1,12 @@
 import pytest
 
 import ansys.units as ansunits
-from ansys.units.unit import InconsistentDimensions, IncorrectUnits, UnconfiguredUnit
+from ansys.units.unit import (
+    InconsistentDimensions,
+    IncorrectTemperatureUnits,
+    IncorrectUnits,
+    UnconfiguredUnit,
+)
 
 
 def test_base_units():
@@ -86,6 +91,9 @@ def test_add():
 
     with pytest.raises(IncorrectUnits):
         C + kg
+
+    with pytest.raises(IncorrectTemperatureUnits):
+        C + C
 
 
 def test_unit_multiply_by_value():
