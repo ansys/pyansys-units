@@ -27,6 +27,16 @@ class IncorrectUnits(ValueError):
         )
 
 
+class IncorrectTemperatureUnits(ValueError):
+    """Provides the error when two temperatures are added."""
+
+    def __init__(self, unit1, unit2):
+        super().__init__(
+            f"`Either {unit1.name}` or '{unit2.name}' must be a relative unit for "
+            f"this operation."
+        )
+
+
 class Unit:
     """
     A class containing the string name and dimensions of a unit.
@@ -331,7 +341,7 @@ class Unit:
 
         return Unit(self._condense(new_units))
 
-    def _temp_precheck(self, other_unit, op: str = None):
+    def _temp_precheck(self, other_unit, op: str = "+"):
         """
         Validate units for temperature differences.
 
@@ -350,11 +360,16 @@ class Unit:
 
         temp = Unit("K")
         delta_temp = Unit("delta_K")
+        if self == other_unit == temp and op == "+":
+            raise IncorrectTemperatureUnits(self, other_unit)
+        # Checks to make sure they are both temperatures.
         if (self and other_unit) in (temp, delta_temp):
             if self != other_unit:
-                return Unit(self.name[-1])
-            if self == other_unit and op == "-":
-                return Unit(f"delta_{self.name[-1]}")
+                # Removes the delta_ prefix if there is one.
+                return Unit(self.name.replace("delta_", ""))
+            if self == other_unit == temp and op == "-":
+                # Adds the delta_ prefix.
+                return Unit(f"delta_{self.name}")
 
     def filter_unit_term(self, unit_term: str) -> tuple:
         """

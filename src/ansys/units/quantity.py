@@ -1,6 +1,7 @@
 """Provides the ``Quantity`` class."""
 from __future__ import annotations
 
+import operator
 from typing import Union
 
 import ansys.units as ansunits
@@ -221,6 +222,21 @@ class Quantity:
 
         return Quantity(value=new_value, units=to_units)
 
+    def _relative_unit_check(self, __value, op: operator = operator.add):
+        if not isinstance(__value, ansunits.Quantity):
+            __value = ansunits.Quantity(__value)
+        # Adds or subtracts the units. Will be self.units unless temperatures
+        # are involved.
+        new_units = op(self._unit, __value._unit) or self.units
+        if __value.units != self.units:
+            new_prefix = "delta_" if __value.units.name.startswith("delta_") else ""
+            new_unit = self.units.name.removeprefix("delta_")
+            # Converts the __value to the same unit as self without changing its prefix.
+            new_value = op(self.value, __value.to(new_prefix + new_unit).value)
+        else:
+            new_value = op(self.value, __value.to(self.units).value)
+        return Quantity(value=new_value, units=new_units)
+
     def __float__(self):
         base_dims = ansunits.BaseDimensions
         dims = ansunits.Dimensions
@@ -296,33 +312,13 @@ class Quantity:
         return Quantity(__value, "") / self
 
     def __add__(self, __value):
-        if not isinstance(__value, ansunits.Quantity):
-            __value = ansunits.Quantity(__value)
-        new_units = (self._unit + __value._unit) or self.units
-        if __value.units != self.units:
-            new_value = (
-                self.value
-                + __value.to(__value.units.name[:-1] + self.units.name[-1]).value
-            )
-        else:
-            new_value = self.value + __value.to(self.units).value
-        return Quantity(value=new_value, units=new_units)
+        return self._relative_unit_check(__value)
 
     def __radd__(self, __value):
         return self.__add__(__value)
 
     def __sub__(self, __value):
-        if not isinstance(__value, ansunits.Quantity):
-            __value = ansunits.Quantity(__value)
-        new_units = (self._unit - __value._unit) or self.units
-        if self.units != __value.units:
-            new_value = (
-                self.value
-                - __value.to(__value.units.name[:-1] + self.units.name[-1]).value
-            )
-        else:
-            new_value = self.value - __value.to(self.units).value
-        return Quantity(value=new_value, units=new_units)
+        return self._relative_unit_check(__value, op=operator.sub)
 
     def __rsub__(self, __value):
         return self.__sub__(__value)
