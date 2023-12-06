@@ -50,7 +50,6 @@ class UnitSystem:
 
     Attributes
     ----------
-    base_units
     MASS
     LENGTH
     TIME
