@@ -1,4 +1,0 @@
-extends: spelling
-level: warning
-filters:
-- 'substrings'
