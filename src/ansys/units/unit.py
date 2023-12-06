@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import ansys.units as ansunits
 from ansys.units import _base_units, _derived_units, _multipliers
 
@@ -341,7 +343,7 @@ class Unit:
 
         return Unit(self._condense(new_units))
 
-    def _temp_precheck(self, other_unit, op: str = "+"):
+    def _temp_precheck(self, other_unit, op: str = "+") -> Optional[Unit]:
         """
         Validate units for temperature differences.
 
@@ -350,7 +352,7 @@ class Unit:
         other_unit : Unit
             Unit for comparison against current unit.
         op : str, optional
-            Operation conducted on the units. "-"
+            Operation conducted on the units.
 
         Returns
         -------

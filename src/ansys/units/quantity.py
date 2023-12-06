@@ -222,7 +222,22 @@ class Quantity:
 
         return Quantity(value=new_value, units=to_units)
 
-    def _relative_unit_check(self, __value, op: operator = operator.add):
+    def _relative_unit_check(self, __value, op: operator = operator.add) -> Quantity:
+        """
+        Checks relative units for temperature differences.
+
+        Parameters
+        ----------
+        __value : float, int, Quantity
+            The value to be added or subtracted to self.
+        op : operator, optional
+            The operation being performed. Default is addition.
+
+        Returns
+        -------
+        Quantity
+            Quantity instance changed to or from relative units.
+        """
         if not isinstance(__value, ansunits.Quantity):
             __value = ansunits.Quantity(__value)
         # Adds or subtracts the units. Will be self.units unless temperatures
