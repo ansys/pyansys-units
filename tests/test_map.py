@@ -1,6 +1,6 @@
 import pytest
 
-import ansys.units as ansunits
+from ansys.units import QuantityMap
 from ansys.units.map import UnknownMapItem
 
 
@@ -12,7 +12,7 @@ def test_quantity_map():
         "Light": 1,
         "Epsilon Flux Coefficient": 2,
     }
-    qm1 = ansunits.QuantityMap(quantity_map=qm1_map)
+    qm1 = QuantityMap(quantity_map=qm1_map)
     assert qm1.units.name == "kg^3 m^-1.5 s^-6.5 A^3 cd"
 
     qm2_map = {
@@ -20,14 +20,14 @@ def test_quantity_map():
         "Pressure": 1,
         "Volume": 1,
     }
-    qm2 = ansunits.QuantityMap(quantity_map=qm2_map)
+    qm2 = QuantityMap(quantity_map=qm2_map)
     assert qm2.units.name == "K Pa m^3"
 
 
 def test_errors():
     qm_map = {"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
     with pytest.raises(UnknownMapItem) as e_info:
-        qm = ansunits.QuantityMap(quantity_map=qm_map)
+        qm = QuantityMap(quantity_map=qm_map)
 
 
 def test_error_messages():
