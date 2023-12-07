@@ -59,7 +59,7 @@ insert them within an equation to perform mathematical operations.
     m_dv = meter / 2  # 0.5
     m_sq = meter**2  # 1
 
-Additions and subtraction between two ``Quantity`` objects will retain the units
+Additions and subtraction between two ``Quantity`` objects retains the units
 of the first quantity.
 
 .. code:: python
