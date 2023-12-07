@@ -1,5 +1,6 @@
 """Provides the ``QuantityMap`` class."""
-from ansys.units import Unit, _api_quantity_map
+import ansys.units as ansunits
+from ansys.units import _api_quantity_map
 
 
 class UnknownMapItem(ValueError):
@@ -44,9 +45,9 @@ class QuantityMap(object):
         Unit
             Unit object representation of the quantity map.
         """
-        base_unit = Unit()
+        base_unit = ansunits.Unit()
         for term, exponent in quantity_map.items():
-            base_unit *= Unit(_api_quantity_map[term]) ** exponent
+            base_unit *= ansunits.Unit(_api_quantity_map[term]) ** exponent
 
         return base_unit
 
