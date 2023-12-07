@@ -1,12 +1,12 @@
 import pytest
 
-import ansys.units as ansunits
+from ansys.units import BaseDimensions, Quantity, Unit, UnitRegistry, UnitSystem
 from ansys.units.systems import IncorrectUnitType, InvalidUnitSystem, NotBaseUnit
 
 
 def test_pre_defined_unit_system():
-    ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(system="SI")
+    ur = UnitRegistry()
+    us = UnitSystem(system="SI")
     assert us.MASS == ur.kg
     assert us.LENGTH == ur.m
     assert us.TIME == ur.s
@@ -20,7 +20,7 @@ def test_pre_defined_unit_system():
 
 
 def test_repr():
-    us = ansunits.UnitSystem()
+    us = UnitSystem()
     us_dict = {
         "MASS": "kg",
         "LENGTH": "m",
@@ -37,15 +37,15 @@ def test_repr():
 
 
 def test_copy():
-    us = ansunits.UnitSystem(system="BT")
-    us1 = ansunits.UnitSystem(copy_from=us)
+    us = UnitSystem(system="BT")
+    us1 = UnitSystem(copy_from=us)
     assert us1 == us
 
 
 def test_update():
-    dims = ansunits.BaseDimensions
-    ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(system="SI")
+    dims = BaseDimensions
+    ur = UnitRegistry()
+    us = UnitSystem(system="SI")
     base_units = {
         dims.MASS: "slug",
         dims.LENGTH: ur.ft,
@@ -72,16 +72,16 @@ def test_update():
 
 
 def test_eq():
-    us1 = ansunits.UnitSystem(system="BT")
-    us2 = ansunits.UnitSystem()
-    us3 = ansunits.UnitSystem(system="SI")
+    us1 = UnitSystem(system="BT")
+    us2 = UnitSystem()
+    us3 = UnitSystem(system="SI")
     assert (us1 == us2) == False
     assert us2 == us3
 
 
 def test_set_type():
-    ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(system="SI")
+    ur = UnitRegistry()
+    us = UnitSystem(system="SI")
     us.MASS = ur.slug
     us.LENGTH = ur.ft
     us.TEMPERATURE = ur.R
@@ -97,9 +97,9 @@ def test_set_type():
 
 
 def test_custom_unit_system():
-    dims = ansunits.BaseDimensions
-    ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(
+    dims = BaseDimensions
+    ur = UnitRegistry()
+    us = UnitSystem(
         base_units={
             dims.MASS: ur.slug,
             dims.LENGTH: ur.ft,
@@ -126,33 +126,33 @@ def test_custom_unit_system():
 
 
 def test_conversion():
-    us1 = ansunits.UnitSystem(system="BT")
-    q1 = ansunits.Quantity(10, "kg ft s")
+    us1 = UnitSystem(system="BT")
+    q1 = Quantity(10, "kg ft s")
 
     q2 = us1.convert(q1)
     assert q2.value == 0.6852176585679174
-    assert q2.units == ansunits.Unit("slug ft s")
+    assert q2.units == Unit("slug ft s")
 
-    us2 = ansunits.UnitSystem(system="SI")
-    q3 = ansunits.Quantity(4, "slug cm s")
+    us2 = UnitSystem(system="SI")
+    q3 = Quantity(4, "slug cm s")
 
     q4 = us2.convert(q3)
     assert q4.value == 0.5837561174882547
-    assert q4.units == ansunits.Unit("kg m s")
+    assert q4.units == Unit("kg m s")
 
 
 def test_not_base_unit_init():
-    dims = ansunits.BaseDimensions
-    ur = ansunits.UnitRegistry()
+    dims = BaseDimensions
+    ur = UnitRegistry()
 
     with pytest.raises(NotBaseUnit):
-        us1 = ansunits.UnitSystem(base_units={dims.LENGTH: ur.N})
+        us1 = UnitSystem(base_units={dims.LENGTH: ur.N})
 
 
 def test_not_base_unit_update():
-    dims = ansunits.BaseDimensions
-    ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(system="SI")
+    dims = BaseDimensions
+    ur = UnitRegistry()
+    us = UnitSystem(system="SI")
     base_units = {dims.MASS: ur.N}
 
     with pytest.raises(NotBaseUnit):
@@ -161,12 +161,12 @@ def test_not_base_unit_update():
 
 def test_invalid_unit_sys():
     with pytest.raises(InvalidUnitSystem):
-        us2 = ansunits.UnitSystem(system="Standard")
+        us2 = UnitSystem(system="Standard")
 
 
 def test_wrong_unit_type():
-    ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem()
+    ur = UnitRegistry()
+    us = UnitSystem()
 
     with pytest.raises(IncorrectUnitType):
         us.TIME = ur.m
@@ -179,7 +179,7 @@ def test_wrong_unit_type():
 
 
 def test_error_messages():
-    e1 = NotBaseUnit(ansunits.Unit("kg s^-1"))
+    e1 = NotBaseUnit(Unit("kg s^-1"))
     expected_str = (
         "`kg s^-1` is not a base unit. To use `kg s^-1`, add it to the "
         "`base_units` table within the cfg.yaml file."
@@ -189,7 +189,5 @@ def test_error_messages():
     e2 = InvalidUnitSystem("ham sandwich")
     assert str(e2) == "`ham sandwich` is not a supported unit system."
 
-    e3 = IncorrectUnitType(
-        unit=ansunits.Unit("ft"), unit_type=ansunits.BaseDimensions.MASS
-    )
+    e3 = IncorrectUnitType(unit=Unit("ft"), unit_type=BaseDimensions.MASS)
     assert str(e3) == "The unit `ft` is incompatible with unit system type: `MASS`"

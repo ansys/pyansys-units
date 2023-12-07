@@ -1,7 +1,14 @@
 from __future__ import annotations
 
-import ansys.units as ansunits
-from ansys.units import _base_units, _derived_units, _multipliers
+from ansys.units import (
+    BaseDimensions,
+    Dimensions,
+    Quantity,
+    UnitSystem,
+    _base_units,
+    _derived_units,
+    _multipliers,
+)
 
 
 class InconsistentDimensions(ValueError):
@@ -70,9 +77,9 @@ class Unit:
         self,
         units: str = None,
         config: dict = None,
-        dimensions: ansunits.Dimensions = None,
-        system: ansunits.UnitSystem = None,
-        copy_from: ansunits.Unit = None,
+        dimensions: Dimensions = None,
+        system: UnitSystem = None,
+        copy_from: Unit = None,
     ):
         if copy_from:
             if (units) and units != copy_from.name:
@@ -82,7 +89,7 @@ class Unit:
         if units:
             self._name = units
             _dimensions = self._units_to_dim(units=units)
-            self._dimensions = ansunits.Dimensions(_dimensions)
+            self._dimensions = Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise InconsistentDimensions()
             if not self._dimensions:
@@ -93,7 +100,7 @@ class Unit:
             self._name = self._dim_to_units(dimensions=dimensions, system=system)
         else:
             self._name = ""
-            self._dimensions = ansunits.Dimensions()
+            self._dimensions = Dimensions()
 
         if not config:
             config = self._get_config(name=self._name)
@@ -118,15 +125,15 @@ class Unit:
         dict
             Dictionary of extra unit information.
         """
-        if name in ansunits._base_units:
-            return ansunits._base_units[name]
-        if name in ansunits._derived_units:
-            return ansunits._derived_units[name]
+        if name in _base_units:
+            return _base_units[name]
+        if name in _derived_units:
+            return _derived_units[name]
 
     def _dim_to_units(
         self,
-        dimensions: ansunits.Dimensions,
-        system: ansunits.UnitSystem = None,
+        dimensions: Dimensions,
+        system: UnitSystem = None,
     ) -> str:
         """
         Convert a dimensions list into a unit string.
@@ -146,8 +153,7 @@ class Unit:
             Unit string.
         """
         if not system:
-            system = ansunits.UnitSystem()
-            system = ansunits.UnitSystem()
+            system = UnitSystem()
 
         base_units = system.base_units
         units = ""
@@ -185,10 +191,10 @@ class Unit:
             if unit_term in _base_units:
                 idx = _base_units[unit_term]["type"]
 
-                if ansunits.BaseDimensions[idx] in dimensions:
-                    dimensions[ansunits.BaseDimensions[idx]] += unit_term_exponent
+                if BaseDimensions[idx] in dimensions:
+                    dimensions[BaseDimensions[idx]] += unit_term_exponent
                 else:
-                    dimensions[ansunits.BaseDimensions[idx]] = unit_term_exponent
+                    dimensions[BaseDimensions[idx]] = unit_term_exponent
 
             # Retrieve derived unit composition unit string and SI factor.
             if unit_term in _derived_units:
@@ -465,7 +471,7 @@ class Unit:
         return self._si_offset
 
     @property
-    def dimensions(self) -> ansunits.Dimensions:
+    def dimensions(self) -> Dimensions:
         """Then units base dimensions."""
         return self._dimensions
 
@@ -478,7 +484,7 @@ class Unit:
     def __add__(self, __value):
         new_dimensions = self.dimensions + __value.dimensions
         if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
+            return Unit(dimensions=new_dimensions)
         if self.dimensions != __value.dimensions:
             raise IncorrectUnits(self, __value)
 
@@ -486,10 +492,8 @@ class Unit:
         if isinstance(__value, Unit):
             return self._new_units(__value, op="*")
 
-        elif isinstance(__value, (float, int)) and not isinstance(
-            __value, ansunits.Quantity
-        ):
-            return ansunits.Quantity(value=__value, units=self)
+        elif isinstance(__value, (float, int)) and not isinstance(__value, Quantity):
+            return Quantity(value=__value, units=self)
 
         else:
             return NotImplemented
@@ -500,7 +504,7 @@ class Unit:
     def __sub__(self, __value):
         new_dimensions = self.dimensions - __value.dimensions
         if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
+            return Unit(dimensions=new_dimensions)
         if self.dimensions != __value.dimensions:
             raise IncorrectUnits(self, __value)
 
@@ -515,9 +519,9 @@ class Unit:
         return self._new_units(__value, op="**")
 
     def __eq__(self, other_unit):
-        if not isinstance(other_unit, ansunits.Unit) and self.name:
+        if not isinstance(other_unit, Unit) and self.name:
             return False
-        if isinstance(other_unit, ansunits.Unit):
+        if isinstance(other_unit, Unit):
             return self.dimensions == other_unit.dimensions
         return True
 

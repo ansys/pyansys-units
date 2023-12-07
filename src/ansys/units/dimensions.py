@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-import ansys.units as ansunits
+from ansys.units import BaseDimensions, Dimensions
 
 
 class IncorrectDimensions(ValueError):
@@ -35,8 +35,8 @@ class Dimensions:
 
     def __init__(
         self,
-        dimensions: dict[ansunits.BaseDimensions, Union[int, float]] = None,
-        copy_from: ansunits.Dimensions = None,
+        dimensions: dict[BaseDimensions, Union[int, float]] = None,
+        copy_from: Dimensions = None,
     ):
         dimensions = dimensions or {}
         self._dimensions = {
@@ -45,12 +45,12 @@ class Dimensions:
         }
 
         for x, y in dimensions.items():
-            if not isinstance(x, ansunits.BaseDimensions):
+            if not isinstance(x, BaseDimensions):
                 raise IncorrectDimensions()
             if y == 0:
                 del self._dimensions[x]
 
-    def _temp_precheck(self, dims2, op: str = None) -> Optional[ansunits.Dimensions]:
+    def _temp_precheck(self, dims2, op: str = None) -> Optional[Dimensions]:
         """
         Validate dimensions for temperature differences.
 
@@ -68,14 +68,14 @@ class Dimensions:
         """
         dims1 = self._dimensions
         if len(dims1) == 1.0 and len(dims2) == 1.0:
-            temp = {ansunits.BaseDimensions.TEMPERATURE: 1.0}
-            delta_temp = {ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
+            temp = {BaseDimensions.TEMPERATURE: 1.0}
+            delta_temp = {BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
             if (dims1 == temp and dims2 == delta_temp) or (
                 dims1 == delta_temp and dims2 == temp
             ):
-                return ansunits.Dimensions(dimensions=temp)
+                return Dimensions(dimensions=temp)
             if (dims1 == temp and dims2 == temp) and op == "-":
-                return ansunits.Dimensions(dimensions=delta_temp)
+                return Dimensions(dimensions=delta_temp)
 
     def _to_string(self):
         """
