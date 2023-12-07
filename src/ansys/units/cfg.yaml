@@ -118,7 +118,7 @@ base_units:
     type: LENGTH
     si_scaling_factor: 0.30479999999999996
     si_offset: 0
-  in:
+  inch:
     type: LENGTH
     si_scaling_factor: 0.0254
     si_offset: 0
@@ -241,7 +241,7 @@ derived_units:
     composition: lbm ft s^-2
     factor: 1
   psi:
-    composition: lbf in^-2
+    composition: lbf inch^-2
     factor: 1
   lbf:
     composition: slug ft s^-2
