@@ -3,10 +3,7 @@ import os
 
 import yaml
 
-try:
-    from ansys.units import Unit
-except:
-    pass
+from ansys.units import Unit
 
 
 class UnitAlreadyRegistered(ValueError):

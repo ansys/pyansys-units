@@ -3,10 +3,7 @@ from __future__ import annotations
 
 from typing import Union
 
-try:
-    from ansys.units import BaseDimensions, Quantity, Unit, _base_units, _unit_systems
-except:
-    pass
+from ansys.units import BaseDimensions, Quantity, Unit, _base_units, _unit_systems
 
 
 class NotBaseUnit(ValueError):

@@ -3,10 +3,7 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-try:
-    from ansys.units import BaseDimensions
-except:
-    pass
+from ansys.units import BaseDimensions
 
 
 class IncorrectDimensions(ValueError):

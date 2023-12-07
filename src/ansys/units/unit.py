@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-try:
-    from ansys.units import (
-        BaseDimensions,
-        Dimensions,
-        UnitSystem,
-        _base_units,
-        _derived_units,
-        _multipliers,
-    )
-except:
-    pass
-
+from ansys.units import (
+    BaseDimensions,
+    Dimensions,
+    UnitSystem,
+    _base_units,
+    _derived_units,
+    _multipliers,
+)
 from ansys.units.quantity import Quantity
 
 
