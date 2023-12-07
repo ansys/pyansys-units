@@ -1,14 +1,18 @@
 from __future__ import annotations
 
-from ansys.units import (
-    BaseDimensions,
-    Dimensions,
-    Quantity,
-    UnitSystem,
-    _base_units,
-    _derived_units,
-    _multipliers,
-)
+try:
+    from ansys.units import (
+        BaseDimensions,
+        Dimensions,
+        UnitSystem,
+        _base_units,
+        _derived_units,
+        _multipliers,
+    )
+except:
+    pass
+
+from ansys.units.quantity import Quantity
 
 
 class InconsistentDimensions(ValueError):

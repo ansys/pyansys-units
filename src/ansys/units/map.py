@@ -1,6 +1,8 @@
 """Provides the ``QuantityMap`` class."""
-from ansys.units import _api_quantity_map
-from ansys.units.unit import Unit
+try:
+    from ansys.units import Unit, _api_quantity_map
+except:
+    pass
 
 
 class UnknownMapItem(ValueError):

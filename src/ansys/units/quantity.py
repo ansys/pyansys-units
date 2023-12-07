@@ -3,8 +3,11 @@ from __future__ import annotations
 
 from typing import Union
 
-from ansys.units import BaseDimensions, Dimensions, QuantityMap
-from ansys.units.unit import Unit
+try:
+    from ansys.units import BaseDimensions, Dimensions, QuantityMap, Unit
+except:
+    pass
+
 
 try:
     import numpy as np
