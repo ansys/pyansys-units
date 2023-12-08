@@ -4,6 +4,7 @@ from ansys.units import (
     BaseDimensions,
     Dimensions,
     UnitSystem,
+    _api_quantity_map,
     _base_units,
     _derived_units,
     _multipliers,
@@ -34,6 +35,13 @@ class IncorrectUnits(ValueError):
         )
 
 
+class UnknownMapItem(ValueError):
+    """Provides the error when the specified quantity map is undefined in the yaml."""
+
+    def __init__(self, item):
+        super().__init__(f"`{item}` is not a valid quantity map item.")
+
+
 class Unit:
     """
     A class containing the string name and dimensions of a unit.
@@ -49,6 +57,8 @@ class Unit:
     system: str, optional
         Define the unit system for base units of dimension,
         default is SI.
+    map: dict, optional
+        A dictionary of api map keys from the cfg.yaml and exponent values.
     copy_from: Unit, optional
         A previous instance of Unit.
 
@@ -79,12 +89,16 @@ class Unit:
         config: dict = None,
         dimensions: Dimensions = None,
         system: UnitSystem = None,
+        map: dict = None,
         copy_from: Unit = None,
     ):
         if copy_from:
             if (units) and units != copy_from.name:
                 raise InconsistentDimensions()
             units = copy_from.name
+
+        if map:
+            units = self._map_to_units(map=map)
 
         if units:
             self._name = units
@@ -207,6 +221,31 @@ class Unit:
                 )
 
         return dimensions
+
+    def _map_to_units(self, map: dict) -> str:
+        """
+        Convert a quantity map into a unit string.
+
+        Parameters
+        ----------
+        quantity_map : dict[str, int]
+            Quantity map to convert to a Unit.
+
+        Returns
+        -------
+        Unit
+            Unit object representation of the quantity map.
+        """
+        for key in map.keys():
+            if key not in _api_quantity_map:
+                raise UnknownMapItem(key)
+
+        base_unit = ""
+
+        for term, exponent in map.items():
+            base_unit *= Unit(_api_quantity_map[term]) ** exponent
+
+        return base_unit
 
     def _has_multiplier(self, unit_term: str) -> bool:
         """
