@@ -71,18 +71,20 @@ class InvalidFloatUsage(FloatingPointError):
 
 class Quantity:
     """
-    A class containing a physical quantity's value and associated units.
+    A class representing a physical quantity's value and associated units.
 
-    A Quantity instance will contain both SI units and the SI value to
-    facilitate consistent computation with other quantities. ``NumPy`` is
-    required to use lists or NumPy arrays. Value is not required when using
-    ``copy_from``.
+    A Quantity object can be instantiated from a NumPy array or list only if the
+    ``NumPy`` package is installed.
 
-    Float conversion will only work for angles or dimensionless quantities.
+    The value argument is not required when using ``copy_from``. A value can be given
+    to override the value from the copy.
+
+    Implicit conversion from Quantity to float is only allowed if the operand is
+    of quantity type angle or dimensionless.
 
     Parameters
     ----------
-    value : int | float | list | np.array
+    value : int, float, list, np.array
         Real value of the quantity.
     units : str, Unit, optional
         Initializes the quantity's units using a string or ``Unit`` instance.
