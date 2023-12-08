@@ -122,6 +122,10 @@ base_units:
     type: LENGTH
     si_scaling_factor: 0.0254
     si_offset: 0
+  in:
+    type: LENGTH
+    si_scaling_factor: 0.0254
+    si_offset: 0
   s:
     type: TIME
     si_scaling_factor: 1
