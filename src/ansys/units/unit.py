@@ -5,12 +5,12 @@ from typing import Union
 from ansys.units import (
     BaseDimensions,
     Dimensions,
-    UnitSystem,
     _api_quantity_map,
     _base_units,
     _derived_units,
     _multipliers,
 )
+from ansys.units.systems import UnitSystem
 
 
 class InconsistentDimensions(ValueError):
