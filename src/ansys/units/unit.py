@@ -168,7 +168,7 @@ def map_to_units(map: dict) -> str:
     return condense(base_unit)
 
 
-def has_multiplier(unit_term: str) -> bool:
+def multiplier_check(unit_term: str) -> bool:
     """
     Check if a unit term contains a multiplier.
 
@@ -278,11 +278,11 @@ def filter_unit_term(unit_term: str) -> tuple:
     base = unit_term
 
     # strip multiplier and base from unit term
-    has_multiplier = has_multiplier(unit_term)
+    has_multiplier = multiplier_check(unit_term)
     if has_multiplier:
         for mult in _multipliers:
             if unit_term.startswith(mult):
-                if not has_multiplier(unit_term[len(mult) :]):
+                if not multiplier_check(unit_term[len(mult) :]):
                     multiplier = mult
                     base = unit_term[len(mult) :]
                     break
@@ -423,11 +423,11 @@ class Unit:
             units = copy_from.name
 
         if map:
-            units = self._map_to_units(map=map)
+            units = map_to_units(map=map)
 
         if units:
             self._name = units
-            _dimensions = self._units_to_dim(units=units)
+            _dimensions = units_to_dim(units=units)
             self._dimensions = Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise InconsistentDimensions()
@@ -436,22 +436,22 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
-            self._name = self._dim_to_units(dimensions=dimensions, system=system)
+            self._name = dim_to_units(dimensions=dimensions, system=system)
         else:
             self._name = ""
             self._dimensions = Dimensions()
 
         if not config:
-            config = self._get_config(name=self._name)
+            config = get_config(name=self._name)
         if config:
             for key in config:
                 setattr(self, f"_{key}", config[key])
 
-        self._si_units, self._si_scaling_factor, self._si_offset = self.si_data(
+        self._si_units, self._si_scaling_factor, self._si_offset = si_data(
             units=self.name
         )
 
-    def to_string(self):
+    def _to_string(self):
         """
         Creates a string representation of the unit.
 
@@ -466,7 +466,7 @@ class Unit:
             returned_string += f"{key}: {attrs[key]}\n"
         return returned_string
 
-    def new_units(self, __value, op):
+    def _new_units(self, __value, op):
         """
         Generate a new units instance depending on mathematical operation.
 
@@ -485,18 +485,17 @@ class Unit:
         new_units = ""
         if op == "**":
             for term in self.name.split(" "):
-                multiplier, base, exponent = self.filter_unit_term(term)
+                multiplier, base, exponent = filter_unit_term(term)
                 exponent *= __value
                 new_units += f"{multiplier}{base}^{exponent} "
         if op == "/":
             new_units = self.name
             for term in __value.name.split(" "):
-                multiplier, base, exponent = self.filter_unit_term(term)
+                multiplier, base, exponent = filter_unit_term(term)
                 new_units += f" {multiplier}{base}^{exponent*-1}"
         if op == "*":
             new_units = f"{self.name} {__value.name}"
-
-        return Unit(self._condense(new_units))
+        return Unit(condense(new_units))
 
     @property
     def name(self) -> str:
