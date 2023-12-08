@@ -244,6 +244,9 @@ class Quantity:
         # are involved.
         new_units = op(self._unit, __value._unit) or self.units
         if __value.units != self.units:
+           # TODO: issue 197 covers the fact that we are twiddling with the 
+           # internals of unit representations here instead of using units in a more
+           # encapsulated way
             new_prefix = "delta_" if __value.units.name.startswith("delta_") else ""
             new_unit = self.units.name.removeprefix("delta_")
             # Converts the __value to the same unit as self without changing its prefix.
