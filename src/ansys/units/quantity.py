@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Union
 
-from ansys.units import BaseDimensions, Dimensions, QuantityMap, Unit
+from ansys.units import BaseDimensions, Dimensions, Unit, UnitSystem
 
 try:
     import numpy as np
@@ -139,7 +139,7 @@ class Quantity:
             self._value = float(value)
 
         if quantity_map:
-            units = QuantityMap(quantity_map).units
+            units = Unit(map=quantity_map)
 
         if dimensions:
             units = Unit(dimensions=dimensions)
@@ -220,6 +220,32 @@ class Quantity:
             raise IncompatibleDimensions(from_unit=self.units, to_unit=to_units)
 
         return Quantity(value=new_value, units=to_units)
+
+    def convert(self, system: UnitSystem) -> Quantity:
+        """
+        Convert a quantity into the unit system.
+
+        Parameters
+        ----------
+        system : UnitSystem
+            Unit system to convert to.
+
+        Returns
+        -------
+        Quantity
+            Quantity object converted into the unit system.
+
+        Examples
+        --------
+        >>> ur = UnitRegistry()
+        >>> speed_si = Quantity(value=5, units= ur.m / ur.s)
+        >>> bt = UnitSystem(system="BT")
+        >>> speed_bt = speed_si.convert(bt)
+        """
+        new_dimensions = self.dimensions.new_system(system)
+        new_unit = Unit(dimensions=new_dimensions)
+
+        return self.to(to_units=new_unit)
 
     def __float__(self):
         base_dims = BaseDimensions

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from ansys.units import BaseDimensions
+from ansys.units import BaseDimensions, UnitSystem
 
 
 class IncorrectDimensions(ValueError):
@@ -11,6 +11,13 @@ class IncorrectDimensions(ValueError):
 
     def __init__(self):
         super().__init__("The `dimensions` key must be a 'BaseDimensions' object")
+
+
+class IncorrectSystem(ValueError):
+    """Provides the error when the given unit system is not a 'UnitSystem'."""
+
+    def __init__(self):
+        super().__init__("The system must be a 'UnitSystem' instance.")
 
 
 class Dimensions:
@@ -29,6 +36,8 @@ class Dimensions:
     ----------
     dimensions : dict, optional
         Dictionary of {``BaseDimensions``: exponent, ...}.
+    system : UnitSystem, optional
+        The unit system for the dimensions.
     copy_from : Dimensions, optional
         A previous instance of Dimensions.
     """
@@ -36,8 +45,14 @@ class Dimensions:
     def __init__(
         self,
         dimensions: dict[BaseDimensions, Union[int, float]] = None,
+        system: UnitSystem = None,
         copy_from: Dimensions = None,
     ):
+        if not isinstance(system, UnitSystem):
+            raise IncorrectSystem()
+
+        self._system = system or copy_from.system if copy_from else UnitSystem("SI")
+
         dimensions = dimensions or {}
         self._dimensions = {
             **(copy_from._dimensions if copy_from else {}),
@@ -90,6 +105,26 @@ class Dimensions:
         if not dims:
             dims = ""
         return str(dims)
+
+    def new_system(self, system: UnitSystem):
+        """
+        Creates a new dimension instance with the given unit system.
+
+        Parameters
+        ----------
+        system : UnitSystem
+            The unit system to change to.
+
+        Returns
+        -------
+        Dimension
+            A dimension carrying a different system.
+        """
+        return Dimensions(system=system, copy_from=self)
+
+    @property
+    def system(self) -> UnitSystem:
+        return self._system
 
     def __str__(self):
         return self._to_string()

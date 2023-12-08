@@ -20,11 +20,11 @@ from ansys.units._constants import (  # noqa: F401
 )
 from ansys.units.base_dimensions import BaseDimensions  # noqa: F401
 from ansys.units.dimensions import Dimensions  # noqa: F401
-from ansys.units.map import QuantityMap  # noqa: F401
 from ansys.units.quantity import Quantity  # noqa: F401
 from ansys.units.systems import UnitSystem  # noqa: F401
 from ansys.units.unit import Unit  # noqa: F401
 from ansys.units.unit_registry import UnitRegistry  # noqa: F401
+from ansys.units.utils import units_to_quantity  # noqa: F401
 
 _THIS_DIRNAME = os.path.dirname(__file__)
 _README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"))

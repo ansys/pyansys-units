@@ -3,13 +3,11 @@ from __future__ import annotations
 from ansys.units import (
     BaseDimensions,
     Dimensions,
-    UnitSystem,
     _api_quantity_map,
     _base_units,
     _derived_units,
     _multipliers,
 )
-from ansys.units.quantity import Quantity
 
 
 class InconsistentDimensions(ValueError):
@@ -88,7 +86,6 @@ class Unit:
         units: str = None,
         config: dict = None,
         dimensions: Dimensions = None,
-        system: UnitSystem = None,
         map: dict = None,
         copy_from: Unit = None,
     ):
@@ -111,7 +108,7 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
-            self._name = self._dim_to_units(dimensions=dimensions, system=system)
+            self._name = self._dim_to_units(dimensions=dimensions)
         else:
             self._name = ""
             self._dimensions = Dimensions()
@@ -147,7 +144,6 @@ class Unit:
     def _dim_to_units(
         self,
         dimensions: Dimensions,
-        system: UnitSystem = None,
     ) -> str:
         """
         Convert a dimensions list into a unit string.
@@ -157,19 +153,13 @@ class Unit:
         dimensions : Dimensions object
             Instance of Dimension class.
 
-        system : UnitSystem object, optional
-            Unit system for dimensions list.
-            Default is SI units.
-
         Returns
         -------
         str
             Unit string.
         """
-        if not system:
-            system = UnitSystem()
 
-        base_units = system.base_units
+        base_units = dimensions.system
         units = ""
         for key, value in dimensions:
             if value == 1:
@@ -242,10 +232,14 @@ class Unit:
 
         base_unit = ""
 
-        for term, exponent in map.items():
-            base_unit *= Unit(_api_quantity_map[term]) ** exponent
+        for key, value in map.items():
+            terms = _api_quantity_map[key]
+            for term in terms.split(" "):
+                multiplier, base, exponent = self.filter_unit_term(term)
 
-        return base_unit
+                base_unit += f"{multiplier}{base}^{exponent*value}"
+
+        return self._condense(base_unit)
 
     def _has_multiplier(self, unit_term: str) -> bool:
         """
@@ -530,9 +524,6 @@ class Unit:
     def __mul__(self, __value):
         if isinstance(__value, Unit):
             return self._new_units(__value, op="*")
-
-        elif isinstance(__value, (float, int)) and not isinstance(__value, Quantity):
-            return Quantity(value=__value, units=self)
 
         else:
             return NotImplemented

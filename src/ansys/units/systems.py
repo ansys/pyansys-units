@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Union
 
-from ansys.units import BaseDimensions, Quantity, Unit, _base_units, _unit_systems
+from ansys.units import BaseDimensions, _base_units, _unit_systems
 
 
 class NotBaseUnit(ValueError):
@@ -86,31 +86,6 @@ class UnitSystem:
         for unit_type in BaseDimensions:
             unit = self._units[unit_type.name]
             self._set_type(unit_type=unit_type, unit=unit)
-
-    def convert(self, quantity: Quantity) -> Quantity:
-        """
-        Convert a quantity into the unit system.
-
-        Parameters
-        ----------
-        quantity : Quantity
-            Quantity to convert.
-
-        Returns
-        -------
-        Quantity
-            Quantity object converted into the unit system.
-
-        Examples
-        --------
-        >>> ur = UnitRegistry()
-        >>> speed_si = Quantity(value=5, units= ur.m / ur.s)
-        >>> bt = UnitSystem(system="BT")
-        >>> speed_bt = bt.convert(speed_si)
-        """
-        new_unit = Unit(dimensions=quantity.dimensions, system=self)
-
-        return quantity.to(to_units=new_unit)
 
     def update(self, base_units: dict[BaseDimensions : Union[Unit, str]]):
         """
