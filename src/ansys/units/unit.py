@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from typing import Union
+
 from ansys.units import (
     BaseDimensions,
     Dimensions,
+    UnitSystem,
     _api_quantity_map,
     _base_units,
     _derived_units,
@@ -86,6 +89,7 @@ class Unit:
         units: str = None,
         config: dict = None,
         dimensions: Dimensions = None,
+        system: Union[UnitSystem, str] = None,
         map: dict = None,
         copy_from: Unit = None,
     ):
@@ -108,7 +112,7 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
-            self._name = self._dim_to_units(dimensions=dimensions)
+            self._name = self._dim_to_units(dimensions=dimensions, system=system)
         else:
             self._name = ""
             self._dimensions = Dimensions()
@@ -143,6 +147,7 @@ class Unit:
 
     def _dim_to_units(
         self,
+        system: UnitSystem,
         dimensions: Dimensions,
     ) -> str:
         """
@@ -158,9 +163,12 @@ class Unit:
         str
             Unit string.
         """
+        if not system:
+            system = UnitSystem()
 
-        base_units = dimensions.system
+        base_units = system.base_units
         units = ""
+
         for key, value in dimensions:
             if value == 1:
                 units += f"{base_units[key.value]} "
@@ -237,9 +245,33 @@ class Unit:
             for term in terms.split(" "):
                 multiplier, base, exponent = self.filter_unit_term(term)
 
-                base_unit += f"{multiplier}{base}^{exponent*value}"
-
+                base_unit += f"{multiplier}{base}^{exponent*value} "
+        print(base_unit)
         return self._condense(base_unit)
+
+    def convert(self, system: UnitSystem) -> Unit:
+        """
+        Convert a unit into the unit system.
+
+        Parameters
+        ----------
+        system : UnitSystem
+            Unit system to convert to.
+
+        Returns
+        -------
+        Unit
+            Unit object converted into the unit system.
+
+        Examples
+        --------
+        >>> ur = UnitRegistry()
+        >>> speed_si = Unit(units= ur.m / ur.s)
+        >>> bt = UnitSystem(system="BT")
+        >>> speed_bt = speed_si.convert(bt)
+        """
+
+        return Unit(dimensions=self.dimensions, system=system)
 
     def _has_multiplier(self, unit_term: str) -> bool:
         """

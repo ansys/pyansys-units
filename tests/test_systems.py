@@ -1,22 +1,21 @@
 import pytest
 
-from ansys.units import BaseDimensions, Quantity, Unit, UnitRegistry, UnitSystem
+from ansys.units import BaseDimensions, UnitSystem
 from ansys.units.systems import IncorrectUnitType, InvalidUnitSystem, NotBaseUnit
 
 
 def test_pre_defined_unit_system():
-    ur = UnitRegistry()
     us = UnitSystem(system="SI")
-    assert us.MASS == ur.kg
-    assert us.LENGTH == ur.m
-    assert us.TIME == ur.s
-    assert us.TEMPERATURE == ur.K
-    assert us.TEMPERATURE_DIFFERENCE == ur.delta_K
-    assert us.ANGLE == ur.radian
-    assert us.CHEMICAL_AMOUNT == ur.mol
-    assert us.LIGHT == ur.cd
-    assert us.CURRENT == ur.A
-    assert us.SOLID_ANGLE == ur.sr
+    assert us.MASS == "kg"
+    assert us.LENGTH == "m"
+    assert us.TIME == "s"
+    assert us.TEMPERATURE == "K"
+    assert us.TEMPERATURE_DIFFERENCE == "delta_K"
+    assert us.ANGLE == "radian"
+    assert us.CHEMICAL_AMOUNT == "mol"
+    assert us.LIGHT == "cd"
+    assert us.CURRENT == "A"
+    assert us.SOLID_ANGLE == "sr"
 
 
 def test_repr():
@@ -44,31 +43,30 @@ def test_copy():
 
 def test_update():
     dims = BaseDimensions
-    ur = UnitRegistry()
     us = UnitSystem(system="SI")
     base_units = {
         dims.MASS: "slug",
-        dims.LENGTH: ur.ft,
-        dims.TIME: ur.s,
-        dims.TEMPERATURE: ur.R,
-        dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
-        dims.ANGLE: ur.degree,
-        dims.CHEMICAL_AMOUNT: ur.slugmol,
-        dims.LIGHT: ur.cd,
-        dims.CURRENT: ur.A,
-        dims.SOLID_ANGLE: ur.sr,
+        dims.LENGTH: "ft",
+        dims.TIME: "s",
+        dims.TEMPERATURE: "R",
+        dims.TEMPERATURE_DIFFERENCE: "delta_R",
+        dims.ANGLE: "degree",
+        dims.CHEMICAL_AMOUNT: "slugmol",
+        dims.LIGHT: "cd",
+        dims.CURRENT: "A",
+        dims.SOLID_ANGLE: "sr",
     }
     us.update(base_units=base_units)
-    assert us.MASS == ur.slug
-    assert us.LENGTH == ur.ft
-    assert us.TIME == ur.s
-    assert us.TEMPERATURE == ur.R
-    assert us.TEMPERATURE_DIFFERENCE == ur.delta_R
-    assert us.ANGLE == ur.degree
-    assert us.CHEMICAL_AMOUNT == ur.slugmol
-    assert us.LIGHT == ur.cd
-    assert us.CURRENT == ur.A
-    assert us.SOLID_ANGLE == ur.sr
+    assert us.MASS == "slug"
+    assert us.LENGTH == "ft"
+    assert us.TIME == "s"
+    assert us.TEMPERATURE == "R"
+    assert us.TEMPERATURE_DIFFERENCE == "delta_R"
+    assert us.ANGLE == "degree"
+    assert us.CHEMICAL_AMOUNT == "slugmol"
+    assert us.LIGHT == "cd"
+    assert us.CURRENT == "A"
+    assert us.SOLID_ANGLE == "sr"
 
 
 def test_eq():
@@ -80,80 +78,60 @@ def test_eq():
 
 
 def test_set_type():
-    ur = UnitRegistry()
     us = UnitSystem(system="SI")
-    us.MASS = ur.slug
-    us.LENGTH = ur.ft
-    us.TEMPERATURE = ur.R
-    us.TEMPERATURE_DIFFERENCE = ur.delta_R
-    us.ANGLE = ur.degree
-    us.CHEMICAL_AMOUNT = ur.slugmol
-    assert us.MASS == ur.slug
-    assert us.LENGTH == ur.ft
-    assert us.TEMPERATURE == ur.R
-    assert us.TEMPERATURE_DIFFERENCE == ur.delta_R
-    assert us.ANGLE == ur.degree
-    assert us.CHEMICAL_AMOUNT == ur.slugmol
+    us.MASS = "slug"
+    us.LENGTH = "ft"
+    us.TEMPERATURE = "R"
+    us.TEMPERATURE_DIFFERENCE = "delta_R"
+    us.ANGLE = "degree"
+    us.CHEMICAL_AMOUNT = "slugmol"
+    assert us.MASS == "slug"
+    assert us.LENGTH == "ft"
+    assert us.TEMPERATURE == "R"
+    assert us.TEMPERATURE_DIFFERENCE == "delta_R"
+    assert us.ANGLE == "degree"
+    assert us.CHEMICAL_AMOUNT == "slugmol"
 
 
 def test_custom_unit_system():
     dims = BaseDimensions
-    ur = UnitRegistry()
     us = UnitSystem(
         base_units={
-            dims.MASS: ur.slug,
-            dims.LENGTH: ur.ft,
-            dims.TIME: ur.s,
-            dims.TEMPERATURE: ur.R,
-            dims.TEMPERATURE_DIFFERENCE: ur.delta_R,
-            dims.ANGLE: ur.radian,
-            dims.CHEMICAL_AMOUNT: ur.slugmol,
-            dims.LIGHT: ur.cd,
-            dims.CURRENT: ur.A,
-            dims.SOLID_ANGLE: ur.sr,
+            dims.MASS: "slug",
+            dims.LENGTH: "ft",
+            dims.TIME: "s",
+            dims.TEMPERATURE: "R",
+            dims.TEMPERATURE_DIFFERENCE: "delta_R",
+            dims.ANGLE: "radian",
+            dims.CHEMICAL_AMOUNT: "slugmol",
+            dims.LIGHT: "cd",
+            dims.CURRENT: "A",
+            dims.SOLID_ANGLE: "sr",
         }
     )
-    assert us.MASS == ur.slug
-    assert us.LENGTH == ur.ft
-    assert us.TIME == ur.s
-    assert us.TEMPERATURE == ur.R
-    assert us.TEMPERATURE_DIFFERENCE == ur.delta_R
-    assert us.ANGLE == ur.radian
-    assert us.CHEMICAL_AMOUNT == ur.slugmol
-    assert us.LIGHT == ur.cd
-    assert us.CURRENT == ur.A
-    assert us.SOLID_ANGLE == ur.sr
-
-
-def test_conversion():
-    us1 = UnitSystem(system="BT")
-    q1 = Quantity(10, "kg ft s")
-
-    q2 = us1.convert(q1)
-    assert q2.value == 0.6852176585679174
-    assert q2.units == Unit("slug ft s")
-
-    us2 = UnitSystem(system="SI")
-    q3 = Quantity(4, "slug cm s")
-
-    q4 = us2.convert(q3)
-    assert q4.value == 0.5837561174882547
-    assert q4.units == Unit("kg m s")
+    assert us.MASS == "slug"
+    assert us.LENGTH == "ft"
+    assert us.TIME == "s"
+    assert us.TEMPERATURE == "R"
+    assert us.TEMPERATURE_DIFFERENCE == "delta_R"
+    assert us.ANGLE == "radian"
+    assert us.CHEMICAL_AMOUNT == "slugmol"
+    assert us.LIGHT == "cd"
+    assert us.CURRENT == "A"
+    assert us.SOLID_ANGLE == "sr"
 
 
 def test_not_base_unit_init():
     dims = BaseDimensions
-    ur = UnitRegistry()
 
     with pytest.raises(NotBaseUnit):
-        us1 = UnitSystem(base_units={dims.LENGTH: ur.N})
+        us1 = UnitSystem(base_units={dims.LENGTH: "N"})
 
 
 def test_not_base_unit_update():
     dims = BaseDimensions
-    ur = UnitRegistry()
     us = UnitSystem(system="SI")
-    base_units = {dims.MASS: ur.N}
+    base_units = {dims.MASS: "N"}
 
     with pytest.raises(NotBaseUnit):
         us.update(base_units=base_units)
@@ -165,21 +143,20 @@ def test_invalid_unit_sys():
 
 
 def test_wrong_unit_type():
-    ur = UnitRegistry()
     us = UnitSystem()
 
     with pytest.raises(IncorrectUnitType):
-        us.TIME = ur.m
+        us.TIME = "m"
     with pytest.raises(IncorrectUnitType):
-        us.LIGHT = ur.sr
+        us.LIGHT = "sr"
     with pytest.raises(IncorrectUnitType):
-        us.CURRENT = ur.ft
+        us.CURRENT = "ft"
     with pytest.raises(IncorrectUnitType):
-        us.SOLID_ANGLE = ur.radian
+        us.SOLID_ANGLE = "radian"
 
 
 def test_error_messages():
-    e1 = NotBaseUnit(Unit("kg s^-1"))
+    e1 = NotBaseUnit("kg s^-1")
     expected_str = (
         "`kg s^-1` is not a base unit. To use `kg s^-1`, add it to the "
         "`base_units` table within the cfg.yaml file."
@@ -189,5 +166,5 @@ def test_error_messages():
     e2 = InvalidUnitSystem("ham sandwich")
     assert str(e2) == "`ham sandwich` is not a supported unit system."
 
-    e3 = IncorrectUnitType(unit=Unit("ft"), unit_type=BaseDimensions.MASS)
+    e3 = IncorrectUnitType(unit="ft", unit_type=BaseDimensions.MASS)
     assert str(e3) == "The unit `ft` is incompatible with unit system type: `MASS`"

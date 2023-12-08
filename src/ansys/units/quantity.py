@@ -242,8 +242,7 @@ class Quantity:
         >>> bt = UnitSystem(system="BT")
         >>> speed_bt = speed_si.convert(bt)
         """
-        new_dimensions = self.dimensions.new_system(system)
-        new_unit = Unit(dimensions=new_dimensions)
+        new_unit = self.units.convert(system)
 
         return self.to(to_units=new_unit)
 

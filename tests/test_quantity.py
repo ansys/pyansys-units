@@ -2,7 +2,14 @@ import math
 
 import pytest
 
-from ansys.units import BaseDimensions, Dimensions, Quantity, Unit, UnitRegistry
+from ansys.units import (
+    BaseDimensions,
+    Dimensions,
+    Quantity,
+    Unit,
+    UnitRegistry,
+    UnitSystem,
+)
 from ansys.units.quantity import (  # InvalidFloatUsage,
     ExcessiveParameters,
     IncompatibleDimensions,
@@ -32,6 +39,22 @@ def test_value_setter():
     v.value = 20
     assert v.value == 20
     assert v.units == Unit("m")
+
+
+def test_conversion():
+    us1 = UnitSystem(system="BT")
+    q1 = Quantity(10, "kg ft s")
+
+    q2 = q1.convert(us1)
+    assert q2.value == 0.6852176585679174
+    assert q2.units == Unit("slug ft s")
+
+    us2 = UnitSystem(system="SI")
+    q3 = Quantity(4, "slug cm s")
+
+    q4 = q3.convert(us2)
+    assert q4.value == 0.5837561174882547
+    assert q4.units == Unit("kg m s")
 
 
 def test_copy():

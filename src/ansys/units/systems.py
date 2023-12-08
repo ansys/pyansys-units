@@ -1,8 +1,6 @@
 """Provides the ``UnitSystem`` class."""
 from __future__ import annotations
 
-from typing import Union
-
 from ansys.units import BaseDimensions, _base_units, _unit_systems
 
 
@@ -11,7 +9,7 @@ class NotBaseUnit(ValueError):
 
     def __init__(self, unit):
         super().__init__(
-            f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
+            f"`{unit}` is not a base unit. To use `{unit}`, add it to the "
             "`base_units` table within the cfg.yaml file."
         )
 
@@ -28,7 +26,7 @@ class IncorrectUnitType(ValueError):
 
     def __init__(self, unit, unit_type):
         super().__init__(
-            f"The unit `{unit.name}` is incompatible with unit system type: `{unit_type.name}`"
+            f"The unit `{unit}` is incompatible with unit system type: `{unit_type.name}`"
         )
 
 
@@ -65,7 +63,7 @@ class UnitSystem:
 
     def __init__(
         self,
-        base_units: dict[BaseDimensions, Union[Unit, str]] = None,
+        base_units: dict[BaseDimensions, str] = None,
         system: str = None,
         copy_from: UnitSystem = None,
     ):
@@ -87,7 +85,7 @@ class UnitSystem:
             unit = self._units[unit_type.name]
             self._set_type(unit_type=unit_type, unit=unit)
 
-    def update(self, base_units: dict[BaseDimensions : Union[Unit, str]]):
+    def update(self, base_units: dict[BaseDimensions:str]):
         """
         Change the units of the unit system.
 
@@ -99,7 +97,7 @@ class UnitSystem:
         for unit_type, unit in base_units.items():
             self._set_type(unit_type=unit_type, unit=unit)
 
-    def _set_type(self, unit_type: BaseDimensions, unit: Union[Unit, str]):
+    def _set_type(self, unit_type: BaseDimensions, unit: str):
         """
         Checks that the unit is compatible with the unit type before being set.
 
@@ -110,13 +108,10 @@ class UnitSystem:
         unit: obj
             The unit to be assigned.
         """
-        if not isinstance(unit, Unit):
-            unit = Unit(unit)
-
-        if unit.name not in _base_units:
+        if unit not in _base_units:
             raise NotBaseUnit(unit)
 
-        if unit._type != unit_type.name:
+        if _base_units[unit]["type"] != unit_type.name:
             raise IncorrectUnitType(unit, unit_type)
 
         setattr(self, f"_{unit_type.name}", unit)
@@ -127,7 +122,7 @@ class UnitSystem:
         _base_units = []
         for unit_type in BaseDimensions:
             unit = getattr(self, f"_{unit_type.name}")
-            _base_units.append(unit.name)
+            _base_units.append(unit)
         return _base_units
 
     @property
@@ -224,7 +219,7 @@ class UnitSystem:
         units = {}
         for unit_type in BaseDimensions:
             unit = getattr(self, f"_{unit_type.name}")
-            units.update({unit_type.name: unit.name})
+            units.update({unit_type.name: unit})
         return str(units)
 
     def __eq__(self, other_sys):
