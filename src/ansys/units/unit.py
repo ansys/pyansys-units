@@ -150,7 +150,7 @@ class Unit:
 
         units = ""
         for key, value in dimensions:
-            unit_name = getattr(unit_sys, key.name).name
+            unit_name = getattr(system, key.name).name
             if value == 1:
                 units += f"{unit_name} "
             elif value != 0.0:
