@@ -182,13 +182,13 @@ pas.units.name  # >>> "Pa s"
 
 dims = ansunits.BaseDimensions
 sys_units = {dims.MASS: "slug", dims.LENGTH: "ft"}
-sys = ansunits.UnitSystem(base_units=sys_units, unit_sys="SI")
+sys = ansunits.UnitSystem(base_units=sys_units, system="SI")
 
 sys.base_units  # >>> ["slug", "ft", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
 
 # Predefined unit systems
 
-cgs = ansunits.UnitSystem(unit_sys="CGS")
+cgs = ansunits.UnitSystem(system="CGS")
 
 cgs.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
 
