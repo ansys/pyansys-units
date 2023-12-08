@@ -15,9 +15,8 @@ class IncorrectDimensions(ValueError):
 
 class Dimensions:
     """
-    A composite dimension (or simply dimensions) composed from an arbitrary number of
-    dimensions, where each dimension is a pair consisting of a base dimension and
-    exponent.
+    A representation of an arbitrary number of dimensions, where each dimension is a
+    pair consisting of a base dimension and exponent.
 
     A dictionary of ``BaseDimensions`` and exponent is required
     for a non-dimensionless object.

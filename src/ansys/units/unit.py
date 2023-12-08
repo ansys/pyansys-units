@@ -29,7 +29,7 @@ class IncorrectUnits(ValueError):
 
 class Unit:
     """
-    A class containing the string name and dimensions of a unit.
+    A class representing the string name and dimensions of a unit.
 
     Parameters
     ----------
