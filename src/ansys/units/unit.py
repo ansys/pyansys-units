@@ -159,7 +159,6 @@ class Unit:
         """
         if not system:
             system = ansunits.UnitSystem()
-            system = ansunits.UnitSystem()
 
         base_units = system.base_units
         units = ""

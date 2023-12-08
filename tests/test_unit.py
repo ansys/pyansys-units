@@ -59,7 +59,7 @@ def test_units_from_dimensions():
     assert kg.si_offset == 0
     slug_squared = ansunits.Unit(
         dimensions=ansunits.Dimensions({dims.MASS: 2}),
-        unit_sys=ansunits.UnitSystem(unit_sys="BT"),
+        system=ansunits.UnitSystem(system="BT"),
     )
     assert slug_squared.name == "slug^2"
     assert slug_squared.dimensions == ansunits.Dimensions({dims.MASS: 2})
