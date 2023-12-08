@@ -6,7 +6,7 @@ from ansys.units.systems import IncorrectUnitType, InvalidUnitSystem, NotBaseUni
 
 def test_pre_defined_unit_system():
     ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(unit_sys="SI")
+    us = ansunits.UnitSystem(system="SI")
     assert us.MASS == ur.kg
     assert us.LENGTH == ur.m
     assert us.TIME == ur.s
@@ -37,7 +37,7 @@ def test_repr():
 
 
 def test_copy():
-    us = ansunits.UnitSystem(unit_sys="BT")
+    us = ansunits.UnitSystem(system="BT")
     us1 = ansunits.UnitSystem(copy_from=us)
     assert us1 == us
 
@@ -45,7 +45,7 @@ def test_copy():
 def test_update():
     dims = ansunits.BaseDimensions
     ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(unit_sys="SI")
+    us = ansunits.UnitSystem(system="SI")
     base_units = {
         dims.MASS: "slug",
         dims.LENGTH: ur.ft,
@@ -72,16 +72,16 @@ def test_update():
 
 
 def test_eq():
-    us1 = ansunits.UnitSystem(unit_sys="BT")
+    us1 = ansunits.UnitSystem(system="BT")
     us2 = ansunits.UnitSystem()
-    us3 = ansunits.UnitSystem(unit_sys="SI")
+    us3 = ansunits.UnitSystem(system="SI")
     assert (us1 == us2) == False
     assert us2 == us3
 
 
 def test_set_type():
     ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(unit_sys="SI")
+    us = ansunits.UnitSystem(system="SI")
     us.MASS = ur.slug
     us.LENGTH = ur.ft
     us.TEMPERATURE = ur.R
@@ -126,14 +126,14 @@ def test_custom_unit_system():
 
 
 def test_conversion():
-    us1 = ansunits.UnitSystem(unit_sys="BT")
+    us1 = ansunits.UnitSystem(system="BT")
     q1 = ansunits.Quantity(10, "kg ft s")
 
     q2 = us1.convert(q1)
     assert q2.value == 0.6852176585679174
     assert q2.units == ansunits.Unit("slug ft s")
 
-    us2 = ansunits.UnitSystem(unit_sys="SI")
+    us2 = ansunits.UnitSystem(system="SI")
     q3 = ansunits.Quantity(4, "slug cm s")
 
     q4 = us2.convert(q3)
@@ -152,7 +152,7 @@ def test_not_base_unit_init():
 def test_not_base_unit_update():
     dims = ansunits.BaseDimensions
     ur = ansunits.UnitRegistry()
-    us = ansunits.UnitSystem(unit_sys="SI")
+    us = ansunits.UnitSystem(system="SI")
     base_units = {dims.MASS: ur.N}
 
     with pytest.raises(NotBaseUnit):
@@ -161,7 +161,7 @@ def test_not_base_unit_update():
 
 def test_invalid_unit_sys():
     with pytest.raises(InvalidUnitSystem):
-        us2 = ansunits.UnitSystem(unit_sys="Standard")
+        us2 = ansunits.UnitSystem(system="Standard")
 
 
 def test_wrong_unit_type():

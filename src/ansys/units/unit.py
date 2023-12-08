@@ -39,7 +39,7 @@ class Unit:
         dictionary of unit properties
     dimensions: Dimensions, optional
         An instance of the Dimensions class.
-    unit_sys: str, optional
+    system: str, optional
         Define the unit system for base units of dimension,
         default is SI.
     copy_from: Unit, optional
@@ -71,7 +71,7 @@ class Unit:
         units: str = None,
         config: dict = None,
         dimensions: ansunits.Dimensions = None,
-        unit_sys: ansunits.UnitSystem = None,
+        system: ansunits.UnitSystem = None,
         copy_from: ansunits.Unit = None,
     ):
         if copy_from:
@@ -90,7 +90,7 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
-            self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
+            self._name = self._dim_to_units(dimensions=dimensions, system=system)
         else:
             self._name = ""
             self._dimensions = ansunits.Dimensions()
@@ -126,7 +126,7 @@ class Unit:
     def _dim_to_units(
         self,
         dimensions: ansunits.Dimensions,
-        unit_sys: ansunits.UnitSystem = None,
+        system: ansunits.UnitSystem = None,
     ) -> str:
         """
         Convert a dimensions list into a unit string.
@@ -136,7 +136,7 @@ class Unit:
         dimensions : Dimensions object
             Instance of Dimension class.
 
-        unit_sys : UnitSystem object, optional
+        system : UnitSystem object, optional
             Unit system for dimensions list.
             Default is SI units.
 
@@ -145,10 +145,10 @@ class Unit:
         str
             Unit string.
         """
-        if not unit_sys:
-            unit_sys = ansunits.UnitSystem()
+        if not system:
+            system = ansunits.UnitSystem()
 
-        base_units = unit_sys.base_units
+        base_units = system.base_units
         units = ""
         for key, value in dimensions:
             if value == 1:
