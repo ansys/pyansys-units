@@ -1,8 +1,16 @@
 import pytest
 
-from ansys.units import BaseDimensions, Dimensions, Quantity, Unit, UnitRegistry
+from ansys.units import (
+    BaseDimensions,
+    Dimensions,
+    Quantity,
+    Unit,
+    UnitRegistry,
+    UnitSystem,
+)
 from ansys.units.unit import (
     InconsistentDimensions,
+    IncorrectTemperatureUnits,
     IncorrectUnits,
     UnconfiguredUnit,
     UnknownMapItem,

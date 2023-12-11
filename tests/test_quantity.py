@@ -17,6 +17,7 @@ from ansys.units.quantity import (  # InvalidFloatUsage,
     IncompatibleValue,
     InsufficientArguments,
     NumPyRequired,
+    get_si_value,
 )
 from ansys.units.unit import IncorrectUnits
 
@@ -163,23 +164,23 @@ def test_reverse_subtraction():
 def test_temp_subtraction():
     dims = BaseDimensions
     t1 = Quantity(1.0, "K")
-    assert t1.si_value == 1.0
+    assert get_si_value(t1) == 1.0
 
     t2 = Quantity(2.0, "K")
-    assert t2.si_value == 2.0
+    assert get_si_value(t2) == 2.0
 
     dt1 = t2 - t1
-    assert dt1.si_value == 1.0
+    assert get_si_value(dt1) == 1.0
     assert dt1.dimensions == Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
 
     t3 = Quantity(1.0, "C")
-    assert t3.si_value == 274.15
+    assert get_si_value(t3) == 274.15
 
     t4 = Quantity(2.0, "C")
-    assert t4.si_value == 275.15
+    assert get_si_value(t4) == 275.15
 
     dt2 = t4 - t3
-    assert dt2.si_value == 1.0
+    assert get_si_value(dt2) == 1.0
     assert dt2.dimensions == Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
 
     t5 = Quantity(10.0, "delta_F")
@@ -209,7 +210,7 @@ def test_mul():
 
     q3 = q1 * q2
     assert q3.units == Unit("m^2 s^-1")
-    assert q3.si_value == pytest.approx(15.239999999999998, DELTA)
+    assert get_si_value(q3) == pytest.approx(15.239999999999998, DELTA)
 
     q4 = q1 * u1
     assert q4.units == Unit("kg m s^-1")
@@ -217,7 +218,7 @@ def test_mul():
 
     q5 = q2 * 3
     assert q5.units == Unit("m")
-    assert q5.si_value == pytest.approx(4.571999999999999, DELTA)
+    assert get_si_value(q5) == pytest.approx(4.571999999999999, DELTA)
 
 
 def test_reverse_mul():
@@ -424,13 +425,13 @@ def test_temp_addition():
 
     td = t1 - t2
     assert td.units == Unit("delta_K")
-    assert td.si_value == 100.0
+    assert get_si_value(td) == 100.0
 
     kd = Quantity(50.0, "delta_C")
     k = Quantity(50.0, "K")
 
     t = k + kd
-    assert t.si_value == 100.0
+    assert get_si_value(t) == 100.0
     assert t.units == Unit("K")
 
 
