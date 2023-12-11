@@ -83,10 +83,10 @@ capacitance = ansunits.Quantity(value=50, quantity_map=cap_map)
 
 capacitance.value  # >>> 50.0
 capacitance.units.name  # >>> "farad"
-capacitance.si_value  # >>> 50.0
-capacitance.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
+capacitance.units.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
 capacitance.dimensions  # >>> {'MASS': -1.0, 'LENGTH': -2.0, 'TIME': 4.0, 'CURRENT': 2.0}
 capacitance.is_dimensionless  # >>> False
+ansunits.get_si_value(capacitance)  # >>> 50.0
 
 ###############################################################################
 # Perform arithmetic operations

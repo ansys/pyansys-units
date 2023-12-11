@@ -34,7 +34,7 @@ class IncorrectUnitType(ValueError):
 
 class UnitSystem:
     """
-    A class containing base units for a unit system.
+    A class representing base units for a unit system.
 
     Predefined unit systems work automatically and are configured when the
     package is initialized, whereas you can add user-defined systems at any time.
