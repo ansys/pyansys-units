@@ -120,6 +120,15 @@ def test_subtraction():
     with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
 
+    ft = ansunits.Quantity(1, "ft")
+    m = ansunits.Quantity(1, "m")
+    mm = ansunits.Quantity(1, "mm")
+
+    assert m - ft == ansunits.Quantity(0.6952, "m")
+    assert ft - m == ansunits.Quantity(-2.280839895013124, "ft")
+    assert m - mm == ansunits.Quantity(0.999, "m")
+    assert mm - m == ansunits.Quantity(-999, "mm")
+
 
 def test_reverse_subtraction():
     q1 = ansunits.Quantity(5.0)
@@ -149,6 +158,10 @@ def test_temp_subtraction():
     dt2 = t4 - t3
     assert ansunits.get_si_value(dt2) == 1.0
     assert dt2.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
+
+    t5 = ansunits.Quantity(10.0, "delta_F")
+    t6 = t5 - t4
+    assert t6 == ansunits.Quantity(-25.60000000495262, "F")
 
 
 def test_pow():
@@ -282,6 +295,15 @@ def test_addition():
     with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
 
+    ft = ansunits.Quantity(1, "ft")
+    m = ansunits.Quantity(1, "m")
+    mm = ansunits.Quantity(1, "mm")
+
+    assert m + ft == ansunits.Quantity(1.3048, "m")
+    assert ft + m == ansunits.Quantity(4.2808398950131235, "ft")
+    assert m + mm == ansunits.Quantity(1.001, "m")
+    assert mm + m == ansunits.Quantity(1001, "mm")
+
 
 def test_reverse_addition():
     q1 = ansunits.Quantity(5.0, "m^0")
@@ -376,19 +398,19 @@ def test_temp():
 
 
 def test_temp_addition():
-    t1 = ansunits.Quantity(150.0, "C")
-    t2 = ansunits.Quantity(50.0, "C")
-
-    td = t1 - t2
-    assert td.units == ansunits.Unit("delta_K")
-    assert ansunits.get_si_value(td) == 100.0
-
-    kd = ansunits.Quantity(50.0, "delta_C")
+    df = ansunits.Quantity(50.0, "delta_F")
     k = ansunits.Quantity(50.0, "K")
 
-    t = k + kd
-    assert ansunits.get_si_value(t) == 100.0
-    assert t.units == ansunits.Unit("K")
+    t1 = df + k
+    assert t1.value == pytest.approx(-319.6699999991, DELTA)
+    assert t1.units.name == "F"
+
+    t2 = k + df
+    assert t2.value == pytest.approx(77.7777777775, DELTA)
+    assert t2.units.name == "K"
+
+    t3 = df + df
+    assert t3 == ansunits.Quantity(100, "delta_F")
 
 
 def test_quantity_from_dimensions():

@@ -221,6 +221,39 @@ class Quantity:
 
         return Quantity(value=new_value, units=to_units)
 
+    def _relative_unit_check(self, __value, op: operator = operator.add) -> Quantity:
+        """
+        Checks relative units for temperature differences.
+
+        Parameters
+        ----------
+        __value : float, int, Quantity
+            The value to be added or subtracted to self.
+        op : operator, optional
+            The operation being performed. Default is addition.
+
+        Returns
+        -------
+        Quantity
+            Quantity instance changed to or from relative units.
+        """
+        if not isinstance(__value, ansunits.Quantity):
+            __value = ansunits.Quantity(__value)
+        # Adds or subtracts the units. Will be self.units unless temperatures
+        # are involved.
+        new_units = op(self._unit, __value._unit) or self.units
+        if __value.units != self.units:
+            # TODO: issue 197 covers the fact that we are twiddling with the
+            # internals of unit representations here instead of using units in a more
+            # encapsulated way
+            new_prefix = "delta_" if __value.units.name.startswith("delta_") else ""
+            new_unit = self.units.name.removeprefix("delta_")
+            # Converts the __value to the same unit as self without changing its prefix.
+            new_value = op(self.value, __value.to(new_prefix + new_unit).value)
+        else:
+            new_value = op(self.value, __value.to(self.units).value)
+        return Quantity(value=new_value, units=new_units)
+
     def __float__(self):
         base_dims = ansunits.BaseDimensions
         dims = ansunits.Dimensions
@@ -296,21 +329,13 @@ class Quantity:
         return Quantity(__value, "") / self
 
     def __add__(self, __value):
-        if not isinstance(__value, ansunits.Quantity):
-            __value = ansunits.Quantity(__value)
-        new_units = (self._unit + __value._unit) or self.units
-        new_value = self.value + __value.value
-        return Quantity(value=new_value, units=new_units)
+        return self._relative_unit_check(__value)
 
     def __radd__(self, __value):
         return self.__add__(__value)
 
     def __sub__(self, __value):
-        if not isinstance(__value, ansunits.Quantity):
-            __value = ansunits.Quantity(__value)
-        new_units = (self._unit - __value._unit) or self.units
-        new_value = self.value - __value.value
-        return Quantity(value=new_value, units=new_units)
+        return self._relative_unit_check(__value, op=operator.sub)
 
     def __rsub__(self, __value):
         return self.__sub__(__value)
