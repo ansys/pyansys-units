@@ -21,8 +21,8 @@ def test_properties():
     v = ansunits.Quantity(10.6, "m")
     assert v.value == 10.6
     assert v.units == ansunits.Unit("m")
-    assert v.si_value == 10.6
-    assert v.si_units == "m"
+    assert ansunits.get_si_value(v) == 10.6
+    assert v.units.si_units == "m"
     assert v.is_dimensionless == False
     assert v.dimensions == ansunits.Dimensions({dims.LENGTH: 1.0})
 
@@ -113,8 +113,8 @@ def test_subtraction():
     q3 = ansunits.Quantity(5.0)
     q4 = q3 - 2
 
-    assert (q1 - q2).si_value == 5.0
-    assert (q2 - q1).si_value == -5.0
+    assert ansunits.get_si_value(q1 - q2) == 5.0
+    assert ansunits.get_si_value(q2 - q1) == -5.0
     assert q4.value == 3
 
     with pytest.raises(IncorrectUnits) as e_info:
@@ -131,23 +131,23 @@ def test_reverse_subtraction():
 def test_temp_subtraction():
     dims = ansunits.BaseDimensions
     t1 = ansunits.Quantity(1.0, "K")
-    assert t1.si_value == 1.0
+    assert ansunits.get_si_value(t1) == 1.0
 
     t2 = ansunits.Quantity(2.0, "K")
-    assert t2.si_value == 2.0
+    assert ansunits.get_si_value(t2) == 2.0
 
     dt1 = t2 - t1
-    assert dt1.si_value == 1.0
+    assert ansunits.get_si_value(dt1) == 1.0
     assert dt1.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
 
     t3 = ansunits.Quantity(1.0, "C")
-    assert t3.si_value == 274.15
+    assert ansunits.get_si_value(t3) == 274.15
 
     t4 = ansunits.Quantity(2.0, "C")
-    assert t4.si_value == 275.15
+    assert ansunits.get_si_value(t4) == 275.15
 
     dt2 = t4 - t3
-    assert dt2.si_value == 1.0
+    assert ansunits.get_si_value(dt2) == 1.0
     assert dt2.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
 
 
@@ -160,10 +160,10 @@ def test_pow():
     assert q1_sq.value == 100
     q2_sq = q2**2
     assert q2_sq.units == ansunits.Unit("m^2")
-    assert q2_sq.si_value == pytest.approx(2.3225759999999993, DELTA)
+    assert ansunits.get_si_value(q2_sq) == pytest.approx(2.3225759999999993, DELTA)
 
-    assert q1.si_value**2 == 100.0
-    assert q2.si_value**2 == pytest.approx(2.3225759999999993, DELTA)
+    assert ansunits.get_si_value(q1) ** 2 == 100.0
+    assert ansunits.get_si_value(q2) ** 2 == pytest.approx(2.3225759999999993, DELTA)
 
 
 def test_mul():
@@ -173,7 +173,7 @@ def test_mul():
 
     q3 = q1 * q2
     assert q3.units == ansunits.Unit("m^2 s^-1")
-    assert q3.si_value == pytest.approx(15.239999999999998, DELTA)
+    assert ansunits.get_si_value(q3) == pytest.approx(15.239999999999998, DELTA)
 
     q4 = q1 * u1
     assert q4.units == ansunits.Unit("kg m s^-1")
@@ -181,7 +181,7 @@ def test_mul():
 
     q5 = q2 * 3
     assert q5.units == ansunits.Unit("m")
-    assert q5.si_value == pytest.approx(4.571999999999999, DELTA)
+    assert ansunits.get_si_value(q5) == pytest.approx(4.571999999999999, DELTA)
 
 
 def test_reverse_mul():
@@ -381,13 +381,13 @@ def test_temp_addition():
 
     td = t1 - t2
     assert td.units == ansunits.Unit("delta_K")
-    assert td.si_value == 100.0
+    assert ansunits.get_si_value(td) == 100.0
 
     kd = ansunits.Quantity(50.0, "delta_C")
     k = ansunits.Quantity(50.0, "K")
 
     t = k + kd
-    assert t.si_value == 100.0
+    assert ansunits.get_si_value(t) == 100.0
     assert t.units == ansunits.Unit("K")
 
 
