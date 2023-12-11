@@ -1,7 +1,12 @@
 import pytest
 
 import ansys.units as ansunits
-from ansys.units.unit import InconsistentDimensions, IncorrectUnits, UnconfiguredUnit
+from ansys.units.unit import (
+    InconsistentDimensions,
+    IncorrectTemperatureUnits,
+    IncorrectUnits,
+    UnconfiguredUnit,
+)
 
 
 def test_base_units():
@@ -45,6 +50,23 @@ def test_copy():
     assert slug == ureg.slug
 
 
+def test_units_from_dimensions():
+    dims = ansunits.BaseDimensions
+    kg = ansunits.Unit(dimensions=ansunits.Dimensions({dims.MASS: 1}))
+    assert kg.name == "kg"
+    assert kg.dimensions == ansunits.Dimensions({dims.MASS: 1})
+    assert kg.si_scaling_factor == 1
+    assert kg.si_offset == 0
+    slug_squared = ansunits.Unit(
+        dimensions=ansunits.Dimensions({dims.MASS: 2}),
+        system=ansunits.UnitSystem(system="BT"),
+    )
+    assert slug_squared.name == "slug^2"
+    assert slug_squared.dimensions == ansunits.Dimensions({dims.MASS: 2})
+    assert slug_squared.si_scaling_factor == 212.9820029406007
+    assert slug_squared.si_offset == 0
+
+
 def test_string_rep():
     C = ansunits.Unit("C")
     C_string = """_name: C
@@ -69,6 +91,9 @@ def test_add():
 
     with pytest.raises(IncorrectUnits):
         C + kg
+
+    with pytest.raises(IncorrectTemperatureUnits):
+        C + C
 
 
 def test_unit_multiply_by_value():

@@ -86,13 +86,13 @@ def test_pint_angle_works_with_trigonometry():
 
 
 def test_pyunits_angle_works_with_trigonometry():
-    from ansys.units.quantity import Quantity
+    from ansys.units.quantity import Quantity, get_si_value
 
     half_pi_rads = Quantity(0.5 * math.pi, "radian")
     sixty_degrees = Quantity(60.0, "degree")
-    assert math.sin(half_pi_rads.si_value) == pytest.approx(1.0)
+    assert math.sin(get_si_value(half_pi_rads)) == pytest.approx(1.0)
     # see that PyUnits goes to radians for the float conversion, which is nice
-    assert math.cos(sixty_degrees.si_value) == pytest.approx(0.5)
+    assert math.cos(get_si_value(sixty_degrees)) == pytest.approx(0.5)
 
 
 @pytest.mark.developer_only

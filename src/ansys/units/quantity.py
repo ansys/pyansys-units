@@ -1,6 +1,7 @@
 """Provides the ``Quantity`` class."""
 from __future__ import annotations
 
+import operator
 from typing import Union
 
 import ansys.units as ansunits
@@ -69,20 +70,29 @@ class InvalidFloatUsage(FloatingPointError):
         )
 
 
+def get_si_value(quantity: Quantity) -> float:
+    """The value in SI units."""
+    return float(
+        (quantity.value + quantity.units.si_offset) * quantity.units.si_scaling_factor
+    )
+
+
 class Quantity:
     """
-    A class containing a physical quantity's value and associated units.
+    A class representing a physical quantity's value and associated units.
 
-    A Quantity instance will contain both SI units and the SI value to
-    facilitate consistent computation with other quantities. ``NumPy`` is
-    required to use lists or NumPy arrays. Value is not required when using
-    ``copy_from``.
+    A Quantity object can be instantiated from a NumPy array or list only if the
+    ``NumPy`` package is installed.
 
-    Float conversion will only work for angles or dimensionless quantities.
+    The value argument is not required when using ``copy_from``. A value can be given
+    to override the value from the copy.
+
+    Implicit conversion from Quantity to float is only allowed if the operand is
+    of quantity type angle or dimensionless.
 
     Parameters
     ----------
-    value : int | float | list | np.array
+    value : int, float, list, np.array
         Real value of the quantity.
     units : str, Unit, optional
         Initializes the quantity's units using a string or ``Unit`` instance.
@@ -97,8 +107,6 @@ class Quantity:
     ----------
     value
     units
-    si_value
-    si_units
     dimensions
     is_dimensionless
     """
@@ -171,16 +179,6 @@ class Quantity:
         return self._unit
 
     @property
-    def si_value(self):
-        """The value in SI units."""
-        return (self.value + self._unit.si_offset) * self._unit.si_scaling_factor
-
-    @property
-    def si_units(self):
-        """The unit string in SI units."""
-        return self._unit._si_units
-
-    @property
     def dimensions(self):
         """The quantity's dimensions."""
         return self._unit.dimensions
@@ -214,12 +212,47 @@ class Quantity:
             to_units = ansunits.Unit(units=to_units)
 
         # Retrieve all SI required SI data and perform conversion
-        new_value = (self.si_value / to_units.si_scaling_factor) - to_units.si_offset
+        new_value = (
+            get_si_value(self) / to_units.si_scaling_factor
+        ) - to_units.si_offset
 
         if self.dimensions != to_units.dimensions:
             raise IncompatibleDimensions(from_unit=self.units, to_unit=to_units)
 
         return Quantity(value=new_value, units=to_units)
+
+    def _relative_unit_check(self, __value, op: operator = operator.add) -> Quantity:
+        """
+        Checks relative units for temperature differences.
+
+        Parameters
+        ----------
+        __value : float, int, Quantity
+            The value to be added or subtracted to self.
+        op : operator, optional
+            The operation being performed. Default is addition.
+
+        Returns
+        -------
+        Quantity
+            Quantity instance changed to or from relative units.
+        """
+        if not isinstance(__value, ansunits.Quantity):
+            __value = ansunits.Quantity(__value)
+        # Adds or subtracts the units. Will be self.units unless temperatures
+        # are involved.
+        new_units = op(self._unit, __value._unit) or self.units
+        if __value.units != self.units:
+            # TODO: issue 197 covers the fact that we are twiddling with the
+            # internals of unit representations here instead of using units in a more
+            # encapsulated way
+            new_prefix = "delta_" if __value.units.name.startswith("delta_") else ""
+            new_unit = self.units.name.removeprefix("delta_")
+            # Converts the __value to the same unit as self without changing its prefix.
+            new_value = op(self.value, __value.to(new_prefix + new_unit).value)
+        else:
+            new_value = op(self.value, __value.to(self.units).value)
+        return Quantity(value=new_value, units=new_units)
 
     def __float__(self):
         base_dims = ansunits.BaseDimensions
@@ -229,7 +262,7 @@ class Quantity:
             dims(dimensions={base_dims.ANGLE: 1.0}),
             dims(dimensions={base_dims.SOLID_ANGLE: 1.0}),
         ]:
-            return self.si_value
+            return get_si_value(self)
         raise InvalidFloatUsage()
 
     def __array__(self):
@@ -296,21 +329,13 @@ class Quantity:
         return Quantity(__value, "") / self
 
     def __add__(self, __value):
-        if not isinstance(__value, ansunits.Quantity):
-            __value = ansunits.Quantity(__value)
-        new_units = (self._unit + __value._unit) or self.units
-        new_value = self.value + __value.value
-        return Quantity(value=new_value, units=new_units)
+        return self._relative_unit_check(__value)
 
     def __radd__(self, __value):
         return self.__add__(__value)
 
     def __sub__(self, __value):
-        if not isinstance(__value, ansunits.Quantity):
-            __value = ansunits.Quantity(__value)
-        new_units = (self._unit - __value._unit) or self.units
-        new_value = self.value - __value.value
-        return Quantity(value=new_value, units=new_units)
+        return self._relative_unit_check(__value, op=operator.sub)
 
     def __rsub__(self, __value):
         return self.__sub__(__value)
@@ -329,45 +354,33 @@ class Quantity:
         ):
             raise IncompatibleQuantities(self, other)
 
+    def _compute_comparison(self, __value, op: operator):
+        """Compares quantity values."""
+        return (
+            op(get_si_value(self), __value)
+            if self.is_dimensionless
+            else op(get_si_value(self), get_si_value(__value))
+        )
+
     def __gt__(self, __value):
         self.validate_matching_dimensions(__value)
-        return (
-            self.si_value > __value
-            if self.is_dimensionless
-            else self.si_value > __value.si_value
-        )
+        return self._compute_comparison(__value, op=operator.gt)
 
     def __ge__(self, __value):
         self.validate_matching_dimensions(__value)
-        return (
-            self.si_value >= __value
-            if self.is_dimensionless
-            else self.si_value >= __value.si_value
-        )
+        return self._compute_comparison(__value, op=operator.ge)
 
     def __lt__(self, __value):
         self.validate_matching_dimensions(__value)
-        return (
-            self.si_value < __value
-            if self.is_dimensionless
-            else self.si_value < __value.si_value
-        )
+        return self._compute_comparison(__value, op=operator.lt)
 
     def __le__(self, __value):
         self.validate_matching_dimensions(__value)
-        return (
-            self.si_value <= __value
-            if self.is_dimensionless
-            else self.si_value <= __value.si_value
-        )
+        return self._compute_comparison(__value, op=operator.le)
 
     def __eq__(self, __value):
         self.validate_matching_dimensions(__value)
-        return (
-            self.si_value == __value
-            if self.is_dimensionless
-            else self.si_value == __value.si_value
-        )
+        return self._compute_comparison(__value, op=operator.eq)
 
     def __ne__(self, __value):
         return not self.__eq__(__value)

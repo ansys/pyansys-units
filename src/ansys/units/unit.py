@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import ansys.units as ansunits
 from ansys.units import _base_units, _derived_units, _multipliers
 
@@ -27,9 +29,19 @@ class IncorrectUnits(ValueError):
         )
 
 
+class IncorrectTemperatureUnits(ValueError):
+    """Provides the error when two temperatures are added."""
+
+    def __init__(self, unit1, unit2):
+        super().__init__(
+            f"`Either {unit1.name}` or '{unit2.name}' must be a relative unit for "
+            f"this operation."
+        )
+
+
 class Unit:
     """
-    A class containing the string name and dimensions of a unit.
+    A class representing a named unit and it's base dimensions.
 
     Parameters
     ----------
@@ -39,7 +51,7 @@ class Unit:
         dictionary of unit properties
     dimensions: Dimensions, optional
         An instance of the Dimensions class.
-    unit_sys: str, optional
+    system: str, optional
         Define the unit system for base units of dimension,
         default is SI.
     copy_from: Unit, optional
@@ -71,7 +83,7 @@ class Unit:
         units: str = None,
         config: dict = None,
         dimensions: ansunits.Dimensions = None,
-        unit_sys: ansunits.UnitSystem = None,
+        system: ansunits.UnitSystem = None,
         copy_from: ansunits.Unit = None,
     ):
         if copy_from:
@@ -90,7 +102,7 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
-            self._name = self._dim_to_units(dimensions=dimensions, unit_sys=unit_sys)
+            self._name = self._dim_to_units(dimensions=dimensions, system=system)
         else:
             self._name = ""
             self._dimensions = ansunits.Dimensions()
@@ -126,7 +138,7 @@ class Unit:
     def _dim_to_units(
         self,
         dimensions: ansunits.Dimensions,
-        unit_sys: ansunits.UnitSystem = None,
+        system: ansunits.UnitSystem = None,
     ) -> str:
         """
         Convert a dimensions list into a unit string.
@@ -136,7 +148,7 @@ class Unit:
         dimensions : Dimensions object
             Instance of Dimension class.
 
-        unit_sys : UnitSystem object, optional
+        system : UnitSystem object, optional
             Unit system for dimensions list.
             Default is SI units.
 
@@ -145,11 +157,10 @@ class Unit:
         str
             Unit string.
         """
-        if not unit_sys:
-            unit_sys = ansunits.UnitSystem()
-            unit_sys = ansunits.UnitSystem()
+        if not system:
+            system = ansunits.UnitSystem()
 
-        base_units = unit_sys.base_units
+        base_units = system.base_units
         units = ""
         for key, value in dimensions:
             if value == 1:
@@ -331,6 +342,45 @@ class Unit:
 
         return Unit(self._condense(new_units))
 
+    def _temp_precheck(self, other_unit, op: str = "+") -> Optional[Unit]:
+        """
+        Validate units for temperature differences.
+
+        Parameters
+        ----------
+        other_unit : Unit
+            Unit for comparison against current unit.
+        op : str, optional
+            Operation conducted on the units.
+
+        Returns
+        -------
+        Unit | None
+            unit object for a quantity of temperature difference or temperature.
+
+        Raises
+        ------
+        IncorrectTemperatureUnits
+            Cannot add two absolute temperatures.
+        IncorrectUnits
+            Cannot add or subtract different units.
+        """
+
+        temp = Unit("K")
+        delta_temp = Unit("delta_K")
+        if self == other_unit == temp and op == "+":
+            raise IncorrectTemperatureUnits(self, other_unit)
+        # Checks to make sure they are both temperatures.
+        if (self and other_unit) in (temp, delta_temp):
+            if self != other_unit:
+                # Removes the delta_ prefix if there is one.
+                return Unit(self.name.replace("delta_", ""))
+            if self == other_unit == temp and op == "-":
+                # Adds the delta_ prefix.
+                return Unit(f"delta_{self.name}")
+        if self != other_unit:
+            raise IncorrectUnits(self, other_unit)
+
     def filter_unit_term(self, unit_term: str) -> tuple:
         """
         Separate multiplier, base, and exponent from a unit term.
@@ -476,11 +526,7 @@ class Unit:
         return self._to_string()
 
     def __add__(self, __value):
-        new_dimensions = self.dimensions + __value.dimensions
-        if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
-        if self.dimensions != __value.dimensions:
-            raise IncorrectUnits(self, __value)
+        return self._temp_precheck(__value)
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
@@ -498,11 +544,7 @@ class Unit:
         return self.__mul__(__value)
 
     def __sub__(self, __value):
-        new_dimensions = self.dimensions - __value.dimensions
-        if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
-        if self.dimensions != __value.dimensions:
-            raise IncorrectUnits(self, __value)
+        return self._temp_precheck(__value, op="-")
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):
