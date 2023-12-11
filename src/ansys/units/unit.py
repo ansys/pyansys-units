@@ -355,8 +355,8 @@ class Unit:
 
         Returns
         -------
-        Unit | None
-            unit object for a quantity of temperature difference or temperature.
+        Unit, Unit | None
+            Two unit objects for a quantity of temperature difference or temperature.
 
         Raises
         ------
@@ -370,14 +370,20 @@ class Unit:
         delta_temp = Unit("delta_K")
         if self == other_unit == temp and op == "+":
             raise IncorrectTemperatureUnits(self, other_unit)
+
         # Checks to make sure they are both temperatures.
         if (self and other_unit) in (temp, delta_temp):
+            unit_name = self.name.removeprefix("delta_")
+            relative = Unit(f"delta_{unit_name}")
+            absolute = Unit(unit_name)
+
             if self != other_unit:
                 # Removes the delta_ prefix if there is one.
-                return Unit(self.name.replace("delta_", ""))
+                return absolute, relative
+
             if self == other_unit == temp and op == "-":
-                # Adds the delta_ prefix.
-                return Unit(f"delta_{self.name}")
+                return relative, absolute
+
         if self != other_unit:
             raise IncorrectUnits(self, other_unit)
 

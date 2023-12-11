@@ -239,19 +239,23 @@ class Quantity:
         """
         if not isinstance(__value, ansunits.Quantity):
             __value = ansunits.Quantity(__value)
-        # Adds or subtracts the units. Will be self.units unless temperatures
-        # are involved.
-        new_units = op(self._unit, __value._unit) or self.units
-        if __value.units != self.units:
-            # TODO: issue 197 covers the fact that we are twiddling with the
-            # internals of unit representations here instead of using units in a more
-            # encapsulated way
-            new_prefix = "delta_" if __value.units.name.startswith("delta_") else ""
-            new_unit = self.units.name.removeprefix("delta_")
-            # Converts the __value to the same unit as self without changing its prefix.
-            new_value = op(self.value, __value.to(new_prefix + new_unit).value)
+
+        # Checks the temperatures at the unit level.
+        new_units, other_units = op(self.units, __value.units) or (
+            self.units,
+            __value.units,
+        )
+
+        # If value does not equal relative units, use the corrected absolute units.
+        if __value.units != other_units:
+            value = __value.to(new_units).value
+        # If both values are temperatures, use the corrected relative units.
+        elif __value.units != self.units:
+            value = __value.to(other_units).value
         else:
-            new_value = op(self.value, __value.to(self.units).value)
+            value = __value.to(self.units).value
+
+        new_value = op(self.value, value)
         return Quantity(value=new_value, units=new_units)
 
     def __float__(self):
