@@ -13,37 +13,37 @@ new ``Quantity`` object:
 
 .. code:: python
 
-    import ansys.units as ansunits
+    from ansys.units import Quantity
 
-    meter = ansunits.Quantity(value=1, units="m")
+    meter = Quantity(value=1, units="m")
 
 A ``Quantity`` object can also be created with a ``Unit`` object directly or
 through multiplication
 
 .. code:: python
 
-    import ansys.units as ansunits
+    from ansys.units import Quantity, UnitRegistry
 
-    ureg = ansunits.UnitRegistry()
+    ureg = UnitRegistry()
 
-    meter = ansunits.Quantity(value=1, units=ureg.m)
+    meter = Quantity(value=1, units=ureg.m)
     meter = 1 * ureg.m
 
 With ``NumPy`` installed, a ``Quantity`` can be created using either a list of floats or a NumPy array.
 
 .. code:: python
 
-    import ansys.units as ansunits
+    from ansys.units import Quantity
     import numpy as np
 
-    meter = ansunits.Quantity(value=[1.0, 6.0, 7.0], units="m")
+    meter = Quantity(value=[1.0, 6.0, 7.0], units="m")
 
     values = np.array([1.0, 6.0, 7.0])
-    meter = ansunits.Quantity(value=values, units="m")
+    meter = Quantity(value=values, units="m")
 
     meter[1]  # Quantity (6.0, "m")
 
-    second = ansunits.Quantity(value=2, units="s")
+    second = Quantity(value=2, units="s")
     speed = meter / second
     speed  # Quantity ([0.5 3.  3.5], "m s^-1")
 
@@ -53,9 +53,9 @@ insert them within an equation to perform mathematical operations.
 .. code:: python
 
 
-    import ansys.units as ansunits
+    from ansys.units import Quantity
 
-    meter = ansunits.Quantity(value=1, units="m")
+    meter = Quantity(value=1, units="m")
 
     m_ad = meter + 2  # 3
     m_sb = meter - 2  # -1

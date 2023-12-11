@@ -16,7 +16,7 @@ Start by importing the ``ansys.units`` package:
 
 .. code:: python
 
-   import ansys.units as ansunits
+   from ansys.units import Quantity, UnitRegistry, BaseDimensions, Dimensions
 
 You can instantiate quantities with one of four methods:
 
@@ -24,33 +24,33 @@ You can instantiate quantities with one of four methods:
 
    # Using supported unit strings
 
-   volume = ansunits.Quantity(value=1, units="m^3")
+   volume = Quantity(value=1, units="m^3")
 
    volume.value  # 1.0
    volume.units.name  # "m^3"
 
    # Using Unit instances
 
-   ureg = ansunits.UnitRegistry()
+   ureg = UnitRegistry()
 
-   mass = ansunits.Quantity(value=1, units=ureg.kg)
+   mass = Quantity(value=1, units=ureg.kg)
 
    volume.value  # 1.0
    volume.units.name  # "kg"
 
    # Using base dimensions
 
-   dims = ansunits.BaseDimensions
-   dimensions = ansunits.Dimensions({dims.LENGTH: 1, dims.TIME: -2})
+   dims = BaseDimensions
+   dimensions = Dimensions({dims.LENGTH: 1, dims.TIME: -2})
 
-   acceleration = ansunits.Quantity(value=3, dimensions=dimensions)
+   acceleration = Quantity(value=3, dimensions=dimensions)
 
    acceleration.value  # 3.0
    acceleration.units.name  # "m s^-2"
 
    # Using the quantity map
 
-   torque = ansunits.Quantity(5, quantity_map={"Torque": 1})
+   torque = Quantity(5, quantity_map={"Torque": 1})
 
    torque.value  # 5.0
    torque.units.name  # "N m"
@@ -62,16 +62,16 @@ You can instantiate unit systems with one of two methods:
 
    # Use a pre-defined unit system
 
-   si = ansunits.UnitSystem(system="SI")
+   si = UnitSystem(system="SI")
 
    si.base_units  # ['kg', 'm', 's', 'K', 'delta_K', 'radian', 'mol', 'cd', 'A', 'sr']
 
    # Custom unit systems are defined by passing selected base units. Any unit
    # type that is not given defaults to SI.
 
-   dims = ansunits.BaseDimensions
+   dims = BaseDimensions
 
-   sys = ansunits.UnitSystem(
+   sys = UnitSystem(
        base_units={
            dims.MASS: ureg.slug,
            dims.LENGTH: ureg.ft,
@@ -90,13 +90,13 @@ Perform arithmetic operations:
 
 .. code:: python
 
-   import ansys.units as ansunits
+   from ansys.units import Quantity
 
-   deg = ansunits.Quantity(90, "degree")
+   deg = Quantity(90, "degree")
    math.sin(deg)  # 1.0
 
-   v1 = ansunits.Quantity(10.0, "m s^-1")
-   v2 = ansunits.Quantity(5.0, "m s^-1")
+   v1 = Quantity(10.0, "m s^-1")
+   v2 = Quantity(5.0, "m s^-1")
 
    v3 = v1 - v2
    v3.value  # 5.0
@@ -109,9 +109,9 @@ Directly convert values to another set of units:
 
 .. code:: python
 
-   import ansys.units as ansunits
+   from ansys.units import Quantity
 
-   flbs = ansunits.Quantity(1, "lb ft^-1 s^-1")
+   flbs = Quantity(1, "lb ft^-1 s^-1")
    flbs.value  # 1
 
    pas = flbs.to("Pa s")
@@ -122,11 +122,11 @@ Use a custom unit system to perform conversions:
 
 .. code:: python
 
-   import ansys.units as ansunits
+   from ansys.units import Quantity, BaseDimensions, UnitSystem
 
-   dims = ansunits.BaseDimensions
+   dims = BaseDimensions
 
-   sys = ansunits.UnitSystem(
+   sys = UnitSystem(
        base_units={
            dims.MASS: ureg.slug,
            dims.LENGTH: ureg.ft,
@@ -136,7 +136,7 @@ Use a custom unit system to perform conversions:
        }
    )
 
-   v = ansunits.Quantity(10, "kg m s^2")
+   v = Quantity(10, "kg m s^2")
    v2 = v.convert(sys)
 
    v2.value  # 2.2480894309971045
