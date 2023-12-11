@@ -18,6 +18,11 @@ def test_default_units():
     assert N.name == "N"
     assert N._composition == "kg m s^-2"
     assert N.si_scaling_factor == 1
+    inch = ur.inch
+    assert inch.name == "inch"
+    assert inch._type == "LENGTH"
+    assert inch.si_scaling_factor == 0.0254
+    assert inch.si_offset == 0
 
 
 def test_custom_yaml():
