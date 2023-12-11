@@ -194,9 +194,9 @@ base_units:
 # Derived Units
 # -------------
 # Derived units are composed from base units.  Each derived unit must provide a
-# `composition` and `factor`. The `composition` specifies the base units and
-# their exponents. The `factor` provides the conversion from the composed unit
-# string to the derived unit.
+# `composition` and `factor`. The `composition` specifies the unit string with
+# exponents. The `factor` provides the conversion from the composed unit
+# string to the derived unit. The `si_offset` is required for all base units.
 #
 # Specification format:
 #

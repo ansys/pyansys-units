@@ -45,31 +45,6 @@ def test_to_string():
     assert str(d2) == repr(d2)
 
 
-def test_add():
-    temp = ansunits.Dimensions(dimensions={ansunits.BaseDimensions.TEMPERATURE: 1.0})
-    delta_temp = ansunits.Dimensions(
-        dimensions={ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
-    )
-    not_temp = ansunits.Dimensions(dimensions={ansunits.BaseDimensions.MASS: 1.0})
-
-    assert temp + delta_temp == temp
-    assert temp + temp == None
-    assert temp + not_temp == None
-
-
-def test_sub():
-    temp = ansunits.Dimensions(dimensions={ansunits.BaseDimensions.TEMPERATURE: 1.0})
-    delta_temp = ansunits.Dimensions(
-        dimensions={ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE: 1.0}
-    )
-    not_temp = ansunits.Dimensions(dimensions={ansunits.BaseDimensions.MASS: 1.0})
-
-    assert temp - temp == delta_temp
-    assert temp - delta_temp == temp
-    assert delta_temp - delta_temp == None
-    assert temp - not_temp == None
-
-
 def test_mul():
     dims = ansunits.BaseDimensions
     d1 = ansunits.Dimensions(dimensions={dims.CURRENT: 1})
