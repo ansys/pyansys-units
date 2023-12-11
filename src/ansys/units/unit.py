@@ -213,7 +213,7 @@ def si_map(unit_term: str) -> str:
 
     Returns
     -------
-    term : str
+    str
         SI unit equivalent.
     """
     # Retrieve type associated with unit term
