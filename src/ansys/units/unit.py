@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Union
+from typing import Optional, Union
 
 from ansys.units import (
     BaseDimensions,
@@ -511,6 +511,45 @@ class Unit:
             new_units = f"{self.name} {__value.name}"
         return Unit(condense(new_units))
 
+    def _temp_precheck(self, other_unit, op: str = "+") -> Optional[Unit]:
+        """
+        Validate units for temperature differences.
+
+        Parameters
+        ----------
+        other_unit : Unit
+            Unit for comparison against current unit.
+        op : str, optional
+            Operation conducted on the units.
+
+        Returns
+        -------
+        Unit | None
+            unit object for a quantity of temperature difference or temperature.
+
+        Raises
+        ------
+        IncorrectTemperatureUnits
+            Cannot add two absolute temperatures.
+        IncorrectUnits
+            Cannot add or subtract different units.
+        """
+
+        temp = Unit("K")
+        delta_temp = Unit("delta_K")
+        if self == other_unit == temp and op == "+":
+            raise IncorrectTemperatureUnits(self, other_unit)
+        # Checks to make sure they are both temperatures.
+        if (self and other_unit) in (temp, delta_temp):
+            if self != other_unit:
+                # Removes the delta_ prefix if there is one.
+                return Unit(self.name.replace("delta_", ""))
+            if self == other_unit == temp and op == "-":
+                # Adds the delta_ prefix.
+                return Unit(f"delta_{self.name}")
+        if self != other_unit:
+            raise IncorrectUnits(self, other_unit)
+
     @property
     def name(self) -> str:
         """The unit string."""
@@ -567,11 +606,7 @@ class Unit:
         return self._to_string()
 
     def __add__(self, __value):
-        new_dimensions = self.dimensions + __value.dimensions
-        if new_dimensions:
-            return Unit(dimensions=new_dimensions)
-        if self.dimensions != __value.dimensions:
-            raise IncorrectUnits(self, __value)
+        return self._temp_precheck(__value)
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
@@ -584,11 +619,7 @@ class Unit:
         return self.__mul__(__value)
 
     def __sub__(self, __value):
-        new_dimensions = self.dimensions - __value.dimensions
-        if new_dimensions:
-            return Unit(dimensions=new_dimensions)
-        if self.dimensions != __value.dimensions:
-            raise IncorrectUnits(self, __value)
+        return self._temp_precheck(__value, op="-")
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):

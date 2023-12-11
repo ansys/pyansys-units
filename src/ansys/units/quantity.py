@@ -264,8 +264,8 @@ class Quantity:
         Quantity
             Quantity instance changed to or from relative units.
         """
-        if not isinstance(__value, ansunits.Quantity):
-            __value = ansunits.Quantity(__value)
+        if not isinstance(__value, Quantity):
+            __value = Quantity(__value)
         # Adds or subtracts the units. Will be self.units unless temperatures
         # are involved.
         new_units = op(self._unit, __value._unit) or self.units
