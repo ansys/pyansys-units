@@ -34,7 +34,7 @@ class IncorrectUnitType(ValueError):
 
 class UnitSystem:
     """
-    A class containing base units for a unit system.
+    A class representing base units for a unit system.
 
     Predefined unit systems work automatically and are configured when the
     package is initialized, whereas you can add user-defined systems at any time.
@@ -66,18 +66,18 @@ class UnitSystem:
     def __init__(
         self,
         base_units: dict[ansunits.BaseDimensions, Union[ansunits.Unit, str]] = None,
-        unit_sys: str = None,
+        system: str = None,
         copy_from: ansunits.UnitSystem = None,
     ):
         if copy_from:
             self._units = copy_from._units
         else:
-            if not unit_sys:
-                unit_sys = "SI"
-            if unit_sys not in ansunits._unit_systems:
-                raise InvalidUnitSystem(unit_sys)
+            if not system:
+                system = "SI"
+            if system not in ansunits._unit_systems:
+                raise InvalidUnitSystem(system)
             else:
-                self._units = ansunits._unit_systems[unit_sys].copy()
+                self._units = ansunits._unit_systems[system].copy()
 
         if base_units:
             for unit_type, unit in base_units.items():
@@ -105,10 +105,10 @@ class UnitSystem:
         --------
         >>> ur = UnitRegistry()
         >>> speed_si = Quantity(value=5, units= ur.m / ur.s)
-        >>> bt = UnitSystem(unit_sys="BT")
+        >>> bt = UnitSystem(system="BT")
         >>> speed_bt = bt.convert(speed_si)
         """
-        new_unit = ansunits.Unit(dimensions=quantity.dimensions, unit_sys=self)
+        new_unit = ansunits.Unit(dimensions=quantity.dimensions, system=self)
 
         return quantity.to(to_units=new_unit)
 

@@ -83,10 +83,10 @@ capacitance = ansunits.Quantity(value=50, quantity_map=cap_map)
 
 capacitance.value  # >>> 50.0
 capacitance.units.name  # >>> "farad"
-capacitance.si_value  # >>> 50.0
-capacitance.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
+capacitance.units.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
 capacitance.dimensions  # >>> {'MASS': -1.0, 'LENGTH': -2.0, 'TIME': 4.0, 'CURRENT': 2.0}
 capacitance.is_dimensionless  # >>> False
+ansunits.get_si_value(capacitance)  # >>> 50.0
 
 ###############################################################################
 # Perform arithmetic operations
@@ -182,13 +182,13 @@ pas.units.name  # >>> "Pa s"
 
 dims = ansunits.BaseDimensions
 sys_units = {dims.MASS: "slug", dims.LENGTH: "ft"}
-sys = ansunits.UnitSystem(base_units=sys_units, unit_sys="SI")
+sys = ansunits.UnitSystem(base_units=sys_units, system="SI")
 
 sys.base_units  # >>> ["slug", "ft", "s", "K", "delta_K", "radian", "mol", "cd", "A", "sr"]
 
 # Predefined unit systems
 
-cgs = ansunits.UnitSystem(unit_sys="CGS")
+cgs = ansunits.UnitSystem(system="CGS")
 
 cgs.base_units  # >>> ['g', 'cm', 's', 'K', "delta_K", 'radian', 'mol', 'cd', 'A', 'sr']
 
