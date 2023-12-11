@@ -221,7 +221,6 @@ class Quantity:
 
         return Quantity(value=new_value, units=to_units)
 
-
     def compatible_units(self) -> set[str]:
         """
         Get all units with the same dimensions.
@@ -266,7 +265,6 @@ class Quantity:
         else:
             new_value = op(self.value, __value.to(self.units).value)
         return Quantity(value=new_value, units=new_units)
-
 
     def __float__(self):
         base_dims = ansunits.BaseDimensions

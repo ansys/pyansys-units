@@ -402,7 +402,6 @@ class Unit:
         if self != other_unit:
             raise IncorrectUnits(self, other_unit)
 
-
     def filter_unit_term(self, unit_term: str) -> tuple:
         """
         Separate multiplier, base, and exponent from a unit term.
