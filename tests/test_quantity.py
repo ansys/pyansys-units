@@ -456,7 +456,7 @@ def testing_units_to_dimensions():
     dim_test("daPa", {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0})
     dim_test("MPa", {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0})
     dim_test("kPa^2", {dims.MASS: 2.0, dims.LENGTH: -2.0, dims.TIME: -4.0})
-    dim_test("slug in^-1 s^-1", {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -1.0})
+    dim_test("slug inch^-1 s^-1", {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -1.0})
     dim_test("radian", {dims.ANGLE: 1.0})
     dim_test(
         "ohm", {dims.MASS: 1.0, dims.LENGTH: 2.0, dims.TIME: -3.0, dims.CURRENT: -2.0}
@@ -478,7 +478,7 @@ def testing_multipliers():
     from_to("dm^3", "m^3")
     from_to("m s^-1", "cm s^-1")
     from_to("N", "dyne")
-    from_to("m^2", "in^2")
+    from_to("m^2", "inch^2")
     from_to("degree s^-1", "radian s^-1")
     from_to("radian s^-1", "degree s^-1")
     from_to("Pa", "lb m s^-2 ft^-2")
