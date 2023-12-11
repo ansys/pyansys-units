@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import ansys.units as ansunits
 from ansys.units import _api_quantity_map, _base_units, _derived_units, _multipliers
 
@@ -27,9 +29,19 @@ class IncorrectUnits(ValueError):
         )
 
 
+class IncorrectTemperatureUnits(ValueError):
+    """Provides the error when two temperatures are added."""
+
+    def __init__(self, unit1, unit2):
+        super().__init__(
+            f"`Either {unit1.name}` or '{unit2.name}' must be a relative unit for "
+            f"this operation."
+        )
+
+
 class Unit:
     """
-    A class containing the string name and dimensions of a unit.
+    A class representing a named unit and it's base dimensions.
 
     Parameters
     ----------
@@ -351,6 +363,46 @@ class Unit:
         compatible_units.discard(self.name)
         return compatible_units
 
+    def _temp_precheck(self, other_unit, op: str = "+") -> Optional[Unit]:
+        """
+        Validate units for temperature differences.
+
+        Parameters
+        ----------
+        other_unit : Unit
+            Unit for comparison against current unit.
+        op : str, optional
+            Operation conducted on the units.
+
+        Returns
+        -------
+        Unit | None
+            unit object for a quantity of temperature difference or temperature.
+
+        Raises
+        ------
+        IncorrectTemperatureUnits
+            Cannot add two absolute temperatures.
+        IncorrectUnits
+            Cannot add or subtract different units.
+        """
+
+        temp = Unit("K")
+        delta_temp = Unit("delta_K")
+        if self == other_unit == temp and op == "+":
+            raise IncorrectTemperatureUnits(self, other_unit)
+        # Checks to make sure they are both temperatures.
+        if (self and other_unit) in (temp, delta_temp):
+            if self != other_unit:
+                # Removes the delta_ prefix if there is one.
+                return Unit(self.name.replace("delta_", ""))
+            if self == other_unit == temp and op == "-":
+                # Adds the delta_ prefix.
+                return Unit(f"delta_{self.name}")
+        if self != other_unit:
+            raise IncorrectUnits(self, other_unit)
+
+
     def filter_unit_term(self, unit_term: str) -> tuple:
         """
         Separate multiplier, base, and exponent from a unit term.
@@ -496,11 +548,7 @@ class Unit:
         return self._to_string()
 
     def __add__(self, __value):
-        new_dimensions = self.dimensions + __value.dimensions
-        if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
-        if self.dimensions != __value.dimensions:
-            raise IncorrectUnits(self, __value)
+        return self._temp_precheck(__value)
 
     def __mul__(self, __value):
         if isinstance(__value, Unit):
@@ -518,11 +566,7 @@ class Unit:
         return self.__mul__(__value)
 
     def __sub__(self, __value):
-        new_dimensions = self.dimensions - __value.dimensions
-        if new_dimensions:
-            return ansunits.Unit(dimensions=new_dimensions)
-        if self.dimensions != __value.dimensions:
-            raise IncorrectUnits(self, __value)
+        return self._temp_precheck(__value, op="-")
 
     def __truediv__(self, __value):
         if isinstance(__value, Unit):

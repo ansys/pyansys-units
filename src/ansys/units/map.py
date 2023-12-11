@@ -11,7 +11,8 @@ class UnknownMapItem(ValueError):
 
 class QuantityMap(object):
     """
-    A class that contains quantity map and equivalent units.
+    A class that represents a mapping between a named quantity and it's equivalent
+    units.
 
     Parameters
     ----------

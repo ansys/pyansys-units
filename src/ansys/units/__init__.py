@@ -21,7 +21,7 @@ from ansys.units._constants import (  # noqa: F401
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions  # noqa: F401
 from ansys.units.map import QuantityMap  # noqa: F401
-from ansys.units.quantity import Quantity  # noqa: F401
+from ansys.units.quantity import Quantity, get_si_value  # noqa: F401
 from ansys.units.systems import UnitSystem  # noqa: F401
 from ansys.units.unit import Unit  # noqa: F401
 from ansys.units.unit_registry import UnitRegistry  # noqa: F401
