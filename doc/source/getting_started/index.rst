@@ -69,7 +69,6 @@ You can instantiate unit systems with one of two methods:
    # Custom unit systems are defined by passing selected base units. Any unit
    # type that is not given defaults to SI.
 
-   ureg = ansunits.UnitRegistry()
    dims = ansunits.BaseDimensions
 
    sys = ansunits.UnitSystem(
@@ -125,7 +124,6 @@ Use a custom unit system to perform conversions:
 
    import ansys.units as ansunits
 
-   ureg = ansunits.UnitRegistry()
    dims = ansunits.BaseDimensions
 
    sys = ansunits.UnitSystem(
@@ -139,7 +137,7 @@ Use a custom unit system to perform conversions:
    )
 
    v = ansunits.Quantity(10, "kg m s^2")
-   v2 = sys.convert(v)
+   v2 = v.convert(sys)
 
    v2.value  # 2.2480894309971045
    v2.units.name  # 'slug ft s^2'

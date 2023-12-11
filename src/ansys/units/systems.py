@@ -41,9 +41,9 @@ class UnitSystem:
     ----------
     base_units: dict, optional
         Units mapped to base dimensions types.
-    unit_sys: str, optional
+    unit_sys: str, Unit, optional
         Predefined unit system.
-    copy_from: UnitSystem
+    copy_from: UnitSystem, optional
         Make a copy of a unit system.
 
     Attributes
@@ -63,7 +63,7 @@ class UnitSystem:
 
     def __init__(
         self,
-        base_units: dict[BaseDimensions, str] = None,
+        base_units: dict[BaseDimensions, any] = None,
         system: str = None,
         copy_from: UnitSystem = None,
     ):
@@ -85,19 +85,19 @@ class UnitSystem:
             unit = self._units[unit_type.name]
             self._set_type(unit_type=unit_type, unit=unit)
 
-    def update(self, base_units: dict[BaseDimensions:str]):
+    def update(self, base_units: dict[BaseDimensions:any]):
         """
         Change the units of the unit system.
 
         Parameters
         ----------
-        base_units: dict, obj
+        base_units: dict
             Units mapped to base dimensions types.
         """
         for unit_type, unit in base_units.items():
             self._set_type(unit_type=unit_type, unit=unit)
 
-    def _set_type(self, unit_type: BaseDimensions, unit: str):
+    def _set_type(self, unit_type: BaseDimensions, unit: any):
         """
         Checks that the unit is compatible with the unit type before being set.
 
@@ -105,14 +105,15 @@ class UnitSystem:
         ----------
         unit_type: obj
             Unit system type slot for the new unit.
-        unit: obj
+        unit: str, obj
             The unit to be assigned.
         """
-        if unit not in _base_units:
-            raise NotBaseUnit(unit)
+        name = getattr(unit, "name", None) or unit
 
-        if _base_units[unit]["type"] != unit_type.name:
-            raise IncorrectUnitType(unit, unit_type)
+        if name not in _base_units:
+            raise NotBaseUnit(name)
+        if _base_units[name]["type"] != unit_type.name:
+            raise IncorrectUnitType(name, unit_type)
 
         setattr(self, f"_{unit_type.name}", unit)
 

@@ -1,6 +1,6 @@
 import pytest
 
-from ansys.units import BaseDimensions, UnitSystem
+from ansys.units import BaseDimensions, UnitRegistry, UnitSystem
 from ansys.units.systems import IncorrectUnitType, InvalidUnitSystem, NotBaseUnit
 
 
@@ -42,28 +42,29 @@ def test_copy():
 
 
 def test_update():
+    ureg = UnitRegistry()
     dims = BaseDimensions
     us = UnitSystem(system="SI")
     base_units = {
-        dims.MASS: "slug",
-        dims.LENGTH: "ft",
+        dims.MASS: ureg.slug,
+        dims.LENGTH: ureg.ft,
         dims.TIME: "s",
         dims.TEMPERATURE: "R",
         dims.TEMPERATURE_DIFFERENCE: "delta_R",
         dims.ANGLE: "degree",
-        dims.CHEMICAL_AMOUNT: "slugmol",
+        dims.CHEMICAL_AMOUNT: ureg.slugmol,
         dims.LIGHT: "cd",
         dims.CURRENT: "A",
         dims.SOLID_ANGLE: "sr",
     }
     us.update(base_units=base_units)
-    assert us.MASS == "slug"
-    assert us.LENGTH == "ft"
+    assert us.MASS.name == "slug"
+    assert us.LENGTH.name == "ft"
     assert us.TIME == "s"
     assert us.TEMPERATURE == "R"
     assert us.TEMPERATURE_DIFFERENCE == "delta_R"
     assert us.ANGLE == "degree"
-    assert us.CHEMICAL_AMOUNT == "slugmol"
+    assert us.CHEMICAL_AMOUNT.name == "slugmol"
     assert us.LIGHT == "cd"
     assert us.CURRENT == "A"
     assert us.SOLID_ANGLE == "sr"
@@ -78,17 +79,18 @@ def test_eq():
 
 
 def test_set_type():
+    ureg = UnitRegistry()
     us = UnitSystem(system="SI")
-    us.MASS = "slug"
+    us.MASS = ureg.slug
     us.LENGTH = "ft"
     us.TEMPERATURE = "R"
-    us.TEMPERATURE_DIFFERENCE = "delta_R"
+    us.TEMPERATURE_DIFFERENCE = ureg.delta_R
     us.ANGLE = "degree"
     us.CHEMICAL_AMOUNT = "slugmol"
-    assert us.MASS == "slug"
+    assert us.MASS.name == "slug"
     assert us.LENGTH == "ft"
     assert us.TEMPERATURE == "R"
-    assert us.TEMPERATURE_DIFFERENCE == "delta_R"
+    assert us.TEMPERATURE_DIFFERENCE.name == "delta_R"
     assert us.ANGLE == "degree"
     assert us.CHEMICAL_AMOUNT == "slugmol"
 
