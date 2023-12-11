@@ -16,7 +16,7 @@ class UnitAlreadyRegistered(ValueError):
 
 class UnitRegistry:
     """
-    A container of valid ``Unit`` instances.
+    A representation of valid ``Unit`` instances.
 
     All base and derived units loaded from the configuration file, `cfg.yaml`,
     on package initialization are provided by default.

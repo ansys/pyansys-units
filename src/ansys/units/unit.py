@@ -36,6 +36,16 @@ class IncorrectUnits(ValueError):
         )
 
 
+class IncorrectTemperatureUnits(ValueError):
+    """Provides the error when two temperatures are added."""
+
+    def __init__(self, unit1, unit2):
+        super().__init__(
+            f"`Either {unit1.name}` or '{unit2.name}' must be a relative unit for "
+            f"this operation."
+        )
+
+
 class UnknownMapItem(ValueError):
     """Provides the error when the specified quantity map is undefined in the yaml."""
 
@@ -74,10 +84,14 @@ def dim_to_units(
     dimensions : Dimensions object
         Instance of Dimension class.
 
-    Returns
-    -------
-    str
-        Unit string.
+        system : UnitSystem object, optional
+            Unit system for dimensions list.
+            Default is SI units.
+
+        Returns
+        -------
+        str
+            Unit string.
     """
     if not system:
         system = UnitSystem()

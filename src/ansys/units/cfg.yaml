@@ -118,6 +118,10 @@ base_units:
     type: LENGTH
     si_scaling_factor: 0.30479999999999996
     si_offset: 0
+  inch:
+    type: LENGTH
+    si_scaling_factor: 0.0254
+    si_offset: 0
   in:
     type: LENGTH
     si_scaling_factor: 0.0254
@@ -190,9 +194,9 @@ base_units:
 # Derived Units
 # -------------
 # Derived units are composed from base units.  Each derived unit must provide a
-# `composition` and `factor`. The `composition` specifies the base units and
-# their exponents. The `factor` provides the conversion from the composed unit
-# string to the derived unit.
+# `composition` and `factor`. The `composition` specifies the unit string with
+# exponents. The `factor` provides the conversion from the composed unit
+# string to the derived unit. The `si_offset` is required for all base units.
 #
 # Specification format:
 #
@@ -241,7 +245,7 @@ derived_units:
     composition: lbm ft s^-2
     factor: 1
   psi:
-    composition: lbf in^-2
+    composition: lbf inch^-2
     factor: 1
   lbf:
     composition: slug ft s^-2

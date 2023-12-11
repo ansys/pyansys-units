@@ -54,7 +54,7 @@ You can instantiate quantities with one of four methods:
 
    torque.value  # 5.0
    torque.units.name  # "N m"
-   torque.si_units  # "kg m^2 s^-2"
+   torque.units.si_units  # "kg m^2 s^-2"
 
 You can instantiate unit systems with one of two methods:
 

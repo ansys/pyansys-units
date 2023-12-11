@@ -80,18 +80,18 @@ def test_ansunits_temperature_difference_from_negative_absolute_value_to_relativ
 
 
 def test_ansunits_converts_temperature_correctly():
-    from ansys.units.quantity import Quantity
+    from ansys.units.quantity import Quantity, get_si_value
 
     tC = Quantity(1.0, "K").to("C")
     assert tC.value == -272.15
-    assert tC.si_value == 1
+    assert get_si_value(tC) == 1
 
 
 # This one is not debatable. This is a pure bug in ansunits code.
 # We will need to do some extra work such that when type is a difference
 # then the offset is zero in conversions.
 def test_ansunits_converts_temperature_difference_correctly():
-    from ansys.units import Quantity, Unit
+    from ansys.units import Quantity, Unit, get_si_value
 
     dK = Quantity(1.0, "K") - Quantity(2.0, "K")
     assert dK.value == -1.0
@@ -100,7 +100,7 @@ def test_ansunits_converts_temperature_difference_correctly():
     tC = dK.to("delta_C")
     assert tC.value == -1.0
     assert tC.units == Unit("delta_C")
-    assert tC.si_value == -1.0
+    assert get_si_value(tC) == -1.0
 
     dK = Quantity(2.0, "K") - Quantity(1.0, "K")
     assert dK.value == 1.0
@@ -109,4 +109,4 @@ def test_ansunits_converts_temperature_difference_correctly():
     tC = dK.to("delta_C")
     assert tC.value == 1.0
     assert tC.units == Unit("delta_C")
-    assert tC.si_value == 1.0
+    assert get_si_value(tC) == 1.0

@@ -28,8 +28,8 @@ def test_properties():
     v = Quantity(10.6, "m")
     assert v.value == 10.6
     assert v.units == Unit("m")
-    assert v.si_value == 10.6
-    assert v.si_units == "m"
+    assert get_si_value(v) == 10.6
+    assert v.units.si_units == "m"
     assert v.is_dimensionless == False
     assert v.dimensions == Dimensions({dims.LENGTH: 1.0})
 
@@ -136,12 +136,21 @@ def test_subtraction():
     q3 = Quantity(5.0)
     q4 = q3 - 2
 
-    assert (q1 - q2).si_value == 5.0
-    assert (q2 - q1).si_value == -5.0
+    assert get_si_value(q1 - q2) == 5.0
+    assert get_si_value(q2 - q1) == -5.0
     assert q4.value == 3
 
     with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
+
+    ft = Quantity(1, "ft")
+    m = Quantity(1, "m")
+    mm = Quantity(1, "mm")
+
+    assert m - ft == Quantity(0.6952, "m")
+    assert ft - m == Quantity(-2.280839895013124, "ft")
+    assert m - mm == Quantity(0.999, "m")
+    assert mm - m == Quantity(-999, "mm")
 
 
 def test_reverse_subtraction():
@@ -173,6 +182,10 @@ def test_temp_subtraction():
     assert dt2.si_value == 1.0
     assert dt2.dimensions == Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
 
+    t5 = Quantity(10.0, "delta_F")
+    t6 = t5 - t4
+    assert t6 == Quantity(-25.60000000495262, "F")
+
 
 def test_pow():
     q1 = Quantity(10.0, "m s^-1")
@@ -183,10 +196,10 @@ def test_pow():
     assert q1_sq.value == 100
     q2_sq = q2**2
     assert q2_sq.units == Unit("m^2")
-    assert q2_sq.si_value == pytest.approx(2.3225759999999993, DELTA)
+    assert get_si_value(q2_sq) == pytest.approx(2.3225759999999993, DELTA)
 
-    assert q1.si_value**2 == 100.0
-    assert q2.si_value**2 == pytest.approx(2.3225759999999993, DELTA)
+    assert get_si_value(q1) ** 2 == 100.0
+    assert get_si_value(q2) ** 2 == pytest.approx(2.3225759999999993, DELTA)
 
 
 def test_mul():
@@ -302,6 +315,15 @@ def test_addition():
 
     with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
+
+    ft = Quantity(1, "ft")
+    m = Quantity(1, "m")
+    mm = Quantity(1, "mm")
+
+    assert m + ft == Quantity(1.3048, "m")
+    assert ft + m == Quantity(4.2808398950131235, "ft")
+    assert m + mm == Quantity(1.001, "m")
+    assert mm + m == Quantity(1001, "mm")
 
 
 def test_reverse_addition():
@@ -453,7 +475,7 @@ def testing_units_to_dimensions():
     dim_test("daPa", {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0})
     dim_test("MPa", {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0})
     dim_test("kPa^2", {dims.MASS: 2.0, dims.LENGTH: -2.0, dims.TIME: -4.0})
-    dim_test("slug in^-1 s^-1", {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -1.0})
+    dim_test("slug inch^-1 s^-1", {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -1.0})
     dim_test("radian", {dims.ANGLE: 1.0})
     dim_test(
         "ohm", {dims.MASS: 1.0, dims.LENGTH: 2.0, dims.TIME: -3.0, dims.CURRENT: -2.0}
@@ -475,7 +497,7 @@ def testing_multipliers():
     from_to("dm^3", "m^3")
     from_to("m s^-1", "cm s^-1")
     from_to("N", "dyne")
-    from_to("m^2", "in^2")
+    from_to("m^2", "inch^2")
     from_to("degree s^-1", "radian s^-1")
     from_to("radian s^-1", "degree s^-1")
     from_to("Pa", "lb m s^-2 ft^-2")
