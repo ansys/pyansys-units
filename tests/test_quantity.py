@@ -185,7 +185,7 @@ def test_mul():
     u1 = ansunits.Unit("kg")
 
     q3 = q1 * q2
-    assert q3.units.name == "m ft s^-1"
+    assert q3.units.name == "m s^-1 ft"
     assert ansunits.get_si_value(q3) == pytest.approx(15.239999999999998, DELTA)
 
     q4 = q1 * u1
