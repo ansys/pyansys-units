@@ -84,8 +84,9 @@ def test_add():
     C = ansunits.Unit("C")
     delta_C = ansunits.Unit("delta_C")
     kg = ansunits.Unit("kg")
-    temp_C, _ = C + delta_C
+    temp_C, delta_temp = C + delta_C
 
+    assert delta_temp == ansunits.Unit("delta_C")
     assert temp_C == ansunits.Unit("C")
     assert kg + kg == None
 
@@ -120,8 +121,9 @@ def test_reverse_multiply():
 def test_sub():
     C = ansunits.Unit("C")
     kg = ansunits.Unit("kg")
-    delta_C, _ = C - C
+    delta_C, C = C - C
 
+    assert C == ansunits.Unit("C")
     assert delta_C == ansunits.Unit("delta_C")
     assert kg - kg == None
 
