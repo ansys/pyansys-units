@@ -18,6 +18,15 @@ def test_base_units():
     assert kg.si_offset == 0
 
 
+def test_equal_dimensions_not_equal_units():
+    l = ansunits.Unit("l")
+    kl = ansunits.Unit("kl")
+    m_cubed = ansunits.Unit("m^3")
+
+    assert m_cubed == kl
+    assert l != m_cubed
+
+
 def test_derived_units():
     N = ansunits.Unit("N")
     assert N.name == "N"

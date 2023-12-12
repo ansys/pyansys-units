@@ -365,20 +365,21 @@ class Unit:
         IncorrectUnits
             Cannot add or subtract different units.
         """
-
-        temp = Unit("K")
-        delta_temp = Unit("delta_K")
-        if self == other_unit == temp and op == "+":
+        base = ansunits.BaseDimensions
+        dims = ansunits.Dimensions
+        temp = dims(dimensions={base.TEMPERATURE: 1})
+        delta_temp = dims(dimensions={base.TEMPERATURE_DIFFERENCE: 1})
+        if self.dimensions == other_unit.dimensions == temp and op == "+":
             raise IncorrectTemperatureUnits(self, other_unit)
         # Checks to make sure they are both temperatures.
-        if (self and other_unit) in (temp, delta_temp):
-            if self != other_unit:
+        if (self.dimensions and other_unit.dimensions) in (temp, delta_temp):
+            if self.dimensions != other_unit.dimensions:
                 # Removes the delta_ prefix if there is one.
                 return Unit(self.name.replace("delta_", ""))
-            if self == other_unit == temp and op == "-":
+            if self.dimensions == other_unit.dimensions == temp and op == "-":
                 # Adds the delta_ prefix.
                 return Unit(f"delta_{self.name}")
-        if self != other_unit:
+        if self.dimensions != other_unit.dimensions:
             raise IncorrectUnits(self, other_unit)
 
     def filter_unit_term(self, unit_term: str) -> tuple:
@@ -560,7 +561,12 @@ class Unit:
         if not isinstance(other_unit, ansunits.Unit) and self.name:
             return False
         if isinstance(other_unit, ansunits.Unit):
-            return self.dimensions == other_unit.dimensions
+            checks = [
+                self.dimensions == other_unit.dimensions,
+                self.si_offset == other_unit.si_offset,
+                self.si_scaling_factor == other_unit.si_scaling_factor,
+            ]
+            return all(checks)
         return True
 
     def __ne__(self, other_unit):

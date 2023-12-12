@@ -69,7 +69,7 @@ def test_to():
     v = ansunits.Quantity(1.0, "m")
     to = v.to("ft")
     assert to.value == pytest.approx(3.2808398, DELTA)
-    assert to.units.name == "ft"
+    assert to.units == ansunits.Unit("ft")
 
 
 def test_temperature_to():
@@ -78,7 +78,7 @@ def test_temperature_to():
     t1C = t1.to("C")
     assert t1C.dimensions == ansunits.Dimensions({dims.TEMPERATURE: 1.0})
     assert t1C.value == 0.0
-    assert t1C.units.name == "C"
+    assert t1C.units == ansunits.Unit("C")
 
 
 def test_complex_temperature_difference_to():
@@ -88,7 +88,7 @@ def test_complex_temperature_difference_to():
     result = m * (t2 - t1)
     resultC2 = result.to("kg delta_C")
     assert resultC2.value == 1.0
-    assert resultC2.units.name == "kg delta_C"
+    assert resultC2.units == ansunits.Unit("kg delta_C")
 
 
 def test_repr():
@@ -169,10 +169,10 @@ def test_pow():
     q2 = ansunits.Quantity(5.0, "ft")
 
     q1_sq = q1**2
-    assert q1_sq.units.name == "m^2 s^-2"
+    assert q1_sq.units == ansunits.Unit("m^2 s^-2")
     assert q1_sq.value == 100
     q2_sq = q2**2
-    assert q2_sq.units.name == "ft^2"
+    assert q2_sq.units == ansunits.Unit("ft^2")
     assert ansunits.get_si_value(q2_sq) == pytest.approx(2.3225759999999993, DELTA)
 
     assert ansunits.get_si_value(q1) ** 2 == 100.0
@@ -185,7 +185,7 @@ def test_mul():
     u1 = ansunits.Unit("kg")
 
     q3 = q1 * q2
-    assert q3.units.name == "m s^-1 ft"
+    assert q3.units == ansunits.Unit("m s^-1 ft")
     assert ansunits.get_si_value(q3) == pytest.approx(15.239999999999998, DELTA)
 
     q4 = q1 * u1
@@ -193,7 +193,7 @@ def test_mul():
     assert q4.value == pytest.approx(10, DELTA)
 
     q5 = q2 * 3
-    assert q5.units == ansunits.Unit("m")
+    assert q5.units == ansunits.Unit("ft")
     assert ansunits.get_si_value(q5) == pytest.approx(4.571999999999999, DELTA)
 
 
@@ -289,7 +289,7 @@ def test_addition():
     q3 = ansunits.Quantity(52, "N")
 
     q2 = q1 + 5
-    assert q2.units.name == ""
+    assert q2.units == ansunits.Unit()
     assert q2.value == 10
 
     with pytest.raises(IncorrectUnits) as e_info:
@@ -309,7 +309,7 @@ def test_reverse_addition():
     q1 = ansunits.Quantity(5.0, "m^0")
 
     q2 = 5 + q1
-    assert q2.units.name == ""
+    assert q2.units == ansunits.Unit()
     assert q2.value == 10
 
 
@@ -386,15 +386,15 @@ def test_temp():
 
     kc = k.to("delta_C")
     assert kc.value == pytest.approx(-40.0, DELTA)
-    assert kc.units.name == "delta_C"
+    assert kc.units == ansunits.Unit("delta_C")
 
     kc = k.to("delta_R")
     assert kc.value == pytest.approx(-72.0, DELTA)
-    assert kc.units.name == "delta_R"
+    assert kc.units == ansunits.Unit("delta_R")
 
     kc = k.to("delta_F")
     assert kc.value == pytest.approx(-72.0, DELTA)
-    assert kc.units.name == "delta_F"
+    assert kc.units == ansunits.Unit("delta_F")
 
 
 def test_temp_addition():
@@ -403,11 +403,11 @@ def test_temp_addition():
 
     t1 = df + k
     assert t1.value == pytest.approx(-319.6699999991, DELTA)
-    assert t1.units.name == "F"
+    assert t1.units == ansunits.Unit("F")
 
     t2 = k + df
     assert t2.value == pytest.approx(77.7777777775, DELTA)
-    assert t2.units.name == "K"
+    assert t2.units == ansunits.Unit("K")
 
     t3 = df + df
     assert t3 == ansunits.Quantity(100, "delta_F")
