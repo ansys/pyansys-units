@@ -39,6 +39,9 @@ def test_unitless():
     assert u_1.name == ""
     assert u_1.dimensions == ansunits.Dimensions()
 
+    assert u_2.name == ""
+    assert u_2.dimensions == ansunits.Dimensions()
+
 
 def test_copy():
     ureg = ansunits.UnitRegistry()

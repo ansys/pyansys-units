@@ -69,7 +69,7 @@ def test_to():
     v = ansunits.Quantity(1.0, "m")
     to = v.to("ft")
     assert to.value == pytest.approx(3.2808398, DELTA)
-    assert to.units == ansunits.Unit("ft")
+    assert to.units.name == "ft"
 
 
 def test_temperature_to():
@@ -78,7 +78,7 @@ def test_temperature_to():
     t1C = t1.to("C")
     assert t1C.dimensions == ansunits.Dimensions({dims.TEMPERATURE: 1.0})
     assert t1C.value == 0.0
-    assert t1C.units == ansunits.Unit("C")
+    assert t1C.units.name == "C"
 
 
 def test_complex_temperature_difference_to():
@@ -88,7 +88,7 @@ def test_complex_temperature_difference_to():
     result = m * (t2 - t1)
     resultC2 = result.to("kg delta_C")
     assert resultC2.value == 1.0
-    assert resultC2.units == ansunits.Unit("kg delta_C")
+    assert resultC2.units.name == "kg delta_C"
 
 
 def test_repr():
@@ -169,10 +169,10 @@ def test_pow():
     q2 = ansunits.Quantity(5.0, "ft")
 
     q1_sq = q1**2
-    assert q1_sq.units == ansunits.Unit("m^2 s^-2")
+    assert q1_sq.units.name == "m^2 s^-2"
     assert q1_sq.value == 100
     q2_sq = q2**2
-    assert q2_sq.units == ansunits.Unit("m^2")
+    assert q2_sq.units.name == "ft^2"
     assert ansunits.get_si_value(q2_sq) == pytest.approx(2.3225759999999993, DELTA)
 
     assert ansunits.get_si_value(q1) ** 2 == 100.0
@@ -185,7 +185,7 @@ def test_mul():
     u1 = ansunits.Unit("kg")
 
     q3 = q1 * q2
-    assert q3.units == ansunits.Unit("m^2 s^-1")
+    assert q3.units.name == "m ft s^-1"
     assert ansunits.get_si_value(q3) == pytest.approx(15.239999999999998, DELTA)
 
     q4 = q1 * u1
@@ -386,15 +386,15 @@ def test_temp():
 
     kc = k.to("delta_C")
     assert kc.value == pytest.approx(-40.0, DELTA)
-    assert kc.units == ansunits.Unit("delta_C")
+    assert kc.units.name == "delta_C"
 
     kc = k.to("delta_R")
     assert kc.value == pytest.approx(-72.0, DELTA)
-    assert kc.units == ansunits.Unit("delta_R")
+    assert kc.units.name == "delta_R"
 
     kc = k.to("delta_F")
     assert kc.value == pytest.approx(-72.0, DELTA)
-    assert kc.units == ansunits.Unit("delta_F")
+    assert kc.units.name == "delta_F"
 
 
 def test_temp_addition():
