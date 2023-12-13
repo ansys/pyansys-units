@@ -7,3 +7,4 @@ Pythonic
 celsius
 rankine
 fahrenheit
+substrings
