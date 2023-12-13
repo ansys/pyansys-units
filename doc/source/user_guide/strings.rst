@@ -22,7 +22,7 @@ where
   by the numerical exponent.
 
 More complex unit strings can be built up by concatenation of these basic strings
-with spaces in between. Spaces between the sub-strings indicate that the units
+with spaces in between. Spaces between the substrings indicate that the units
 are multiplied together. Some examples are as follows:
 
 .. code:: python

@@ -3,7 +3,7 @@ import os
 
 import yaml
 
-import ansys.units as ansunits
+from ansys.units import Unit
 
 
 class UnitAlreadyRegistered(ValueError):
@@ -55,7 +55,7 @@ class UnitRegistry:
             unitdict.update(**_base_units, **_derived_units)
 
         for unit in unitdict:
-            setattr(self, unit, ansunits.Unit(unit, unitdict[unit]))
+            setattr(self, unit, Unit(unit, unitdict[unit]))
 
     def __str__(self):
         returned_string = ""
