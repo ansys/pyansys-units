@@ -39,7 +39,7 @@ units.
 
 Equivalent units are also handled differently. Any two ``Unit`` objects that
 have the same dimensions, SI offset, and SI scaling factor will be evaluated as
-True.
+equal.
 
 PyAnsys Units treats all angles as dimensional units. With this behavior the
 conversion from rad/s to Hz is not allowed.
