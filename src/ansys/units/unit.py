@@ -32,7 +32,7 @@ class IncorrectUnits(ValueError):
 
     def __init__(self, unit1, unit2):
         super().__init__(
-            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this operation."
+            f"'{unit1.si_units}' and '{unit2.si_units}' must match for this operation."
         )
 
 
@@ -41,7 +41,7 @@ class IncorrectTemperatureUnits(ValueError):
 
     def __init__(self, unit1, unit2):
         super().__init__(
-            f"`Either {unit1.name}` or '{unit2.name}' must be a relative unit for "
+            f"Either '{unit1.name}' or '{unit2.name}' must be a relative unit for "
             f"this operation."
         )
 
@@ -563,19 +563,19 @@ class Unit:
             raise IncorrectTemperatureUnits(self, other_unit)
 
         # Checks to make sure they are both temperatures.
-        if (self and other_unit) in (temp, delta_temp):
+        if (self.dimensions and other_unit.dimensions) in (temp, delta_temp):
             unit_name = self.name.removeprefix("delta_")
             relative = Unit(f"delta_{unit_name}")
             absolute = Unit(unit_name)
 
-            if self != other_unit:
+            if self.dimensions != other_unit.dimensions:
                 # Removes the delta_ prefix if there is one.
                 return absolute, relative
 
-            if self == other_unit == temp and op == "-":
+            if self.dimensions == other_unit.dimensions == temp and op == "-":
                 return relative, absolute
 
-        if self != other_unit:
+        if self.dimensions != other_unit.dimensions:
             raise IncorrectUnits(self, other_unit)
 
     @property

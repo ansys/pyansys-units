@@ -286,10 +286,10 @@ class Quantity:
         )
 
         # If value does not equal relative units, use the corrected absolute units.
-        if __value.units != other_units:
+        if __value.units.dimensions != other_units.dimensions:
             value = __value.to(new_units).value
         # If both values are temperatures, use the corrected relative units.
-        elif __value.units != self.units:
+        elif __value.units.dimensions != self.units.dimensions:
             value = __value.to(other_units).value
         else:
             value = __value.to(self.units).value
