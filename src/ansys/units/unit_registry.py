@@ -68,3 +68,7 @@ class UnitRegistry:
         if hasattr(self, __name):
             raise UnitAlreadyRegistered(__name)
         self.__dict__[__name] = unit
+
+    def __iter__(self):
+        for item in self.__dict__:
+            yield getattr(self, item)

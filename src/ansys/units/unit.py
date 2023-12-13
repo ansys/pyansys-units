@@ -511,6 +511,27 @@ class Unit:
             new_units = f"{self.name} {__value.name}"
         return Unit(condense(new_units))
 
+    def compatible_units(self) -> set[str]:
+        """
+        Get all units with the same dimensions.
+
+        Returns
+        -------
+        set
+            A set of unit objects.
+        """
+        compatible_units = set()
+        for unit_name in {**_base_units, **_derived_units}.keys():
+            unit = Unit(units=unit_name)
+            if self.dimensions == unit.dimensions:
+                compatible_units.add(unit.name)
+        for unit_name in _api_quantity_map:
+            unit = Unit(map={unit_name: 1})
+            if self.dimensions == unit.dimensions:
+                compatible_units.add(unit.name)
+        compatible_units.discard(self.name)
+        return compatible_units
+
     def _temp_precheck(self, other_unit, op: str = "+") -> Optional[Unit]:
         """
         Validate units for temperature differences.

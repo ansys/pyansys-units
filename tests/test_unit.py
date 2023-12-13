@@ -70,6 +70,17 @@ def test_copy():
     assert slug == ureg.slug
 
 
+def test_compatibility():
+    ureg = UnitRegistry()
+    length_units = {"cm", "in", "m", "inch"}
+    force_units = {"dyne", "lbf", "pdl"}
+    temperature_difference_units = {"delta_C", "delta_R", "delta_F"}
+
+    assert ureg.ft.compatible_units() == length_units
+    assert ureg.N.compatible_units() == force_units
+    assert ureg.delta_K.compatible_units() == temperature_difference_units
+
+
 def test_units_from_dimensions():
     dims = BaseDimensions
     kg = Unit(dimensions=Dimensions({dims.MASS: 1}))
