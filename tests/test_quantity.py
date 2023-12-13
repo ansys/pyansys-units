@@ -437,6 +437,20 @@ def test_temp_addition():
     assert t2.value == pytest.approx(77.7777777775, DELTA)
     assert t2.units == Unit("K")
 
+    df = Quantity(50.0, "delta_F")
+    k = Quantity(50.0, "K")
+
+    t3 = df + k
+    assert t1.value == pytest.approx(-319.6699999991, DELTA)
+    assert t1.units.name == "F"
+
+    t4 = k + df
+    assert t2.value == pytest.approx(77.7777777775, DELTA)
+    assert t2.units.name == "K"
+
+    t5 = df + df
+    assert t3 == Quantity(100, "delta_F")
+
 
 def test_quantity_from_dimensions():
     dims = BaseDimensions

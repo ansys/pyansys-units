@@ -534,8 +534,8 @@ class Unit:
         IncorrectUnits
             Cannot add or subtract different units.
         """
-        base = ansunits.BaseDimensions
-        dims = ansunits.Dimensions
+        base = BaseDimensions
+        dims = Dimensions
         temp = dims(dimensions={base.TEMPERATURE: 1})
         delta_temp = dims(dimensions={base.TEMPERATURE_DIFFERENCE: 1})
         if self.dimensions == other_unit.dimensions == temp and op == "+":
