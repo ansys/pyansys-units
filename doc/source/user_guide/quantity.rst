@@ -4,10 +4,6 @@
 Defining a quantity
 ===================
 
-The default unit system used when performing quantity operations is SI. This
-ensures consistency between ``Quantity`` objects using different unit systems, such
-as CGS or BT.
-
 To initialize a physical quantity, import the ``ansunits`` library and create a
 new ``Quantity`` object:
 
@@ -62,6 +58,20 @@ insert them within an equation to perform mathematical operations.
     m_ml = meter * 2  # 2
     m_dv = meter / 2  # 0.5
     m_sq = meter**2  # 1
+
+Additions and subtraction between two ``Quantity`` objects retains the units
+of the first quantity.
+
+.. code:: python
+
+
+    import ansys.units as ansunits
+
+    meter = ansunits.Quantity(value=1, units="m")
+    foot = ansunits.Quantity(value=1, units="ft")
+
+    meter + foot  # Quantity (1.3048, "m")
+    foot + meter  # Quantity (4.2808398950131235, "ft")
 
 ``Quantity`` objects work intuitively with unit conversion. The arithmetic operation
 behind conversions is:

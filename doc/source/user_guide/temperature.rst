@@ -27,7 +27,7 @@ Conversion is handled naturally through arithmetic operations:
     delta_K_ad_delta_K = delta_K + delta_K  # (10, delta_K)
     delta_K_sb_delta_K = delta_K - delta_K  # (0, delta_K)
 
-Negative absolute values for any temperature are instantiated as a temperature
+Any temperature values below absolute zero are instantiated as a temperature
 difference.
 
 .. code:: python
@@ -40,3 +40,4 @@ difference.
     C = Quantity(value=-2, units=ureg.C)  # (-275, delta_C)
     F = Quantity(value=-2, units=ureg.F)  # (-500, delta_F)
     R = Quantity(value=-2, units=ureg.R)  # (-2, delta_R)
+
