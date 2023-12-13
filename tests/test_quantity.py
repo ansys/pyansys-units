@@ -2,7 +2,14 @@ import math
 
 import pytest
 
-import ansys.units as ansunits
+from ansys.units import (
+    BaseDimensions,
+    Dimensions,
+    Quantity,
+    Unit,
+    UnitRegistry,
+    UnitSystem,
+)
 from ansys.units.quantity import (  # InvalidFloatUsage,
     ExcessiveParameters,
     IncompatibleDimensions,
@@ -10,6 +17,7 @@ from ansys.units.quantity import (  # InvalidFloatUsage,
     IncompatibleValue,
     InsufficientArguments,
     NumPyRequired,
+    get_si_value,
 )
 from ansys.units.unit import IncorrectUnits
 
@@ -17,32 +25,48 @@ DELTA = 1.0e-5
 
 
 def test_properties():
-    dims = ansunits.BaseDimensions
-    v = ansunits.Quantity(10.6, "m")
+    dims = BaseDimensions
+    v = Quantity(10.6, "m")
     assert v.value == 10.6
-    assert v.units == ansunits.Unit("m")
-    assert ansunits.get_si_value(v) == 10.6
+    assert v.units == Unit("m")
+    assert get_si_value(v) == 10.6
     assert v.units.si_units == "m"
     assert v.is_dimensionless == False
-    assert v.dimensions == ansunits.Dimensions({dims.LENGTH: 1.0})
+    assert v.dimensions == Dimensions({dims.LENGTH: 1.0})
 
 
 def test_value_setter():
-    v = ansunits.Quantity(1, "m")
+    v = Quantity(1, "m")
     v.value = 20
     assert v.value == 20
-    assert v.units == ansunits.Unit("m")
+    assert v.units == Unit("m")
+
+
+def test_conversion():
+    us1 = UnitSystem(system="BT")
+    q1 = Quantity(10, "kg ft s")
+
+    q2 = q1.convert(us1)
+    assert q2.value == 0.6852176585679174
+    assert q2.units == Unit("slug ft s")
+
+    us2 = UnitSystem(system="SI")
+    q3 = Quantity(4, "slug cm s")
+
+    q4 = q3.convert(us2)
+    assert q4.value == 0.5837561174882547
+    assert q4.units == Unit("kg m s")
 
 
 def test_copy():
-    meter = ansunits.Quantity(1.0, "m")
-    copy_meter = ansunits.Quantity(copy_from=meter)
+    meter = Quantity(1.0, "m")
+    copy_meter = Quantity(copy_from=meter)
 
     assert meter == copy_meter
 
-    two_meter = ansunits.Quantity(2, copy_from=meter)
+    two_meter = Quantity(2, copy_from=meter)
 
-    assert two_meter == ansunits.Quantity(2.0, "m")
+    assert two_meter == Quantity(2.0, "m")
 
 
 def test_array():
@@ -50,173 +74,176 @@ def test_array():
         import numpy as np
 
         arr = np.array([7, 6, 5])
-        meter = ansunits.Quantity(arr, "m")
+        meter = Quantity(arr, "m")
 
         assert np.array_equal(meter.value, arr)
-        list_meter = ansunits.Quantity([7, 6, 5], "m")
+        list_meter = Quantity([7, 6, 5], "m")
 
         assert np.array_equal(list_meter.value, arr)
 
     except ImportError:
         with pytest.raises(NumPyRequired):
-            e1 = ansunits.Quantity(7, "kg").__array__()
+            e1 = Quantity(7, "kg").__array__()
 
         with pytest.raises(NumPyRequired):
-            e2 = ansunits.Quantity([7, 8, 9], "kg")
+            e2 = Quantity([7, 8, 9], "kg")
 
 
 def test_to():
-    v = ansunits.Quantity(1.0, "m")
+    v = Quantity(1.0, "m")
     to = v.to("ft")
     assert to.value == pytest.approx(3.2808398, DELTA)
-    assert to.units == ansunits.Unit("ft")
+    assert to.units == Unit("ft")
 
 
 def test_temperature_to():
-    dims = ansunits.BaseDimensions
-    t1 = ansunits.Quantity(273.15, "K")
+    dims = BaseDimensions
+    t1 = Quantity(273.15, "K")
     t1C = t1.to("C")
-    assert t1C.dimensions == ansunits.Dimensions({dims.TEMPERATURE: 1.0})
+    assert t1C.dimensions == Dimensions({dims.TEMPERATURE: 1.0})
     assert t1C.value == 0.0
-    assert t1C.units == ansunits.Unit("C")
+    assert t1C.units == Unit("C")
 
 
 def test_complex_temperature_difference_to():
-    t1 = ansunits.Quantity(1.0, "K")
-    t2 = ansunits.Quantity(2.0, "K")
-    m = ansunits.Quantity(1.0, "kg")
+    t1 = Quantity(1.0, "K")
+    t2 = Quantity(2.0, "K")
+    m = Quantity(1.0, "kg")
     result = m * (t2 - t1)
     resultC2 = result.to("kg delta_C")
     assert resultC2.value == 1.0
-    assert resultC2.units == ansunits.Unit("kg delta_C")
+    assert resultC2.units == Unit("kg delta_C")
 
 
 def test_repr():
-    v = ansunits.Quantity(1.0, "m")
+    v = Quantity(1.0, "m")
     assert v.__repr__() == 'Quantity (1.0, "m")'
 
 
 def test_math():
-    deg = ansunits.Quantity(90, "degree")
+    deg = Quantity(90, "degree")
     assert math.sin(deg) == 1.0
 
-    rad = ansunits.Quantity(math.pi / 2, "radian")
+    rad = Quantity(math.pi / 2, "radian")
     assert math.sin(rad) == 1.0
 
-    root = ansunits.Quantity(100.0, "")
+    root = Quantity(100.0, "")
     assert math.sqrt(root) == 10.0
 
 
 def test_subtraction():
-    q1 = ansunits.Quantity(10.0, "m s^-1")
-    q2 = ansunits.Quantity(5.0, "m s^-1")
-    q3 = ansunits.Quantity(5.0)
+    q1 = Quantity(10.0, "m s^-1")
+    q2 = Quantity(5.0, "m s^-1")
+    q3 = Quantity(5.0)
     q4 = q3 - 2
 
-    assert ansunits.get_si_value(q1 - q2) == 5.0
-    assert ansunits.get_si_value(q2 - q1) == -5.0
+    assert get_si_value(q1 - q2) == 5.0
+    assert get_si_value(q2 - q1) == -5.0
     assert q4.value == 3
 
     with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
 
-    ft = ansunits.Quantity(1, "ft")
-    m = ansunits.Quantity(1, "m")
-    mm = ansunits.Quantity(1, "mm")
+    ft = Quantity(1, "ft")
+    m = Quantity(1, "m")
+    mm = Quantity(1, "mm")
 
-    assert m - ft == ansunits.Quantity(0.6952, "m")
-    assert ft - m == ansunits.Quantity(-2.280839895013124, "ft")
-    assert m - mm == ansunits.Quantity(0.999, "m")
-    assert mm - m == ansunits.Quantity(-999, "mm")
+    assert m - ft == Quantity(0.6952, "m")
+    assert ft - m == Quantity(-2.280839895013124, "ft")
+    assert m - mm == Quantity(0.999, "m")
+    assert mm - m == Quantity(-999, "mm")
 
 
 def test_reverse_subtraction():
-    q1 = ansunits.Quantity(5.0)
+    q1 = Quantity(5.0)
     q2 = 2 - q1
 
     assert q2.value == 3
 
 
 def test_temp_subtraction():
-    dims = ansunits.BaseDimensions
-    t1 = ansunits.Quantity(1.0, "K")
-    assert ansunits.get_si_value(t1) == 1.0
+    dims = BaseDimensions
+    t1 = Quantity(1.0, "K")
+    assert get_si_value(t1) == 1.0
 
-    t2 = ansunits.Quantity(2.0, "K")
-    assert ansunits.get_si_value(t2) == 2.0
+    t2 = Quantity(2.0, "K")
+    assert get_si_value(t2) == 2.0
 
     dt1 = t2 - t1
-    assert ansunits.get_si_value(dt1) == 1.0
-    assert dt1.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
+    assert get_si_value(dt1) == 1.0
+    assert dt1.dimensions == Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
 
-    t3 = ansunits.Quantity(1.0, "C")
-    assert ansunits.get_si_value(t3) == 274.15
+    t3 = Quantity(1.0, "C")
+    assert get_si_value(t3) == 274.15
 
-    t4 = ansunits.Quantity(2.0, "C")
-    assert ansunits.get_si_value(t4) == 275.15
+    t4 = Quantity(2.0, "C")
+    assert get_si_value(t4) == 275.15
 
     dt2 = t4 - t3
-    assert ansunits.get_si_value(dt2) == 1.0
-    assert dt2.dimensions == ansunits.Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
+    assert get_si_value(dt2) == 1.0
+    assert dt2.dimensions == Dimensions({dims.TEMPERATURE_DIFFERENCE: 1.0})
 
-    t5 = ansunits.Quantity(10.0, "delta_F")
+    t5 = Quantity(10.0, "delta_F")
     t6 = t5 - t4
-    assert t6 == ansunits.Quantity(-25.60000000495262, "F")
+    assert t6 == Quantity(-25.60000000495262, "F")
 
 
 def test_pow():
-    q1 = ansunits.Quantity(10.0, "m s^-1")
-    q2 = ansunits.Quantity(5.0, "ft")
+    q1 = Quantity(10.0, "m s^-1")
+    q2 = Quantity(5.0, "ft")
 
     q1_sq = q1**2
-    assert q1_sq.units == ansunits.Unit("m^2 s^-2")
+    assert q1_sq.units == Unit("m^2 s^-2")
     assert q1_sq.value == 100
     q2_sq = q2**2
+    
     assert q2_sq.units == ansunits.Unit("ft^2")
-    assert ansunits.get_si_value(q2_sq) == pytest.approx(2.3225759999999993, DELTA)
+    assert get_si_value(q2_sq) == pytest.approx(2.3225759999999993, DELTA)
 
-    assert ansunits.get_si_value(q1) ** 2 == 100.0
-    assert ansunits.get_si_value(q2) ** 2 == pytest.approx(2.3225759999999993, DELTA)
+    assert get_si_value(q1) ** 2 == 100.0
+    assert get_si_value(q2) ** 2 == pytest.approx(2.3225759999999993, DELTA)
 
 
 def test_mul():
-    q1 = ansunits.Quantity(10.0, "m s^-1")
-    q2 = ansunits.Quantity(5.0, "ft")
-    u1 = ansunits.Unit("kg")
+    q1 = Quantity(10.0, "m s^-1")
+    q2 = Quantity(5.0, "ft")
+    u1 = Unit("kg")
 
     q3 = q1 * q2
+
     assert q3.units == ansunits.Unit("m s^-1 ft")
-    assert ansunits.get_si_value(q3) == pytest.approx(15.239999999999998, DELTA)
+    assert get_si_value(q3) == pytest.approx(15.239999999999998, DELTA)
 
     q4 = q1 * u1
-    assert q4.units == ansunits.Unit("kg m s^-1")
+    assert q4.units == Unit("kg m s^-1")
     assert q4.value == pytest.approx(10, DELTA)
 
     q5 = q2 * 3
+
     assert q5.units == ansunits.Unit("ft")
-    assert ansunits.get_si_value(q5) == pytest.approx(4.571999999999999, DELTA)
+    assert get_si_value(q5) == pytest.approx(4.571999999999999, DELTA)
 
 
 def test_reverse_mul():
-    q1 = ansunits.Quantity(10.0, "m s^-1")
-    u1 = ansunits.Unit("kg")
+    q1 = Quantity(10.0, "m s^-1")
+    u1 = Unit("kg")
 
     q3 = u1 * q1
-    assert q3.units == ansunits.Unit("m s^-1 kg")
+    assert q3.units == Unit("m s^-1 kg")
     assert q3.value == pytest.approx(10, DELTA)
 
 
 def test_neg():
-    q0 = ansunits.Quantity(10.0, "m s^-1")
+    q0 = Quantity(10.0, "m s^-1")
     q1 = -q0
     assert q1.value == -10.0
 
 
 def test_ne():
-    x = ansunits.Quantity(10.5, "cm")
-    y = ansunits.Quantity(10.5, "m")
-    z = ansunits.Quantity(10.5, "g")
-    r = ansunits.Quantity(10.5, "")
+    x = Quantity(10.5, "cm")
+    y = Quantity(10.5, "m")
+    z = Quantity(10.5, "g")
+    r = Quantity(10.5, "")
 
     assert y != x
     assert x != y
@@ -226,14 +253,14 @@ def test_ne():
 
 
 def test_eq():
-    x = ansunits.Quantity(10.5, "cm")
-    y = ansunits.Quantity(10.5, "m")
-    r = ansunits.Quantity(10.5, "")
+    x = Quantity(10.5, "cm")
+    y = Quantity(10.5, "m")
+    r = Quantity(10.5, "")
 
-    l = ansunits.Quantity(10.5, "cm")
-    m = ansunits.Quantity(10.5, "kg")
+    l = Quantity(10.5, "cm")
+    m = Quantity(10.5, "kg")
 
-    n = ansunits.Quantity(10.5, "")
+    n = Quantity(10.5, "")
 
     assert x == l
     assert r == n
@@ -248,45 +275,43 @@ def test_eq():
 
 
 def test_rdiv():
-    q1 = ansunits.Quantity(10.0, "m s^-1")
+    q1 = Quantity(10.0, "m s^-1")
 
     q2 = 50 / q1
     assert q2.value == 5
-    assert q2.units == ansunits.Unit("m^-1 s")
+    assert q2.units == Unit("m^-1 s")
 
 
 def test_quantity_divided_by_unit():
-    dims = ansunits.BaseDimensions
-    ur = ansunits.UnitRegistry()
-    mass = ansunits.Quantity(10.0, ur.kg)
+    dims = BaseDimensions
+    ur = UnitRegistry()
+    mass = Quantity(10.0, ur.kg)
     mass_flow_rate = mass / ur.s
-    assert mass_flow_rate.units == ansunits.Unit("kg s^-1")
+    assert mass_flow_rate.units == Unit("kg s^-1")
     assert mass_flow_rate.value == 10
-    assert mass_flow_rate.dimensions == ansunits.Dimensions(
-        {dims.MASS: 1.0, dims.TIME: -1.0}
-    )
+    assert mass_flow_rate.dimensions == Dimensions({dims.MASS: 1.0, dims.TIME: -1.0})
 
 
 def test_quantity_divided_by_number():
-    ur = ansunits.UnitRegistry()
-    mass = ansunits.Quantity(10.0, ur.kg)
+    ur = UnitRegistry()
+    mass = Quantity(10.0, ur.kg)
     half_m = mass / 2
-    assert half_m.units == ansunits.Unit("kg")
+    assert half_m.units == Unit("kg")
     assert half_m.value == 5
 
 
 def test_exponent():
-    qt = ansunits.Quantity(5.0, "m^0")
+    qt = Quantity(5.0, "m^0")
     qtm = qt**2
 
     assert qtm.value == 25.0
-    assert qtm.dimensions == ansunits.Dimensions()
-    assert qtm.units == ansunits.Unit("")
+    assert qtm.dimensions == Dimensions()
+    assert qtm.units == Unit("")
 
 
 def test_addition():
-    q1 = ansunits.Quantity(5.0, "m^0")
-    q3 = ansunits.Quantity(52, "N")
+    q1 = Quantity(5.0, "m^0")
+    q3 = Quantity(52, "N")
 
     q2 = q1 + 5
     assert q2.units == ansunits.Unit()
@@ -295,18 +320,18 @@ def test_addition():
     with pytest.raises(IncorrectUnits) as e_info:
         assert q1 - q3
 
-    ft = ansunits.Quantity(1, "ft")
-    m = ansunits.Quantity(1, "m")
-    mm = ansunits.Quantity(1, "mm")
+    ft = Quantity(1, "ft")
+    m = Quantity(1, "m")
+    mm = Quantity(1, "mm")
 
-    assert m + ft == ansunits.Quantity(1.3048, "m")
-    assert ft + m == ansunits.Quantity(4.2808398950131235, "ft")
-    assert m + mm == ansunits.Quantity(1.001, "m")
-    assert mm + m == ansunits.Quantity(1001, "mm")
+    assert m + ft == Quantity(1.3048, "m")
+    assert ft + m == Quantity(4.2808398950131235, "ft")
+    assert m + mm == Quantity(1.001, "m")
+    assert mm + m == Quantity(1001, "mm")
 
 
 def test_reverse_addition():
-    q1 = ansunits.Quantity(5.0, "m^0")
+    q1 = Quantity(5.0, "m^0")
 
     q2 = 5 + q1
     assert q2.units == ansunits.Unit()
@@ -314,10 +339,10 @@ def test_reverse_addition():
 
 
 def test_ge():
-    x = ansunits.Quantity(10.5, "cm")
-    y = ansunits.Quantity(10.5, "m")
-    z = ansunits.Quantity(10.5, "g")
-    r = ansunits.Quantity(10.5, "")
+    x = Quantity(10.5, "cm")
+    y = Quantity(10.5, "m")
+    z = Quantity(10.5, "g")
+    r = Quantity(10.5, "")
 
     assert y >= x
     assert 15.7 >= r
@@ -331,10 +356,10 @@ def test_ge():
 
 
 def test_gt():
-    x = ansunits.Quantity(10.5, "cm")
-    y = ansunits.Quantity(10.5, "m")
-    z = ansunits.Quantity(10.5, "g")
-    r = ansunits.Quantity(10.5, "")
+    x = Quantity(10.5, "cm")
+    y = Quantity(10.5, "m")
+    z = Quantity(10.5, "g")
+    r = Quantity(10.5, "")
 
     assert y > x
     assert 15.7 > r
@@ -348,10 +373,10 @@ def test_gt():
 
 
 def test_lt():
-    x = ansunits.Quantity(10.5, "cm")
-    y = ansunits.Quantity(10.5, "m")
-    z = ansunits.Quantity(10.5, "g")
-    r = ansunits.Quantity(10.5, "")
+    x = Quantity(10.5, "cm")
+    y = Quantity(10.5, "m")
+    z = Quantity(10.5, "g")
+    r = Quantity(10.5, "")
 
     assert x < y
     assert r < 15.7
@@ -365,10 +390,10 @@ def test_lt():
 
 
 def test_le():
-    x = ansunits.Quantity(10.5, "cm")
-    y = ansunits.Quantity(10.5, "m")
-    z = ansunits.Quantity(10.5, "g")
-    r = ansunits.Quantity(10.5, "")
+    x = Quantity(10.5, "cm")
+    y = Quantity(10.5, "m")
+    z = Quantity(10.5, "g")
+    r = Quantity(10.5, "")
 
     assert x <= y
     assert r <= 15.7
@@ -382,46 +407,58 @@ def test_le():
 
 
 def test_temp():
-    k = ansunits.Quantity(-40, "K")
+    k = Quantity(-40, "K")
 
     kc = k.to("delta_C")
     assert kc.value == pytest.approx(-40.0, DELTA)
-    assert kc.units == ansunits.Unit("delta_C")
+    assert kc.units == Unit("delta_C")
 
     kc = k.to("delta_R")
     assert kc.value == pytest.approx(-72.0, DELTA)
-    assert kc.units == ansunits.Unit("delta_R")
+    assert kc.units == Unit("delta_R")
 
     kc = k.to("delta_F")
     assert kc.value == pytest.approx(-72.0, DELTA)
-    assert kc.units == ansunits.Unit("delta_F")
+    assert kc.units == Unit("delta_F")
 
 
 def test_temp_addition():
+    t1 = Quantity(150.0, "C")
+    t2 = Quantity(50.0, "C")
+    
+    td = t1 - t2
+    assert td.units == Unit("delta_K")
+    assert get_si_value(td) == 100.0
+
+    kd = Quantity(50.0, "delta_C")
+    k = Quantity(50.0, "K")
+
+    t = k + kd
+    assert get_si_value(t) == 100.0
+    assert t.units == Unit("K")
+    
     df = ansunits.Quantity(50.0, "delta_F")
     k = ansunits.Quantity(50.0, "K")
 
-    t1 = df + k
+    t3 = df + k
     assert t1.value == pytest.approx(-319.6699999991, DELTA)
-    assert t1.units == ansunits.Unit("F")
+    assert t1.units.name == "F"
 
-    t2 = k + df
+    t4 = k + df
     assert t2.value == pytest.approx(77.7777777775, DELTA)
-    assert t2.units == ansunits.Unit("K")
+    assert t2.units.name == "K"
 
-    t3 = df + df
+    t5 = df + df
     assert t3 == ansunits.Quantity(100, "delta_F")
 
 
 def test_quantity_from_dimensions():
-    dims = ansunits.BaseDimensions
-    p = ansunits.Quantity(
+    dims = BaseDimensions
+    p = Quantity(
         10.5,
-        dimensions=ansunits.Dimensions(
-            {dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}
-        ),
+        dimensions=Dimensions({dims.MASS: 1.0, dims.LENGTH: -1.0, dims.TIME: -2.0}),
     )
-    assert p.units == ansunits.Unit("kg m^-1 s^-2")
+    assert p.units == Unit("kg m^-1 s^-2")
 
 
 def test_quantity_map():
@@ -433,19 +470,19 @@ def test_quantity_map():
         "Epsilon Flux Coefficient": 2,
     }
 
-    api_test = ansunits.Quantity(10.5, quantity_map=quantity_map_from_settings_API)
+    api_test = Quantity(10.5, quantity_map=quantity_map_from_settings_API)
     assert api_test.value == 10.5
-    assert api_test.units == ansunits.Unit("kg^3 m^-1.5 s^-6.5 A^3 cd")
+    assert api_test.units == Unit("kg^3 m^-1.5 s^-6.5 A^3 cd")
 
 
 def testing_units_to_dimensions():
     print(f"{'*' * 25} {testing_units_to_dimensions.__name__} {'*' * 25}")
-    dims = ansunits.BaseDimensions
+    dims = BaseDimensions
 
     def dim_test(units, dim_dict):
-        qt = ansunits.Quantity(10, units)
+        qt = Quantity(10, units)
         print(f"{units} : {qt.dimensions}")
-        assert qt.dimensions == ansunits.Dimensions(dim_dict)
+        assert qt.dimensions == Dimensions(dim_dict)
 
     dim_test("m", {dims.LENGTH: 1.0})
     dim_test("m s^-1", {dims.LENGTH: 1.0, dims.TIME: -1.0})
@@ -469,7 +506,7 @@ def testing_multipliers():
     print(f"{'*' * 25} {testing_multipliers.__name__} {'*' * 25}")
 
     def from_to(from_str, to_str):
-        qt = ansunits.Quantity(1, from_str)
+        qt = Quantity(1, from_str)
         to = qt.to(to_str)
         print(f"from {qt} -> to {to}")
 
@@ -496,22 +533,22 @@ def testing_multipliers():
 
 
 def test_excessive_parameters_error():
-    dims = ansunits.BaseDimensions
+    dims = BaseDimensions
     with pytest.raises(ExcessiveParameters):
-        e1 = ansunits.Quantity(
+        e1 = Quantity(
             value=10,
             units="farad",
-            dimensions=ansunits.Dimensions({dims.MASS: 1}),
+            dimensions=Dimensions({dims.MASS: 1}),
             quantity_map={"Velocity": 3},
         )
     with pytest.raises(InsufficientArguments):
-        e2 = ansunits.Quantity()
+        e2 = Quantity()
 
 
 def test_incompatible_dimensions_error():
-    ur = ansunits.UnitRegistry()
+    ur = UnitRegistry()
     with pytest.raises(IncompatibleDimensions):
-        e1 = ansunits.Quantity(7, ur.kg).to(ur.ft)
+        e1 = Quantity(7, ur.kg).to(ur.ft)
 
 
 def test_error_messages():
@@ -522,7 +559,7 @@ def test_error_messages():
             (units) or (quantity_map) or (dimensions)."
     )
 
-    e2 = IncompatibleDimensions(ansunits.Unit("mm"), ansunits.Unit("K"))
+    e2 = IncompatibleDimensions(Unit("mm"), Unit("K"))
     assert str(e2) == "`mm` and `K` have incompatible dimensions."
 
     e3 = IncompatibleValue("radian")
