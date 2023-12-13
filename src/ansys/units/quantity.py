@@ -4,7 +4,9 @@ from __future__ import annotations
 import operator
 from typing import Union
 
-import ansys.units as ansunits
+from ansys.units import BaseDimensions, Dimensions
+from ansys.units.systems import UnitSystem
+from ansys.units.unit import Unit
 
 try:
     import numpy as np
@@ -114,10 +116,10 @@ class Quantity:
     def __init__(
         self,
         value: Union[int, float] = None,
-        units: Union[ansunits.Unit, str] = None,
+        units: Union[Unit, str] = None,
         quantity_map: dict = None,
-        dimensions: ansunits.Dimensions = None,
-        copy_from: ansunits.Quantity = None,
+        dimensions: Dimensions = None,
+        copy_from: Quantity = None,
     ):
         if (
             (units and quantity_map)
@@ -147,20 +149,20 @@ class Quantity:
             self._value = float(value)
 
         if quantity_map:
-            units = ansunits.QuantityMap(quantity_map).units
+            units = Unit(map=quantity_map)
 
         if dimensions:
-            units = ansunits.Unit(dimensions=dimensions)
+            units = Unit(dimensions=dimensions)
 
-        if not isinstance(units, ansunits.Unit):
-            units = ansunits.Unit(units)
+        if not isinstance(units, Unit):
+            units = Unit(units)
 
         if (
             (units.name in ["K", "R"] and value < 0)
             or (units.name == "C" and value < -273.15)
             or (units.name == "F" and value < -459.67)
         ):
-            units = ansunits.Unit(f"delta_{units.name}")
+            units = Unit(f"delta_{units.name}")
 
         self._unit = units
 
@@ -174,7 +176,7 @@ class Quantity:
         self._value = new_value
 
     @property
-    def units(self) -> ansunits.Unit:
+    def units(self) -> Unit:
         """The quantity's units."""
         return self._unit
 
@@ -188,7 +190,7 @@ class Quantity:
         """True if the quantity is dimensionless."""
         return not bool(self.dimensions)
 
-    def to(self, to_units: Union[ansunits.Unit, str]) -> "Quantity":
+    def to(self, to_units: Union[Unit, str]) -> "Quantity":
         """
         Perform quantity conversions.
 
@@ -208,8 +210,8 @@ class Quantity:
         >>> speed_bt = speed_si.to("ft s^-1")
         """
 
-        if not isinstance(to_units, ansunits.Unit):
-            to_units = ansunits.Unit(units=to_units)
+        if not isinstance(to_units, Unit):
+            to_units = Unit(units=to_units)
 
         # Retrieve all SI required SI data and perform conversion
         new_value = (
@@ -220,6 +222,43 @@ class Quantity:
             raise IncompatibleDimensions(from_unit=self.units, to_unit=to_units)
 
         return Quantity(value=new_value, units=to_units)
+
+    def compatible_units(self) -> set[str]:
+        """
+        Get all units with the same dimensions.
+
+        Returns
+        -------
+        set
+            A set of unit objects.
+        """
+
+        return self.units.compatible_units()
+
+    def convert(self, system: UnitSystem) -> Quantity:
+        """
+        Convert a quantity into the unit system.
+
+        Parameters
+        ----------
+        system : UnitSystem
+            Unit system to convert to.
+
+        Returns
+        -------
+        Quantity
+            Quantity object converted into the unit system.
+
+        Examples
+        --------
+        >>> ur = UnitRegistry()
+        >>> speed_si = Quantity(value=5, units= ur.m / ur.s)
+        >>> bt = UnitSystem(system="BT")
+        >>> speed_bt = speed_si.convert(bt)
+        """
+        new_unit = self.units.convert(system)
+
+        return self.to(to_units=new_unit)
 
     def _relative_unit_check(self, __value, op: operator = operator.add) -> Quantity:
         """
@@ -237,8 +276,8 @@ class Quantity:
         Quantity
             Quantity instance changed to or from relative units.
         """
-        if not isinstance(__value, ansunits.Quantity):
-            __value = ansunits.Quantity(__value)
+        if not isinstance(__value, Quantity):
+            __value = Quantity(__value)
         # Adds or subtracts the units. Will be self.units unless temperatures
         # are involved.
         new_units = op(self._unit, __value._unit) or self.units
@@ -255,8 +294,8 @@ class Quantity:
         return Quantity(value=new_value, units=new_units)
 
     def __float__(self):
-        base_dims = ansunits.BaseDimensions
-        dims = ansunits.Dimensions
+        base_dims = BaseDimensions
+        dims = Dimensions
         if self.dimensions in [
             dims(),
             dims(dimensions={base_dims.ANGLE: 1.0}),
@@ -299,7 +338,7 @@ class Quantity:
                 value=new_value,
                 units=new_units,
             )
-        if isinstance(__value, ansunits.Unit):
+        if isinstance(__value, Unit):
             base_quantity = Quantity(1, __value)
             return self * base_quantity
 
@@ -318,7 +357,7 @@ class Quantity:
                 units=new_units,
             )
 
-        if isinstance(__value, ansunits.Unit):
+        if isinstance(__value, Unit):
             base_quantity = Quantity(1, __value)
             return self / base_quantity
 

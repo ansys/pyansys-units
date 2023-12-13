@@ -1,9 +1,7 @@
 """Provides the ``UnitSystem`` class."""
 from __future__ import annotations
 
-from typing import Union
-
-import ansys.units as ansunits
+from ansys.units import BaseDimensions, _base_units, _unit_systems
 
 
 class NotBaseUnit(ValueError):
@@ -11,7 +9,7 @@ class NotBaseUnit(ValueError):
 
     def __init__(self, unit):
         super().__init__(
-            f"`{unit.name}` is not a base unit. To use `{unit.name}`, add it to the "
+            f"`{unit}` is not a base unit. To use `{unit}`, add it to the "
             "`base_units` table within the cfg.yaml file."
         )
 
@@ -28,7 +26,7 @@ class IncorrectUnitType(ValueError):
 
     def __init__(self, unit, unit_type):
         super().__init__(
-            f"The unit `{unit.name}` is incompatible with unit system type: `{unit_type.name}`"
+            f"The unit `{unit}` is incompatible with unit system type: `{unit_type.name}`"
         )
 
 
@@ -43,9 +41,9 @@ class UnitSystem:
     ----------
     base_units: dict, optional
         Units mapped to base dimensions types.
-    unit_sys: str, optional
+    unit_sys: str, Unit, optional
         Predefined unit system.
-    copy_from: UnitSystem
+    copy_from: UnitSystem, optional
         Make a copy of a unit system.
 
     Attributes
@@ -64,70 +62,41 @@ class UnitSystem:
 
     def __init__(
         self,
-        base_units: dict[ansunits.BaseDimensions, Union[ansunits.Unit, str]] = None,
+        base_units: dict[BaseDimensions, any] = None,
         system: str = None,
-        copy_from: ansunits.UnitSystem = None,
+        copy_from: UnitSystem = None,
     ):
         if copy_from:
             self._units = copy_from._units
         else:
             if not system:
                 system = "SI"
-            if system not in ansunits._unit_systems:
+            if system not in _unit_systems:
                 raise InvalidUnitSystem(system)
             else:
-                self._units = ansunits._unit_systems[system].copy()
+                self._units = _unit_systems[system].copy()
 
         if base_units:
             for unit_type, unit in base_units.items():
                 self._units[unit_type.name] = unit
 
-        for unit_type in ansunits.BaseDimensions:
+        for unit_type in BaseDimensions:
             unit = self._units[unit_type.name]
             self._set_type(unit_type=unit_type, unit=unit)
 
-    def convert(self, quantity: ansunits.Quantity) -> ansunits.Quantity:
-        """
-        Convert a quantity into the unit system.
-
-        Parameters
-        ----------
-        quantity : Quantity
-            Quantity to convert.
-
-        Returns
-        -------
-        Quantity
-            Quantity object converted into the unit system.
-
-        Examples
-        --------
-        >>> ur = UnitRegistry()
-        >>> speed_si = Quantity(value=5, units= ur.m / ur.s)
-        >>> bt = UnitSystem(system="BT")
-        >>> speed_bt = bt.convert(speed_si)
-        """
-        new_unit = ansunits.Unit(dimensions=quantity.dimensions, system=self)
-
-        return quantity.to(to_units=new_unit)
-
-    def update(
-        self, base_units: dict[ansunits.BaseDimensions : Union[ansunits.Unit, str]]
-    ):
+    def update(self, base_units: dict[BaseDimensions:any]):
         """
         Change the units of the unit system.
 
         Parameters
         ----------
-        base_units: dict, obj
+        base_units: dict
             Units mapped to base dimensions types.
         """
         for unit_type, unit in base_units.items():
             self._set_type(unit_type=unit_type, unit=unit)
 
-    def _set_type(
-        self, unit_type: ansunits.BaseDimensions, unit: Union[ansunits.Unit, str]
-    ):
+    def _set_type(self, unit_type: BaseDimensions, unit: any):
         """
         Checks that the unit is compatible with the unit type before being set.
 
@@ -135,17 +104,15 @@ class UnitSystem:
         ----------
         unit_type: obj
             Unit system type slot for the new unit.
-        unit: obj
+        unit: str, obj
             The unit to be assigned.
         """
-        if not isinstance(unit, ansunits.Unit):
-            unit = ansunits.Unit(unit)
+        name = getattr(unit, "name", None) or unit
 
-        if unit.name not in ansunits._base_units:
-            raise NotBaseUnit(unit)
-
-        if unit._type != unit_type.name:
-            raise IncorrectUnitType(unit, unit_type)
+        if name not in _base_units:
+            raise NotBaseUnit(name)
+        if _base_units[name]["type"] != unit_type.name:
+            raise IncorrectUnitType(name, unit_type)
 
         setattr(self, f"_{unit_type.name}", unit)
 
@@ -156,7 +123,7 @@ class UnitSystem:
 
     @MASS.setter
     def MASS(self, new_unit):
-        self._set_type(unit_type=ansunits.BaseDimensions.MASS, unit=new_unit)
+        self._set_type(unit_type=BaseDimensions.MASS, unit=new_unit)
 
     @property
     def LENGTH(self):
@@ -165,7 +132,7 @@ class UnitSystem:
 
     @LENGTH.setter
     def LENGTH(self, new_unit):
-        self._set_type(unit_type=ansunits.BaseDimensions.LENGTH, unit=new_unit)
+        self._set_type(unit_type=BaseDimensions.LENGTH, unit=new_unit)
 
     @property
     def TIME(self):
@@ -174,7 +141,7 @@ class UnitSystem:
 
     @TIME.setter
     def TIME(self, new_unit):
-        self._set_type(unit_type=ansunits.BaseDimensions.TIME, unit=new_unit)
+        self._set_type(unit_type=BaseDimensions.TIME, unit=new_unit)
 
     @property
     def TEMPERATURE(self):
@@ -183,7 +150,7 @@ class UnitSystem:
 
     @TEMPERATURE.setter
     def TEMPERATURE(self, new_unit):
-        self._set_type(unit_type=ansunits.BaseDimensions.TEMPERATURE, unit=new_unit)
+        self._set_type(unit_type=BaseDimensions.TEMPERATURE, unit=new_unit)
 
     @property
     def TEMPERATURE_DIFFERENCE(self):
@@ -192,9 +159,7 @@ class UnitSystem:
 
     @TEMPERATURE_DIFFERENCE.setter
     def TEMPERATURE_DIFFERENCE(self, new_mass):
-        self._set_type(
-            unit_type=ansunits.BaseDimensions.TEMPERATURE_DIFFERENCE, unit=new_mass
-        )
+        self._set_type(unit_type=BaseDimensions.TEMPERATURE_DIFFERENCE, unit=new_mass)
 
     @property
     def ANGLE(self):
@@ -203,7 +168,7 @@ class UnitSystem:
 
     @ANGLE.setter
     def ANGLE(self, new_mass):
-        self._set_type(unit_type=ansunits.BaseDimensions.ANGLE, unit=new_mass)
+        self._set_type(unit_type=BaseDimensions.ANGLE, unit=new_mass)
 
     @property
     def CHEMICAL_AMOUNT(self):
@@ -212,7 +177,7 @@ class UnitSystem:
 
     @CHEMICAL_AMOUNT.setter
     def CHEMICAL_AMOUNT(self, new_mass):
-        self._set_type(unit_type=ansunits.BaseDimensions.CHEMICAL_AMOUNT, unit=new_mass)
+        self._set_type(unit_type=BaseDimensions.CHEMICAL_AMOUNT, unit=new_mass)
 
     @property
     def LIGHT(self):
@@ -221,7 +186,7 @@ class UnitSystem:
 
     @LIGHT.setter
     def LIGHT(self, new_mass):
-        self._set_type(unit_type=ansunits.BaseDimensions.LIGHT, unit=new_mass)
+        self._set_type(unit_type=BaseDimensions.LIGHT, unit=new_mass)
 
     @property
     def CURRENT(self):
@@ -230,7 +195,7 @@ class UnitSystem:
 
     @CURRENT.setter
     def CURRENT(self, new_mass):
-        self._set_type(unit_type=ansunits.BaseDimensions.CURRENT, unit=new_mass)
+        self._set_type(unit_type=BaseDimensions.CURRENT, unit=new_mass)
 
     @property
     def SOLID_ANGLE(self):
@@ -239,7 +204,7 @@ class UnitSystem:
 
     @SOLID_ANGLE.setter
     def SOLID_ANGLE(self, new_mass):
-        self._set_type(unit_type=ansunits.BaseDimensions.SOLID_ANGLE, unit=new_mass)
+        self._set_type(unit_type=BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
     def __repr__(self):
         units = ""
@@ -247,6 +212,7 @@ class UnitSystem:
             unit = getattr(self, f"_{unit_type.name}")
             units += f"{unit_type.name}: {unit.name}\n"
         return units
+
 
     def __eq__(self, other_sys):
         for attr, value in self.__dict__.items():

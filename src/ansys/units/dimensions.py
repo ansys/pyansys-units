@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Union
 
-import ansys.units as ansunits
+from ansys.units import BaseDimensions
 
 
 class IncorrectDimensions(ValueError):
@@ -11,6 +11,13 @@ class IncorrectDimensions(ValueError):
 
     def __init__(self):
         super().__init__("The `dimensions` key must be a 'BaseDimensions' object")
+
+
+class IncorrectSystem(ValueError):
+    """Provides the error when the given unit system is not a 'UnitSystem'."""
+
+    def __init__(self):
+        super().__init__("The system must be a 'UnitSystem' instance.")
 
 
 class Dimensions:
@@ -28,14 +35,16 @@ class Dimensions:
     ----------
     dimensions : dict, optional
         Dictionary of {``BaseDimensions``: exponent, ...}.
+    system : UnitSystem, optional
+        The unit system for the dimensions.
     copy_from : Dimensions, optional
         A previous instance of Dimensions.
     """
 
     def __init__(
         self,
-        dimensions: dict[ansunits.BaseDimensions, Union[int, float]] = None,
-        copy_from: ansunits.Dimensions = None,
+        dimensions: dict[BaseDimensions, Union[int, float]] = None,
+        copy_from: Dimensions = None,
     ):
         dimensions = dimensions or {}
         self._dimensions = {
@@ -44,7 +53,7 @@ class Dimensions:
         }
 
         for x, y in dimensions.items():
-            if not isinstance(x, ansunits.BaseDimensions):
+            if not isinstance(x, BaseDimensions):
                 raise IncorrectDimensions()
             if y == 0:
                 del self._dimensions[x]
