@@ -520,13 +520,13 @@ class Unit:
         set
             A set of unit objects.
         """
-        ureg = ansunits.UnitRegistry()
         compatible_units = set()
-        for unit in ureg:
+        for unit_name in {**_base_units, **_derived_units}.keys():
+            unit = Unit(units=unit_name)
             if self.dimensions == unit.dimensions:
                 compatible_units.add(unit.name)
-        for unit in _api_quantity_map:
-            unit = ansunits.QuantityMap({unit: 1}).units
+        for unit_name in _api_quantity_map:
+            unit = Unit(map={unit_name: 1})
             if self.dimensions == unit.dimensions:
                 compatible_units.add(unit.name)
         compatible_units.discard(self.name)

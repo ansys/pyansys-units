@@ -59,8 +59,8 @@ def test_copy():
 
 
 def test_compatibility():
-    ureg = ansunits.UnitRegistry()
-    length_units = {"cm", "in", "m"}
+    ureg = UnitRegistry()
+    length_units = {"cm", "in", "m", "inch"}
     force_units = {"dyne", "lbf", "pdl"}
     temperature_difference_units = {"delta_C", "delta_R", "delta_F"}
 
