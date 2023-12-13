@@ -196,7 +196,7 @@ def test_pow():
     assert q1_sq.units == Unit("m^2 s^-2")
     assert q1_sq.value == 100
     q2_sq = q2**2
-    assert q2_sq.units == Unit("m^2")
+    assert q2_sq.units == Unit("ft^2")
     assert get_si_value(q2_sq) == pytest.approx(2.3225759999999993, DELTA)
 
     assert get_si_value(q1) ** 2 == 100.0
@@ -209,7 +209,7 @@ def test_mul():
     u1 = Unit("kg")
 
     q3 = q1 * q2
-    assert q3.units == Unit("m^2 s^-1")
+    assert q3.units == Unit("m s^-1 ft")
     assert get_si_value(q3) == pytest.approx(15.239999999999998, DELTA)
 
     q4 = q1 * u1
@@ -217,7 +217,7 @@ def test_mul():
     assert q4.value == pytest.approx(10, DELTA)
 
     q5 = q2 * 3
-    assert q5.units == Unit("m")
+    assert q5.units == Unit("ft")
     assert get_si_value(q5) == pytest.approx(4.571999999999999, DELTA)
 
 
@@ -311,7 +311,7 @@ def test_addition():
     q3 = Quantity(52, "N")
 
     q2 = q1 + 5
-    assert q2.units.name == ""
+    assert q2.units == Unit()
     assert q2.value == 10
 
     with pytest.raises(IncorrectUnits) as e_info:
@@ -331,7 +331,7 @@ def test_reverse_addition():
     q1 = Quantity(5.0, "m^0")
 
     q2 = 5 + q1
-    assert q2.units.name == ""
+    assert q2.units == Unit()
     assert q2.value == 10
 
 
@@ -422,17 +422,23 @@ def test_temp():
 def test_temp_addition():
     t1 = Quantity(150.0, "C")
     t2 = Quantity(50.0, "C")
+    df = Quantity(50.0, "delta_F")
+    k = Quantity(50.0, "K")
 
     td = t1 - t2
     assert td.units == Unit("delta_K")
     assert get_si_value(td) == 100.0
 
-    kd = Quantity(50.0, "delta_C")
-    k = Quantity(50.0, "K")
+    t3 = df + k
+    assert t3.value == pytest.approx(-319.6699999991, DELTA)
+    assert t3.units == Unit("F")
 
-    t = k + kd
-    assert get_si_value(t) == 100.0
-    assert t.units == Unit("K")
+    t4 = k + df
+    assert t4.value == pytest.approx(77.7777777775, DELTA)
+    assert t4.units == Unit("K")
+
+    t5 = df + df
+    assert t5 == Quantity(100, "delta_F")
 
 
 def test_quantity_from_dimensions():

@@ -26,6 +26,15 @@ def test_base_units():
     assert kg.si_offset == 0
 
 
+def test_equal_dimensions_not_equal_units():
+    l = Unit("l")
+    kl = Unit("kl")
+    m_cubed = Unit("m^3")
+
+    assert m_cubed == kl
+    assert l != m_cubed
+
+
 def test_derived_units():
     N = Unit("N")
     assert N.name == "N"
@@ -46,6 +55,9 @@ def test_unitless():
 
     assert u_1.name == ""
     assert u_1.dimensions == Dimensions()
+
+    assert u_2.name == ""
+    assert u_2.dimensions == Dimensions()
 
 
 def test_copy():
