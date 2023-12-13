@@ -220,7 +220,6 @@ SOLID_ANGLE: sr
 """
 
 
-
 # Copy from a preexisting unit system
 
 cgs_copy = ansunits.UnitSystem(copy_from=cgs)

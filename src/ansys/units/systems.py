@@ -213,7 +213,6 @@ class UnitSystem:
             units += f"{unit_type.name}: {unit.name}\n"
         return units
 
-
     def __eq__(self, other_sys):
         for attr, value in self.__dict__.items():
             if getattr(other_sys, attr) != value:
