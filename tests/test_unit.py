@@ -27,9 +27,9 @@ def test_base_units():
 
 
 def test_equal_dimensions_not_equal_units():
-    l = ansunits.Unit("l")
-    kl = ansunits.Unit("kl")
-    m_cubed = ansunits.Unit("m^3")
+    l = Unit("l")
+    kl = Unit("kl")
+    m_cubed = Unit("m^3")
 
     assert m_cubed == kl
     assert l != m_cubed
@@ -57,7 +57,7 @@ def test_unitless():
     assert u_1.dimensions == Dimensions()
 
     assert u_2.name == ""
-    assert u_2.dimensions == ansunits.Dimensions()
+    assert u_2.dimensions == Dimensions()
 
 
 def test_copy():
