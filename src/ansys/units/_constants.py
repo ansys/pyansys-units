@@ -23,6 +23,11 @@ with open(qc_path, "r") as qc_yaml:
 
 _multipliers: dict = qc_data["multipliers"]
 _unit_systems: dict = qc_data["unit_systems"]
-_api_quantity_map: dict = qc_data["api_quantity_map"]
 _base_units: dict = qc_data["base_units"]
 _derived_units: dict = qc_data["derived_units"]
+
+map_path = os.path.join(file_dir, "api_maps\cfx.yaml")
+
+with open(map_path, "r") as api_map:
+    api_map_data = yaml.safe_load(api_map)
+_api_quantity_map: dict = api_map_data["api_quantity_map"]
