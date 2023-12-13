@@ -37,5 +37,9 @@ the ``UnitSystem`` is a standalone class. When creating a ``Unit`` using
 ``Dimensions`` it requires a unit system parameter to be passed in for non-SI
 units.
 
+Equivalent units are also handled differently. Any two ``Unit`` objects that
+have the same dimensions, SI offset, and SI scaling factor will be evaluated as
+True.
+
 PyAnsys Units treats all angles as dimensional units. With this behavior the
 conversion from rad/s to Hz is not allowed.
