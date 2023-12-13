@@ -19,7 +19,7 @@ def test_pre_defined_unit_system():
 
 
 def test_repr():
-    us = ansunits.UnitSystem()
+    us = UnitSystem()
     us_dict = """MASS: kg
 LENGTH: m
 TIME: s

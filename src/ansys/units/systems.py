@@ -208,9 +208,9 @@ class UnitSystem:
 
     def __repr__(self):
         units = ""
-        for unit_type in ansunits.BaseDimensions:
+        for unit_type in BaseDimensions:
             unit = getattr(self, f"_{unit_type.name}")
-            units += f"{unit_type.name}: {unit.name}\n"
+            units += f"{unit_type.name}: {unit}\n"
         return units
 
     def __eq__(self, other_sys):
