@@ -196,7 +196,7 @@ def test_pow():
     assert q1_sq.units == Unit("m^2 s^-2")
     assert q1_sq.value == 100
     q2_sq = q2**2
-    
+
     assert q2_sq.units == ansunits.Unit("ft^2")
     assert get_si_value(q2_sq) == pytest.approx(2.3225759999999993, DELTA)
 
@@ -425,7 +425,7 @@ def test_temp():
 def test_temp_addition():
     t1 = Quantity(150.0, "C")
     t2 = Quantity(50.0, "C")
-    
+
     td = t1 - t2
     assert td.units == Unit("delta_K")
     assert get_si_value(td) == 100.0
@@ -436,7 +436,7 @@ def test_temp_addition():
     t = k + kd
     assert get_si_value(t) == 100.0
     assert t.units == Unit("K")
-    
+
     df = ansunits.Quantity(50.0, "delta_F")
     k = ansunits.Quantity(50.0, "K")
 
