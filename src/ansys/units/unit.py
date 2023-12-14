@@ -32,7 +32,7 @@ class IncorrectUnits(ValueError):
 
     def __init__(self, unit1, unit2):
         super().__init__(
-            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this operation."
+            f"'{unit1.si_units}' and '{unit2.si_units}' must match for this operation."
         )
 
 
@@ -41,7 +41,7 @@ class IncorrectTemperatureUnits(ValueError):
 
     def __init__(self, unit1, unit2):
         super().__init__(
-            f"`Either {unit1.name}` or '{unit2.name}' must be a relative unit for "
+            f"Either '{unit1.name}' or '{unit2.name}' must be a relative unit for "
             f"this operation."
         )
 
@@ -545,8 +545,8 @@ class Unit:
 
         Returns
         -------
-        Unit | None
-            unit object for a quantity of temperature difference or temperature.
+        Unit, Unit | None
+            Two unit objects for a quantity of temperature difference or temperature.
 
         Raises
         ------
@@ -561,14 +561,20 @@ class Unit:
         delta_temp = dims(dimensions={base.TEMPERATURE_DIFFERENCE: 1})
         if self.dimensions == other_unit.dimensions == temp and op == "+":
             raise IncorrectTemperatureUnits(self, other_unit)
+
         # Checks to make sure they are both temperatures.
         if (self.dimensions and other_unit.dimensions) in (temp, delta_temp):
+            unit_name = self.name.removeprefix("delta_")
+            relative = Unit(f"delta_{unit_name}")
+            absolute = Unit(unit_name)
+
             if self.dimensions != other_unit.dimensions:
                 # Removes the delta_ prefix if there is one.
-                return Unit(self.name.replace("delta_", ""))
+                return absolute, relative
+
             if self.dimensions == other_unit.dimensions == temp and op == "-":
-                # Adds the delta_ prefix.
-                return Unit(f"delta_{self.name}")
+                return relative, absolute
+
         if self.dimensions != other_unit.dimensions:
             raise IncorrectUnits(self, other_unit)
 
