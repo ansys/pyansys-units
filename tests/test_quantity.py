@@ -17,11 +17,28 @@ from ansys.units.quantity import (  # InvalidFloatUsage,
     IncompatibleValue,
     InsufficientArguments,
     NumPyRequired,
+    RequiresUniqueDimensions,
     get_si_value,
 )
 from ansys.units.unit import IncorrectUnits
 
 DELTA = 1.0e-5
+
+
+def test_preferred_units():
+    Quantity.preferred_units(units=["J", "slug", "psi"])
+    assert Quantity._chosen_units == [Unit("J"), Unit("slug"), Unit("psi")]
+
+    with pytest.raises(RequiresUniqueDimensions):
+        Quantity.preferred_units(units=["kg"])
+
+    ten_N = Quantity(10, units="N")
+    ten_m = Quantity(10, units="m")
+
+    assert ten_N * ten_m == Quantity(100, units="J")
+
+    Quantity.preferred_units(units=["J", "slug", "psi"], remove=True)
+    assert Quantity._chosen_units == []
 
 
 def test_properties():
@@ -553,3 +570,6 @@ def test_error_messages():
 
     e3 = IncompatibleValue("radian")
     assert str(e3) == "`radian` is incompatible with the current quantity object."
+
+    e4 = RequiresUniqueDimensions(Unit("mm"), Unit("m"))
+    assert str(e4) == "For 'mm' to be added 'm' must be removed."

@@ -72,6 +72,16 @@ class InvalidFloatUsage(FloatingPointError):
         )
 
 
+class RequiresUniqueDimensions(ValueError):
+    """Provides the error when two units with the same dimensions are added to the
+    chosen units."""
+
+    def __init__(self, unit, other_unit):
+        super().__init__(
+            f"For '{unit.name}' to be added '{other_unit.name}' must be removed."
+        )
+
+
 def get_si_value(quantity: Quantity) -> float:
     """The value in SI units."""
     return float(
@@ -112,6 +122,8 @@ class Quantity:
     dimensions
     is_dimensionless
     """
+
+    _chosen_units = []
 
     def __init__(
         self,
@@ -165,6 +177,39 @@ class Quantity:
             units = Unit(f"delta_{units.name}")
 
         self._unit = units
+
+        for unit in self._chosen_units:
+            if unit.name != units.name and self.dimensions == unit.dimensions:
+                self._value = self.to(unit).value
+                self._unit = unit
+
+    @classmethod
+    def preferred_units(
+        cls, units: list[Union[Unit, str]], remove: bool = False
+    ) -> None:
+        """
+        Add or remove preferred units.
+
+        Quantities will automatically be converted to preferred units during
+        instantiation.
+
+        Parameters
+        ----------
+        units : list
+            A list of units to be added or removed.
+        remove : bool
+            Specify if the units should be removed.
+        """
+        for unit in units:
+            if isinstance(unit, str):
+                unit = Unit(units=unit)
+            if remove and unit in cls._chosen_units:
+                cls._chosen_units.remove(unit)
+            elif not remove:
+                for chosen_unit in cls._chosen_units:
+                    if chosen_unit.dimensions == unit.dimensions:
+                        raise RequiresUniqueDimensions(unit, chosen_unit)
+                cls._chosen_units.append(unit)
 
     @property
     def value(self):

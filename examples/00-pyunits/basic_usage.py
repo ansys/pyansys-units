@@ -269,3 +269,20 @@ meters_per_second = feet_per_second.convert(si)
 
 meters_per_second.value  # >>> 3.4137599999999995
 meters_per_second.units  # >>> "m s^-1"
+
+
+###############################################################################
+# Using preferred units
+# ~~~~~~~~~~~~~~~~~~~~~
+# Specify a list of units that quantities will automatically convert to.
+
+Quantity.preferred_units(units=["J"])
+
+torque = Quantity(1, quantity_map={"Torque": 1})
+torque  # >>> Quantity (1.0, "J")
+
+ten_N = Quantity(10, units="N")
+ten_m = Quantity(10, units="m")
+
+joules = ten_N * ten_m
+joules  # >>> Quantity (100.0, "J")
