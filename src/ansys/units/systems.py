@@ -48,7 +48,6 @@ class UnitSystem:
 
     Attributes
     ----------
-    base_units
     MASS
     LENGTH
     TIME
@@ -116,15 +115,6 @@ class UnitSystem:
             raise IncorrectUnitType(name, unit_type)
 
         setattr(self, f"_{unit_type.name}", unit)
-
-    @property
-    def base_units(self) -> list[str]:
-        """Base units of the unit system."""
-        _base_units = []
-        for unit_type in BaseDimensions:
-            unit = getattr(self, f"_{unit_type.name}")
-            _base_units.append(unit)
-        return _base_units
 
     @property
     def MASS(self):
@@ -217,11 +207,11 @@ class UnitSystem:
         self._set_type(unit_type=BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
     def __repr__(self):
-        units = {}
+        units = ""
         for unit_type in BaseDimensions:
             unit = getattr(self, f"_{unit_type.name}")
-            units.update({unit_type.name: unit})
-        return str(units)
+            units += f"{unit_type.name}: {unit}\n"
+        return units
 
     def __eq__(self, other_sys):
         for attr, value in self.__dict__.items():

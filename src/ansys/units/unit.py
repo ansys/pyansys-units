@@ -96,15 +96,14 @@ def dim_to_units(
     if not system:
         system = UnitSystem()
 
-    base_units = system.base_units
     units = ""
 
     for key, value in dimensions:
         if value == 1:
-            units += f"{base_units[key.value]} "
+            units += f"{getattr(system, key.name)} "
         elif value != 0.0:
             value = int(value) if value % 1 == 0 else value
-            units += f"{base_units[key.value]}^{value} "
+            units += f"{getattr(system, key.name)}^{value} "
 
     return units.strip()
 
