@@ -190,8 +190,9 @@ class Quantity:
         """
         Add or remove preferred units.
 
-        Quantities will automatically be converted to preferred units during
-        instantiation.
+        Quantities are automatically converted to preferred units when the
+        quantity is initialized. Conversion is always carried out if the base
+        units are consistent with the preferred units.
 
         Parameters
         ----------
