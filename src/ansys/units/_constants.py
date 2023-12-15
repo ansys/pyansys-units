@@ -26,7 +26,7 @@ _unit_systems: dict = qc_data["unit_systems"]
 _base_units: dict = qc_data["base_units"]
 _derived_units: dict = qc_data["derived_units"]
 
-map_path = os.path.join(file_dir, "api_maps\cfx.yaml")
+map_path = os.path.join(file_dir, "quantity_maps\cfx.yaml")
 
 with open(map_path, "r") as api_map:
     api_map_data = yaml.safe_load(api_map)
