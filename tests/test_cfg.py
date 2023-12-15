@@ -6,7 +6,7 @@ import yaml
 def test_config_import():
     root = os.path.abspath(os.curdir)
     qc_path = os.path.join(root, "src/ansys/units/cfg.yaml")
-    map_path = os.path.join(root, "src/ansys/units/quantity_maps/base_map.yaml")
+    map_path = os.path.join(root, "src/ansys/units/quantity_maps/si_map.yaml")
 
     with open(qc_path, "r") as qc_yaml:
         qc_data = yaml.safe_load(qc_yaml)
