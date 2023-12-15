@@ -133,10 +133,10 @@ def test_quantity_map():
         "Velocity": 2.5,
         "Current": 3,
         "Light": 1,
-        "Epsilon Flux Coefficient": 2,
+        "Heat Transfer Coefficient": 2,
     }
     qm1 = Unit(map=qm1_map)
-    assert qm1.name == "kg^3 m^-1.5 s^-6.5 A^3 cd"
+    assert qm1.name == "kg m^-1.5 s^-2.5 A^3 cd W^2 K^-2"
 
 
 def test_unit_multiply_by_quantity():

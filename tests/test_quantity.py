@@ -456,12 +456,12 @@ def test_quantity_map():
         "Velocity": 2.5,
         "Current": 3,
         "Light": 1,
-        "Epsilon Flux Coefficient": 2,
+        "Heat Transfer Coefficient": 2,
     }
 
     api_test = Quantity(10.5, quantity_map=quantity_map_from_settings_API)
     assert api_test.value == 10.5
-    assert api_test.units == Unit("kg^3 m^-1.5 s^-6.5 A^3 cd")
+    assert api_test.units == Unit("kg m^-1.5 s^-2.5 A^3 cd W^2 K^-2")
 
 
 def testing_units_to_dimensions():
