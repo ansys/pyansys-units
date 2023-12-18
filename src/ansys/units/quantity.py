@@ -463,3 +463,13 @@ class InvalidFloatUsage(FloatingPointError):
         super().__init__(
             "Only dimensionless quantities and angles can be used as a float."
         )
+
+
+class RequiresUniqueDimensions(ValueError):
+    """Provides the error when two units with the same dimensions are added to the
+    chosen units."""
+
+    def __init__(self, unit, other_unit):
+        super().__init__(
+            f"For '{unit.name}' to be added '{other_unit.name}' must be removed."
+        )
