@@ -22,5 +22,5 @@ Unit
 .. autoexception:: ansys.units.unit.UnconfiguredUnit
    :show-inheritance:
 
-.. autoexception:: ansys.units.unit.UnknownMapItem
+.. autoexception:: ansys.units.unit.UnknownTableItem
    :show-inheritance:
