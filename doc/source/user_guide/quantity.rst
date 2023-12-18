@@ -4,7 +4,7 @@
 Defining a quantity
 ===================
 
-To initialize a physical quantity, import the ``ansunits`` library and create a
+To initialize a physical quantity, import from the ``ansys.units`` library and create a
 new ``Quantity`` object:
 
 .. code:: python
@@ -65,10 +65,10 @@ of the first quantity.
 .. code:: python
 
 
-    import ansys.units as ansunits
+    from ansys.units import Quantity
 
-    meter = ansunits.Quantity(value=1, units="m")
-    foot = ansunits.Quantity(value=1, units="ft")
+    meter = Quantity(value=1, units="m")
+    foot = Quantity(value=1, units="ft")
 
     meter + foot  # Quantity (1.3048, "m")
     foot + meter  # Quantity (4.2808398950131235, "ft")

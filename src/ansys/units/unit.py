@@ -13,374 +13,6 @@ from ansys.units import (
 from ansys.units.systems import UnitSystem
 
 
-class InconsistentDimensions(ValueError):
-    """Provides the error when dimensions are inconsistent."""
-
-    def __init__(self):
-        super().__init__("Unit dimensions do not match given dimensions.")
-
-
-class UnconfiguredUnit(ValueError):
-    """Provides the error when the specified unit is unconfigured."""
-
-    def __init__(self, unit):
-        super().__init__(f"`{unit}` is an unconfigured unit.")
-
-
-class IncorrectUnits(ValueError):
-    """Provides the error when the specified units are incorrect."""
-
-    def __init__(self, unit1, unit2):
-        super().__init__(
-            f"`{unit1.si_units}` and '{unit2.si_units}' must match for this operation."
-        )
-
-
-class IncorrectTemperatureUnits(ValueError):
-    """Provides the error when two temperatures are added."""
-
-    def __init__(self, unit1, unit2):
-        super().__init__(
-            f"`Either {unit1.name}` or '{unit2.name}' must be a relative unit for "
-            f"this operation."
-        )
-
-
-class UnknownMapItem(ValueError):
-    """Provides the error when the specified quantity map is undefined in the yaml."""
-
-    def __init__(self, item):
-        super().__init__(f"`{item}` is not a valid quantity map item.")
-
-
-def get_config(name: str) -> dict:
-    """
-    Retrieve unit configuration from '_base_units' or '_derived_units'.
-
-    Parameters
-    ----------
-    name : str
-        Unit string.
-    Returns
-    -------
-    dict
-        Dictionary of extra unit information.
-    """
-    if name in _base_units:
-        return _base_units[name]
-    if name in _derived_units:
-        return _derived_units[name]
-
-
-def dim_to_units(
-    system: UnitSystem,
-    dimensions: Dimensions,
-) -> str:
-    """
-    Convert a dimensions list into a unit string.
-
-    Parameters
-    ----------
-    dimensions : Dimensions object
-        Instance of Dimension class.
-
-        system : UnitSystem object, optional
-            Unit system for dimensions list.
-            Default is SI units.
-
-        Returns
-        -------
-        str
-            Unit string.
-    """
-    if not system:
-        system = UnitSystem()
-
-    base_units = system.base_units
-    units = ""
-
-    for key, value in dimensions:
-        if value == 1:
-            units += f"{base_units[key.value]} "
-        elif value != 0.0:
-            value = int(value) if value % 1 == 0 else value
-            units += f"{base_units[key.value]}^{value} "
-
-    return units.strip()
-
-
-def units_to_dim(
-    units: str, exponent: float = None, dimensions: dict = None
-) -> dict[BaseDimensions : Union[int, float]]:
-    """
-    Convert a unit string into a Dimensions instance.
-
-    Parameters
-    ----------
-    units : str
-        Unit string.
-    Returns
-    -------
-    dict
-        Dimensions dictionary
-    """
-    exponent = exponent or 1.0
-    dimensions = dimensions or {}
-    # Split unit string into terms and parse data associated with individual terms
-    for term in units.split(" "):
-        _, unit_term, unit_term_exponent = filter_unit_term(term)
-        unit_term_exponent *= exponent
-        # retrieve data associated with base unit
-        if unit_term in _base_units:
-            idx = _base_units[unit_term]["type"]
-
-            if BaseDimensions[idx] in dimensions:
-                dimensions[BaseDimensions[idx]] += unit_term_exponent
-            else:
-                dimensions[BaseDimensions[idx]] = unit_term_exponent
-
-        # Retrieve derived unit composition unit string and SI factor.
-        if unit_term in _derived_units:
-            # Recursively parse composition unit string
-
-            dimensions = units_to_dim(
-                units=_derived_units[unit_term]["composition"],
-                exponent=unit_term_exponent,
-                dimensions=dimensions,
-            )
-
-    return dimensions
-
-
-def map_to_units(map: dict) -> str:
-    """
-    Convert a quantity map into a unit string.
-
-    Parameters
-    ----------
-    quantity_map : dict[str, int]
-        Quantity map to convert to a Unit.
-
-    Returns
-    -------
-    Unit
-        Unit object representation of the quantity map.
-    """
-    for key in map.keys():
-        if key not in _api_quantity_map:
-            raise UnknownMapItem(key)
-
-    base_unit = ""
-
-    for key, value in map.items():
-        terms = _api_quantity_map[key]
-        for term in terms.split(" "):
-            multiplier, base, exponent = filter_unit_term(term)
-
-            base_unit += f"{multiplier}{base}^{exponent*value} "
-
-    return condense(base_unit)
-
-
-def multiplier_check(unit_term: str) -> bool:
-    """
-    Check if a unit term contains a multiplier.
-
-    Parameters
-    ----------
-    unit_term : str
-        Unit term of the unit string.
-
-    Returns
-    -------
-    bool
-        ``True`` if the unit term contains a multiplier, ``False`` otherwise.
-    """
-    # Check if the unit term is not an existing base or derived unit.
-    return unit_term and not (
-        (unit_term in _base_units) or (unit_term in _derived_units)
-    )
-
-
-def si_map(unit_term: str) -> str:
-    """
-    Map unit to SI unit equivalent.
-
-    Parameters
-    ----------
-    unit_term : str
-        Unit term of the unit string.
-
-    Returns
-    -------
-    str
-        SI unit equivalent.
-    """
-    # Retrieve type associated with unit term
-    unit_term_type = _base_units[unit_term]["type"]
-
-    # Find SI unit with same type as unit term
-    for term, term_info in _base_units.items():
-        if (
-            term_info["type"] == unit_term_type
-            and term_info["si_scaling_factor"] == 1.0
-        ):
-            return term
-
-
-def condense(units=str) -> str:
-    """
-    Condense a unit string by collecting like terms.
-
-    Parameters
-    ----------
-    units : str
-        Unit string to simplify.
-
-    Returns
-    -------
-    str
-        Simplified unit string.
-    """
-    terms_and_exponents = {}
-    units = units.strip()
-
-    # Split unit string into terms and parse data associated with individual terms
-    for term in units.split(" "):
-        multiplier, unit_term, unit_term_exponent = filter_unit_term(term)
-        full_term = f"{multiplier}{unit_term}"
-        if full_term in terms_and_exponents:
-            terms_and_exponents[full_term] += unit_term_exponent
-        else:
-            terms_and_exponents[full_term] = unit_term_exponent
-    units = ""
-    # Concatenate unit string
-    for term, exponent in terms_and_exponents.items():
-        if not (exponent):
-            continue
-        if exponent == 1.0:
-            units += f"{term} "
-        else:
-            exponent = int(exponent) if exponent % 1 == 0 else exponent
-            units += f"{term}^{exponent} "
-
-    return units.rstrip()
-
-
-def filter_unit_term(unit_term: str) -> tuple:
-    """
-    Separate multiplier, base, and exponent from a unit term.
-
-    Parameters
-    ----------
-    unit_term : str
-        Unit term of the unit string.
-
-    Returns
-    -------
-    tuple
-        Tuple containing the multiplier, base, and exponent of the unit term.
-    """
-    multiplier = ""
-    exponent = 1.0
-
-    # strip exponent from unit term
-    if "^" in unit_term:
-        exponent = float(unit_term[unit_term.index("^") + 1 :])
-        unit_term = unit_term[: unit_term.index("^")]
-
-    base = unit_term
-
-    # strip multiplier and base from unit term
-    has_multiplier = multiplier_check(unit_term)
-    if has_multiplier:
-        for mult in _multipliers:
-            if unit_term.startswith(mult):
-                if not multiplier_check(unit_term[len(mult) :]):
-                    multiplier = mult
-                    base = unit_term[len(mult) :]
-                    break
-
-    # if we thought it had a multiplier, that's just because the string wasn't
-    # a known unit on its own. So if we can't actually find its multiplier then
-    # this string is an invalid unit string
-    if has_multiplier and not multiplier:
-        raise UnconfiguredUnit(unit_term)
-    return multiplier, base, exponent
-
-
-def si_data(
-    units: str,
-    exponent: float = None,
-    si_units: str = None,
-    si_scaling_factor: float = None,
-) -> tuple:
-    """
-    Compute the SI unit string, SI scaling factor, and SI offset.
-
-    Parameters
-    ----------
-    units : str
-        Unit string representation of the quantity.
-    exponent : float, None
-        exponent of the unit string.
-    si_units : str, None
-        SI unit string representation of the quantity.
-    si_scaling_factor : float, None
-        SI scaling factor of the unit string.
-
-    Returns
-    -------
-    tuple
-        Tuple containing the SI units, SI scaling factor, and SI offset.
-    """
-    # Initialize default values
-    units = units or " "
-    exponent = exponent or 1.0
-    si_units = si_units or ""
-    si_scaling_factor = si_scaling_factor or 1.0
-    si_offset = _base_units[units]["si_offset"] if units in _base_units else 0.0
-
-    # Split unit string into terms and parse data associated with individual terms
-    for term in units.split(" "):
-        unit_multiplier, unit_term, unit_term_exponent = filter_unit_term(term)
-
-        unit_term_exponent *= exponent
-
-        si_scaling_factor *= (
-            _multipliers[unit_multiplier] ** unit_term_exponent
-            if unit_multiplier
-            else 1.0
-        )
-
-        # Retrieve data associated with base unit
-        if unit_term in _base_units:
-            if unit_term_exponent == 1.0:
-                si_units += f" {si_map(unit_term)}"
-            elif unit_term_exponent != 0.0:
-                si_units += f" {si_map(unit_term)}^{unit_term_exponent}"
-
-            si_scaling_factor *= (
-                _base_units[unit_term]["si_scaling_factor"] ** unit_term_exponent
-            )
-
-        # Retrieve derived unit composition unit string and SI scaling factor
-        elif unit_term in _derived_units:
-            si_scaling_factor *= (
-                _derived_units[unit_term]["factor"] ** unit_term_exponent
-            )
-
-            # Recursively parse composition unit string
-            si_units, si_scaling_factor, _ = si_data(
-                units=_derived_units[unit_term]["composition"],
-                exponent=unit_term_exponent,
-                si_units=si_units,
-                si_scaling_factor=si_scaling_factor,
-            )
-
-    return condense(si_units), si_scaling_factor, si_offset
-
-
 class Unit:
     """
     A class containing the string name and dimensions of a unit.
@@ -437,11 +69,11 @@ class Unit:
             units = copy_from.name
 
         if map:
-            units = map_to_units(map=map)
+            units = _map_to_units(map=map)
 
         if units:
             self._name = units
-            _dimensions = units_to_dim(units=units)
+            _dimensions = _units_to_dim(units=units)
             self._dimensions = Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise InconsistentDimensions()
@@ -450,18 +82,18 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
-            self._name = dim_to_units(dimensions=dimensions, system=system)
+            self._name = _dim_to_units(dimensions=dimensions, system=system)
         else:
             self._name = ""
             self._dimensions = Dimensions()
 
         if not config:
-            config = get_config(name=self._name)
+            config = _get_config(name=self._name)
         if config:
             for key in config:
                 setattr(self, f"_{key}", config[key])
 
-        self._si_units, self._si_scaling_factor, self._si_offset = si_data(
+        self._si_units, self._si_scaling_factor, self._si_offset = _si_data(
             units=self.name
         )
 
@@ -499,17 +131,17 @@ class Unit:
         new_units = ""
         if op == "**":
             for term in self.name.split(" "):
-                multiplier, base, exponent = filter_unit_term(term)
+                multiplier, base, exponent = _filter_unit_term(term)
                 exponent *= __value
                 new_units += f"{multiplier}{base}^{exponent} "
         if op == "/":
             new_units = self.name
             for term in __value.name.split(" "):
-                multiplier, base, exponent = filter_unit_term(term)
+                multiplier, base, exponent = _filter_unit_term(term)
                 new_units += f" {multiplier}{base}^{exponent*-1}"
         if op == "*":
             new_units = f"{self.name} {__value.name}"
-        return Unit(condense(new_units))
+        return Unit(_condense(new_units))
 
     def compatible_units(self) -> set[str]:
         """
@@ -545,8 +177,8 @@ class Unit:
 
         Returns
         -------
-        Unit | None
-            unit object for a quantity of temperature difference or temperature.
+        Unit, Unit | None
+            Two unit objects for a quantity of temperature difference or temperature.
 
         Raises
         ------
@@ -561,14 +193,20 @@ class Unit:
         delta_temp = dims(dimensions={base.TEMPERATURE_DIFFERENCE: 1})
         if self.dimensions == other_unit.dimensions == temp and op == "+":
             raise IncorrectTemperatureUnits(self, other_unit)
+
         # Checks to make sure they are both temperatures.
         if (self.dimensions and other_unit.dimensions) in (temp, delta_temp):
+            unit_name = self.name.removeprefix("delta_")
+            relative = Unit(f"delta_{unit_name}")
+            absolute = Unit(unit_name)
+
             if self.dimensions != other_unit.dimensions:
                 # Removes the delta_ prefix if there is one.
-                return Unit(self.name.replace("delta_", ""))
+                return absolute, relative
+
             if self.dimensions == other_unit.dimensions == temp and op == "-":
-                # Adds the delta_ prefix.
-                return Unit(f"delta_{self.name}")
+                return relative, absolute
+
         if self.dimensions != other_unit.dimensions:
             raise IncorrectUnits(self, other_unit)
 
@@ -667,3 +305,370 @@ class Unit:
 
     def __ne__(self, other_unit):
         return not self.__eq__(other_unit=other_unit)
+
+
+def _get_config(name: str) -> dict:
+    """
+    Retrieve unit configuration from '_base_units' or '_derived_units'.
+
+    Parameters
+    ----------
+    name : str
+        Unit string.
+    Returns
+    -------
+    dict
+        Dictionary of extra unit information.
+    """
+    if name in _base_units:
+        return _base_units[name]
+    if name in _derived_units:
+        return _derived_units[name]
+
+
+def _dim_to_units(
+    system: UnitSystem,
+    dimensions: Dimensions,
+) -> str:
+    """
+    Convert a dimensions list into a unit string.
+
+    Parameters
+    ----------
+    dimensions : Dimensions object
+        Instance of Dimension class.
+
+        system : UnitSystem object, optional
+            Unit system for dimensions list.
+            Default is SI units.
+
+        Returns
+        -------
+        str
+            Unit string.
+    """
+    if not system:
+        system = UnitSystem()
+
+    units = ""
+
+    for key, value in dimensions:
+        if value == 1:
+            units += f"{getattr(system, key.name)} "
+        elif value != 0.0:
+            value = int(value) if value % 1 == 0 else value
+            units += f"{getattr(system, key.name)}^{value} "
+
+    return units.strip()
+
+
+def _units_to_dim(
+    units: str, exponent: float = None, dimensions: dict = None
+) -> dict[BaseDimensions : Union[int, float]]:
+    """
+    Convert a unit string into a Dimensions instance.
+
+    Parameters
+    ----------
+    units : str
+        Unit string.
+    Returns
+    -------
+    dict
+        Dimensions dictionary
+    """
+    exponent = exponent or 1.0
+    dimensions = dimensions or {}
+    # Split unit string into terms and parse data associated with individual terms
+    for term in units.split(" "):
+        _, unit_term, unit_term_exponent = _filter_unit_term(term)
+        unit_term_exponent *= exponent
+        # retrieve data associated with base unit
+        if unit_term in _base_units:
+            idx = _base_units[unit_term]["type"]
+
+            if BaseDimensions[idx] in dimensions:
+                dimensions[BaseDimensions[idx]] += unit_term_exponent
+            else:
+                dimensions[BaseDimensions[idx]] = unit_term_exponent
+
+        # Retrieve derived unit composition unit string and SI factor.
+        if unit_term in _derived_units:
+            # Recursively parse composition unit string
+
+            dimensions = _units_to_dim(
+                units=_derived_units[unit_term]["composition"],
+                exponent=unit_term_exponent,
+                dimensions=dimensions,
+            )
+
+    return dimensions
+
+
+def _map_to_units(map: dict) -> str:
+    """
+    Convert a quantity map into a unit string.
+
+    Parameters
+    ----------
+    quantity_map : dict[str, int]
+        Quantity map to convert to a Unit.
+
+    Returns
+    -------
+    Unit
+        Unit object representation of the quantity map.
+    """
+    for key in map.keys():
+        if key not in _api_quantity_map:
+            raise UnknownMapItem(key)
+
+    base_unit = ""
+
+    for key, value in map.items():
+        terms = _api_quantity_map[key]
+        for term in terms.split(" "):
+            multiplier, base, exponent = _filter_unit_term(term)
+
+            base_unit += f"{multiplier}{base}^{exponent*value} "
+
+    return _condense(base_unit)
+
+
+def _multiplier_check(unit_term: str) -> bool:
+    """
+    Check if a unit term contains a multiplier.
+
+    Parameters
+    ----------
+    unit_term : str
+        Unit term of the unit string.
+
+    Returns
+    -------
+    bool
+        ``True`` if the unit term contains a multiplier, ``False`` otherwise.
+    """
+    # Check if the unit term is not an existing base or derived unit.
+    return unit_term and not (
+        (unit_term in _base_units) or (unit_term in _derived_units)
+    )
+
+
+def _si_map(unit_term: str) -> str:
+    """
+    Convert a unit into its SI equivalent.
+
+    Parameters
+    ----------
+    unit_term : str
+        Unit term of the unit string.
+
+    Returns
+    -------
+    str
+        SI unit equivalent.
+    """
+    # Retrieve type associated with unit term
+    unit_term_type = _base_units[unit_term]["type"]
+
+    # Find SI unit with same type as unit term
+    for term, term_info in _base_units.items():
+        if (
+            term_info["type"] == unit_term_type
+            and term_info["si_scaling_factor"] == 1.0
+        ):
+            return term
+
+
+def _condense(units=str) -> str:
+    """
+    Condense a unit string by collecting like terms.
+
+    Parameters
+    ----------
+    units : str
+        Unit string to simplify.
+
+    Returns
+    -------
+    str
+        Simplified unit string.
+    """
+    terms_and_exponents = {}
+    units = units.strip()
+
+    # Split unit string into terms and parse data associated with individual terms
+    for term in units.split(" "):
+        multiplier, unit_term, unit_term_exponent = _filter_unit_term(term)
+        full_term = f"{multiplier}{unit_term}"
+        if full_term in terms_and_exponents:
+            terms_and_exponents[full_term] += unit_term_exponent
+        else:
+            terms_and_exponents[full_term] = unit_term_exponent
+    units = ""
+    # Concatenate unit string
+    for term, exponent in terms_and_exponents.items():
+        if not (exponent):
+            continue
+        if exponent == 1.0:
+            units += f"{term} "
+        else:
+            exponent = int(exponent) if exponent % 1 == 0 else exponent
+            units += f"{term}^{exponent} "
+
+    return units.rstrip()
+
+
+def _filter_unit_term(unit_term: str) -> tuple:
+    """
+    Separate multiplier, base, and exponent from a unit term.
+
+    Parameters
+    ----------
+    unit_term : str
+        Unit term of the unit string.
+
+    Returns
+    -------
+    tuple
+        Tuple containing the multiplier, base, and exponent of the unit term.
+    """
+    multiplier = ""
+    exponent = 1.0
+
+    # strip exponent from unit term
+    if "^" in unit_term:
+        exponent = float(unit_term[unit_term.index("^") + 1 :])
+        unit_term = unit_term[: unit_term.index("^")]
+
+    base = unit_term
+
+    # strip multiplier and base from unit term
+    has_multiplier = _multiplier_check(unit_term)
+    if has_multiplier:
+        for mult in _multipliers:
+            if unit_term.startswith(mult):
+                if not _multiplier_check(unit_term[len(mult) :]):
+                    multiplier = mult
+                    base = unit_term[len(mult) :]
+                    break
+
+    # if we thought it had a multiplier, that's just because the string wasn't
+    # a known unit on its own. So if we can't actually find its multiplier then
+    # this string is an invalid unit string
+    if has_multiplier and not multiplier:
+        raise UnconfiguredUnit(unit_term)
+    return multiplier, base, exponent
+
+
+def _si_data(
+    units: str,
+    exponent: float = None,
+    si_units: str = None,
+    si_scaling_factor: float = None,
+) -> tuple:
+    """
+    Compute the SI unit string, SI scaling factor, and SI offset.
+
+    Parameters
+    ----------
+    units : str
+        Unit string representation of the quantity.
+    exponent : float, None
+        exponent of the unit string.
+    si_units : str, None
+        SI unit string representation of the quantity.
+    si_scaling_factor : float, None
+        SI scaling factor of the unit string.
+
+    Returns
+    -------
+    tuple
+        Tuple containing the SI units, SI scaling factor, and SI offset.
+    """
+    # Initialize default values
+    units = units or " "
+    exponent = exponent or 1.0
+    si_units = si_units or ""
+    si_scaling_factor = si_scaling_factor or 1.0
+    si_offset = _base_units[units]["si_offset"] if units in _base_units else 0.0
+
+    # Split unit string into terms and parse data associated with individual terms
+    for term in units.split(" "):
+        unit_multiplier, unit_term, unit_term_exponent = _filter_unit_term(term)
+
+        unit_term_exponent *= exponent
+
+        si_scaling_factor *= (
+            _multipliers[unit_multiplier] ** unit_term_exponent
+            if unit_multiplier
+            else 1.0
+        )
+
+        # Retrieve data associated with base unit
+        if unit_term in _base_units:
+            if unit_term_exponent == 1.0:
+                si_units += f" {_si_map(unit_term)}"
+            elif unit_term_exponent != 0.0:
+                si_units += f" {_si_map(unit_term)}^{unit_term_exponent}"
+
+            si_scaling_factor *= (
+                _base_units[unit_term]["si_scaling_factor"] ** unit_term_exponent
+            )
+
+        # Retrieve derived unit composition unit string and SI scaling factor
+        elif unit_term in _derived_units:
+            si_scaling_factor *= (
+                _derived_units[unit_term]["factor"] ** unit_term_exponent
+            )
+
+            # Recursively parse composition unit string
+            si_units, si_scaling_factor, _ = _si_data(
+                units=_derived_units[unit_term]["composition"],
+                exponent=unit_term_exponent,
+                si_units=si_units,
+                si_scaling_factor=si_scaling_factor,
+            )
+
+    return _condense(si_units), si_scaling_factor, si_offset
+
+
+class InconsistentDimensions(ValueError):
+    """Raised when units have inconsistent base dimensions."""
+
+    def __init__(self):
+        super().__init__("Unit dimensions do not match given dimensions.")
+
+
+class UnconfiguredUnit(ValueError):
+    """Raised when the specified unit is unconfigured."""
+
+    def __init__(self, unit):
+        super().__init__(f"`{unit}` is an unconfigured unit.")
+
+
+class IncorrectUnits(ValueError):
+    """Raised when the specified units are incorrect."""
+
+    def __init__(self, unit1, unit2):
+        super().__init__(
+            f"'{unit1.si_units}' and '{unit2.si_units}' must match for this operation."
+        )
+
+
+class IncorrectTemperatureUnits(ValueError):
+    """Raised when incompatible temperature dimensions are added."""
+
+    def __init__(self, unit1, unit2):
+        super().__init__(
+            f"Either '{unit1.name}' or '{unit2.name}' must be a relative unit for "
+            f"this operation."
+        )
+
+
+class UnknownMapItem(ValueError):
+    """Raised when a quantity mapping is undefined."""
+
+    def __init__(self, item):
+        super().__init__(f"`{item}` is not a valid quantity map item.")

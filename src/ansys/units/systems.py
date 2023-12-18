@@ -4,32 +4,6 @@ from __future__ import annotations
 from ansys.units import BaseDimensions, _base_units, _unit_systems
 
 
-class NotBaseUnit(ValueError):
-    """Provides the error when the provided unit is unavailable in base units."""
-
-    def __init__(self, unit):
-        super().__init__(
-            f"`{unit}` is not a base unit. To use `{unit}`, add it to the "
-            "`base_units` table within the cfg.yaml file."
-        )
-
-
-class InvalidUnitSystem(ValueError):
-    """Provides the error when the provided unit system is unsupported."""
-
-    def __init__(self, sys):
-        super().__init__(f"`{sys}` is not a supported unit system.")
-
-
-class IncorrectUnitType(ValueError):
-    """Provides the error when the type of provided unit is incorrect."""
-
-    def __init__(self, unit, unit_type):
-        super().__init__(
-            f"The unit `{unit}` is incompatible with unit system type: `{unit_type.name}`"
-        )
-
-
 class UnitSystem:
     """
     A class representing base units for a unit system.
@@ -48,7 +22,6 @@ class UnitSystem:
 
     Attributes
     ----------
-    base_units
     MASS
     LENGTH
     TIME
@@ -116,15 +89,6 @@ class UnitSystem:
             raise IncorrectUnitType(name, unit_type)
 
         setattr(self, f"_{unit_type.name}", unit)
-
-    @property
-    def base_units(self) -> list[str]:
-        """Base units of the unit system."""
-        _base_units = []
-        for unit_type in BaseDimensions:
-            unit = getattr(self, f"_{unit_type.name}")
-            _base_units.append(unit)
-        return _base_units
 
     @property
     def MASS(self):
@@ -217,14 +181,40 @@ class UnitSystem:
         self._set_type(unit_type=BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
     def __repr__(self):
-        units = {}
+        units = ""
         for unit_type in BaseDimensions:
             unit = getattr(self, f"_{unit_type.name}")
-            units.update({unit_type.name: unit})
-        return str(units)
+            units += f"{unit_type.name}: {unit}\n"
+        return units
 
     def __eq__(self, other_sys):
         for attr, value in self.__dict__.items():
             if getattr(other_sys, attr) != value:
                 return False
         return True
+
+
+class NotBaseUnit(ValueError):
+    """Raised when a unit system unit is not a configured base unit."""
+
+    def __init__(self, unit):
+        super().__init__(
+            f"`{unit}` is not a base unit. To use `{unit}`, add it to the "
+            "`base_units` table within the cfg.yaml file."
+        )
+
+
+class InvalidUnitSystem(ValueError):
+    """Raised when a unit system is initialized with an unsupported unit system."""
+
+    def __init__(self, sys):
+        super().__init__(f"`{sys}` is not a supported unit system.")
+
+
+class IncorrectUnitType(ValueError):
+    """Raised when a unit is provided that does not have a valid type of base unit."""
+
+    def __init__(self, unit, unit_type):
+        super().__init__(
+            f"The unit `{unit}` is incompatible with unit system type: `{unit_type.name}`"
+        )

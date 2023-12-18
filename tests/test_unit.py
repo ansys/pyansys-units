@@ -115,8 +115,9 @@ def test_add():
     C = Unit("C")
     delta_C = Unit("delta_C")
     kg = Unit("kg")
-    temp_C = C + delta_C
+    temp_C, delta_temp = C + delta_C
 
+    assert delta_temp == Unit("delta_C")
     assert temp_C == Unit("C")
     assert kg + kg == None
 
@@ -155,8 +156,9 @@ def test_reverse_multiply():
 def test_sub():
     C = Unit("C")
     kg = Unit("kg")
-    delta_C = C - C
+    delta_C, C = C - C
 
+    assert C == Unit("C")
     assert delta_C == Unit("delta_C")
     assert kg - kg == None
 
