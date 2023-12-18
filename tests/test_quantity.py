@@ -32,12 +32,28 @@ def test_preferred_units():
     with pytest.raises(RequiresUniqueDimensions):
         Quantity.preferred_units(units=["kg"])
 
+    Quantity.preferred_units(units=["slug"], remove=True)
+    Quantity.preferred_units(units=["kg"])
+    Quantity.preferred_units(units=["kg Pa"])
+
+    ten_pa = Quantity(10, units="Pa")
+    assert ten_pa.value == pytest.approx(0.0014503773773020918, DELTA)
+    assert ten_pa.units == Unit(units="psi")
+
+    ten_slug = Quantity(10, units="slug")
+    assert ten_slug.value == pytest.approx(145.93902937206367, DELTA)
+    assert ten_slug.units == Unit(units="kg")
+
+    assert (ten_slug * ten_pa).value == pytest.approx(1459.3902937206367, DELTA)
+    assert (ten_slug * ten_pa).units == Unit(units="kg Pa")
+
     ten_N = Quantity(10, units="N")
     ten_m = Quantity(10, units="m")
 
-    assert ten_N * ten_m == Quantity(100, units="J")
+    assert (ten_N * ten_m).value == pytest.approx(100, DELTA)
+    assert (ten_N * ten_m).units == Unit(units="J")
 
-    Quantity.preferred_units(units=["J", "slug", "psi"], remove=True)
+    Quantity.preferred_units(units=["J", "kg", "psi", "kg Pa"], remove=True)
     assert Quantity._chosen_units == []
 
 
