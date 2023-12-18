@@ -17,11 +17,44 @@ from ansys.units.quantity import (  # InvalidFloatUsage,
     IncompatibleValue,
     InsufficientArguments,
     NumPyRequired,
+    RequiresUniqueDimensions,
     get_si_value,
 )
 from ansys.units.unit import IncorrectUnits
 
 DELTA = 1.0e-5
+
+
+def test_preferred_units():
+    Quantity.preferred_units(units=["J", "slug", "psi"])
+    assert Quantity._chosen_units == [Unit("J"), Unit("slug"), Unit("psi")]
+
+    with pytest.raises(RequiresUniqueDimensions):
+        Quantity.preferred_units(units=["kg"])
+
+    Quantity.preferred_units(units=["slug"], remove=True)
+    Quantity.preferred_units(units=["kg"])
+    Quantity.preferred_units(units=["kg Pa"])
+
+    ten_pa = Quantity(10, units="Pa")
+    assert ten_pa.value == pytest.approx(0.0014503773773020918, DELTA)
+    assert ten_pa.units == Unit(units="psi")
+
+    ten_slug = Quantity(10, units="slug")
+    assert ten_slug.value == pytest.approx(145.93902937206367, DELTA)
+    assert ten_slug.units == Unit(units="kg")
+
+    assert (ten_slug * ten_pa).value == pytest.approx(1459.3902937206367, DELTA)
+    assert (ten_slug * ten_pa).units == Unit(units="kg Pa")
+
+    ten_N = Quantity(10, units="N")
+    ten_m = Quantity(10, units="m")
+
+    assert (ten_N * ten_m).value == pytest.approx(100, DELTA)
+    assert (ten_N * ten_m).units == Unit(units="J")
+
+    Quantity.preferred_units(units=["J", "kg", "psi", "kg Pa"], remove=True)
+    assert Quantity._chosen_units == []
 
 
 def test_properties():
@@ -553,3 +586,6 @@ def test_error_messages():
 
     e3 = IncompatibleValue("radian")
     assert str(e3) == "`radian` is incompatible with the current quantity object."
+
+    e4 = RequiresUniqueDimensions(Unit("mm"), Unit("m"))
+    assert str(e4) == "For 'mm' to be added 'm' must be removed."
