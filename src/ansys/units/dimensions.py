@@ -6,20 +6,6 @@ from typing import Union
 from ansys.units import BaseDimensions
 
 
-class IncorrectDimensions(ValueError):
-    """Provides the error when dimensions are not in dimension order."""
-
-    def __init__(self):
-        super().__init__("The `dimensions` key must be a 'BaseDimensions' object")
-
-
-class IncorrectSystem(ValueError):
-    """Provides the error when the given unit system is not a 'UnitSystem'."""
-
-    def __init__(self):
-        super().__init__("The system must be a 'UnitSystem' instance.")
-
-
 class Dimensions:
     """
     A representation of an arbitrary number of dimensions, where each dimension is a
@@ -122,3 +108,10 @@ class Dimensions:
 
     def __bool__(self):
         return bool(self._dimensions)
+
+
+class IncorrectDimensions(ValueError):
+    """Raised on initialization if a dimension is not of type ``BaseDimensions``."""
+
+    def __init__(self):
+        super().__init__("The `dimensions` key must be a 'BaseDimensions' object")
