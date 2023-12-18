@@ -278,7 +278,7 @@ meters_per_second.units  # >>> "m s^-1"
 
 Quantity.preferred_units(units=["J"])
 
-torque = Quantity(1, quantity_map={"Torque": 1})
+torque = Quantity(1, quantity_table={"Torque": 1})
 torque  # >>> Quantity (1.0, "J")
 
 ten_N = Quantity(10, units="N")
