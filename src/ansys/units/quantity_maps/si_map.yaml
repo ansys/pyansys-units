@@ -1,7 +1,7 @@
 # Quantity Map
 # ------------
 #
-# Quantity Name : Quantity unit string
+# Quantity: units
 
 api_quantity_map:
   Mass: kg
