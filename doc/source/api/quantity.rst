@@ -32,3 +32,6 @@ Quantity
 
 .. autoexception:: ansys.units.quantity.NumPyRequired
    :show-inheritance:
+
+.. autoexception:: ansys.units.quantity.RequiresUniqueDimensions
+   :show-inheritance:
