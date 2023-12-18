@@ -16,69 +16,6 @@ except ImportError:
     _array = None
 
 
-class ExcessiveParameters(ValueError):
-    """Provides the error when excessive parameters are provided."""
-
-    def __init__(self):
-        super().__init__(
-            "Quantity only accepts one of the following parameters: \
-            (units) or (quantity_map) or (dimensions)."
-        )
-
-
-class InsufficientArguments(ValueError):
-    """Provides the error when insufficient arguments are provided."""
-
-    def __init__(self):
-        super().__init__("Requires at least one 'value' or 'copy_from' argument.")
-
-
-class IncompatibleDimensions(ValueError):
-    """Provides the error when dimensions are incompatible."""
-
-    def __init__(self, from_unit, to_unit):
-        super().__init__(
-            f"`{from_unit.name}` and `{to_unit.name}` have incompatible dimensions."
-        )
-
-
-class IncompatibleValue(ValueError):
-    """Provides the error when an incompatible value is provided."""
-
-    def __init__(self, value):
-        super().__init__(f"`{value}` is incompatible with the current quantity object.")
-
-
-class IncompatibleQuantities(ValueError):
-    """Provides the error when quantities are incompatible."""
-
-    def __init__(self, q1, q2):
-        super().__init__(f"'{q1}' and '{q2}' are incompatible.")
-
-
-class NumPyRequired(ModuleNotFoundError):
-    """Provides the error when NumPy is unavailable."""
-
-    def __init__(self):
-        super().__init__("To use NumPy arrays and lists install NumPy.")
-
-
-class InvalidFloatUsage(FloatingPointError):
-    """Provides the error when float is unsupported for given type of quantity."""
-
-    def __init__(self):
-        super().__init__(
-            "Only dimensionless quantities and angles can be used as a float."
-        )
-
-
-def get_si_value(quantity: Quantity) -> float:
-    """The value in SI units."""
-    return float(
-        (quantity.value + quantity.units.si_offset) * quantity.units.si_scaling_factor
-    )
-
-
 class Quantity:
     """
     A class representing a physical quantity's value and associated units.
@@ -387,7 +324,7 @@ class Quantity:
         return Quantity(-self.value, self._unit)
 
     def validate_matching_dimensions(self, other):
-        """Validate dimensions of quantities."""
+        """Validates dimensions of quantities."""
         if isinstance(other, Quantity) and (self.dimensions != other.dimensions):
             raise IncompatibleDimensions(from_unit=self.units, to_unit=other.units)
         elif (
@@ -427,3 +364,66 @@ class Quantity:
 
     def __ne__(self, __value):
         return not self.__eq__(__value)
+
+
+def get_si_value(quantity: Quantity) -> float:
+    """Returns a quantity's value in SI units."""
+    return float(
+        (quantity.value + quantity.units.si_offset) * quantity.units.si_scaling_factor
+    )
+
+
+class ExcessiveParameters(ValueError):
+    """Raised when excessive parameters are provided."""
+
+    def __init__(self):
+        super().__init__(
+            "Quantity only accepts one of the following parameters: \
+            (units) or (quantity_map) or (dimensions)."
+        )
+
+
+class InsufficientArguments(ValueError):
+    """Raised when insufficient arguments are provided."""
+
+    def __init__(self):
+        super().__init__("Requires at least one 'value' or 'copy_from' argument.")
+
+
+class IncompatibleDimensions(ValueError):
+    """Raised when dimensions are incompatible."""
+
+    def __init__(self, from_unit, to_unit):
+        super().__init__(
+            f"`{from_unit.name}` and `{to_unit.name}` have incompatible dimensions."
+        )
+
+
+class IncompatibleValue(ValueError):
+    """Raised when an incompatible value is provided."""
+
+    def __init__(self, value):
+        super().__init__(f"`{value}` is incompatible with the current quantity object.")
+
+
+class IncompatibleQuantities(ValueError):
+    """Raised when quantities are incompatible."""
+
+    def __init__(self, q1, q2):
+        super().__init__(f"'{q1}' and '{q2}' are incompatible.")
+
+
+class NumPyRequired(ModuleNotFoundError):
+    """Raised when NumPy is unavailable."""
+
+    def __init__(self):
+        super().__init__("To use NumPy arrays and lists install NumPy.")
+
+
+class InvalidFloatUsage(FloatingPointError):
+    """Raised when float is unsupported for given type of quantity."""
+
+    def __init__(self):
+        super().__init__(
+            "Only dimensionless quantities and angles can be used as a float."
+        )
