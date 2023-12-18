@@ -450,8 +450,8 @@ def test_quantity_from_dimensions():
     assert p.units == Unit("kg m^-1 s^-2")
 
 
-def test_quantity_map():
-    quantity_map_from_settings_API = {
+def test_quantity_table():
+    quantity_dict_from_settings_API = {
         "Mass": 1,
         "Velocity": 2.5,
         "Current": 3,
@@ -459,7 +459,7 @@ def test_quantity_map():
         "Heat Transfer Coefficient": 2,
     }
 
-    api_test = Quantity(10.5, quantity_map=quantity_map_from_settings_API)
+    api_test = Quantity(10.5, quantity_table=quantity_dict_from_settings_API)
     assert api_test.value == 10.5
     assert api_test.units == Unit("kg m^-1.5 s^-2.5 A^3 cd W^2 K^-2")
 
@@ -528,7 +528,7 @@ def test_excessive_parameters_error():
             value=10,
             units="farad",
             dimensions=Dimensions({dims.MASS: 1}),
-            quantity_map={"Velocity": 3},
+            quantity_table={"Velocity": 3},
         )
     with pytest.raises(InsufficientArguments):
         e2 = Quantity()
@@ -545,7 +545,7 @@ def test_error_messages():
     assert (
         str(e1)
         == "Quantity only accepts one of the following parameters: \
-            (units) or (quantity_map) or (dimensions)."
+            (units) or (quantity_table) or (dimensions)."
     )
 
     e2 = IncompatibleDimensions(Unit("mm"), Unit("K"))

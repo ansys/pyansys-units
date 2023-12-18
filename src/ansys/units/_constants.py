@@ -26,8 +26,8 @@ _unit_systems: dict = qc_data["unit_systems"]
 _base_units: dict = qc_data["base_units"]
 _derived_units: dict = qc_data["derived_units"]
 
-map_path = os.path.join(file_dir, "quantity_maps/si_map.yaml")
+table_path = os.path.join(file_dir, "quantity_tables/si_table.yaml")
 
-with open(map_path, "r") as api_map:
-    api_map_data = yaml.safe_load(api_map)
-_api_quantity_map: dict = api_map_data["api_quantity_map"]
+with open(table_path, "r") as table:
+    table_data = yaml.safe_load(table)
+_quantity_units_table: dict = table_data["quantity_units_table"]

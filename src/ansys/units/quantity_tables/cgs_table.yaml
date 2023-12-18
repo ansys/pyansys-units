@@ -3,7 +3,7 @@
 #
 # Quantity: units
 
-api_quantity_map:
+quantity_units_table:
   Mass: g
   Length: cm
   Time: s
