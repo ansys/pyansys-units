@@ -121,6 +121,9 @@ class Quantity:
         quantity is initialized. Conversion is always carried out if the base
         units are consistent with the preferred units.
 
+        Each preferred unit must have unique dimensions. To override units with
+        the same dimensions, the original must first be removed.
+
         Parameters
         ----------
         units : list
