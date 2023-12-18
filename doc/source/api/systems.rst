@@ -4,8 +4,17 @@
 Unit systems
 ============
 
-.. automodule:: ansys.units.systems
+.. autoclass:: ansys.units.systems.UnitSystem
    :members:
    :show-inheritance:
    :undoc-members:
-   :exclude-members: __weakref__, __dict__, __init__, UnitSystemError
+   :exclude-members:
+
+.. autoexception:: ansys.units.systems.IncorrectUnitType
+   :show-inheritance:
+
+.. autoexception:: ansys.units.systems.InvalidUnitSystem
+   :show-inheritance:
+
+.. autoexception:: ansys.units.systems.NotBaseUnit
+   :show-inheritance:

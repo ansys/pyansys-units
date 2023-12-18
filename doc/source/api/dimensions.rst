@@ -4,8 +4,11 @@
 Dimensions
 ==========
 
-.. automodule:: ansys.units.dimensions
+.. autoclass:: ansys.units.dimensions.Dimensions
    :members:
    :show-inheritance:
    :undoc-members:
-   :exclude-members: __weakref__, __dict__, __init__, DimensionsError
+   :exclude-members:
+
+.. autoexception:: ansys.units.dimensions.IncorrectDimensions
+   :show-inheritance:
