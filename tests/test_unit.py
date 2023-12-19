@@ -13,7 +13,7 @@ from ansys.units.unit import (
     IncorrectTemperatureUnits,
     IncorrectUnits,
     UnconfiguredUnit,
-    UnknownMapItem,
+    UnknownTableItem,
 )
 
 
@@ -128,16 +128,16 @@ def test_add():
         C + kg
 
 
-def test_quantity_map():
-    qm1_map = {
+def test_quantity_table():
+    qm1_table = {
         "Mass": 1,
         "Velocity": 2.5,
         "Current": 3,
         "Light": 1,
-        "Epsilon Flux Coefficient": 2,
+        "Heat Transfer Coefficient": 2,
     }
-    qm1 = Unit(map=qm1_map)
-    assert qm1.name == "kg^3 m^-1.5 s^-6.5 A^3 cd"
+    qm1 = Unit(table=qm1_table)
+    assert qm1.name == "kg m^-1.5 s^-2.5 A^3 cd W^2 K^-2"
 
 
 def test_unit_multiply_by_quantity():
@@ -216,11 +216,11 @@ def test_copy_units_with_incompatable_dimensions():
 
 
 def test_errors():
-    qm_map = {"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
-    with pytest.raises(UnknownMapItem) as e_info:
-        qm = Unit(map=qm_map)
+    qm_table = {"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
+    with pytest.raises(UnknownTableItem) as e_info:
+        qm = Unit(table=qm_table)
 
 
 def test_error_messages():
-    e1 = UnknownMapItem("Risk")
-    assert str(e1) == "`Risk` is not a valid quantity map item."
+    e1 = UnknownTableItem("Risk")
+    assert str(e1) == "`Risk` is not a valid quantity table item."

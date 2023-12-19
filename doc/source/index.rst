@@ -18,7 +18,7 @@ conversions. Its features enable seamless setup and usage of physical
 quantities, enabling you to perform these tasks:
 
 - Instantiate physical quantities from a unit string, list of dimensions, or
-  quantity map.
+  quantity table.
 - Perform unit conversions and arithmetic operations between quantity objects or
   real values.
 - Create custom units and unit systems.

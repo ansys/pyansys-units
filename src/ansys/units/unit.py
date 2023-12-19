@@ -5,10 +5,10 @@ from typing import Optional, Union
 from ansys.units import (
     BaseDimensions,
     Dimensions,
-    _api_quantity_map,
     _base_units,
     _derived_units,
     _multipliers,
+    _quantity_units_table,
 )
 from ansys.units.systems import UnitSystem
 
@@ -28,8 +28,8 @@ class Unit:
     system: str, optional
         Define the unit system for base units of dimension,
         default is SI.
-    map: dict, optional
-        A dictionary of api map keys from the cfg.yaml and exponent values.
+    table: dict, optional
+        A dictionary of api table keys from the cfg.yaml and exponent values.
     copy_from: Unit, optional
         A previous instance of Unit.
 
@@ -60,7 +60,7 @@ class Unit:
         config: dict = None,
         dimensions: Dimensions = None,
         system: Union[UnitSystem, str] = None,
-        map: dict = None,
+        table: dict = None,
         copy_from: Unit = None,
     ):
         if copy_from:
@@ -68,8 +68,8 @@ class Unit:
                 raise InconsistentDimensions()
             units = copy_from.name
 
-        if map:
-            units = _map_to_units(map=map)
+        if table:
+            units = _table_to_units(table=table)
 
         if units:
             self._name = units
@@ -157,8 +157,8 @@ class Unit:
             unit = Unit(units=unit_name)
             if self.dimensions == unit.dimensions:
                 compatible_units.add(unit.name)
-        for unit_name in _api_quantity_map:
-            unit = Unit(map={unit_name: 1})
+        for unit_name in _quantity_units_table:
+            unit = Unit(table={unit_name: 1})
             if self.dimensions == unit.dimensions:
                 compatible_units.add(unit.name)
         compatible_units.discard(self.name)
@@ -405,28 +405,28 @@ def _units_to_dim(
     return dimensions
 
 
-def _map_to_units(map: dict) -> str:
+def _table_to_units(table: dict) -> str:
     """
-    Convert a quantity map into a unit string.
+    Convert a quantity table item into a unit string.
 
     Parameters
     ----------
-    quantity_map : dict[str, int]
-        Quantity map to convert to a Unit.
+    table : dict[str, int]
+        Quantity table item to convert to a Unit.
 
     Returns
     -------
     Unit
-        Unit object representation of the quantity map.
+        Unit object representation of a quantity table item.
     """
-    for key in map.keys():
-        if key not in _api_quantity_map:
-            raise UnknownMapItem(key)
+    for key in table.keys():
+        if key not in _quantity_units_table:
+            raise UnknownTableItem(key)
 
     base_unit = ""
 
-    for key, value in map.items():
-        terms = _api_quantity_map[key]
+    for key, value in table.items():
+        terms = _quantity_units_table[key]
         for term in terms.split(" "):
             multiplier, base, exponent = _filter_unit_term(term)
 
@@ -667,8 +667,8 @@ class IncorrectTemperatureUnits(ValueError):
         )
 
 
-class UnknownMapItem(ValueError):
-    """Raised when a quantity mapping is undefined."""
+class UnknownTableItem(ValueError):
+    """Raised when a quantity table item is undefined."""
 
     def __init__(self, item):
-        super().__init__(f"`{item}` is not a valid quantity map item.")
+        super().__init__(f"`{item}` is not a valid quantity table item.")

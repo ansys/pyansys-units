@@ -35,8 +35,8 @@ class Quantity:
         Real value of the quantity.
     units : str, Unit, optional
         Initializes the quantity's units using a string or ``Unit`` instance.
-    quantity_map : dict[str, int], optional
-        Initializes the quantity's units using the quantity map.
+    quantity_table : dict[str, int], optional
+        Initializes the quantity's units using the quantity table.
     dimensions : Dimensions, optional
         Initializes the quantity's units in SI using a ``Dimensions`` instance.
     copy_from : Quantity, optional
@@ -56,14 +56,14 @@ class Quantity:
         self,
         value: Union[int, float] = None,
         units: Union[Unit, str] = None,
-        quantity_map: dict = None,
+        quantity_table: dict = None,
         dimensions: Dimensions = None,
         copy_from: Quantity = None,
     ):
         if (
-            (units and quantity_map)
+            (units and quantity_table)
             or (units and dimensions)
-            or (quantity_map and dimensions)
+            or (quantity_table and dimensions)
         ):
             raise ExcessiveParameters()
 
@@ -87,8 +87,8 @@ class Quantity:
         else:
             self._value = float(value)
 
-        if quantity_map:
-            units = Unit(map=quantity_map)
+        if quantity_table:
+            units = Unit(table=quantity_table)
 
         if dimensions:
             units = Unit(dimensions=dimensions)
@@ -415,7 +415,7 @@ class ExcessiveParameters(ValueError):
     def __init__(self):
         super().__init__(
             "Quantity only accepts one of the following parameters: \
-            (units) or (quantity_map) or (dimensions)."
+            (units) or (quantity_table) or (dimensions)."
         )
 
 

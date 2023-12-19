@@ -11,10 +11,10 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 import os
 
 from ansys.units._constants import (  # noqa: F401
-    _api_quantity_map,
     _base_units,
     _derived_units,
     _multipliers,
+    _quantity_units_table,
     _QuantityType,
     _unit_systems,
 )
