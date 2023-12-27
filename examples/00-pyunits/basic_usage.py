@@ -8,7 +8,7 @@ Its features enable seamless setup and usage of physical quantities.
 
 This example shows you how to perform these tasks:
 
-- Create quantities (unit strings, dimensions, and quantity maps).
+- Create quantities (unit strings, dimensions, and quantity tables).
 - Access different quantity properties.
 - Perform arithmetic operations.
 - Perform unit conversions.
@@ -32,7 +32,7 @@ from ansys.units.quantity import get_si_value
 # You can instantiate quantities using one of three methods:
 # - Unit strings : str, Unit
 # - Dimensions : Dimensions
-# - Quantity maps : dict
+# - Quantity table : dict
 
 # Unit strings
 
@@ -55,16 +55,16 @@ acceleration = Quantity(value=3, dimensions=acc_dims)
 tor_dims = Dimensions({dims.MASS: 1, dims.LENGTH: 2, dims.TIME: -2})
 torque = Quantity(value=5, dimensions=tor_dims)
 
-# Quantity map
+# Quantity table
 
-vol_map = {"Volume": 1}
-volume = Quantity(value=1, quantity_map=vol_map)
+vol_dict = {"Volume": 1}
+volume = Quantity(value=1, quantity_table=vol_dict)
 
-acc_map = {"Acceleration": 1}
-acceleration = Quantity(value=3, quantity_map=acc_map)
+acc_dict = {"Acceleration": 1}
+acceleration = Quantity(value=3, quantity_table=acc_dict)
 
-tor_map = {"Torque": 1}
-torque = Quantity(value=5, quantity_map=tor_map)
+tor_dict = {"Torque": 1}
+torque = Quantity(value=5, quantity_table=tor_dict)
 
 ###############################################################################
 # Specify quantity properties
@@ -79,8 +79,8 @@ torque = Quantity(value=5, quantity_map=tor_map)
 # 6. is_dimensionless : bool
 
 
-cap_map = {"Capacitance": 1}
-capacitance = Quantity(value=50, quantity_map=cap_map)
+cap_dict = {"Capacitance": 1}
+capacitance = Quantity(value=50, quantity_table=cap_dict)
 
 capacitance.value  # >>> 50.0
 capacitance.units.name  # >>> "farad"
@@ -278,7 +278,7 @@ meters_per_second.units  # >>> "m s^-1"
 
 Quantity.preferred_units(units=["J"])
 
-torque = Quantity(1, quantity_map={"Torque": 1})
+torque = Quantity(1, quantity_table={"Torque": 1})
 torque  # >>> Quantity (1.0, "J")
 
 ten_N = Quantity(10, units="N")

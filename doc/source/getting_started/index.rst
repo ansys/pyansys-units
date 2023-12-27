@@ -48,9 +48,9 @@ You can instantiate quantities with one of four methods:
    acceleration.value  # 3.0
    acceleration.units.name  # "m s^-2"
 
-   # Using the quantity map
+   # Using the quantity table
 
-   torque = Quantity(5, quantity_map={"Torque": 1})
+   torque = Quantity(5, quantity_table={"Torque": 1})
 
    torque.value  # 5.0
    torque.units.name  # "N m"
