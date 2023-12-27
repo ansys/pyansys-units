@@ -1,6 +1,10 @@
-name: "Pull Request Labeler"
+name: Labeler
 on:
-- pull_request
+  pull_request:
+  push:
+    branches: [ main ]
+    paths:
+      - '../labels.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,7 +35,6 @@ jobs:
       uses: actions/labeler@v5
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        sync-labels: ''
 
     # Label based on branch name
     - uses: actions-ecosystem/action-add-labels@v1
