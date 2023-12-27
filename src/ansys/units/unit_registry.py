@@ -3,20 +3,12 @@ import os
 
 import yaml
 
-import ansys.units as ansunits
-
-
-class UnitAlreadyRegistered(ValueError):
-    """Provides the error when the specified unit is trying to override a registered
-    unit."""
-
-    def __init__(self, name):
-        super().__init__(f"Unable to override `{name}` it has already been registered.")
+from ansys.units import Unit
 
 
 class UnitRegistry:
     """
-    A container of valid ``Unit`` instances.
+    A representation of valid ``Unit`` instances.
 
     All base and derived units loaded from the configuration file, `cfg.yaml`,
     on package initialization are provided by default.
@@ -55,7 +47,7 @@ class UnitRegistry:
             unitdict.update(**_base_units, **_derived_units)
 
         for unit in unitdict:
-            setattr(self, unit, ansunits.Unit(unit, unitdict[unit]))
+            setattr(self, unit, Unit(unit, unitdict[unit]))
 
     def __str__(self):
         returned_string = ""
@@ -68,3 +60,14 @@ class UnitRegistry:
         if hasattr(self, __name):
             raise UnitAlreadyRegistered(__name)
         self.__dict__[__name] = unit
+
+    def __iter__(self):
+        for item in self.__dict__:
+            yield getattr(self, item)
+
+
+class UnitAlreadyRegistered(ValueError):
+    """Raised when a unit has previously been registered."""
+
+    def __init__(self, name: str):
+        super().__init__(f"Unable to override `{name}` it has already been registered.")
