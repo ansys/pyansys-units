@@ -3,27 +3,32 @@ import os
 
 import yaml
 
-import ansys.units as ansunits
+from ansys.units import Unit
 
 
 class UnitRegistry:
     """
-    A container of common ``Units`` for ease of use. Defaults to all units in
-    '_base_units' and '_derived_units'.
+    A representation of valid ``Unit`` instances.
+
+    All base and derived units loaded from the configuration file, `cfg.yaml`,
+    on package initialization are provided by default.
 
     Parameters
     ----------
     config: str, optional
-        Custom .yaml file or `cfg.yaml`. Format must match `cfg.yaml`.
+        Path of a ``YAML`` configuration file, which can be a custom file, and
+        defaults to the provided file, ``cfg.yaml``. Custom configuration files
+        must match the format of the default configuration file.
     other: dict, optional
-        Dictionary for extra units.
+        Dictionary for additional units.
 
     Examples
     --------
-    import ansys.units as ansunits
-    ureg = ansunits.UnitRegistry()
-
-    ureg.kg == ansunits.Unit(units= "kg")
+    >>> from ansys.units import UnitRegistry, Unit
+    >>> ureg = UnitRegistry()
+    >>> assert ureg.kg == Unit(units="kg")
+    >>> fps = Unit("ft s^-1")
+    >>> ureg.foot_per_sec = fps
     """
 
     def __init__(self, config="cfg.yaml", other: dict = None):
@@ -42,7 +47,7 @@ class UnitRegistry:
             unitdict.update(**_base_units, **_derived_units)
 
         for unit in unitdict:
-            setattr(self, unit, ansunits.Unit(unit, unitdict[unit]))
+            setattr(self, unit, Unit(unit, unitdict[unit]))
 
     def __str__(self):
         returned_string = ""
@@ -53,17 +58,16 @@ class UnitRegistry:
 
     def __setattr__(self, __name: str, unit: any) -> None:
         if hasattr(self, __name):
-            raise RegistryError.UNIT_ALREADY_REGISTERED(__name)
+            raise UnitAlreadyRegistered(__name)
         self.__dict__[__name] = unit
 
+    def __iter__(self):
+        for item in self.__dict__:
+            yield getattr(self, item)
 
-class RegistryError(ValueError):
-    """Custom dimensions errors."""
 
-    def __init__(self, err):
-        super().__init__(err)
+class UnitAlreadyRegistered(ValueError):
+    """Raised when a unit has previously been registered."""
 
-    @classmethod
-    def UNIT_ALREADY_REGISTERED(cls, name):
-        """Return in case of trying to override a registered unit."""
-        return cls(f"Unable to override `{name}` it has already been registered.")
+    def __init__(self, name: str):
+        super().__init__(f"Unable to override `{name}` it has already been registered.")

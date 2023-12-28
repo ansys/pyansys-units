@@ -92,52 +92,78 @@ Getting started
 
 Basic usage
 ~~~~~~~~~~~
-
-Import the ``ansys.units`` package:
+PyAnsys Units supports defining quantities and their units in a intuitive way.
+Start by importing the ``ansys.units`` package:
 
 .. code:: python
 
    import ansys.units as ansunits
 
-You can instantiate quantities with one of three methods:
+You can instantiate quantities with one of four methods:
 
 .. code:: python
 
-   # unit string
+   # Using unit strings
 
    volume = ansunits.Quantity(value=1, units="m^3")
 
    volume.value  # 1.0
-   volume.units  # "m^3"
+   volume.units.name  # "m^3"
 
-   # dimensions
+   # Using Unit instances
 
-   acceleration = ansunits.Quantity(value=3, dimensions=[0, 1, -2])
+   ureg = ansunits.UnitRegistry()
+
+   mass = ansunits.Quantity(value=1, units=ureg.kg)
+
+   volume.value  # 1.0
+   volume.units.name  # "kg"
+
+   # Using base dimensions
+
+   dims = ansunits.BaseDimensions
+   dimensions = ansunits.Dimensions({dims.LENGTH: 1, dims.TIME: -2})
+
+   acceleration = ansunits.Quantity(value=3, dimensions=dimensions)
 
    acceleration.value  # 3.0
-   acceleration.units  # "m s^-2"
+   acceleration.units.name  # "m s^-2"
 
-   # quantity map
+   # Using the quantity map
 
    torque = ansunits.Quantity(5, quantity_map={"Torque": 1})
 
    torque.value  # 5.0
-   torque.units  # "N m"
+   torque.units.name  # "N m"
+   torque.si_units  # "kg m^2 s^-2"
 
 You can instantiate unit systems with one of two methods:
 
 .. code:: python
 
-   # custom unit systems
-
-   sys = ansunits.UnitSystem(
-       name="sys",
-       base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
-   )
-
-   # pre-defined unit systems
+   # Use a pre-defined unit system
 
    si = ansunits.UnitSystem(unit_sys="SI")
+
+   si.base_units  # ['kg', 'm', 's', 'K', 'delta_K', 'radian', 'mol', 'cd', 'A', 'sr']
+
+   # Custom unit systems are defined by passing selected base units. Any unit
+   # type that is not given will be filled with the SI equivalent.
+
+   ureg = ansunits.UnitRegistry()
+   dims = ansunits.BaseDimensions
+
+   sys = ansunits.UnitSystem(
+       base_units={
+           dims.MASS: ureg.slug,
+           dims.LENGTH: ureg.ft,
+           dims.TEMPERATURE: ureg.R,
+           dims.TEMPERATURE_DIFFERENCE: ureg.delta_R,
+           dims.CHEMICAL_AMOUNT: ureg.slugmol,
+       }
+   )
+
+   sys.base_units  # ['slug', 'ft', 's', 'R', 'delta_R', 'radian', 'slugmol', 'cd', 'A', 'sr']
 
 Examples
 ~~~~~~~~
@@ -167,12 +193,12 @@ Directly convert values to another set of units:
 
    import ansys.units as ansunits
 
-   fps = ansunits.Quantity(1, "lb ft^-1 s^-1")
-   fps.value  # 1
+   flbs = ansunits.Quantity(1, "lb ft^-1 s^-1")
+   flbs.value  # 1
 
-   pas = fps.to("Pa s")
+   pas = flbs.to("Pa s")
    pas.value  # 1.4881639435695542
-   pas.units  # 'Pa s'
+   pas.units.name  # 'Pa s'
 
 Use a custom unit system to perform conversions:
 
@@ -180,16 +206,24 @@ Use a custom unit system to perform conversions:
 
    import ansys.units as ansunits
 
+   ureg = ansunits.UnitRegistry()
+   dims = ansunits.BaseDimensions
+
    sys = ansunits.UnitSystem(
-       name="sys",
-       base_units=["slug", "ft", "s", "R", "radian", "slugmol", "cd", "A", "sr"],
+       base_units={
+           dims.MASS: ureg.slug,
+           dims.LENGTH: ureg.ft,
+           dims.TEMPERATURE: ureg.R,
+           dims.TEMPERATURE_DIFFERENCE: ureg.delta_R,
+           dims.CHEMICAL_AMOUNT: ureg.slugmol,
+       }
    )
 
    v = ansunits.Quantity(10, "kg m s^2")
    v2 = sys.convert(v)
 
    v2.value  # 2.2480894309971045
-   v2.units  # 'slug ft s^2'
+   v2.units.name  # 'slug ft s^2'
 
 License
 -------

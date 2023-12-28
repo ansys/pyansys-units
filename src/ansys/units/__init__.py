@@ -11,20 +11,19 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 import os
 
 from ansys.units._constants import (  # noqa: F401
-    _api_quantity_map,
     _base_units,
     _derived_units,
     _multipliers,
+    _quantity_units_table,
     _QuantityType,
     _unit_systems,
 )
-from ansys.units.base_dimensions import BaseDimensions
-from ansys.units.dimensions import Dimensions, DimensionsError  # noqa: F401
-from ansys.units.map import QuantityMap, QuantityMapError  # noqa: F401
-from ansys.units.quantity import Quantity, QuantityError  # noqa: F401
-from ansys.units.systems import UnitSystem, UnitSystemError  # noqa: F401
-from ansys.units.unit import Unit, UnitError  # noqa: F401
-from ansys.units.unit_registry import RegistryError, UnitRegistry  # noqa: F401
+from ansys.units.base_dimensions import BaseDimensions  # noqa: F401
+from ansys.units.dimensions import Dimensions  # noqa: F401
+from ansys.units.quantity import Quantity, get_si_value  # noqa: F401
+from ansys.units.systems import UnitSystem  # noqa: F401
+from ansys.units.unit import Unit  # noqa: F401
+from ansys.units.unit_registry import UnitRegistry  # noqa: F401
 
 _THIS_DIRNAME = os.path.dirname(__file__)
 _README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"))

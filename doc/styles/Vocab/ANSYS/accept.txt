@@ -1,3 +1,10 @@
 ANSYS
 Ansys
 ansys
+API
+[Pp]y[Aa]nsys
+Pythonic
+celsius
+rankine
+fahrenheit
+substrings

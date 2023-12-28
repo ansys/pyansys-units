@@ -4,8 +4,11 @@
 Unit registry
 =============
 
-.. automodule:: ansys.units.unit_registry
+.. autoclass:: ansys.units.unit_registry.UnitRegistry
    :members:
    :show-inheritance:
    :undoc-members:
-   :exclude-members: __weakref__, __dict__, __init__
+   :exclude-members:
+
+.. autoexception:: ansys.units.unit_registry.UnitAlreadyRegistered
+   :show-inheritance:

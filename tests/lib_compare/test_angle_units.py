@@ -58,13 +58,13 @@ def test_pint_angle_and_dimensionless_are_convertible():
 
 
 def test_pyunits_angle_and_dimensionless_are_not_convertible():
-    from ansys.units.quantity import Quantity, QuantityError
+    from ansys.units.quantity import IncompatibleDimensions, Quantity
 
     no_dim = Quantity(1.0, "")
-    with pytest.raises(QuantityError):
+    with pytest.raises(IncompatibleDimensions):
         no_dim.to("radian")
     radian = Quantity(1.0, "radian")
-    with pytest.raises(QuantityError):
+    with pytest.raises(IncompatibleDimensions):
         # seems generally meaningless, but OK, this is something
         # that could happen in a generic loop:
         radian.to("")
@@ -86,13 +86,13 @@ def test_pint_angle_works_with_trigonometry():
 
 
 def test_pyunits_angle_works_with_trigonometry():
-    from ansys.units.quantity import Quantity
+    from ansys.units.quantity import Quantity, get_si_value
 
     half_pi_rads = Quantity(0.5 * math.pi, "radian")
     sixty_degrees = Quantity(60.0, "degree")
-    assert math.sin(float(half_pi_rads)) == pytest.approx(1.0)
+    assert math.sin(get_si_value(half_pi_rads)) == pytest.approx(1.0)
     # see that PyUnits goes to radians for the float conversion, which is nice
-    assert math.cos(float(sixty_degrees)) == pytest.approx(0.5)
+    assert math.cos(get_si_value(sixty_degrees)) == pytest.approx(0.5)
 
 
 @pytest.mark.developer_only
@@ -148,13 +148,13 @@ def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
 
 
 def test_ansunits_frequency_and_angular_frequency_are_not_convertible():
-    from ansys.units.quantity import Quantity, QuantityError
+    from ansys.units.quantity import IncompatibleDimensions, Quantity
 
     # ansunits avoids the pint complications by simply not allowing
     # those conversions
     hz = Quantity(1.0, "Hz")
-    with pytest.raises(QuantityError):
+    with pytest.raises(IncompatibleDimensions):
         hz.to("radian s^-1")
     rad_per_s = Quantity(1.0, "radian s^-1")
-    with pytest.raises(QuantityError):
+    with pytest.raises(IncompatibleDimensions):
         rad_per_s.to("Hz")

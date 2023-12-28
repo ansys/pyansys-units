@@ -3,11 +3,12 @@ import tempfile
 
 import pytest
 
-import ansys.units as ansunits
+from ansys.units import Unit, UnitRegistry, _base_units
+from ansys.units.unit_registry import UnitAlreadyRegistered
 
 
 def test_default_units():
-    ur = ansunits.UnitRegistry()
+    ur = UnitRegistry()
     kg = ur.kg
     assert kg.name == "kg"
     assert kg._type == "MASS"
@@ -17,6 +18,11 @@ def test_default_units():
     assert N.name == "N"
     assert N._composition == "kg m s^-2"
     assert N.si_scaling_factor == 1
+    inch = ur.inch
+    assert inch.name == "inch"
+    assert inch._type == "LENGTH"
+    assert inch.si_scaling_factor == 0.0254
+    assert inch.si_offset == 0
 
 
 def test_custom_yaml():
@@ -41,7 +47,7 @@ derived_units:
 """
     with tempfile.NamedTemporaryFile(delete=False, suffix=".yaml", dir=cwd) as fp:
         fp.write(custom_file)
-    ur = ansunits.UnitRegistry(config=fp.name)
+    ur = UnitRegistry(config=fp.name)
     os.remove(fp.name)
     if os.path.exists(fp.name):
         print(f"File: {fp.name} was not deleted")
@@ -56,20 +62,20 @@ derived_units:
 
 
 def test_additional_units():
-    kg = ansunits._base_units["kg"]
-    ur = ansunits.UnitRegistry(config=None, other={"kg": kg})
-    default_ur = ansunits.UnitRegistry()
+    kg = _base_units["kg"]
+    ur = UnitRegistry(config=None, other={"kg": kg})
+    default_ur = UnitRegistry()
     assert str(ur) == "kg, "
     assert ur.kg == default_ur.kg
 
 
 def test_immutability():
-    ur = ansunits.UnitRegistry()
-    with pytest.raises(ansunits.RegistryError):
-        ur.m = ansunits.Unit("ft")
+    ur = UnitRegistry()
+    with pytest.raises(UnitAlreadyRegistered):
+        ur.m = Unit("ft")
 
 
 def test_error_message():
-    e1 = ansunits.RegistryError.UNIT_ALREADY_REGISTERED("kg")
+    e1 = UnitAlreadyRegistered("kg")
     expected_str = "Unable to override `kg` it has already been registered."
     assert str(e1) == expected_str
