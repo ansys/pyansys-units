@@ -31,7 +31,7 @@ dependencies = [
 [project.optional-dependencies]
 doc = [
     "ansys-sphinx-theme==0.12.5",
-    "matplotlib==3.8.1",
+    "matplotlib==3.8.2",
     "numpydoc==1.6.0",
     "Sphinx==7.2.6",
     "sphinx-copybutton==0.5.2",
