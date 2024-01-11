@@ -8,3 +8,4 @@ celsius
 rankine
 fahrenheit
 substrings
+PyAnsys Units
