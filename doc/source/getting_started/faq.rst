@@ -13,7 +13,7 @@ operations and conversions.
 
 What unit systems are provided by default?
 """"""""""""""""""""""""""""""""""""""""""
-PyAnsys Units provides the following unit systems by default:
+PyAnsys units provides the following unit systems by default:
 
 - `International System of Units <https://en.wikipedia.org/wiki/International_System_of_Units>`_ (SI)
 - `Centimetre gram second <https://en.wikipedia.org/wiki/Centimetre–gram–second_system_of_units>`_ (CGS)
@@ -24,11 +24,11 @@ British technical units define the mass units as the ``slug``, length units as
 force units. You can introduce your own unit systems either dynamically at run
 time or by providing a custom configuration file.
 
-PyAnsys Units defines a unit system as a `unique selection` of base units. For
+PyAnsys units defines a unit system as a `unique selection` of base units. For
 instance, the SI unit system is a unique choice of units for the default base
 units.
 
-How is PyAnsys Units different from pint?
+How is PyAnsys units different from pint?
 """""""""""""""""""""""""""""""""""""""""
 
 In contrast to pint, the ``UnitRegistry`` is only a container of the configured
@@ -41,5 +41,5 @@ Equivalent units are also handled differently. Any two ``Unit`` objects that
 have the same dimensions, SI offset, and SI scaling factor are evaluated as
 equal.
 
-PyAnsys Units treats all angles as dimensional units. With this behavior the
+PyAnsys units treats all angles as dimensional units. With this behavior the
 conversion from rad/s to Hz is not allowed.
