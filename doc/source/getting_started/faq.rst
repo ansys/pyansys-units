@@ -38,7 +38,7 @@ the ``UnitSystem`` is a standalone class. When creating a ``Unit`` using
 units.
 
 Equivalent units are also handled differently. Any two ``Unit`` objects that
-have the same dimensions, SI offset, and SI scaling factor will be evaluated as
+have the same dimensions, SI offset, and SI scaling factor are evaluated as
 equal.
 
 PyAnsys Units treats all angles as dimensional units. With this behavior the
