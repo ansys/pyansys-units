@@ -1,4 +1,4 @@
-PyAnsys Units documentation |version|
+PyAnsys-Units documentation |version|
 =====================================
 
 .. toctree::
