@@ -1,4 +1,5 @@
 """Provides the ``UnitRegistry`` class."""
+
 import os
 
 import yaml
