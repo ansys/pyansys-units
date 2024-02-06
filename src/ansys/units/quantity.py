@@ -1,4 +1,5 @@
 """Provides the ``Quantity`` class."""
+
 from __future__ import annotations
 
 import operator
