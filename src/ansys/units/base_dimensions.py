@@ -1,4 +1,5 @@
 """Provides the ``BaseDimensions`` class."""
+
 from enum import Enum
 
 
