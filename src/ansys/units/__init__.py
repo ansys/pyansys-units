@@ -1,6 +1,5 @@
 """Pyunits is a pythonic interface for units, unit systems, and unit conversions."""
 
-
 try:
     import importlib.metadata as importlib_metadata
 except ModuleNotFoundError:

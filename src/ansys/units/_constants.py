@@ -1,4 +1,5 @@
 """Provides ``QuantityType`` class."""
+
 import os
 
 import yaml

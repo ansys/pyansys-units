@@ -1,4 +1,5 @@
 """Provides the ``UnitSystem`` class."""
+
 from __future__ import annotations
 
 from ansys.units import BaseDimensions, _base_units, _unit_systems
