@@ -592,5 +592,5 @@ def test_error_messages():
 
 
 def test_value_as_string():
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         q = Quantity("string", "m")

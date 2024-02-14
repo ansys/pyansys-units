@@ -79,7 +79,7 @@ class Quantity:
 
         if not isinstance(value, (float, int)):
             if isinstance(value, str):
-                raise ValueError("value should be either float, int or [float, int].")
+                raise TypeError("value should be either float, int or [float, int].")
             if _array:
                 if isinstance(value, _array.ndarray):
                     self._value = value
