@@ -589,3 +589,8 @@ def test_error_messages():
 
     e4 = RequiresUniqueDimensions(Unit("mm"), Unit("m"))
     assert str(e4) == "For 'mm' to be added 'm' must be removed."
+
+
+def test_value_as_string():
+    with pytest.raises(ValueError):
+        q = Quantity("string", "m")
