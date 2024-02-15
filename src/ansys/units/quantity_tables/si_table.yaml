@@ -1,112 +1,92 @@
-# Quantity Map
+# Quantity map
 # ------------
 #
 # Quantity: units
 
 quantity_units_table:
-  Mass: kg
-  Length: m
-  Time: s
-  Temperature: K
-  Current: A
-  SubstanceAmount: mol
-  Light: cd
-  Angle: radian
-  SolidAngle: sr
-  Acceleration: m s^-2
-  Angular Acceleration: radian s^-2
-  Angular Velocity: radian s^-1
-  Area: m^2
-  Capacitance: farad
-  Compressibility: Pa^-1
-  Concentration: m^-3
-  Contact Resistance: m^2 s kg^-1
-  Decay Constant: s^-1
-  Density: kg m^-3
-  Density Derivative: m^-2 s^2
-  Density Derivative wrt Pressure: m^-2 s^2
-  Density Derivative wrt Temperature: kg m^-3 K^-1
-  Dielectric Contact Resistance: farad^-1 m^2
-  Dynamic Viscosity: Pa s
-  Electric Charge: A s
-  Electric Charge Density: A s m^-3
-  Electric Charge Transfer Coefficient: farad m^-2
-  Electric Conductance Per Unit Area: S m^-2
-  Electric Current Density: A m^-2
-  Electric Current Source: A m^-3
-  Electric Field: V m^-1
-  Electric Flux Density: coulomb m^-2
-  Electrical Conductance: S
-  Electrical Conductivity: S m^-1
-  Electrical Contact Resistance: S^-1 m^2
-  Electrical Permittivity: A s V^-1 m^-1
-  Electrical Resistance: ohm
-  Electrical Resistivity: ohm m
-  Energy Source: W m^-3
-  Force: N
-  Force Density: N m^-3
-  Force Intensity: N m^-1
-  Frequency: Hz
-  Heat Flux: W m^-2
-  Heat Flux in: W m^-2
-  Heat Generation: W m^-3
-  Heat Rate: W
-  Heat Transfer Coefficient: W m^-2 K^-1
-  Impulse: N s
-  Impulse Per Angular Unit: N s radian^-1
-  Inductance: H
-  Kinematic Diffusivity: m^2 s^-1
-  Magnetic Field: A m^-1
-  Magnetic Field Intensity: A m^-1
-  Magnetic Flux: Wb
-  Magnetic Flux Density: T
-  Magnetic Induction: T
-  Magnetic Permeability: H m^-1
-  Magnetic Potential: T m
-  Mass Concentration: kg m^-3
-  Mass Concentration Rate: kg m^-3 s^-1
-  Mass Flow: kg s^-1
-  Mass Flux: kg s^-1 m^-2
-  Mass Fraction: kg kg^-1
-  Mass Per Area: kg m^-2
-  Mass Source: kg s^-1 m^-3
-  Mass Source Coefficient: kg s^-1 m^-3 Pa^-1
-  Molar Concentration: mol m^-3
-  Molar Energy: J mol^-1
-  Molar Entropy: J mol^-1 K^-1
-  Molar Fraction: mol mol^-1
-  Molar Mass: kg kmol^-1
-  Molar Volume: m^3 mol^-1
-  Moment: N m
-  Moment of Inertia of Area: m^2 m^2
-  Moment of Inertia of Mass: kg m^2
-  Pressure: Pa
-  Pressure Gradient: Pa m^-1
-  Relative Permeability: H H^-1
-  Relative Permittivity: farad farad^-1
-  Shear Strain: radian
-  Shear Strain Rate: s^-1
-  Specific Concentration: mol kg^-1
-  Specific Energy: J kg^-1
-  Specific Enthalpy: J kg^-1
-  Specific Entropy: J kg^-1 K^-1
-  Specific Flame Surface Density: m^2 kg^-1
-  Specific Heat Capacity: J kg^-1 K^-1
-  Specific Volume: kg^-1 m^3
-  Stiffness: N m^-1
-  Strain: m m^-1
-  Surface Charge Density: A s m^-2
-  Surface Force Density: N m^-2
-  Surface Power Density: W m^-2
-  Surface Tension: N m^-1
-  Temperature Gradient: K m^-1
-  Thermal Capacitance: J K^-1
-  Thermal Conductance: W K^-1
-  Thermal Conductivity: W m^-1 K^-1
-  Thermal Contact Resistance: W^-1 m^2 K
-  Thermal Expansivity: K^-1
-  Torque: N m
-  Velocity: m s^-1
-  Volume: m^3
-  Volumetric: kg m^-3
-  Volumetric Flow: m^3 s^-1
+  mass: kg
+  length: m
+  time: s
+  temperature: K
+  current: A
+  substance-amount: mol
+  light: cd
+  angle: radian
+  solid-angle: sr
+  acceleration: m s^-2
+  angular-acceleration: radian s^-2
+  angular-velocity: radian s^-1
+  area: m^2
+  capacitance: farad
+  compressibility: Pa^-1
+  concentration: m^-3
+  decay-constant: s^-1
+  density: kg m^-3
+  dielectric-contact-resistance: farad^-1 m^2
+  dynamic-viscosity: Pa s
+  electric-charge: A s
+  electric-charge-density: A s m^-3
+  electric-charge-transfer-coefficient: farad m^-2
+  electric-conductance-per-unit-area: S m^-2
+  electric-current-density: A m^-2
+  electric-current-source: A m^-3
+  electric-field: V m^-1
+  electric-flux-density: coulomb m^-2
+  electrical-conductance: S
+  electrical-conductivity: S m^-1
+  electrical-contact-resistance: S^-1 m^2
+  electrical-permittivity: A s V^-1 m^-1
+  electrical-resistance: ohm
+  electrical-resistivity: ohm m
+  enthalpy: J
+  force: N
+  force-density: N m^-3
+  frequency: Hz
+  heat-flux: W m^-2
+  heat-generation: W m^-3
+  heat-transfer-coefficient: W m^-2 K^-1
+  impulse: N s
+  inductance: H
+  magnetic-field-intensity: A m^-1
+  magnetic-flux: Wb
+  magnetic-flux-density: T
+  magnetic-permeability: H m^-1
+  magnetic-potential: T m
+  mass-flow-rate: kg s^-1
+  mass-flux: kg s^-1 m^-2
+  molar-concentration: mol m^-3
+  molar-energy: J mol^-1
+  molar-enthalpy: J mol^-1
+  molar-entropy: J mol^-1 K^-1
+  molar-mass: kg mol^-1
+  molar-volume: m^3 mol^-1
+  moment: N m
+  moment-of-inertia-of-area: m^2 m^2
+  moment-of-inertia-of-mass: kg m^2
+  momentum: kg m s^-1
+  pressure: Pa
+  shear-strain: radian
+  shear-strain-rate: radian s^-1
+  specific-concentration: mol kg^-1
+  specific-energy: J kg^-1
+  specific-enthalpy: J kg^-1
+  specific-entropy: J kg^-1 K^-1
+  specific-flame-surface-density: m^2 kg^-1
+  specific-heat-capacity: J kg^-1 K^-1
+  specific-volume: kg^-1 m^3
+  stiffness: N m^-1
+  strain: m m^-1
+  surface-charge-density: A s m^-2
+  surface-force-density: N m^-2
+  surface-power-density: W m^-2
+  surface-tension: N m^-1
+  temperature-gradient: K m^-1
+  thermal-capacitance: J K^-1
+  thermal-conductance: W K^-1
+  thermal-conductivity: W m^-1 K^-1
+  thermal-contact-resistance: W^-1 m^2 K
+  thermal-expansion-coefficient: K^-1
+  torque: N m
+  velocity: m s^-1
+  volume: m^3
+  volumetric-flow-rate: m^3 s^-1
