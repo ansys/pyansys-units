@@ -17,16 +17,16 @@ quantity_units_table:
   angular-acceleration: radian s^-2
   angular-velocity: radian s^-1
   area: cm^2
-  capacitance: farad  # verify
+  capacitance: farad
   compressibility: cm^2 dyne^-1
   concentration: cm^-3
   decay-constant: s^-1
   density: g cm^-3
-  dielectric-contact-resistance: farad^-1 cm^2  # verify
+  dielectric-contact-resistance: farad^-1 cm^2
   dynamic-viscosity: dyne cm^-2 s
   electric-charge: A s
   electric-charge-density: A s cm^-3
-  electric-charge-transfer-coefficient: farad cm^-2  # verify
+  electric-charge-transfer-coefficient: farad cm^-2
   electric-conductance-per-unit-area: S cm^-2
   electric-current-density: A cm^-2
   electric-current-source: A cm^-3
@@ -42,16 +42,16 @@ quantity_units_table:
   force: dyne
   force-density: dyne cm^-3
   frequency: Hz
-  heat-flux: erg cm^-2 s^-1
-  heat-generation: erg s^-1 cm^-3  # verify
-  heat-transfer-coefficient: erg s^-1 cm^-2 K^-1  # verify
+  heat-flux: dyne s^-1 cm^-1
+  heat-generation: erg s^-1 cm^-3
+  heat-transfer-coefficient: erg s^-1 cm^-2 K^-1
   impulse: dyne s
-  inductance: cm-1 s  # verify
+  inductance: H
   magnetic-field-intensity: A cm^-1
-  magnetic-flux: Mx  # 1 Wb = 108 maxwell, need to add in derived units
-  magnetic-flux-density: gauss  # 1 T = 10000 gauss, need to add in derived units
-  magnetic-permeability: cm-1 s cm^-1  # verify
-  magnetic-potential: gauss cm   # verify
+  magnetic-flux: maxwell
+  magnetic-flux-density: gauss
+  magnetic-permeability: H cm^-1
+  magnetic-potential: gauss cm
   mass-flow-rate: g s^-1
   mass-flux: g s^-1 cm^-2
   molar-concentration: mol cm^-3
@@ -78,13 +78,13 @@ quantity_units_table:
   strain: cm cm^-1
   surface-charge-density: A s cm^-2
   surface-force-density: dyne cm^-2
-  surface-power-density: erg s^-1 cm^-2  # verify
+  surface-power-density: erg s^-1 cm^-2
   surface-tension: dyne cm^-1
   temperature-gradient: K cm^-1
   thermal-capacitance: erg K^-1
   thermal-conductance: erg s^-1 K^-1
   thermal-conductivity: erg s^-1 cm^-1 K^-1
-  thermal-contact-resistance: erg^-1 s cm^2 K
+  thermal-contact-resistance: W^-1 cm^2 K
   thermal-expansion-coefficient: K^-1
   torque: dyne cm
   velocity: cm s^-1

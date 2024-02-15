@@ -274,3 +274,12 @@ derived_units:
   coulomb:
     composition: A s
     factor: 1
+  line:
+    composition: Wb
+    factor: 100000000
+  gauss:
+    composition: T
+    factor: 10000
+  maxwell:
+    composition: Wb
+    factor: 108

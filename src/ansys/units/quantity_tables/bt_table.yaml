@@ -48,7 +48,7 @@ quantity_units_table:
   impulse: lbf s
   inductance: H
   magnetic-field-intensity: A ft^-1
-  magnetic-flux: line  # 1 weber = 100000000 line need to add in derived units
+  magnetic-flux: line
   magnetic-flux-density: line ft^-2
   magnetic-permeability: H ft^-1
   magnetic-potential: T ft
