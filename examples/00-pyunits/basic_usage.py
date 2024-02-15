@@ -57,13 +57,13 @@ torque = Quantity(value=5, dimensions=tor_dims)
 
 # Quantity table
 
-vol_dict = {"Volume": 1}
+vol_dict = {"volume": 1}
 volume = Quantity(value=1, quantity_table=vol_dict)
 
-acc_dict = {"Acceleration": 1}
+acc_dict = {"acceleration": 1}
 acceleration = Quantity(value=3, quantity_table=acc_dict)
 
-tor_dict = {"Torque": 1}
+tor_dict = {"torque": 1}
 torque = Quantity(value=5, quantity_table=tor_dict)
 
 ###############################################################################
@@ -79,7 +79,7 @@ torque = Quantity(value=5, quantity_table=tor_dict)
 # 6. is_dimensionless : bool
 
 
-cap_dict = {"Capacitance": 1}
+cap_dict = {"capacitance": 1}
 capacitance = Quantity(value=50, quantity_table=cap_dict)
 
 capacitance.value  # >>> 50.0
@@ -278,7 +278,7 @@ meters_per_second.units  # >>> "m s^-1"
 
 Quantity.preferred_units(units=["J"])
 
-torque = Quantity(1, quantity_table={"Torque": 1})
+torque = Quantity(1, quantity_table={"torque": 1})
 torque  # >>> Quantity (1.0, "J")
 
 ten_N = Quantity(10, units="N")
