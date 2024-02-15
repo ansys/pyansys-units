@@ -4,95 +4,89 @@
 # Quantity: units
 
 quantity_units_table:
-  Mass: g
-  Length: cm
-  Time: s
-  Temperature: K
-  Angle: radian
-  Solid Angle: sr
-  Chemical Amount: mol
-  Energy: erg
-  Force: dyne
-  Power: erg s^-1
-  Pressure: dyne cm^-2
-  Current: A
-  Voltage: V
-  Luminance: cd
-  Acceleration: cm s^-2
-  Angular Acceleration: radian s^-2
-  Angular Velocity: radian s^-1
-  Area: cm^2
-  Compressibility: cm^2 dyne^-1
-  Concentration: cm^-3
-  Contact Resistance: cm^2 s g^-1
-  Decay Constant: s^-1
-  Density: g cm^-3
-  Density Derivative wrt Pressure: cm^-2 s^2
-  Density Derivative wrt Temperature: g cm^-3 K^-1
-  Dielectric Contact Resistance: F^-1 cm^2
-  Dynamic Viscosity: dyne cm^-2 s
-  Electric Charge: A s
-  Electric Charge Density: A s cm^-3
-  Electric Charge Transfer Coefficient: F cm^-2
-  Electric Current Density: A cm^-2
-  Electric Current Transfer Coefficient: A cm^-2 V^-1
-  Electric Current Source: A cm^-3
-  Electric Field: V cm^-1
-  Electrical Conductivity: S cm^-1
-  Electrical Contact Resistance: ohm cm^2
-  Electrical Permittivity: A s V^-1 cm^-1
-  Electrical Resistivity: ohm cm
-  Energy Source: erg s^-1 cm^-3
-  Energy Source Coefficient: erg s^-1 cm^-3 K^-1
-  Frequency: Hz
-  Heat Flux in: erg cm^-2 s^-1
-  Heat Rate: erg s^-1
-  Heat Transfer Coefficient: erg s^-1 cm^-2 K^-1
-  Interphase Transfer Coefficient: g cm^-2 s^-1
-  Kinematic Diffusivity: cm^2 s^-1
-  Magnetic Field: A m^-1
-  Magnetic Flux: Mx
-  Magnetic Flux Density: gauss
-  Magnetic Induction: T
-  Magnetic Permeability: H m^-1
-  Magnetic Potential: T m
-  Mass Concentration: g cm^-3
-  Mass Concentration Rate: g cm^-3 s^-1
-  Mass Flow: g s^-1
-  Mass Flow in: g s^-1
-  Mass Flux: g s^-1 cm^-2
-  Mass Fraction: g g^-1
-  Mass Moment of Inertia: g cm^2
-  Mass Source: g s^-1 cm^-3
-  Mass Source Coefficient: g s^-1 cm^-3
-  Mass Source Pressure Coefficient: dyne^-1 g s^-1 cm^-1
-  Molar Concentration: mol cm^-3
-  Molar Concentration Henry Coefficient: dyne cm mol^-1
-  Molar Concentration Rate: mol cm^-3 s^-1
-  Molar Energy: erg mol^-1
-  Molar Entropy: erg mol^-1 K^-1
-  Molar Fraction: mol mol^-1
-  Molar Mass: g mol^-1
-  Molar Volume: cm^3 mol^-1
-  Moment: dyne cm
-  Shear Strain Rate: s^-1
-  Shock Velocity: s cm^-1
-  Specific Concentration: mol g^-1
-  Specific Energy: erg g^-1
-  Specific Enthalpy: erg g^-1
-  Specific Entropy: erg g^-1 K^-1
-  Specific Heat Capacity: erg g^-1 K^-1
-  Specific Volume: g^-1 cm^3
-  Surface Charge Density: A s cm^-2
-  Surface Tension: dyne cm^-1
-  Temperature Variance Source: g cm^-3 s^-1 K^2
-  Thermal Conductivity: erg s^-1 m^-1 K^-1
-  Thermal Contact Resistance: erg^-1 s cm^2 K
-  Thermal Expansivity: K^-1
-  Torque: dyne cm
-  Torsional Spring Constant: dyne cm radian^-1
-  Turbulent Heat Flux: cm^3 s^-3
-  Velocity: cm s^-1
-  Volume: cm^3
-  Volumetric: g cm^-3
-  Volumetric Flow: cm^3 s^-1
+  mass: g
+  length: cm
+  time: s
+  temperature: K
+  current: A
+  substance-amount: mol
+  light: cd
+  angle: radian
+  solid-angle: sr
+  acceleration: cm s^-2
+  angular-acceleration: radian s^-2
+  angular-velocity: radian s^-1
+  area: cm^2
+  capacitance: farad  # verify
+  compressibility: cm^2 dyne^-1
+  concentration: cm^-3
+  decay-constant: s^-1
+  density: g cm^-3
+  dielectric-contact-resistance: farad^-1 cm^2  # verify
+  dynamic-viscosity: dyne cm^-2 s
+  electric-charge: A s
+  electric-charge-density: A s cm^-3
+  electric-charge-transfer-coefficient: farad cm^-2  # verify
+  electric-conductance-per-unit-area: S cm^-2
+  electric-current-density: A cm^-2
+  electric-current-source: A cm^-3
+  electric-field: V cm^-1
+  electric-flux-density: coulomb cm^-2
+  electrical-conductance: S
+  electrical-conductivity: S cm^-1
+  electrical-contact-resistance: S^-1 cm^2
+  electrical-permittivity: A s V^-1 cm^-1
+  electrical-resistance: ohm
+  electrical-resistivity: ohm cm
+  enthalpy: erg
+  force: dyne
+  force-density: dyne cm^-3
+  frequency: Hz
+  heat-flux: erg cm^-2 s^-1
+  heat-generation: erg s^-1 cm^-3  # verify
+  heat-transfer-coefficient: erg s^-1 cm^-2 K^-1  # verify
+  impulse: dyne s
+  inductance: cm-1 s  # verify
+  magnetic-field-intensity: A cm^-1
+  magnetic-flux: Mx  # 1 Wb = 108 maxwell, need to add in derived units
+  magnetic-flux-density: gauss  # 1 T = 10000 gauss, need to add in derived units
+  magnetic-permeability: cm-1 s cm^-1  # verify
+  magnetic-potential: gauss cm   # verify
+  mass-flow-rate: g s^-1
+  mass-flux: g s^-1 cm^-2
+  molar-concentration: mol cm^-3
+  molar-energy: erg mol^-1
+  molar-enthalpy: erg mol^-1
+  molar-entropy: erg mol^-1 K^-1
+  molar-mass: g mol^-1
+  molar-volume: cm^3 mol^-1
+  moment: dyne cm
+  moment-of-inertia-of-area: cm^2 cm^2
+  moment-of-inertia-of-mass: g cm^2
+  momentum: g cm s^-1
+  pressure: dyne cm^-2
+  shear-strain: radian
+  shear-strain-rate: radian s^-1
+  specific-concentration: mol g^-1
+  specific-energy: erg g^-1
+  specific-enthalpy: erg g^-1
+  specific-entropy: erg g^-1 K^-1
+  specific-flame-surface-density: cm^2 g^-1
+  specific-heat-capacity: erg g^-1 K^-1
+  specific-volume: g^-1 cm^3
+  stiffness: dyne cm^-1
+  strain: cm cm^-1
+  surface-charge-density: A s cm^-2
+  surface-force-density: dyne cm^-2
+  surface-power-density: erg s^-1 cm^-2  # verify
+  surface-tension: dyne cm^-1
+  temperature-gradient: K cm^-1
+  thermal-capacitance: erg K^-1
+  thermal-conductance: erg s^-1 K^-1
+  thermal-conductivity: erg s^-1 cm^-1 K^-1
+  thermal-contact-resistance: erg^-1 s cm^2 K
+  thermal-expansion-coefficient: K^-1
+  torque: dyne cm
+  velocity: cm s^-1
+  volume: cm^3
+  volumetric-flow-rate: cm^3 s^-1
