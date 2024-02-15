@@ -15,8 +15,7 @@ class _QuantityType:
 
 # Single import of static tables
 
-file_path = os.path.relpath(__file__)
-file_dir = os.path.dirname(file_path)
+file_dir = os.path.dirname(__file__)
 qc_path = os.path.join(file_dir, "cfg.yaml")
 
 with open(qc_path, "r") as qc_yaml:
