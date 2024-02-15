@@ -36,8 +36,7 @@ class UnitRegistry:
         unitdict = other or {}
 
         if config:
-            file_path = os.path.relpath(__file__)
-            file_dir = os.path.dirname(file_path)
+            file_dir = os.path.dirname(__file__)
             qc_path = os.path.join(file_dir, config)
 
             with open(qc_path, "r") as qc_yaml:
