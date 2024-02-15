@@ -4,95 +4,89 @@
 # Quantity: units
 
 quantity_units_table:
-  Mass: slug
-  Length: ft
-  Time: s
-  Temperature: R
-  Angle: radian
-  Solid Angle: sr
-  Chemical Amount: slugmol
-  Force: lbf
-  Pressure: psf
-  Energy: lbf ft
-  Power: lbf ft s^-1
-  Current: A
-  Voltage: V
-  Luminance: cd
-  Acceleration: ft s^-2
-  Angular Acceleration: radian s^-2
-  Angular Velocity: radian s^-1
-  Area: ft^2
-  Compressibility: psf^-1
-  Concentration: ft^-3
-  Contact Resistance: ft^2 s slug^-1
-  Decay Constant: s^-1
-  Density: slug ft^-3
-  Density Derivative wrt Pressure: ft^-2 s^2
-  Density Derivative wrt Temperature: slug ft^-3 R^-1
-  Dielectric Contact Resistance: F^-1 ft^2
-  Dynamic Viscosity: lbf s ft^-2
-  Electric Charge: A s
-  Electric Charge Density: A s ft^-3
-  Electric Charge Transfer Coefficient: F ft^-2
-  Electric Current Density: A ft^-2
-  Electric Current Transfer Coefficient: A ft^-2 V^-1
-  Electric Current Source: A ft^-3
-  Electric Field: V ft^-1
-  Electrical Conductivity: S ft^-1
-  Electrical Contact Resistance: ohm ft^2
-  Electrical Permittivity: A s V^-1 ft^-1
-  Electrical Resistivity: ohm ft
-  Energy Source: lbf s^-1 ft^-2
-  Energy Source Coefficient: lbf s^-1 ft^-2 R^-1
-  Frequency: Hz
-  Heat Flux in: lbf s^-1 ft^-1
-  Heat Rate: lbf ft s^-1
-  Heat Transfer Coefficient: lbf s^-1 ft^-1 R^-1
-  Interphase Transfer Coefficient: slug ft^-2 s^-1
-  Kinematic Diffusivity: ft^2 s^-1
-  Magnetic Field: A ft^-1
-  Magnetic Flux: line
-  Magnetic Flux Density: line ft^-2
-  Magnetic Induction: T
-  Magnetic Permeability: H ft^-1
-  Magnetic Potential: T ft
-  Mass Concentration: slug ft^-3
-  Mass Concentration Rate: slug ft^-3 s^-1
-  Mass Flow: slug s^-1
-  Mass Flow in: slug s^-1
-  Mass Flux: slug s^-1 ft^-2
-  Mass Fraction: slug slug^-1
-  Mass Moment of Inertia: slug ft^2
-  Mass Source: slug s^-1 ft^-3
-  Mass Source Coefficient: slug s^-1 ft^-3
-  Mass Source Pressure Coefficient: slug s^-1 ft^-3 psf^-1
-  Molar Concentration: slugmol ft^-3
-  Molar Concentration Henry Coefficient: psf ft^3 mol^-1
-  Molar Concentration Rate: slugmol ft^-3 s^-1
-  Molar Energy: lbf ft slugmol^-1
-  Molar Entropy: lbf ft slugmol^-1 R^-1
-  Molar Fraction: slugmol slugmol^-1
-  Molar Mass: slug slugmol^-1
-  Molar Volume: ft^3 slugmol^-1
-  Moment: ft lbf
-  Shear Strain Rate: s^-1
-  Shock Velocity: s ft^-1
-  Specific Concentration: slugmol slug^-1
-  Specific Energy: lbf ft slug^-1
-  Specific Enthalpy: lbf ft slug^-1
-  Specific Entropy: lbf ft slug^-1 R^-1
-  Specific Heat Capacity: lbf ft slug^-1 R^-1
-  Specific Volume: slug^-1 ft^3
-  Surface Charge Density: A s ft^-2
-  Surface Tension: slug s^-2
-  Temperature Variance Source: slug ft^-3 s^-1 R^2
-  Thermal Conductivity: lbf s^-1 R^-1
-  Thermal Contact Resistance: lbf^-1 s ft R
-  Thermal Expansivity: R^-1
-  Torque: ft lbf
-  Torsional Spring Constant: ft lbf radian^-1
-  Turbulent Heat Flux: ft^3 s^-3
-  Velocity: ft s^-1
-  Volume: ft^3
-  Volumetric Flow: ft^3 s^-1
-  Volumetric Flow in: ft^3 s^-1
+  mass: slug
+  length: ft
+  time: s
+  temperature: R
+  current: A
+  substance-amount: slugmol
+  light: cd
+  angle: radian
+  solid-angle: sr
+  acceleration: ft s^-2
+  angular-acceleration: radian s^-2
+  angular-velocity: radian s^-1
+  area: ft^2
+  capacitance: farad
+  compressibility: psf^-1
+  concentration: ft^-3
+  decay-constant: s^-1
+  density: slug ft^-3
+  dielectric-contact-resistance: farad^-1 ft^2
+  dynamic-viscosity: lbf s ft^-2
+  electric-charge: A s
+  electric-charge-density: A s ft^-3
+  electric-charge-transfer-coefficient: farad ft^-2
+  electric-conductance-per-unit-area: S ft^-2
+  electric-current-density: A ft^-2
+  electric-current-source: A ft^-3
+  electric-field: V ft^-1
+  electric-flux-density: coulomb ft^-2
+  electrical-conductance: S
+  electrical-conductivity: S ft^-1
+  electrical-contact-resistance: S^-1 ft^2
+  electrical-permittivity: A s V^-1 ft^-1
+  electrical-resistance: ohm
+  electrical-resistivity: ohm ft
+  enthalpy: lbf ft
+  force: lbf
+  force-density: lbf ft^-3
+  frequency: Hz
+  heat-flux: lbf s^-1 ft^-1
+  heat-generation: BTU s^-1 ft^-3
+  heat-transfer-coefficient: lbf s^-1 ft^-1 R^-1
+  impulse: lbf s
+  inductance: H
+  magnetic-field-intensity: A ft^-1
+  magnetic-flux: line  # 1 weber = 100000000 line need to add in derived units
+  magnetic-flux-density: line ft^-2
+  magnetic-permeability: H ft^-1
+  magnetic-potential: T ft
+  mass-flow-rate: slug s^-1
+  mass-flux: slug s^-1 ft^-2
+  molar-concentration: slugmol ft^-3
+  molar-energy: lbf ft slugmol-1
+  molar-enthalpy: lbf ft slugmol-1
+  molar-entropy: lbf ft slugmol-1 R^-1
+  molar-mass: slug slugmol-1
+  molar-volume: ft^3 slugmol-1
+  moment: lbf ft
+  moment-of-inertia-of-area: ft^2 ft^2
+  moment-of-inertia-of-mass: lbm ft^2
+  momentum: slug ft s^-1
+  pressure: psf
+  shear-strain: radian
+  shear-strain-rate: radian s^-1
+  specific-concentration: slugmol slug^-1
+  specific-energy: lbf ft slug^-1
+  specific-enthalpy: lbf ft slug^-1
+  specific-entropy: lbf ft slug^-1 R^-1
+  specific-flame-surface-density: ft^2 slug^-1
+  specific-heat-capacity: lbf ft slug^-1 R^-1
+  specific-volume: slug^-1 ft^3
+  stiffness: lbf ft^-1
+  strain: ft ft^-1
+  surface-charge-density: A s ft^-2
+  surface-force-density: lbf ft^-2
+  surface-power-density: lbf ft s^-1 ft^-2
+  surface-tension: slug s^-2
+  temperature-gradient: R ft^-1
+  thermal-capacitance: lbf ft R^-1
+  thermal-conductance: lbf ft s^-1 R^-1
+  thermal-conductivity: lbf s^-1 R^-1
+  thermal-contact-resistance: lbf^-1 ft s R
+  thermal-expansion-coefficient: R^-1
+  torque: lbf ft
+  velocity: ft s^-1
+  volume: ft^3
+  volumetric-flow-rate: ft^3 s^-1
