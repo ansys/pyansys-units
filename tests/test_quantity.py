@@ -485,11 +485,11 @@ def test_quantity_from_dimensions():
 
 def test_quantity_table():
     quantity_dict_from_settings_API = {
-        "Mass": 1,
-        "Velocity": 2.5,
-        "Current": 3,
-        "Light": 1,
-        "Heat Transfer Coefficient": 2,
+        "mass": 1,
+        "velocity": 2.5,
+        "current": 3,
+        "light": 1,
+        "heat-transfer-coefficient": 2,
     }
 
     api_test = Quantity(10.5, quantity_table=quantity_dict_from_settings_API)
