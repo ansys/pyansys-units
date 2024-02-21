@@ -122,6 +122,22 @@ def test_array():
             e2 = Quantity([7, 8, 9], "kg")
 
 
+def test_array_compare():
+    assert Quantity([7, 8, 9], "kg") == Quantity([7, 8, 9], "kg")
+    assert Quantity([7, 8, 9], "kg") != Quantity([1, 2, 3], "kg")
+    with pytest.raises(IncompatibleDimensions):
+        Quantity([7, 8, 9], "kg") != Quantity([7, 8, 9], "m")
+    with pytest.raises(IncompatibleDimensions):
+        Quantity([7, 8, 9], "kg") == Quantity([7, 8, 9], "m")
+    assert Quantity([7, 8, 9], "kg") != Quantity([7, 8, 9], "g")
+
+
+def test_array_to_si_value():
+    si_value = get_si_value(Quantity([1, 2], "in"))
+    assert si_value[0] == get_si_value(Quantity(1, "in"))
+    assert si_value[1] == get_si_value(Quantity(2, "in"))
+
+
 def test_to():
     v = Quantity(1.0, "m")
     to = v.to("ft")
