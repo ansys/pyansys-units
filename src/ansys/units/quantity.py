@@ -420,15 +420,18 @@ class Quantity:
 
 def get_si_value(quantity: Quantity) -> float:
     """Returns a quantity's value in SI units."""
+
+    def _convert(value, offset, factor):
+        return float((value + offset) * factor)
+
     if isinstance(quantity.value, float):
-        return float(
-            (quantity.value + quantity.units.si_offset)
-            * quantity.units.si_scaling_factor
+        return _convert(
+            quantity.value, quantity.units.si_offset, quantity.units.si_scaling_factor
         )
     if _array and isinstance(quantity.value, _array.ndarray):
         offset = quantity.units.si_offset
         factor = quantity.units.si_scaling_factor
-        return _array.array([((x + offset) * factor) for x in quantity.value])
+        return _array.array([_convert(x, offset, factor) for x in quantity.value])
 
 
 class ExcessiveParameters(ValueError):
