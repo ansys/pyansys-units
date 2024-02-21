@@ -131,6 +131,8 @@ def test_array_compare():
         Quantity([7, 8, 9], "kg") == Quantity([7, 8, 9], "m")
     assert Quantity([7, 8, 9], "kg") != Quantity([7, 8, 9], "g")
     assert Quantity([7, 8, 9], "") == Quantity([7, 8, 9], "")
+    assert Quantity(1, "kg") != Quantity([1, 2, 3], "kg")
+    assert Quantity([1, 2, 3], "kg") != Quantity(1, "kg")
 
 
 def test_array_to_si_value():
