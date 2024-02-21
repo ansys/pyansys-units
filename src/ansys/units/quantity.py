@@ -405,7 +405,7 @@ class Quantity:
 
     def __eq__(self, __value):
         self.validate_matching_dimensions(__value)
-        if all((isinstance(x.value, float) for x in (self, __value))):
+        if isinstance(self.value, float):
             return self._compute_single_value_comparison(__value, op=operator.eq)
         # no type-checking here since array_equal happily processes anything
         return _array and _array.array_equal(get_si_value(self), get_si_value(__value))
