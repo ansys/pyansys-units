@@ -381,15 +381,11 @@ class Quantity:
 
     def _compute_single_value_comparison(self, __value, op: operator):
         """Compares quantity values."""
-        try:
-            return (
-                op(get_si_value(self), __value)
-                if self.is_dimensionless
-                else op(get_si_value(self), get_si_value(__value))
-            )
-        # ValueError raised for e.g., incompatible arrays
-        except ValueError:
-            return False
+        return (
+            op(get_si_value(self), __value)
+            if self.is_dimensionless
+            else op(get_si_value(self), get_si_value(__value))
+        )
 
     def __gt__(self, __value):
         self.validate_matching_dimensions(__value)
