@@ -150,13 +150,6 @@ class Quantity:
         """Value in contained units."""
         return self._value
 
-    # Given the complex constraints applied in the constructor, it is
-    # unclear why we are simply allowing the value to be overwritten here.
-    # See what tests are affected by removing this.
-    @value.setter
-    def value(self, new_value):
-        self._value = new_value
-
     @property
     def units(self) -> Unit:
         """The quantity's units."""
