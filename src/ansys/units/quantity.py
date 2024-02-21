@@ -150,10 +150,6 @@ class Quantity:
         """Value in contained units."""
         return self._value
 
-    @value.setter
-    def value(self, new_value):
-        self._value = new_value
-
     @property
     def units(self) -> Unit:
         """The quantity's units."""
@@ -376,7 +372,7 @@ class Quantity:
         ):
             raise IncompatibleQuantities(self, other)
 
-    def _compute_comparison(self, __value, op: operator):
+    def _compute_single_value_comparison(self, __value, op: operator):
         """Compares quantity values."""
         return (
             op(get_si_value(self), __value)
@@ -386,23 +382,36 @@ class Quantity:
 
     def __gt__(self, __value):
         self.validate_matching_dimensions(__value)
-        return self._compute_comparison(__value, op=operator.gt)
+        return self._compute_single_value_comparison(__value, op=operator.gt)
 
     def __ge__(self, __value):
         self.validate_matching_dimensions(__value)
-        return self._compute_comparison(__value, op=operator.ge)
+        return self._compute_single_value_comparison(__value, op=operator.ge)
 
     def __lt__(self, __value):
         self.validate_matching_dimensions(__value)
-        return self._compute_comparison(__value, op=operator.lt)
+        return self._compute_single_value_comparison(__value, op=operator.lt)
 
     def __le__(self, __value):
         self.validate_matching_dimensions(__value)
-        return self._compute_comparison(__value, op=operator.le)
+        return self._compute_single_value_comparison(__value, op=operator.le)
 
     def __eq__(self, __value):
         self.validate_matching_dimensions(__value)
-        return self._compute_comparison(__value, op=operator.eq)
+        if all(
+            (
+                isinstance(self.value, float),
+                any(
+                    (
+                        isinstance(x, float)
+                        for x in (__value, getattr(__value, "value", None))
+                    )
+                ),
+            )
+        ):
+            return self._compute_single_value_comparison(__value, op=operator.eq)
+        # no type-checking here since array_equal happily processes anything
+        return _array and _array.array_equal(get_si_value(self), get_si_value(__value))
 
     def __ne__(self, __value):
         return not self.__eq__(__value)
@@ -410,9 +419,18 @@ class Quantity:
 
 def get_si_value(quantity: Quantity) -> float:
     """Returns a quantity's value in SI units."""
-    return float(
-        (quantity.value + quantity.units.si_offset) * quantity.units.si_scaling_factor
-    )
+
+    def _convert(value, offset, factor):
+        return float((value + offset) * factor)
+
+    if isinstance(quantity.value, float):
+        return _convert(
+            quantity.value, quantity.units.si_offset, quantity.units.si_scaling_factor
+        )
+    if _array and isinstance(quantity.value, _array.ndarray):
+        offset = quantity.units.si_offset
+        factor = quantity.units.si_scaling_factor
+        return _array.array([_convert(x, offset, factor) for x in quantity.value])
 
 
 class ExcessiveParameters(ValueError):
