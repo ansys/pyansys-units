@@ -122,7 +122,17 @@ def test_array():
             e2 = Quantity([7, 8, 9], "kg")
 
 
+def _supporting_numpy():
+    try:
+        import numpy  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
 def test_array_compare():
+    if not _supporting_numpy():
+        return
     assert Quantity([7, 8, 9], "kg") == Quantity([7, 8, 9], "kg")
     assert Quantity([7, 8, 9], "kg") != Quantity([1, 2, 3], "kg")
     with pytest.raises(IncompatibleDimensions):
@@ -136,12 +146,16 @@ def test_array_compare():
 
 
 def test_array_to_si_value():
+    if not _supporting_numpy():
+        return
     si_value = get_si_value(Quantity([1, 2], "in"))
     assert si_value[0] == get_si_value(Quantity(1, "in"))
     assert si_value[1] == get_si_value(Quantity(2, "in"))
 
 
 def test_array_to():
+    if not _supporting_numpy():
+        return
     to = Quantity([1, 2], "in").to("m")
     assert to.value[0] == get_si_value(Quantity(1, "in"))
     assert to.value[1] == get_si_value(Quantity(2, "in"))
