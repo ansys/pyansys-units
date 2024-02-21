@@ -68,11 +68,15 @@ def test_properties():
     assert v.dimensions == Dimensions({dims.LENGTH: 1.0})
 
 
-def test_value_setter():
+def test_quantity_is_immutable():
     v = Quantity(1, "m")
-    v.value = 20
-    assert v.value == 20
-    assert v.units == Unit("m")
+    with pytest.raises(AttributeError):
+        v.value = 20
+    with pytest.raises(AttributeError):
+        v.units = "kg"
+    with pytest.raises(AttributeError):
+        v.dimensions = Dimensions({})
+    assert v == Quantity(1, "m")
 
 
 def test_conversion():
