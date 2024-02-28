@@ -4,7 +4,7 @@
 Defining a quantity
 ===================
 
-To initialize a physical quantity, import from the ``ansys.units`` library and create a
+To initialize a physical quantity, import from the ``ansys.units`` package, and create a
 new ``Quantity`` object:
 
 .. code:: python
@@ -13,8 +13,9 @@ new ``Quantity`` object:
 
     meter = Quantity(value=1, units="m")
 
-A ``Quantity`` object can also be created with a ``Unit`` object directly or
-through multiplication
+You can also provide a ``Unit`` object (rather than a unit string) as a construction
+argument. Alternatively, you can instantiate a ``Quantity`` object by multiplying
+a ``Unit`` object by a value:
 
 .. code:: python
 
@@ -25,26 +26,25 @@ through multiplication
     meter = Quantity(value=1, units=ureg.m)
     meter = 1 * ureg.m
 
-With ``NumPy`` installed, a ``Quantity`` can be created using either a list of floats or a NumPy array.
+With ``NumPy`` installed, a ``Quantity`` can be created using either a list of floats or a NumPy array:
 
 .. code:: python
 
     from ansys.units import Quantity
     import numpy as np
 
-    meter = Quantity(value=[1.0, 6.0, 7.0], units="m")
+    length_array_quantity = Quantity(value=[1.0, 6.0, 7.0], units="m")
 
-    values = np.array([1.0, 6.0, 7.0])
-    meter = Quantity(value=values, units="m")
+    length_array = np.array([1.0, 6.0, 7.0])
+    length_array_quantity = Quantity(value=values, units="m")
 
-    meter[1]  # Quantity (6.0, "m")
+    length_array_quantity[1]  # Quantity (6.0, "m")
 
-    second = Quantity(value=2, units="s")
-    speed = meter / second
+    time = Quantity(value=2, units="s")
+    speed = length_array_quantity / time
     speed  # Quantity ([0.5 3.  3.5], "m s^-1")
 
-All ``Quantity`` objects work intuitively with arithmetic operators. Simply
-insert them within an equation to perform mathematical operations.
+All ``Quantity`` objects work intuitively with arithmetic operators:
 
 .. code:: python
 
@@ -59,8 +59,8 @@ insert them within an equation to perform mathematical operations.
     m_dv = meter / 2  # 0.5
     m_sq = meter**2  # 1
 
-Additions and subtraction between two ``Quantity`` objects retains the units
-of the first quantity.
+Additions and subtractions involving ``Quantity`` objects retain the units
+of the first operand:
 
 .. code:: python
 
@@ -73,17 +73,15 @@ of the first quantity.
     meter + foot  # Quantity (1.3048, "m")
     foot + meter  # Quantity (4.2808398950131235, "ft")
 
-``Quantity`` objects work intuitively with unit conversion. The arithmetic operation
-behind conversions is:
+This formula defines the conversion of ``Quantity`` objects between different units:
 
 .. math::
 
     value_{\text{new}} = \frac{value_{\text{si}}}{f_{\text{new}}} - c_{\text{new}}
 
-
-Where :math:`f_{new}` is a scaling factor and :math:`c_{new}` is an offset to convert
+where :math:`f_{new}` is a scaling factor and :math:`c_{new}` is an offset to convert
 from SI units to the requested units.
 
-To define a new unit system or create custom quantities, manually update the
-``cfg.yaml`` file with your desired data. Once saved, these changes are reflected
-throughout PyAnsys Units.
+To define a new unit system or create custom quantities, you can manually update the
+``cfg.yaml`` file with your desired settings. Once saved, these changes are reflected
+the next time the ``ansys.units`` package is initialized.
