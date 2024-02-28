@@ -293,7 +293,7 @@ class Quantity:
 
     def __getitem__(self, idx):
         if _array:
-            value = self.__array__()[idx]
+            value = float(self.__array__()[idx])
             return Quantity(value, self.units)
         else:
             raise NumPyRequired()
@@ -415,9 +415,6 @@ class Quantity:
 
     def __ne__(self, __value):
         return not self.__eq__(__value)
-
-    def __iter__(self):
-        return (x for x in (self.value, self.units.name))
 
 
 def get_si_value(quantity: Quantity) -> float:
