@@ -416,6 +416,9 @@ class Quantity:
     def __ne__(self, __value):
         return not self.__eq__(__value)
 
+    def __iter__(self):
+        return (x for x in (self.value, self.units.name))
+
 
 def get_si_value(quantity: Quantity) -> float:
     """Returns a quantity's value in SI units."""

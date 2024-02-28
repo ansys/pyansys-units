@@ -637,3 +637,19 @@ def test_error_messages():
 def test_value_as_string():
     with pytest.raises(TypeError):
         q = Quantity("string", "m")
+
+
+def test_to_tuple():
+    assert tuple(Quantity(1.0)) == (1, "")
+    assert tuple(Quantity(1.0, "")) == (1, "")
+    assert tuple(Quantity(1.0, "m")) == (1, "m")
+    assert tuple(Quantity(1.0, "m")) == (1, "m")
+    if _supporting_numpy():
+        arr = Quantity([1])
+        arr_in_tup = tuple(arr)
+        assert arr_in_tup[0] == Quantity([1])
+        assert arr_in_tup[1] == ""
+        arr = Quantity([1], "m")
+        arr_in_tup = tuple(arr)
+        assert arr_in_tup[0] == Quantity([1])
+        assert arr_in_tup[1] == "m"
