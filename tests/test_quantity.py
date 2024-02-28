@@ -165,6 +165,26 @@ def test_array_to():
     assert to.value[1] == get_si_value(Quantity(2, "in"))
 
 
+def test_array_index():
+    if not _supporting_numpy():
+        return
+    q = Quantity([1, 2], "m")
+    assert q[0] == Quantity(1, "m")
+    assert q[1] == Quantity(2, "m")
+
+
+def test_array_iteration():
+    if not _supporting_numpy():
+        return
+    q = Quantity([1, 2], "m")
+    qs = [x for x in q]
+    assert qs[0] == Quantity(1, "m")
+    assert qs[1] == Quantity(2, "m")
+    i = iter(q)
+    assert next(i) == Quantity(1, "m")
+    assert next(i) == Quantity(2, "m")
+
+
 def test_to():
     v = Quantity(1.0, "m")
     to = v.to("ft")
@@ -637,19 +657,3 @@ def test_error_messages():
 def test_value_as_string():
     with pytest.raises(TypeError):
         q = Quantity("string", "m")
-
-
-def test_to_tuple():
-    assert tuple(Quantity(1.0)) == (1, "")
-    assert tuple(Quantity(1.0, "")) == (1, "")
-    assert tuple(Quantity(1.0, "m")) == (1, "m")
-    assert tuple(Quantity(1.0, "m")) == (1, "m")
-    if _supporting_numpy():
-        arr = Quantity([1])
-        arr_in_tup = tuple(arr)
-        assert arr_in_tup[0] == Quantity([1])
-        assert arr_in_tup[1] == ""
-        arr = Quantity([1], "m")
-        arr_in_tup = tuple(arr)
-        assert arr_in_tup[0] == Quantity([1])
-        assert arr_in_tup[1] == "m"
