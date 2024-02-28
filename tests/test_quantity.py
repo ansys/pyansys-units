@@ -180,6 +180,9 @@ def test_array_iteration():
     qs = [x for x in q]
     assert qs[0] == Quantity(1, "m")
     assert qs[1] == Quantity(2, "m")
+    i = iter(q)
+    assert next(i) == Quantity(1, "m")
+    assert next(i) == Quantity(2, "m")
 
 
 def test_to():
