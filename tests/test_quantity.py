@@ -174,7 +174,6 @@ def test_array_index():
 
 
 def test_array_iteration():
-    return
     if not _supporting_numpy():
         return
     q = Quantity([1, 2], "m")
