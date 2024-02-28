@@ -4,8 +4,8 @@
 Defining a quantity
 ===================
 
-To initialize a physical quantity, import from the ``ansys.units`` package, and create a
-new ``Quantity`` object:
+Import ``Quantity`` from the ``ansys.units`` package and instantiate a
+``Quantity`` object, providing a numerical value and a unit string:
 
 .. code:: python
 
@@ -13,9 +13,9 @@ new ``Quantity`` object:
 
     meter = Quantity(value=1, units="m")
 
-You can also provide a ``Unit`` object (rather than a unit string) as a construction
-argument. Alternatively, you can instantiate a ``Quantity`` object by multiplying
-a ``Unit`` object by a value:
+You can also provide a ``Unit`` object (rather than a unit string) as a
+construction argument. Alternatively, you can instantiate a ``Quantity``
+object by multiplying a ``Unit`` object by a value:
 
 .. code:: python
 
@@ -26,7 +26,8 @@ a ``Unit`` object by a value:
     meter = Quantity(value=1, units=ureg.m)
     meter = 1 * ureg.m
 
-With ``NumPy`` installed, a ``Quantity`` can be created using either a list of floats or a NumPy array:
+With ``NumPy`` installed, you can instantiate a ``Quantity`` using either
+a list of floats or a NumPy array:
 
 .. code:: python
 
