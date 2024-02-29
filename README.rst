@@ -35,15 +35,18 @@ PyAnsys Units
 
 PyAnsys Units
 -------------
-PyAnsys Units provides a Pythonic interface for units, unit systems, and unit
-conversions. Its features enable seamless setup and usage of physical
-quantities, enabling you to perform these tasks:
+PyAnsys Units is a Python library designed for managing physical quantities,
+which are combinations of numerical values and corresponding units of
+measurement. This package facilitates arithmetic operations and conversions
+between various units.
 
-- Instantiate physical quantities from a unit string, list of dimensions, or
-  quantity map.
-- Perform unit conversions and arithmetic operations between quantity objects or
-  real values.
-- Create custom units and unit systems.
+With a modular design, PyAnsys Units offers the flexibility to extend or
+modify its extensive list of physical units, prefixes, and constants without
+altering the source code. It seamlessly integrates with NumPy mathematical
+operations.
+
+PyAnsys Units comes bundled with a comprehensive set of physical units,
+prefixes, and constants and boasts complete test coverage.
 
 Documentation and issues
 ------------------------
@@ -90,21 +93,7 @@ these commands:
 Getting started
 ---------------
 
-PyAnsys Units is a Python library designed for managing physical quantities,
-which are combinations of numerical values and corresponding units of
-measurement. This package facilitates arithmetic operations and conversions
-between various units.
-
-With a modular design, PyAnsys Units offers the flexibility to extend or
-modify its extensive list of physical units, prefixes, and constants without
-altering the source code. It seamlessly integrates with NumPy mathematical
-operations.
-
-PyAnsys Units comes bundled with a comprehensive set of physical units,
-prefixes, and constants and boasts complete test coverage.
-
-Using PyAnsys Units is intuitive, and support flexible
-instantiation of ``Quantity`` objects:
+PyAnsys Units supports flexible instantiation of ``Quantity`` objects:
 
 .. code:: python
 
