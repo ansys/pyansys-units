@@ -490,8 +490,7 @@ class InvalidFloatUsage(FloatingPointError):
 
 
 class RequiresUniqueDimensions(ValueError):
-    """Provides the error when two units with the same dimensions are added to the
-    chosen units."""
+    """Raised when two units with the same dimensions are added to the chosen units."""
 
     def __init__(self, unit, other_unit):
         super().__init__(

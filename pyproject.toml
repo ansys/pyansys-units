@@ -36,6 +36,7 @@ doc = [
     "Sphinx==7.2.6",
     "sphinx-copybutton==0.5.2",
     "sphinx-gallery==0.15.0",
+    "sphinx-toggleprompt==0.5.2",
 ]
 tests = [
     "pytest==8.0.0",
