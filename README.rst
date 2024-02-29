@@ -41,7 +41,7 @@ measurement. This package facilitates arithmetic operations and conversions
 between various units.
 
 With a modular design, PyAnsys Units offers the flexibility to extend or
-modify its extensive list of physical units, prefixes, and constants without
+modify its extensive list of physical units and unit systems without
 altering the source code. It seamlessly integrates with NumPy mathematical
 operations.
 
