@@ -33,8 +33,8 @@ PyAnsys Units
    :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-units/main
    :alt: pre-commit.ci status
 
-PyAnsys Units
--------------
+Overview
+--------
 PyAnsys Units is a Python library designed for managing physical quantities,
 which are combinations of numerical values and corresponding units of
 measurement. This package facilitates arithmetic operations and conversions
