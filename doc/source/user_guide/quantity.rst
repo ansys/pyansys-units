@@ -27,7 +27,7 @@ object by multiplying a ``Unit`` object by a value:
     meter = 1 * ureg.m
 
 With ``NumPy`` installed, you can instantiate a ``Quantity`` using either
-a list of floats or a NumPy array:
+a list of floats or a ``NumPy`` array:
 
 .. code:: python
 
@@ -35,15 +35,10 @@ a list of floats or a NumPy array:
     import numpy as np
 
     length_array_quantity = Quantity(value=[1.0, 6.0, 7.0], units="m")
-
-    length_array = np.array([1.0, 6.0, 7.0])
-    length_array_quantity = Quantity(value=values, units="m")
-
     length_array_quantity[1]  # Quantity (6.0, "m")
-
     time = Quantity(value=2, units="s")
     speed = length_array_quantity / time
-    speed  # Quantity ([0.5 3.  3.5], "m s^-1")
+    speed  # Quantity ([0.5 3. 3.5], "m s^-1")
 
 All ``Quantity`` objects work intuitively with arithmetic operators:
 
