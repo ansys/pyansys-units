@@ -33,8 +33,8 @@ PyAnsys Units
    :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-units/main
    :alt: pre-commit.ci status
 
-Overview
---------
+PyAnsys Units
+-------------
 PyAnsys Units provides a Pythonic interface for units, unit systems, and unit
 conversions. Its features enable seamless setup and usage of physical
 quantities, enabling you to perform these tasks:
