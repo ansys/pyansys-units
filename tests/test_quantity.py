@@ -165,6 +165,26 @@ def test_array_to():
     assert to.value[1] == get_si_value(Quantity(2, "in"))
 
 
+def test_array_index():
+    if not _supporting_numpy():
+        return
+    q = Quantity([1, 2], "m")
+    assert q[0] == Quantity(1, "m")
+    assert q[1] == Quantity(2, "m")
+
+
+def test_array_iteration():
+    if not _supporting_numpy():
+        return
+    q = Quantity([1, 2], "m")
+    qs = [x for x in q]
+    assert qs[0] == Quantity(1, "m")
+    assert qs[1] == Quantity(2, "m")
+    i = iter(q)
+    assert next(i) == Quantity(1, "m")
+    assert next(i) == Quantity(2, "m")
+
+
 def test_to():
     v = Quantity(1.0, "m")
     to = v.to("ft")

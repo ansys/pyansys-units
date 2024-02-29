@@ -293,7 +293,7 @@ class Quantity:
 
     def __getitem__(self, idx):
         if _array:
-            value = self.__array__()[idx]
+            value = float(self.__array__()[idx])
             return Quantity(value, self.units)
         else:
             raise NumPyRequired()
