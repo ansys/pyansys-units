@@ -90,18 +90,25 @@ these commands:
 Getting started
 ---------------
 
-Basic usage
-~~~~~~~~~~~
-PyAnsys Units supports defining quantities and their units in a intuitive way.
-Start by importing the ``ansys.units`` package:
+PyAnsys Units is a Python library designed for managing physical quantities,
+which are combinations of numerical values and corresponding units of
+measurement. This package facilitates arithmetic operations and conversions
+between various units.
+
+With a modular design, PyAnsys Units offers the flexibility to extend or
+modify its extensive list of physical units, prefixes, and constants without
+altering the source code. It seamlessly integrates with NumPy mathematical
+operations.
+
+PyAnsys Units comes bundled with a comprehensive set of physical units,
+prefixes, and constants and boasts complete test coverage.
+
+Using PyAnsys Units is intuitive, and support flexible
+instantiation of ``Quantity`` objects:
 
 .. code:: python
 
    import ansys.units as ansunits
-
-You can instantiate quantities with one of four methods:
-
-.. code:: python
 
    # Using unit strings
 
@@ -137,6 +144,25 @@ You can instantiate quantities with one of four methods:
    torque.units.name  # "N m"
    torque.si_units  # "kg m^2 s^-2"
 
+With ``NumPy`` installed, you can instantiate a ``Quantity`` using either
+a list of floats or a ``NumPy`` array:
+
+.. code:: python
+
+    from ansys.units import Quantity
+    import numpy as np
+
+    length_array_quantity = Quantity(value=[1.0, 6.0, 7.0], units="m")
+
+    length_array = np.array([1.0, 6.0, 7.0])
+    length_array_quantity = Quantity(value=values, units="m")
+
+    length_array_quantity[1]  # Quantity (6.0, "m")
+
+    time = Quantity(value=2, units="s")
+    speed = length_array_quantity / time
+    speed  # Quantity ([0.5 3.  3.5], "m s^-1")
+
 You can instantiate unit systems with one of two methods:
 
 .. code:: python
@@ -147,8 +173,8 @@ You can instantiate unit systems with one of two methods:
 
    si.base_units  # ['kg', 'm', 's', 'K', 'delta_K', 'radian', 'mol', 'cd', 'A', 'sr']
 
-   # Custom unit systems are defined by passing selected base units. Any unit
-   # type that is not given will be filled with the SI equivalent.
+   # Define a custom unit system from a dictionary of base units. Any unspecified
+   # unit will default to the SI equivalent.
 
    ureg = ansunits.UnitRegistry()
    dims = ansunits.BaseDimensions

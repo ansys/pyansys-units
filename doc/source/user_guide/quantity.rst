@@ -27,7 +27,7 @@ object by multiplying a ``Unit`` object by a value:
     meter = 1 * ureg.m
 
 With ``NumPy`` installed, you can instantiate a ``Quantity`` using either
-a list of floats or a NumPy array:
+a list of floats or a ``NumPy`` array:
 
 .. code:: python
 
