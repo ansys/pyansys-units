@@ -401,7 +401,10 @@ def _units_to_dim(
                 dimensions=dimensions,
             )
         else:
-            raise UnimplementedUnit(term)
+            if _:
+                raise UnimplementedUnit(_)
+            elif unit_term:
+                raise UnimplementedUnit(unit_term)
 
     return dimensions
 
