@@ -241,7 +241,7 @@ derived_units:
   erg:
     composition: dyne cm
     factor: 1
-  hour:
+  h:
     composition: s
     factor: 3600
   pdl:
