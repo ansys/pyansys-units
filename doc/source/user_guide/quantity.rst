@@ -48,12 +48,13 @@ All ``Quantity`` objects work intuitively with arithmetic operators:
     from ansys.units import Quantity
 
     meter = Quantity(value=1, units="m")
+    meter_2 = Quantity(value=1, units="cm")
 
-    m_ad = meter + 2  # 3
-    m_sb = meter - 2  # -1
-    m_ml = meter * 2  # 2
-    m_dv = meter / 2  # 0.5
-    m_sq = meter**2  # 1
+    m_ad = meter + meter_2  # (1.01, "m")
+    m_sb = meter - meter_2  # (0.99, "m")
+    m_ml = meter * 2  # (2.0, "m")
+    m_dv = meter / 2  # (0.5, "m")
+    m_sq = meter**2  # (1.0, "m^2")
 
 Additions and subtractions involving ``Quantity`` objects retain the units
 of the first operand:
