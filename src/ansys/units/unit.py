@@ -402,7 +402,7 @@ def _units_to_dim(
             )
         else:
             if _:
-                raise UnimplementedUnit(_)
+                raise UnconfiguredUnit(_)
 
     return dimensions
 
@@ -674,10 +674,3 @@ class UnknownTableItem(ValueError):
 
     def __init__(self, item):
         super().__init__(f"`{item}` is not a valid quantity table item.")
-
-
-class UnimplementedUnit(ValueError):
-    """Raised when unit is not implemented."""
-
-    def __init__(self, unit):
-        super().__init__(f"`{unit}` is not implemented.")
