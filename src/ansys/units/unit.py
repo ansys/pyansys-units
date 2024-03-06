@@ -400,9 +400,8 @@ def _units_to_dim(
                 exponent=unit_term_exponent,
                 dimensions=dimensions,
             )
-        else:
-            if _:
-                raise UnconfiguredUnit(_)
+        elif _:
+            raise UnconfiguredUnit(_)
 
     return dimensions
 
