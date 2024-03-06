@@ -20,7 +20,7 @@ from ansys.units.quantity import (  # InvalidFloatUsage,
     RequiresUniqueDimensions,
     get_si_value,
 )
-from ansys.units.unit import IncorrectUnits
+from ansys.units.unit import IncorrectTemperatureUnits, IncorrectUnits
 
 DELTA = 1.0e-5
 
@@ -535,6 +535,9 @@ def test_temp_addition():
 
     t5 = df + df
     assert t5 == Quantity(100, "delta_F")
+
+    with pytest.raises(IncorrectTemperatureUnits):
+        t1 + t2
 
 
 def test_quantity_from_dimensions():
