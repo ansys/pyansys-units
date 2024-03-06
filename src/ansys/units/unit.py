@@ -391,9 +391,8 @@ def _units_to_dim(
                 dimensions[BaseDimensions[idx]] += unit_term_exponent
             else:
                 dimensions[BaseDimensions[idx]] = unit_term_exponent
-
         # Retrieve derived unit composition unit string and SI factor.
-        if unit_term in _derived_units:
+        elif unit_term in _derived_units:
             # Recursively parse composition unit string
 
             dimensions = _units_to_dim(
@@ -401,6 +400,8 @@ def _units_to_dim(
                 exponent=unit_term_exponent,
                 dimensions=dimensions,
             )
+        else:
+            raise UnimplementedUnit(term)
 
     return dimensions
 
@@ -672,3 +673,10 @@ class UnknownTableItem(ValueError):
 
     def __init__(self, item):
         super().__init__(f"`{item}` is not a valid quantity table item.")
+
+
+class UnimplementedUnit(ValueError):
+    """Raised when unit is not implemented."""
+
+    def __init__(self, unit):
+        super().__init__(f"`{unit}` is not implemented.")

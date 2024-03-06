@@ -13,6 +13,7 @@ from ansys.units.unit import (
     IncorrectTemperatureUnits,
     IncorrectUnits,
     UnconfiguredUnit,
+    UnimplementedUnit,
     UnknownTableItem,
 )
 
@@ -213,6 +214,16 @@ def test_copy_units_with_incompatable_dimensions():
     kg = Unit("kg")
     with pytest.raises(InconsistentDimensions):
         Unit(units="m", copy_from=kg)
+
+
+def test_unimplemented_units():
+
+    with pytest.raises(UnimplementedUnit):
+        q1 = Quantity(value=1, units="h")
+
+        q2 = Quantity(value=1, units="k")
+
+        q3 = Quantity(value=1, units="kg m^2 h")
 
 
 def test_errors():
