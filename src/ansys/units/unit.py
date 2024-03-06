@@ -403,8 +403,6 @@ def _units_to_dim(
         else:
             if _:
                 raise UnimplementedUnit(_)
-            elif unit_term:
-                raise UnimplementedUnit(unit_term)
 
     return dimensions
 
