@@ -10,8 +10,8 @@ from ansys.units import (
 )
 from ansys.units.unit import (
     InconsistentDimensions,
-    IncorrectTemperatureUnits,
     IncorrectUnits,
+    ProhibitedTemperatureOperation,
     UnconfiguredUnit,
     UnknownTableItem,
 )
@@ -121,7 +121,7 @@ def test_add():
     assert temp_C == Unit("C")
     assert kg + kg == None
 
-    with pytest.raises(IncorrectTemperatureUnits):
+    with pytest.raises(ProhibitedTemperatureOperation):
         C + C
 
     with pytest.raises(IncorrectUnits):
