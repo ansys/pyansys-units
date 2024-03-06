@@ -658,7 +658,7 @@ class IncorrectUnits(ValueError):
         )
 
 
-class ProhibitedTemperatureOperation(ValueError):
+class ProhibitedTemperatureOperation(TypeError):
     """Raised when two absolute temperatures are added."""
 
     def __init__(self):
