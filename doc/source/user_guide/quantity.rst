@@ -48,10 +48,7 @@ All ``Quantity`` objects work intuitively with arithmetic operators:
     from ansys.units import Quantity
 
     meter = Quantity(value=1, units="m")
-    cmeter = Quantity(value=1, units="cm")
 
-    m_ad = meter + cmeter  # (1.01, "m")
-    m_sb = meter - cmeter  # (0.99, "m")
     m_ml = meter * 2  # (2.0, "m")
     m_dv = meter / 2  # (0.5, "m")
     m_sq = meter**2  # (1.0, "m^2")
