@@ -49,11 +49,9 @@ All ``Quantity`` objects work intuitively with arithmetic operators:
 
     meter = Quantity(value=1, units="m")
 
-    m_ad = meter + 2  # 3
-    m_sb = meter - 2  # -1
-    m_ml = meter * 2  # 2
-    m_dv = meter / 2  # 0.5
-    m_sq = meter**2  # 1
+    m_ml = meter * 2  # (2.0, "m")
+    m_dv = meter / 2  # (0.5, "m")
+    m_sq = meter**2  # (1.0, "m^2")
 
 Additions and subtractions involving ``Quantity`` objects retain the units
 of the first operand:

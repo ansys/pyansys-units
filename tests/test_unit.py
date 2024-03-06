@@ -10,8 +10,8 @@ from ansys.units import (
 )
 from ansys.units.unit import (
     InconsistentDimensions,
-    IncorrectTemperatureUnits,
     IncorrectUnits,
+    ProhibitedTemperatureOperation,
     UnconfiguredUnit,
     UnknownTableItem,
 )
@@ -121,7 +121,7 @@ def test_add():
     assert temp_C == Unit("C")
     assert kg + kg == None
 
-    with pytest.raises(IncorrectTemperatureUnits):
+    with pytest.raises(ProhibitedTemperatureOperation):
         C + C
 
     with pytest.raises(IncorrectUnits):
@@ -213,6 +213,15 @@ def test_copy_units_with_incompatable_dimensions():
     kg = Unit("kg")
     with pytest.raises(InconsistentDimensions):
         Unit(units="m", copy_from=kg)
+
+
+def test_unconfigured_units():
+
+    with pytest.raises(UnconfiguredUnit):
+
+        q2 = Quantity(value=1, units="k")
+
+        q3 = Quantity(value=1, units="kg m^2 k")
 
 
 def test_errors():
