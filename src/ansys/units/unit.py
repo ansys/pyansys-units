@@ -192,7 +192,7 @@ class Unit:
         temp = dims(dimensions={base.TEMPERATURE: 1})
         delta_temp = dims(dimensions={base.TEMPERATURE_DIFFERENCE: 1})
         if self.dimensions == other_unit.dimensions == temp and op == "+":
-            raise ProhibitedTemperatureOperation(self, other_unit)
+            raise ProhibitedTemperatureOperation()
 
         # Checks to make sure they are both temperatures.
         if (self.dimensions and other_unit.dimensions) in (temp, delta_temp):
@@ -659,12 +659,11 @@ class IncorrectUnits(ValueError):
 
 
 class ProhibitedTemperatureOperation(ValueError):
-    """Raised when incompatible temperature dimensions are added."""
+    """Raised when two absolute temperatures are added."""
 
-    def __init__(self, unit1, unit2):
+    def __init__(self):
         super().__init__(
-            f"Either '{unit1.name}' or '{unit2.name}' must be a relative unit for "
-            f"this operation."
+            "In order to add two temperature-based quantities, at least one must be a temperature difference."  # noqa: E501
         )
 
 
