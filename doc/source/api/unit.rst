@@ -10,7 +10,7 @@ Unit
    :undoc-members:
    :exclude-members:
 
-.. autoexception:: ansys.units.unit.IncorrectTemperatureUnits
+.. autoexception:: ansys.units.unit.ProhibitedTemperatureOperation
    :show-inheritance:
 
 .. autoexception:: ansys.units.unit.IncorrectUnits

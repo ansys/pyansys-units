@@ -182,7 +182,7 @@ class Unit:
 
         Raises
         ------
-        IncorrectTemperatureUnits
+        ProhibitedTemperatureOperation
             Cannot add two absolute temperatures.
         IncorrectUnits
             Cannot add or subtract different units.
@@ -192,7 +192,7 @@ class Unit:
         temp = dims(dimensions={base.TEMPERATURE: 1})
         delta_temp = dims(dimensions={base.TEMPERATURE_DIFFERENCE: 1})
         if self.dimensions == other_unit.dimensions == temp and op == "+":
-            raise IncorrectTemperatureUnits(self, other_unit)
+            raise ProhibitedTemperatureOperation()
 
         # Checks to make sure they are both temperatures.
         if (self.dimensions and other_unit.dimensions) in (temp, delta_temp):
@@ -391,9 +391,8 @@ def _units_to_dim(
                 dimensions[BaseDimensions[idx]] += unit_term_exponent
             else:
                 dimensions[BaseDimensions[idx]] = unit_term_exponent
-
         # Retrieve derived unit composition unit string and SI factor.
-        if unit_term in _derived_units:
+        elif unit_term in _derived_units:
             # Recursively parse composition unit string
 
             dimensions = _units_to_dim(
@@ -401,6 +400,8 @@ def _units_to_dim(
                 exponent=unit_term_exponent,
                 dimensions=dimensions,
             )
+        elif _:
+            raise UnconfiguredUnit(_)
 
     return dimensions
 
@@ -657,13 +658,12 @@ class IncorrectUnits(ValueError):
         )
 
 
-class IncorrectTemperatureUnits(ValueError):
-    """Raised when incompatible temperature dimensions are added."""
+class ProhibitedTemperatureOperation(TypeError):
+    """Raised when two absolute temperatures are added."""
 
-    def __init__(self, unit1, unit2):
+    def __init__(self):
         super().__init__(
-            f"Either '{unit1.name}' or '{unit2.name}' must be a relative unit for "
-            f"this operation."
+            "In order to add two temperature-based quantities, at least one must be a temperature difference."  # noqa: E501
         )
 
 
