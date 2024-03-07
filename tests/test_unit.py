@@ -56,7 +56,7 @@ def test_unitless():
     assert u_1.name == ""
     assert u_1.dimensions == Dimensions()
 
-    assert u_2.name == ""
+    assert u_2.name == "m^0"
     assert u_2.dimensions == Dimensions()
 
 
