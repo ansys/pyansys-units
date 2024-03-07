@@ -555,7 +555,7 @@ def test_quantity_table():
         "Velocity": 2.5,
         "Current": 3,
         "Light": 1,
-        "Heat Transfer Coefficient": 2,
+        "HeatTransferCoefficient": 2,
     }
 
     api_test = Quantity(10.5, quantity_table=quantity_dict_from_settings_API)
