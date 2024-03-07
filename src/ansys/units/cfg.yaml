@@ -241,6 +241,9 @@ derived_units:
   erg:
     composition: dyne cm
     factor: 1
+  h:
+    composition: s
+    factor: 3600
   pdl:
     composition: lbm ft s^-2
     factor: 1
