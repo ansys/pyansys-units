@@ -2,4 +2,4 @@ from ansys.units import __version__
 
 
 def test_pkg_version():
-    assert __version__ == "0.2.0"
+    assert __version__ == "0.3.1"

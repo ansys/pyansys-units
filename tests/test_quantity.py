@@ -20,7 +20,7 @@ from ansys.units.quantity import (  # InvalidFloatUsage,
     RequiresUniqueDimensions,
     get_si_value,
 )
-from ansys.units.unit import IncorrectUnits
+from ansys.units.unit import IncorrectUnits, ProhibitedTemperatureOperation
 
 DELTA = 1.0e-5
 
@@ -68,11 +68,15 @@ def test_properties():
     assert v.dimensions == Dimensions({dims.LENGTH: 1.0})
 
 
-def test_value_setter():
+def test_quantity_is_immutable():
     v = Quantity(1, "m")
-    v.value = 20
-    assert v.value == 20
-    assert v.units == Unit("m")
+    with pytest.raises(AttributeError):
+        v.value = 20
+    with pytest.raises(AttributeError):
+        v.units = "kg"
+    with pytest.raises(AttributeError):
+        v.dimensions = Dimensions({})
+    assert v == Quantity(1, "m")
 
 
 def test_conversion():
@@ -120,6 +124,65 @@ def test_array():
 
         with pytest.raises(NumPyRequired):
             e2 = Quantity([7, 8, 9], "kg")
+
+
+def _supporting_numpy():
+    try:
+        import numpy  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+def test_array_compare():
+    if not _supporting_numpy():
+        return
+    assert Quantity([7, 8, 9], "kg") == Quantity([7, 8, 9], "kg")
+    assert Quantity([7, 8, 9], "kg") != Quantity([1, 2, 3], "kg")
+    with pytest.raises(IncompatibleDimensions):
+        Quantity([7, 8, 9], "kg") != Quantity([7, 8, 9], "m")
+    with pytest.raises(IncompatibleDimensions):
+        Quantity([7, 8, 9], "kg") == Quantity([7, 8, 9], "m")
+    assert Quantity([7, 8, 9], "kg") != Quantity([7, 8, 9], "g")
+    assert Quantity([7, 8, 9], "") == Quantity([7, 8, 9], "")
+    assert Quantity(1, "kg") != Quantity([1, 2, 3], "kg")
+    assert Quantity([1, 2, 3], "kg") != Quantity(1, "kg")
+
+
+def test_array_to_si_value():
+    if not _supporting_numpy():
+        return
+    si_value = get_si_value(Quantity([1, 2], "in"))
+    assert si_value[0] == get_si_value(Quantity(1, "in"))
+    assert si_value[1] == get_si_value(Quantity(2, "in"))
+
+
+def test_array_to():
+    if not _supporting_numpy():
+        return
+    to = Quantity([1, 2], "in").to("m")
+    assert to.value[0] == get_si_value(Quantity(1, "in"))
+    assert to.value[1] == get_si_value(Quantity(2, "in"))
+
+
+def test_array_index():
+    if not _supporting_numpy():
+        return
+    q = Quantity([1, 2], "m")
+    assert q[0] == Quantity(1, "m")
+    assert q[1] == Quantity(2, "m")
+
+
+def test_array_iteration():
+    if not _supporting_numpy():
+        return
+    q = Quantity([1, 2], "m")
+    qs = [x for x in q]
+    assert qs[0] == Quantity(1, "m")
+    assert qs[1] == Quantity(2, "m")
+    i = iter(q)
+    assert next(i) == Quantity(1, "m")
+    assert next(i) == Quantity(2, "m")
 
 
 def test_to():
@@ -473,6 +536,9 @@ def test_temp_addition():
     t5 = df + df
     assert t5 == Quantity(100, "delta_F")
 
+    with pytest.raises(ProhibitedTemperatureOperation):
+        t1 + t2
+
 
 def test_quantity_from_dimensions():
     dims = BaseDimensions
@@ -589,3 +655,8 @@ def test_error_messages():
 
     e4 = RequiresUniqueDimensions(Unit("mm"), Unit("m"))
     assert str(e4) == "For 'mm' to be added 'm' must be removed."
+
+
+def test_value_as_string():
+    with pytest.raises(TypeError):
+        q = Quantity("string", "m")
