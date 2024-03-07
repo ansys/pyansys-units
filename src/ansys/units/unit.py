@@ -77,8 +77,6 @@ class Unit:
             self._dimensions = Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise InconsistentDimensions()
-            if not self._dimensions:
-                self._name = ""
 
         elif dimensions:
             self._dimensions = dimensions
