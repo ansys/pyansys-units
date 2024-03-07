@@ -9,84 +9,84 @@ quantity_units_table:
   Time: s
   Temperature: K
   Current: A
-  Substanceamount: mol
+  SubstanceAmount: mol
   Light: cd
   Angle: radian
-  solidangle: sr
-  Acceleration: m s^2
-  Angularacceleration: radian s^2
-  Angularvelocity: radian s^1
+  SolidAngle: sr
+  Acceleration: m s^-2
+  AngularAcceleration: radian s^-2
+  AngularVelocity: radian s^-1
   Area: m^2
   Capacitance: farad
-  Compressibility: Pa^1
-  Concentration: m^3
-  DecayConstant: s^1
-  Density: kg m^3
-  DielectricContactResistance: farad^1 m^2
+  Compressibility: Pa^-1
+  Concentration: m^-3
+  DecayConstant: s^-1
+  Density: kg m^-3
+  DielectricContactResistance: farad^-1 m^2
   DynamicViscosity: Pa s
   ElectricCharge: A s
-  ElectricChargeDensity: A s m^3
-  ElectricChargeTransferCoefficient: farad m^2
-  ElectricConductancePerUnitArea: S m^2
-  ElectricCurrentDensity: A m^2
-  Electriccurrentsource: A m^3
-  ElectricField: V m^1
-  ElectricFluxDensity: coulomb m^2
+  ElectricChargeDensity: A s m^-3
+  ElectricChargeTransferCoefficient: farad m^-2
+  ElectricConductancePerUnitArea: S m^-2
+  ElectricCurrentDensity: A m^-2
+  ElectricCurrentSource: A m^-3
+  ElectricField: V m^-1
+  ElectricFluxDensity: coulomb m^-2
   ElectricalConductance: S
-  ElectricalConductivity: S m^1
-  ElectricalContactResistance: S^1 m^2
-  ElectricalPermittivity: A s V^1 m^1
+  ElectricalConductivity: S m^-1
+  ElectricalContactResistance: S^-1 m^2
+  ElectricalPermittivity: A s V^-1 m^-1
   ElectricalResistance: ohm
   ElectricalResistivity: ohm m
   Enthalpy: J
   Force: N
-  ForceDensity: N m^3
+  ForceDensity: N m^-3
   Frequency: Hz
-  Heatflux: W m^2
-  HeatGeneration: W m^3
-  HeatTransferCoefficient: W m^2 K^1
+  HeatFlux: W m^-2
+  HeatGeneration: W m^-3
+  HeatTransferCoefficient: W m^-2 K^-1
   Impulse: N s
   Inductance: H
-  MagneticFieldIntensity: A m^1
+  MagneticFieldIntensity: A m^-1
   MagneticFlux: Wb
   MagneticFluxDensity: T
-  MagneticPermeability: H m^1
+  MagneticPermeability: H m^-1
   MagneticPotential: T m
-  MassFlowRate: kg s^1
-  Massflux: kg s^1 m^2
-  MolarConcentration: mol m^3
-  MolarEnergy: J mol^1
-  MolarEnthalpy: J mol^1
-  MolarEntropy: J mol^1 K^1
-  Molarmass: kg mol^1
-  MolarVolume: m^3 mol^1
+  MassFlowRate: kg s^-1
+  MassFlux: kg s^-1 m^-2
+  MolarConcentration: mol m^-3
+  MolarEnergy: J mol^-1
+  MolarEnthalpy: J mol^-1
+  MolarEntropy: J mol^-1 K^-1
+  MolarMass: kg mol^-1
+  MolarVolume: m^3 mol^-1
   Moment: N m
   MomentOfInertiaOfArea: m^2 m^2
   MomentOfInertiaOfMass: kg m^2
-  Momentum: kg m s^1
+  Momentum: kg m s^-1
   Pressure: Pa
   ShearStrain: radian
-  ShearStrainRate: radian s^1
-  SpecificConcentration: mol kg^1
-  SpecificEnergy: J kg^1
-  SpecificEnthalpy: J kg^1
-  SpecificEntropy: J kg^1 K^1
-  SpecificFlameSurfaceDensity: m^2 kg^1
-  SpecificHeatCapacity: J kg^1 K^1
-  SpecificVolume: kg^1 m^3
-  Stiffness: N m^1
-  Strain: m m^1
-  SurfaceChargeDensity: A s m^2
-  SurfaceForceDensity: N m^2
-  SurfacePowerDensity: W m^2
-  SurfaceTension: N m^1
-  TemperatureGradient: K m^1
-  ThermalCapacitance: J K^1
-  ThermalConductance: W K^1
-  ThermalConductivity: W m^1 K^1
-  ThermalContactResistance: W^1 m^2 K
-  ThermalExpansionCoefficient: K^1
+  ShearStrainRate: radian s^-1
+  SpecificConcentration: mol kg^-1
+  SpecificEnergy: J kg^-1
+  SpecificEnthalpy: J kg^-1
+  SpecificEntropy: J kg^-1 K^-1
+  SpecificFlameSurfaceDensity: m^2 kg^-1
+  SpecificHeatCapacity: J kg^-1 K^-1
+  SpecificVolume: kg^-1 m^3
+  Stiffness: N m^-1
+  Strain: m m^-1
+  SurfaceChargeDensity: A s m^-2
+  SurfaceForceDensity: N m^-2
+  SurfacePowerDensity: W m^-2
+  SurfaceTension: N m^-1
+  TemperatureGradient: K m^-1
+  ThermalCapacitance: J K^-1
+  ThermalConductance: W K^-1
+  ThermalConductivity: W m^-1 K^-1
+  ThermalContactResistance: W^-1 m^2 K
+  ThermalExpansionCoefficient: K^-1
   Torque: N m
-  Velocity: m s^1
+  Velocity: m s^-1
   Volume: m^3
-  VolumetricFlowRate: m^3 s^1
+  VolumetricFlowRate: m^3 s^-1
