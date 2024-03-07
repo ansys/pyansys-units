@@ -5,6 +5,7 @@ API
 [Pp]y[Aa]nsys
 Pythonic
 celsius
+delta_
 rankine
 fahrenheit
 substrings
