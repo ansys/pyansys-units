@@ -1,9 +1,9 @@
 # Quantity Map
 # ------------
 #
-# Quantity: Units
+# Quantity: units
 
-quantity_Units_table:
+quantity_units_table:
   Mass: g
   Length: cm
   Time: s
