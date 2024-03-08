@@ -134,7 +134,7 @@ def test_quantity_table():
         "Velocity": 2.5,
         "Current": 3,
         "Light": 1,
-        "Heat Transfer Coefficient": 2,
+        "HeatTransferCoefficient": 2,
     }
     qm1 = Unit(table=qm1_table)
     assert qm1.name == "kg m^-1.5 s^-2.5 A^3 cd W^2 K^-2"
