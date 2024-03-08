@@ -17,27 +17,16 @@ quantity_units_table:
   AngularAcceleration: radian s^-2
   AngularVelocity: radian s^-1
   Area: ft^2
-  Capacitance: farad
   Compressibility: psf^-1
   Concentration: ft^-3
   DecayConstant: s^-1
   Density: slug ft^-3
-  DielectricContactResistance: farad^-1 ft^2
   DynamicViscosity: lbf s ft^-2
   ElectricCharge: A s
   ElectricChargeDensity: A s ft^-3
-  ElectricChargeTransferCoefficient: farad ft^-2
-  ElectricConductancePerUnitArea: S ft^-2
   ElectricCurrentDensity: A ft^-2
   ElectricCurrentSource: A ft^-3
-  ElectricField: V ft^-1
   ElectricFluxDensity: coulomb ft^-2
-  ElectricalConductance: S
-  ElectricalConductivity: S ft^-1
-  ElectricalContactResistance: S^-1 ft^2
-  ElectricalPermittivity: A s V^-1 ft^-1
-  ElectricalResistance: ohm
-  ElectricalResistivity: ohm ft
   Enthalpy: lbf ft
   Force: lbf
   ForceDensity: lbf ft^-3
@@ -46,12 +35,7 @@ quantity_units_table:
   HeatGeneration: BTU s^-1 ft^-3
   HeatTransferCoefficient: lbf s^-1 ft^-1 R^-1
   Impulse: lbf s
-  Inductance: H
   MagneticFieldIntensity: A ft^-1
-  MagneticFlux: line
-  MagneticFluxDensity: line ft^-2
-  MagneticPermeability: H ft^-1
-  MagneticPotential: T ft
   MassFlowRate: slug s^-1
   MassFlux: slug s^-1 ft^-2
   MolarConcentration: slugmol ft^-3
