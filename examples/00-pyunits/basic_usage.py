@@ -69,7 +69,7 @@ torque = Quantity(value=5, quantity_table=tor_dict)
 ###############################################################################
 # Specify quantity properties
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# For a quantity, you specify seven properties:
+# For a quantity, you specify six properties:
 
 # 1. value : float | int
 # 2. units : str
@@ -79,15 +79,15 @@ torque = Quantity(value=5, quantity_table=tor_dict)
 # 6. is_dimensionless : bool
 
 
-cap_dict = {"Capacitance": 1}
-capacitance = Quantity(value=50, quantity_table=cap_dict)
+dv_dict = {"DynamicViscosity": 1}
+dynamic_viscosity = Quantity(value=50, quantity_table=dv_dict)
 
-capacitance.value  # >>> 50.0
-capacitance.units.name  # >>> "farad"
-capacitance.units.si_units  # >>> "kg^-1 m^-2 s^4 A^2"
-capacitance.dimensions  # >>> {'MASS': -1.0, 'LENGTH': -2.0, 'TIME': 4.0, 'CURRENT': 2.0}
-capacitance.is_dimensionless  # >>> False
-get_si_value(capacitance)  # >>> 50.0
+dynamic_viscosity.value  # >>> 50.0
+dynamic_viscosity.units.name  # >>> "Pa s"
+dynamic_viscosity.units.si_units  # >>> "kg m^-1 s^-1"
+dynamic_viscosity.dimensions  # >>> {'MASS': 1.0, 'LENGTH': -1.0, 'TIME': -1.0}
+dynamic_viscosity.is_dimensionless  # >>> False
+get_si_value(dynamic_viscosity)  # >>> 50.0
 
 ###############################################################################
 # Perform arithmetic operations
