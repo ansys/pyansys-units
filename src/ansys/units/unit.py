@@ -72,13 +72,11 @@ class Unit:
             units = _table_to_units(table=table)
 
         if units:
-            self._name = units
+            self._name = _condense(units)
             _dimensions = _units_to_dim(units=units)
             self._dimensions = Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise InconsistentDimensions()
-            if not self._dimensions:
-                self._name = ""
 
         elif dimensions:
             self._dimensions = dimensions

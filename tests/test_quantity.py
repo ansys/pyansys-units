@@ -375,6 +375,14 @@ def test_rdiv():
     assert q2.units == Unit("m^-1 s")
 
 
+def test_dimensionless_div():
+    length_1 = Quantity(50, "mm")
+    length_2 = Quantity(40, "inch")
+    result = length_1 / length_2
+    result.value == 1.25
+    result.units == "mm inch^-1"
+
+
 def test_quantity_divided_by_unit():
     dims = BaseDimensions
     ur = UnitRegistry()
