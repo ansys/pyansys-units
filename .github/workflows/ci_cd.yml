@@ -37,6 +37,7 @@ jobs:
         uses: ansys/actions/doc-style@v5.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          vale-version: "3.4.1"
 
   commit-style:
     name: "Run commit style checks"
