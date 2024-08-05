@@ -281,7 +281,7 @@ def test_temp_subtraction():
 
     t5 = Quantity(10.0, "delta_F")
     t6 = t5 - t4
-    assert t6 == Quantity(-25.60000000495262, "F")
+    assert t6 == Quantity(-25.600000000000023, "F")
 
 
 def test_pow():
