@@ -668,3 +668,11 @@ def test_error_messages():
 def test_value_as_string():
     with pytest.raises(TypeError):
         q = Quantity("string", "m")
+
+
+def test_C_to_F():
+    ureg = UnitRegistry()
+    five_c = Quantity(value=5.0, units=ureg.C)
+    converted = five_c.to(ureg.F)
+    assert converted.value == 41.0
+    assert converted.units._name == "F"
