@@ -32,10 +32,10 @@ dependencies = [
 doc = [
     "ansys-sphinx-theme==1.0.7",
     "matplotlib==3.9.1",
-    "numpydoc==1.7.0",
-    "Sphinx==8.0.2",
+    "numpydoc==1.8.0",
+    "Sphinx==7.4.7",
     "sphinx-copybutton==0.5.2",
-    "sphinx-gallery==0.17.0",
+    "sphinx-gallery==0.17.1",
     "sphinx-toggleprompt==0.5.2",
 ]
 tests = [
