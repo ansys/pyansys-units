@@ -48,6 +48,10 @@ extensions = [
 
 toggleprompt_offset_right = 35
 
+suppress_warnings = [
+    "config.cache",
+]
+
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
