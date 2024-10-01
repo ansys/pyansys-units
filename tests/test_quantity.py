@@ -281,7 +281,7 @@ def test_temp_subtraction():
 
     t5 = Quantity(10.0, "delta_F")
     t6 = t5 - t4
-    assert t6 == Quantity(-25.60000000495262, "F")
+    assert t6 == Quantity(-25.600000000000023, "F")
 
 
 def test_pow():
@@ -668,3 +668,11 @@ def test_error_messages():
 def test_value_as_string():
     with pytest.raises(TypeError):
         q = Quantity("string", "m")
+
+
+def test_C_to_F():
+    ureg = UnitRegistry()
+    five_c = Quantity(value=5.0, units=ureg.C)
+    converted = five_c.to(ureg.F)
+    assert converted.value == 41.0
+    assert converted.units._name == "F"

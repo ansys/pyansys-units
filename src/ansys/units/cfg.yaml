@@ -168,11 +168,11 @@ base_units:
     si_offset: 273.15
   F:
     type: TEMPERATURE
-    si_scaling_factor: 0.55555555555
+    si_scaling_factor: 0.5555555555555555
     si_offset: 459.67
   R:
     type: TEMPERATURE
-    si_scaling_factor: 0.55555555555
+    si_scaling_factor: 0.5555555555555555
     si_offset: 0
   delta_K:
     type: TEMPERATURE_DIFFERENCE
@@ -184,11 +184,11 @@ base_units:
     si_offset: 0
   delta_F:
     type: TEMPERATURE_DIFFERENCE
-    si_scaling_factor: 0.55555555555
+    si_scaling_factor: 0.5555555555555555
     si_offset: 0
   delta_R:
     type: TEMPERATURE_DIFFERENCE
-    si_scaling_factor: 0.55555555555
+    si_scaling_factor: 0.5555555555555555
     si_offset: 0
 
 # Derived Units
