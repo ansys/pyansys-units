@@ -1,6 +1,4 @@
-ANSYS
-Ansys
-ansys
+(?i)ansys
 API
 [Pp]y[Aa]nsys
 Pythonic
