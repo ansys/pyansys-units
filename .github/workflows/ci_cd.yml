@@ -47,11 +47,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  pr-name-style:
-    name: "Run PR name style checks"
+  pr-name:
+    if: github.event_name == 'pull_request'
+    name: Check the name of the PR
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-pr-title@v8
+      - name: Check commit name
+        uses: ansys/actions/check-pr-title@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   smoke-tests:
     name: "Build and Smoke tests"
