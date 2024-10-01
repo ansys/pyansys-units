@@ -1,4 +1,6 @@
-(?i)ansys
+ANSYS
+Ansys
+ansys
 API
 [Pp]y[Aa]nsys
 Pythonic
@@ -7,4 +9,3 @@ delta_
 rankine
 fahrenheit
 substrings
-THIRDPARTY
