@@ -1,6 +1,6 @@
 # Contributors
 
-## Project Leads
+## Project Lead
 
 * [Harshal Pohekar](https://github.com/hpohekar)
 
