@@ -30,12 +30,12 @@ dependencies = [
 
 [project.optional-dependencies]
 doc = [
-    "ansys-sphinx-theme==1.1.1",
+    "ansys-sphinx-theme==1.2.0",
     "matplotlib==3.9.2",
     "numpydoc==1.8.0",
     "Sphinx==7.4.7",
     "sphinx-copybutton==0.5.2",
-    "sphinx-gallery==0.17.1",
+    "sphinx-gallery==0.18.0",
     "sphinx-toggleprompt==0.5.2",
 ]
 tests = [
@@ -44,7 +44,7 @@ tests = [
     "pytest-mock==3.14.0",
 ]
 lists = [
-    "numpy==2.1.1",
+    "numpy==2.1.2",
 ]
 
 [project.urls]
