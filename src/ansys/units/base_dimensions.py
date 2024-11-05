@@ -37,11 +37,9 @@ class BaseDimensions(Enum):
     TIME
     TEMPERATURE
     TEMPERATURE_DIFFERENCE
-    ANGLE
     CHEMICAL_AMOUNT
     LIGHT
     CURRENT
-    SOLID_ANGLE
     """
 
     MASS = 0
@@ -49,8 +47,6 @@ class BaseDimensions(Enum):
     TIME = 2
     TEMPERATURE = 3
     TEMPERATURE_DIFFERENCE = 4
-    ANGLE = 5
-    CHEMICAL_AMOUNT = 6
-    LIGHT = 7
-    CURRENT = 8
-    SOLID_ANGLE = 9
+    CHEMICAL_AMOUNT = 5
+    LIGHT = 6
+    CURRENT = 7

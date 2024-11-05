@@ -49,11 +49,9 @@ class UnitSystem:
     TIME
     TEMPERATURE
     TEMPERATURE_DIFFERENCE
-    ANGLE
     CHEMICAL_AMOUNT
     LIGHT
     CURRENT
-    SOLID_ANGLE
     """
 
     def __init__(
@@ -158,15 +156,6 @@ class UnitSystem:
         self._set_type(unit_type=BaseDimensions.TEMPERATURE_DIFFERENCE, unit=new_mass)
 
     @property
-    def ANGLE(self):
-        """Angle unit of the unit system."""
-        return self._ANGLE
-
-    @ANGLE.setter
-    def ANGLE(self, new_mass):
-        self._set_type(unit_type=BaseDimensions.ANGLE, unit=new_mass)
-
-    @property
     def CHEMICAL_AMOUNT(self):
         """Chemical Amount unit of the unit system."""
         return self._CHEMICAL_AMOUNT
@@ -192,15 +181,6 @@ class UnitSystem:
     @CURRENT.setter
     def CURRENT(self, new_mass):
         self._set_type(unit_type=BaseDimensions.CURRENT, unit=new_mass)
-
-    @property
-    def SOLID_ANGLE(self):
-        """Solid Angle unit of the unit system."""
-        return self._SOLID_ANGLE
-
-    @SOLID_ANGLE.setter
-    def SOLID_ANGLE(self, new_mass):
-        self._set_type(unit_type=BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
     def __repr__(self):
         units = ""

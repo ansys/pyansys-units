@@ -407,10 +407,11 @@ def _units_to_dim(
         if unit_term in _base_units:
             idx = _base_units[unit_term]["type"]
 
-            if BaseDimensions[idx] in dimensions:
-                dimensions[BaseDimensions[idx]] += unit_term_exponent
-            else:
-                dimensions[BaseDimensions[idx]] = unit_term_exponent
+            if idx in list(BaseDimensions):
+                if BaseDimensions[idx] in dimensions:
+                    dimensions[BaseDimensions[idx]] += unit_term_exponent
+                else:
+                    dimensions[BaseDimensions[idx]] = unit_term_exponent
         # Retrieve derived unit composition unit string and SI factor.
         elif unit_term in _derived_units:
             # Recursively parse composition unit string
