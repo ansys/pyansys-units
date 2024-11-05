@@ -20,7 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+
 import ansys.units as pyunits
+
+os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "0"
 
 
 def test_degree_addition():
