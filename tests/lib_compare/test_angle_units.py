@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import math
+import os
 
 import pytest
 import util
