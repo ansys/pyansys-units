@@ -20,39 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-
-import ansys.units as pyunits
+import pytest
 
 
-def test_degree_addition(dims_without_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
-    degree = pyunits.Quantity(1.0, "degree")
-    assert not degree.dimensions
-    assert degree.is_dimensionless
-    assert degree + 1 == pyunits.Quantity(58.29577951308232, "degree")
+@pytest.fixture(autouse=True)
+def dims_without_angle(monkeypatch):
+    # Set environment variables
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", None)
 
 
-def test_radian_addition(dims_without_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
-    radian = pyunits.Quantity(1.0, "radian")
-    assert not radian.dimensions
-    assert radian.is_dimensionless
-    assert radian + 1 == pyunits.Quantity(2.0, "radian")
-    assert (radian + 1).to("degree") == pyunits.Quantity(114.59155902616465, "degree")
-
-
-def test_unit_system_repr(dims_without_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
-    us = pyunits.UnitSystem()
-    us_dict = """MASS: kg
-LENGTH: m
-TIME: s
-TEMPERATURE: K
-TEMPERATURE_DIFFERENCE: delta_K
-CHEMICAL_AMOUNT: mol
-LIGHT: cd
-CURRENT: A
-"""
-
-    assert repr(us) == str(us_dict)
+@pytest.fixture(autouse=True)
+def dims_with_angle(monkeypatch):
+    # Set environment variables
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
