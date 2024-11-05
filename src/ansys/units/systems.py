@@ -23,6 +23,8 @@
 
 from __future__ import annotations
 
+import os
+
 from ansys.units import BaseDimensions, _base_units, _unit_systems
 
 
@@ -181,6 +183,26 @@ class UnitSystem:
     @CURRENT.setter
     def CURRENT(self, new_mass):
         self._set_type(unit_type=BaseDimensions.CURRENT, unit=new_mass)
+
+    if os.getenv("ANSYS_UNITS_ANGLE_AS_DIMENSION"):
+
+        @property
+        def ANGLE(self):
+            """Angle unit of the unit system."""
+            return self._ANGLE
+
+        @ANGLE.setter
+        def ANGLE(self, new_mass):
+            self._set_type(unit_type=BaseDimensions.ANGLE, unit=new_mass)
+
+        @property
+        def SOLID_ANGLE(self):
+            """Solid Angle unit of the unit system."""
+            return self._SOLID_ANGLE
+
+        @SOLID_ANGLE.setter
+        def SOLID_ANGLE(self, new_mass):
+            self._set_type(unit_type=BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
     def __repr__(self):
         units = ""

@@ -19,34 +19,46 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides the ``BaseDimensions`` class."""
+"""
+Provides the ``BaseDimensions`` class.
+
+Supplies all valid base dimensions used in dimensional analysis.
+
+Used as dictionary keys for defining a `Dimensions` object.
+"""
 
 from enum import Enum
+import os
 
+_base_dims = {
+    "MASS": 0,
+    "LENGTH": 1,
+    "TIME": 2,
+    "TEMPERATURE": 3,
+    "TEMPERATURE_DIFFERENCE": 4,
+    "CHEMICAL_AMOUNT": 5,
+    "LIGHT": 6,
+    "CURRENT": 7,
+}
 
-class BaseDimensions(Enum):
-    """
-    Supplies all valid base dimensions used in dimensional analysis.
+_base_dims_with_angle = {
+    "MASS": 0,
+    "LENGTH": 1,
+    "TIME": 2,
+    "TEMPERATURE": 3,
+    "TEMPERATURE_DIFFERENCE": 4,
+    "CHEMICAL_AMOUNT": 5,
+    "LIGHT": 6,
+    "CURRENT": 7,
+    "ANGLE": 8,
+    "SOLID_ANGLE": 9,
+}
 
-    Used as dictionary keys for defining a `Dimensions` object.
-
-    Attributes
-    ----------
-    MASS
-    LENGTH
-    TIME
-    TEMPERATURE
-    TEMPERATURE_DIFFERENCE
-    CHEMICAL_AMOUNT
-    LIGHT
-    CURRENT
-    """
-
-    MASS = 0
-    LENGTH = 1
-    TIME = 2
-    TEMPERATURE = 3
-    TEMPERATURE_DIFFERENCE = 4
-    CHEMICAL_AMOUNT = 5
-    LIGHT = 6
-    CURRENT = 7
+BaseDimensions = Enum(
+    "BaseDimensions",
+    (
+        _base_dims_with_angle
+        if os.getenv("ANSYS_UNITS_ANGLE_AS_DIMENSION")
+        else _base_dims
+    ),
+)
