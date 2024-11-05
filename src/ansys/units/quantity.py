@@ -294,7 +294,7 @@ class Quantity:
         return Quantity(value=new_value, units=new_units)
 
     def __float__(self):
-        if self.is_dimensionless:
+        if self.is_dimensionless or "ANGLE" or "SOLID_ANGLE" in self.dimensions:
             return get_si_value(self)
         raise InvalidFloatUsage()
 
