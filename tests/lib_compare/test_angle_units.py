@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import math
+import os
 
 import pytest
 import util
@@ -45,13 +46,15 @@ def test_pint_angles_are_dimensionless():
     assert str(angle_in_radians_dimensions) == "dimensionless"
 
 
-def test_pyunits_angles_are_dimensionsless():
+def test_pyunits_angles_have_angle_dimensions():
+    os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
+    from ansys.units import BaseDimensions, Dimensions
     from ansys.units.quantity import Quantity
 
     radian = Quantity(1.0, "radian")
-    assert not radian.dimensions
+    assert radian.dimensions == Dimensions({BaseDimensions.ANGLE: 1})
     degree = Quantity(1.0, "degree")
-    assert not degree.dimensions
+    assert degree.dimensions == Dimensions({BaseDimensions.ANGLE: 1})
 
 
 # pint is happy to convert between angle and dimensionless because it
@@ -78,13 +81,18 @@ def test_pint_angle_and_dimensionless_are_convertible():
     assert num_deg_rom_rad == util.one_degree_in_radians
 
 
-def test_pyunits_angle_and_dimensionless_are_convertible():
-    from ansys.units.quantity import Quantity
+def test_pyunits_angle_and_dimensionless_are_not_convertible():
+    os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
+    from ansys.units.quantity import IncompatibleDimensions, Quantity
 
     no_dim = Quantity(1.0, "")
-    assert no_dim.to("radian")
+    with pytest.raises(IncompatibleDimensions):
+        no_dim.to("radian")
     radian = Quantity(1.0, "radian")
-    assert radian.to("")
+    with pytest.raises(IncompatibleDimensions):
+        # seems generally meaningless, but OK, this is something
+        # that could happen in a generic loop:
+        radian.to("")
 
 
 # because of the way that pint treats angles, we get seamless integration
@@ -110,3 +118,17 @@ def test_pyunits_angle_works_with_trigonometry():
     assert math.sin(get_si_value(half_pi_rads)) == pytest.approx(1.0)
     # see that PyUnits goes to radians for the float conversion, which is nice
     assert math.cos(get_si_value(sixty_degrees)) == pytest.approx(0.5)
+
+
+def test_ansunits_frequency_and_angular_frequency_are_not_convertible():
+    os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
+    from ansys.units.quantity import IncompatibleDimensions, Quantity
+
+    # ansunits avoids the pint complications by simply not allowing
+    # those conversions
+    hz = Quantity(1.0, "Hz")
+    with pytest.raises(IncompatibleDimensions):
+        hz.to("radian s^-1")
+    rad_per_s = Quantity(1.0, "radian s^-1")
+    with pytest.raises(IncompatibleDimensions):
+        rad_per_s.to("Hz")
