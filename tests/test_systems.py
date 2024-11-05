@@ -20,7 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+
 import pytest
+
+os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
 
 from ansys.units import BaseDimensions, UnitRegistry, UnitSystem
 from ansys.units.systems import IncorrectUnitType, InvalidUnitSystem, NotBaseUnit
@@ -33,9 +37,11 @@ def test_pre_defined_unit_system():
     assert us.TIME == "s"
     assert us.TEMPERATURE == "K"
     assert us.TEMPERATURE_DIFFERENCE == "delta_K"
+    assert us.ANGLE == "radian"
     assert us.CHEMICAL_AMOUNT == "mol"
     assert us.LIGHT == "cd"
     assert us.CURRENT == "A"
+    assert us.SOLID_ANGLE == "sr"
 
 
 def test_repr():
@@ -48,6 +54,8 @@ TEMPERATURE_DIFFERENCE: delta_K
 CHEMICAL_AMOUNT: mol
 LIGHT: cd
 CURRENT: A
+ANGLE: radian
+SOLID_ANGLE: sr
 """
 
     assert repr(us) == str(us_dict)
@@ -69,9 +77,11 @@ def test_update():
         dims.TIME: "s",
         dims.TEMPERATURE: "R",
         dims.TEMPERATURE_DIFFERENCE: "delta_R",
+        dims.ANGLE: "degree",
         dims.CHEMICAL_AMOUNT: ureg.slugmol,
         dims.LIGHT: "cd",
         dims.CURRENT: "A",
+        dims.SOLID_ANGLE: "sr",
     }
     us.update(base_units=base_units)
     assert us.MASS.name == "slug"
@@ -79,9 +89,11 @@ def test_update():
     assert us.TIME == "s"
     assert us.TEMPERATURE == "R"
     assert us.TEMPERATURE_DIFFERENCE == "delta_R"
+    assert us.ANGLE == "degree"
     assert us.CHEMICAL_AMOUNT.name == "slugmol"
     assert us.LIGHT == "cd"
     assert us.CURRENT == "A"
+    assert us.SOLID_ANGLE == "sr"
 
 
 def test_eq():
@@ -118,9 +130,11 @@ def test_custom_unit_system():
             dims.TIME: "s",
             dims.TEMPERATURE: "R",
             dims.TEMPERATURE_DIFFERENCE: "delta_R",
+            dims.ANGLE: "radian",
             dims.CHEMICAL_AMOUNT: "slugmol",
             dims.LIGHT: "cd",
             dims.CURRENT: "A",
+            dims.SOLID_ANGLE: "sr",
         }
     )
     assert us.MASS == "slug"
@@ -128,9 +142,11 @@ def test_custom_unit_system():
     assert us.TIME == "s"
     assert us.TEMPERATURE == "R"
     assert us.TEMPERATURE_DIFFERENCE == "delta_R"
+    assert us.ANGLE == "radian"
     assert us.CHEMICAL_AMOUNT == "slugmol"
     assert us.LIGHT == "cd"
     assert us.CURRENT == "A"
+    assert us.SOLID_ANGLE == "sr"
 
 
 def test_not_base_unit_init():
@@ -163,6 +179,8 @@ def test_wrong_unit_type():
         us.LIGHT = "sr"
     with pytest.raises(IncorrectUnitType):
         us.CURRENT = "ft"
+    with pytest.raises(IncorrectUnitType):
+        us.SOLID_ANGLE = "radian"
 
 
 def test_error_messages():
