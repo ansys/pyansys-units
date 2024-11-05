@@ -20,13 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-
 import ansys.units as pyunits
 
 
 def test_degree_addition():
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
     degree = pyunits.Quantity(1.0, "degree")
     assert not degree.dimensions
     assert degree.is_dimensionless
@@ -34,7 +31,6 @@ def test_degree_addition():
 
 
 def test_radian_addition():
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
     radian = pyunits.Quantity(1.0, "radian")
     assert not radian.dimensions
     assert radian.is_dimensionless
@@ -43,7 +39,6 @@ def test_radian_addition():
 
 
 def test_unit_system_repr():
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
     us = pyunits.UnitSystem()
     us_dict = """MASS: kg
 LENGTH: m
