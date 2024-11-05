@@ -261,7 +261,7 @@ SOLID_ANGLE: sr
 
 # Combinations of these
 
-sys_units = {dims.MASS: "slug", dims.LENGTH: "ft", dims.ANGLE: "degree"}
+sys_units = {dims.MASS: "slug", dims.LENGTH: "ft"}
 cgs_modified = UnitSystem(base_units=sys_units, copy_from=cgs)
 cgs_modified
 """
