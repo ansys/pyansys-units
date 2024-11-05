@@ -120,6 +120,58 @@ def test_pyunits_angle_works_with_trigonometry():
     assert math.cos(get_si_value(sixty_degrees)) == pytest.approx(0.5)
 
 
+@pytest.mark.developer_only
+def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
+    from pint import UnitRegistry
+    from util import assert_rightly_but_fail, assert_wrongly
+    from util.pint import pint_value
+
+    ur = UnitRegistry()
+    hz = 1 * ur.hertz
+    rps = hz.to(ur.rps)
+    hz_out = rps.to(ur.hertz)
+    assert hz == hz_out
+    # google "conversion from revolutions per second to hertz";
+    # every site unanimously tells you that 1 rps = 1 Hz.
+    # But see https://github.com/hgrecco/pint/pull/653 where rps is
+    # revolutions per second in pint as the above PR and related
+    # issue convey. See e.g., https://github.com/hgrecco/pint/pull/653#issue-342008864
+    # which states "Correct behaviour is 1 rpm = 60 rps = 2 * pi * 60 Hz."
+    # I don't even get where they're coming from here. 1 Hz is one cycle
+    # per second, so that's 1 rps. This doesn't even seem to be ambiguous.
+    # This is a tricky area but they've landed on a solution that's not even
+    # arguable. But this is actually just collateral damage arising from a deeper issue.
+    # See further on in the same test where rad/s is covered.
+    assert_wrongly(
+        pint_value(hz) == 2.0 * math.pi * pint_value(rps), "2 pi factor for Hz and rps"
+    )
+    # but it should be
+    assert_rightly_but_fail(
+        pint_value(hz) == pint_value(rps), "Hertz and rps equivalence"
+    )
+    radians_per_second = hz.to(ur.radian / ur.s)
+    assert_rightly_but_fail(
+        2.0 * math.pi * pint_value(hz) == pytest.approx(radians_per_second),
+        "2 pi factor for Hz and rad/s",
+    )
+    assert_wrongly(
+        pint_value(hz) == pytest.approx(radians_per_second),
+        "equivalence of Hz and rad/s",
+    )
+    # The problem is: one radian is asserted to be unity
+    #  for conversion between angles and dimensionless values.
+    # So the code has to stick to the idea that one radian
+    #  is unity. So, when we talk about an "inverse second",
+    # or equivalently one hertz then the unit rotation in that
+    #  second is one radian, and s^-1 and Hz convert directly
+    # to rad/s without any numerical shift. But there is no context
+    #  where this is correct. Hz is a unit of frequency, measuring
+    # cycles per second, not radians per second.
+    # And so, when pint maintainers write things like "Correct behaviour
+    #  is 1 rpm = 60 rps = 2 * pi * 60 Hz", what they really
+    # mean is "This is the inevitable outcome of the way we do things."
+
+
 def test_ansunits_frequency_and_angular_frequency_are_not_convertible():
     os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
     from ansys.units.quantity import IncompatibleDimensions, Quantity

@@ -78,6 +78,7 @@ jobs:
       - uses: ansys/actions/tests-pytest@v8
         with:
           pytest-markers: '-m "not developer_only"'
+          pytest-extra-args: '--last-failed --last-failed-no-failures none'
 
   doc-build:
     name: "Build documentation"
