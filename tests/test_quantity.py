@@ -23,7 +23,7 @@
 import math
 import os
 
-os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = 1
+os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
 
 import pytest
 
@@ -242,7 +242,6 @@ def test_repr():
 
 
 def test_math():
-
     deg = Quantity(90, "degree")
     assert math.sin(deg) == 1.0
 
@@ -625,7 +624,6 @@ def testing_units_to_dimensions():
 
 
 def testing_multipliers():
-
     print(f"{'*' * 25} {testing_multipliers.__name__} {'*' * 25}")
 
     def from_to(from_str, to_str):

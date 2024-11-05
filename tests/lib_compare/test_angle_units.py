@@ -22,7 +22,7 @@
 
 import os
 
-os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = 1
+os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
 
 import math
 
@@ -50,7 +50,6 @@ def test_pint_angles_are_dimensionless():
 
 
 def test_pyunits_angles_have_angle_dimensions():
-
     from ansys.units import BaseDimensions, Dimensions
     from ansys.units.quantity import Quantity
 
@@ -85,7 +84,6 @@ def test_pint_angle_and_dimensionless_are_convertible():
 
 
 def test_pyunits_angle_and_dimensionless_are_not_convertible():
-
     from ansys.units.quantity import IncompatibleDimensions, Quantity
 
     no_dim = Quantity(1.0, "")
@@ -176,7 +174,6 @@ def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
 
 
 def test_ansunits_frequency_and_angular_frequency_are_not_convertible():
-
     from ansys.units.quantity import IncompatibleDimensions, Quantity
 
     # ansunits avoids the pint complications by simply not allowing

@@ -22,7 +22,7 @@
 
 import os
 
-os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = 1
+os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
 
 import pytest
 
@@ -45,7 +45,6 @@ def test_pre_defined_unit_system():
 
 
 def test_repr():
-
     us = UnitSystem()
     us_dict = """MASS: kg
 LENGTH: m
