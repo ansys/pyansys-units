@@ -295,7 +295,7 @@ class Quantity:
 
     def __float__(self):
         dims = Dimensions
-        if self.dimensions in dims():
+        if self.dimensions in [dims()]:
             return get_si_value(self)
         raise InvalidFloatUsage()
 
