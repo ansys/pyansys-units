@@ -58,7 +58,7 @@ BaseDimensions = Enum(
     "BaseDimensions",
     (
         _base_dims_with_angle
-        if os.getenv("ANSYS_UNITS_ANGLE_AS_DIMENSION")
+        if os.getenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION")
         else _base_dims
     ),
 )

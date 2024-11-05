@@ -297,7 +297,7 @@ class Quantity:
     def __float__(self):
         base_dims = BaseDimensions
         dims = Dimensions
-        if os.getenv("ANSYS_UNITS_ANGLE_AS_DIMENSION"):
+        if os.getenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION"):
             angle_dims = {base_dims.ANGLE: 1.0}
             solid_angle_dims = {base_dims.SOLID_ANGLE: 1.0}
         else:

@@ -184,7 +184,7 @@ class UnitSystem:
     def CURRENT(self, new_mass):
         self._set_type(unit_type=BaseDimensions.CURRENT, unit=new_mass)
 
-    if os.getenv("ANSYS_UNITS_ANGLE_AS_DIMENSION"):
+    if os.getenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION"):
 
         @property
         def ANGLE(self):
