@@ -36,3 +36,18 @@ def test_radian_addition():
     assert radian.is_dimensionless
     assert radian + 1 == pyunits.Quantity(2.0, "radian")
     assert (radian + 1).to("degree") == pyunits.Quantity(114.59155902616465, "degree")
+
+
+def test_unit_system_repr():
+    us = pyunits.UnitSystem()
+    us_dict = """MASS: kg
+LENGTH: m
+TIME: s
+TEMPERATURE: K
+TEMPERATURE_DIFFERENCE: delta_K
+CHEMICAL_AMOUNT: mol
+LIGHT: cd
+CURRENT: A
+"""
+
+    assert repr(us) == str(us_dict)
