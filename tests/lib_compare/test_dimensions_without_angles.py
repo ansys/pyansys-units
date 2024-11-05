@@ -25,7 +25,7 @@ import os
 import ansys.units as pyunits
 
 
-def test_degree_addition(dims_without_angle):
+def test_degree_addition():
     assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
     degree = pyunits.Quantity(1.0, "degree")
     assert not degree.dimensions
@@ -33,7 +33,7 @@ def test_degree_addition(dims_without_angle):
     assert degree + 1 == pyunits.Quantity(58.29577951308232, "degree")
 
 
-def test_radian_addition(dims_without_angle):
+def test_radian_addition():
     assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
     radian = pyunits.Quantity(1.0, "radian")
     assert not radian.dimensions
@@ -42,7 +42,7 @@ def test_radian_addition(dims_without_angle):
     assert (radian + 1).to("degree") == pyunits.Quantity(114.59155902616465, "degree")
 
 
-def test_unit_system_repr(dims_without_angle):
+def test_unit_system_repr():
     assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == None
     us = pyunits.UnitSystem()
     us_dict = """MASS: kg

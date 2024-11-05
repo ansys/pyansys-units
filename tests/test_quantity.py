@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 import math
-import os
 
 import pytest
 
@@ -239,8 +238,8 @@ def test_repr():
     assert v.__repr__() == 'Quantity (1.0, "m")'
 
 
-def test_math(dims_with_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == "1"
+def test_math(monkeypatch):
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
     deg = Quantity(90, "degree")
     assert math.sin(deg) == 1.0
 
@@ -622,8 +621,8 @@ def testing_units_to_dimensions():
     print("-" * 75)
 
 
-def testing_multipliers(dims_with_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == "1"
+def testing_multipliers(monkeypatch):
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
     print(f"{'*' * 25} {testing_multipliers.__name__} {'*' * 25}")
 
     def from_to(from_str, to_str):

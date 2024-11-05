@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 import math
-import os
 
 import pytest
 import util
@@ -46,8 +45,8 @@ def test_pint_angles_are_dimensionless():
     assert str(angle_in_radians_dimensions) == "dimensionless"
 
 
-def test_pyunits_angles_have_angle_dimensions(dims_with_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == "1"
+def test_pyunits_angles_have_angle_dimensions(monkeypatch):
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
     from ansys.units import BaseDimensions, Dimensions
     from ansys.units.quantity import Quantity
 
@@ -81,8 +80,8 @@ def test_pint_angle_and_dimensionless_are_convertible():
     assert num_deg_rom_rad == util.one_degree_in_radians
 
 
-def test_pyunits_angle_and_dimensionless_are_not_convertible(dims_with_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == "1"
+def test_pyunits_angle_and_dimensionless_are_not_convertible(monkeypatch):
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
     from ansys.units.quantity import IncompatibleDimensions, Quantity
 
     no_dim = Quantity(1.0, "")
@@ -172,8 +171,8 @@ def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
     # mean is "This is the inevitable outcome of the way we do things."
 
 
-def test_ansunits_frequency_and_angular_frequency_are_not_convertible(dims_with_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == "1"
+def test_ansunits_frequency_and_angular_frequency_are_not_convertible(monkeypatch):
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
     from ansys.units.quantity import IncompatibleDimensions, Quantity
 
     # ansunits avoids the pint complications by simply not allowing

@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-
 import pytest
 
 from ansys.units import BaseDimensions, UnitRegistry, UnitSystem
@@ -42,8 +40,8 @@ def test_pre_defined_unit_system():
     assert us.SOLID_ANGLE == "sr"
 
 
-def test_repr(dims_with_angle):
-    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == "1"
+def test_repr(monkeypatch):
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
     us = UnitSystem()
     us_dict = """MASS: kg
 LENGTH: m
