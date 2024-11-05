@@ -24,8 +24,6 @@ import os
 
 import pytest
 
-os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
-
 from ansys.units import BaseDimensions, UnitRegistry, UnitSystem
 from ansys.units.systems import IncorrectUnitType, InvalidUnitSystem, NotBaseUnit
 
@@ -44,7 +42,8 @@ def test_pre_defined_unit_system():
     assert us.SOLID_ANGLE == "sr"
 
 
-def test_repr():
+def test_repr(dims_with_angle):
+    assert os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] == "1"
     us = UnitSystem()
     us_dict = """MASS: kg
 LENGTH: m
