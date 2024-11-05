@@ -41,18 +41,7 @@ _base_dims = {
     "CURRENT": 7,
 }
 
-_base_dims_with_angle = {
-    "MASS": 0,
-    "LENGTH": 1,
-    "TIME": 2,
-    "TEMPERATURE": 3,
-    "TEMPERATURE_DIFFERENCE": 4,
-    "CHEMICAL_AMOUNT": 5,
-    "LIGHT": 6,
-    "CURRENT": 7,
-    "ANGLE": 8,
-    "SOLID_ANGLE": 9,
-}
+_base_dims_with_angle = {**_base_dims, "ANGLE": 8, "SOLID_ANGLE": 9}
 
 BaseDimensions = Enum(
     "BaseDimensions",

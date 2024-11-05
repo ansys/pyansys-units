@@ -23,8 +23,6 @@
 
 from __future__ import annotations
 
-import os
-
 from ansys.units import BaseDimensions, _base_units, _unit_systems
 
 
@@ -184,7 +182,7 @@ class UnitSystem:
     def CURRENT(self, new_mass):
         self._set_type(unit_type=BaseDimensions.CURRENT, unit=new_mass)
 
-    if os.getenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION"):
+    if hasattr(BaseDimensions, "ANGLE") and hasattr(BaseDimensions, "SOLID_ANGLE"):
 
         @property
         def ANGLE(self):
