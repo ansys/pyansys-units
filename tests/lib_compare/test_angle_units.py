@@ -45,7 +45,8 @@ def test_pint_angles_are_dimensionless():
     assert str(angle_in_radians_dimensions) == "dimensionless"
 
 
-def test_pyunits_angles_have_angle_dimensions():
+def test_pyunits_angles_have_angle_dimensions(monkeypatch):
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
     from ansys.units import BaseDimensions, Dimensions
     from ansys.units.quantity import Quantity
 
