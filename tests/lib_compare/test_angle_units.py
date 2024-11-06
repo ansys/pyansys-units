@@ -183,3 +183,22 @@ def test_ansunits_frequency_and_angular_frequency_are_not_convertible(monkeypatc
     rad_per_s = Quantity(1.0, "radian s^-1")
     with pytest.raises(IncompatibleDimensions):
         rad_per_s.to("Hz")
+
+
+def test_degree_addition():
+    import ansys.units as pyunits
+
+    degree = pyunits.Quantity(1.0, "degree")
+    assert not degree.dimensions
+    assert degree.is_dimensionless
+    assert degree + 1 == pyunits.Quantity(58.29577951308232, "degree")
+
+
+def test_radian_addition():
+    import ansys.units as pyunits
+
+    radian = pyunits.Quantity(1.0, "radian")
+    assert not radian.dimensions
+    assert radian.is_dimensionless
+    assert radian + 1 == pyunits.Quantity(2.0, "radian")
+    assert (radian + 1).to("degree") == pyunits.Quantity(114.59155902616465, "degree")
