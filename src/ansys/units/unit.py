@@ -407,7 +407,7 @@ def _units_to_dim(
         if unit_term in _base_units:
             idx = _base_units[unit_term]["type"]
 
-            if idx in BaseDimensions.__members__:
+            if hasattr(BaseDimensions, idx):
                 if BaseDimensions[idx] in dimensions:
                     dimensions[BaseDimensions[idx]] += unit_term_exponent
                 else:
