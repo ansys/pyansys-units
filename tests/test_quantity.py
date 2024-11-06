@@ -21,9 +21,6 @@
 # SOFTWARE.
 
 import math
-import os
-
-os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
 
 import pytest
 

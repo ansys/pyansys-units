@@ -20,10 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-
-os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
-
 import math
 
 import pytest

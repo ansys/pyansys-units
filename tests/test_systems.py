@@ -20,10 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-
-os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
-
 import pytest
 
 from ansys.units import BaseDimensions, UnitRegistry, UnitSystem
@@ -51,10 +47,10 @@ LENGTH: m
 TIME: s
 TEMPERATURE: K
 TEMPERATURE_DIFFERENCE: delta_K
+ANGLE: radian
 CHEMICAL_AMOUNT: mol
 LIGHT: cd
 CURRENT: A
-ANGLE: radian
 SOLID_ANGLE: sr
 """
 
