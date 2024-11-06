@@ -122,11 +122,10 @@ class Unit:
 
     def _remove_angle_as_dim(self, dimensions):
         if not os.getenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", None):
-            if isinstance(dimensions, Dimensions):
-                if BaseDimensions.ANGLE in dimensions._dimensions:
-                    del dimensions._dimensions[BaseDimensions.ANGLE]
-                if BaseDimensions.SOLID_ANGLE in dimensions._dimensions:
-                    del dimensions._dimensions[BaseDimensions.SOLID_ANGLE]
+            if BaseDimensions.ANGLE in dimensions._dimensions:
+                del dimensions._dimensions[BaseDimensions.ANGLE]
+            if BaseDimensions.SOLID_ANGLE in dimensions._dimensions:
+                del dimensions._dimensions[BaseDimensions.SOLID_ANGLE]
         return dimensions
 
     def _to_string(self):
