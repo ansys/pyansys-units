@@ -19,35 +19,38 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""
-Provides the ``BaseDimensions`` class.
-
-Supplies all valid base dimensions used in dimensional analysis.
-
-Used as dictionary keys for defining a `Dimensions` object.
-"""
+"""Provides the ``BaseDimensions`` class."""
 
 from enum import Enum
-import os
 
-_base_dims = {
-    "MASS": 0,
-    "LENGTH": 1,
-    "TIME": 2,
-    "TEMPERATURE": 3,
-    "TEMPERATURE_DIFFERENCE": 4,
-    "CHEMICAL_AMOUNT": 5,
-    "LIGHT": 6,
-    "CURRENT": 7,
-}
 
-_base_dims_with_angle = {**_base_dims, "ANGLE": 8, "SOLID_ANGLE": 9}
+class BaseDimensions(Enum):
+    """
+    Supplies all valid base dimensions used in dimensional analysis.
 
-BaseDimensions = Enum(
-    "BaseDimensions",
-    (
-        _base_dims_with_angle
-        if os.getenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION")
-        else _base_dims
-    ),
-)
+    Used as dictionary keys for defining a `Dimensions` object.
+
+    Attributes
+    ----------
+    MASS
+    LENGTH
+    TIME
+    TEMPERATURE
+    TEMPERATURE_DIFFERENCE
+    ANGLE
+    CHEMICAL_AMOUNT
+    LIGHT
+    CURRENT
+    SOLID_ANGLE
+    """
+
+    MASS = 0
+    LENGTH = 1
+    TIME = 2
+    TEMPERATURE = 3
+    TEMPERATURE_DIFFERENCE = 4
+    ANGLE = 5
+    CHEMICAL_AMOUNT = 6
+    LIGHT = 7
+    CURRENT = 8
+    SOLID_ANGLE = 9

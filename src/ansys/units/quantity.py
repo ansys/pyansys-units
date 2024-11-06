@@ -26,7 +26,7 @@ from __future__ import annotations
 import operator
 from typing import Union
 
-from ansys.units import Dimensions
+from ansys.units import BaseDimensions, Dimensions
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
 
@@ -294,7 +294,13 @@ class Quantity:
         return Quantity(value=new_value, units=new_units)
 
     def __float__(self):
-        if self.is_dimensionless or "ANGLE" or "SOLID_ANGLE" in self.dimensions:
+        base_dims = BaseDimensions
+        dims = Dimensions
+        if self.dimensions in [
+            dims(),
+            dims(dimensions={base_dims.ANGLE: 1.0}),
+            dims(dimensions={base_dims.SOLID_ANGLE: 1.0}),
+        ]:
             return get_si_value(self)
         raise InvalidFloatUsage()
 
