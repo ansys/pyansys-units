@@ -25,7 +25,41 @@ import os
 
 import yaml
 
-from ansys.units import Unit
+from ansys.units import Unit, _base_units, _derived_units
+
+
+def register_unit(unit: str, composition: str, factor):
+    """
+    Register a customized unit.
+
+    Parameters
+    ----------
+    unit: str
+        Name of the unit
+    composition: str
+        String chain of combined units
+    factor: float
+        Scaling factor
+
+    Examples
+    --------
+    >>> from ansys.units import register_unit
+    >>> register_unit(unit="Q", composition="N m", factor=1)
+    >>> ureg = UnitRegistry()
+    >>> ureg.Q
+    _name: Q
+    _dimensions: {'MASS': 1.0, 'LENGTH': 2.0, 'TIME': -2.0}
+    _composition: N m
+    _factor: 1
+    _si_units: kg m^2 s^-2
+    _si_scaling_factor: 1.0
+    _si_offset: 0.0
+    """
+    if unit in _base_units or unit in _derived_units:
+        raise UnitAlreadyRegistered(unit)
+    else:
+        register = {unit: {"composition": composition, "factor": factor}}
+        _derived_units.update(register)
 
 
 class UnitRegistry:
@@ -55,6 +89,8 @@ class UnitRegistry:
 
     def __init__(self, config="cfg.yaml", other: dict = None):
         unitdict = other or {}
+        global _derived_units
+        unitdict.update(_derived_units)
 
         if config:
             file_dir = os.path.dirname(__file__)
@@ -62,10 +98,10 @@ class UnitRegistry:
 
             with open(qc_path, "r") as qc_yaml:
                 qc_data = yaml.safe_load(qc_yaml)
-                _base_units: dict = qc_data["base_units"]
-                _derived_units: dict = qc_data["derived_units"]
+                _qc_base_units: dict = qc_data["base_units"]
+                _qc_derived_units: dict = qc_data["derived_units"]
 
-            unitdict.update(**_base_units, **_derived_units)
+            unitdict.update(**_qc_base_units, **_qc_derived_units)
 
         for unit in unitdict:
             setattr(self, unit, Unit(unit, unitdict[unit]))

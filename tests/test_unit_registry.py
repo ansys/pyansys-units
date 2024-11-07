@@ -25,7 +25,7 @@ import tempfile
 
 import pytest
 
-from ansys.units import Unit, UnitRegistry, _base_units
+from ansys.units import Unit, UnitRegistry, _base_units, register_unit
 from ansys.units.unit_registry import UnitAlreadyRegistered
 
 
@@ -95,6 +95,22 @@ def test_immutability():
     ur = UnitRegistry()
     with pytest.raises(UnitAlreadyRegistered):
         ur.m = Unit("ft")
+
+
+def test_register_unit():
+    register_unit(unit="Q", composition="N m", factor=1)
+    ur = UnitRegistry()
+    assert ur.Q == ur.J
+
+    with pytest.raises(UnitAlreadyRegistered):
+        register_unit(unit="Q", composition="N m", factor=1)
+
+    register_unit(unit="Z", composition="N m", factor=1)
+    with pytest.raises(AttributeError):
+        ur.Z
+
+    ur = UnitRegistry()
+    assert ur.Q == ur.J == ur.Z
 
 
 def test_error_message():
