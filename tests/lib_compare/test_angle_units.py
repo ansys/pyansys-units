@@ -194,6 +194,42 @@ def test_degree_addition():
     assert degree + 1 == pyunits.Quantity(58.29577951308232, "degree")
 
 
+def test_degree_subtraction():
+    import ansys.units as pyunits
+
+    degree = pyunits.Quantity(120, "degree")
+    assert not degree.dimensions
+    assert degree.is_dimensionless
+    assert degree - 1 == pyunits.Quantity(62.70422048691768, "degree")
+
+
+def test_degree_division():
+    import ansys.units as pyunits
+
+    degree = pyunits.Quantity(120, "degree")
+    assert not degree.dimensions
+    assert degree.is_dimensionless
+    assert degree / 2 == pyunits.Quantity(60, "degree")
+
+
+def test_degree_multiplication():
+    import ansys.units as pyunits
+
+    degree = pyunits.Quantity(10, "degree")
+    assert not degree.dimensions
+    assert degree.is_dimensionless
+    assert degree * 2 == pyunits.Quantity(20.0, "degree")
+
+
+def test_degree_power():
+    import ansys.units as pyunits
+
+    degree = pyunits.Quantity(10, "degree")
+    assert not degree.dimensions
+    assert degree.is_dimensionless
+    assert degree**2 == pyunits.Quantity(100, "degree^2")
+
+
 def test_radian_addition():
     import ansys.units as pyunits
 
@@ -202,3 +238,45 @@ def test_radian_addition():
     assert radian.is_dimensionless
     assert radian + 1 == pyunits.Quantity(2.0, "radian")
     assert (radian + 1).to("degree") == pyunits.Quantity(114.59155902616465, "degree")
+
+
+def test_radian_subtraction():
+    import ansys.units as pyunits
+
+    radian = pyunits.Quantity(2.0, "radian")
+    assert not radian.dimensions
+    assert radian.is_dimensionless
+    assert radian - 1 == pyunits.Quantity(1.0, "radian")
+    assert (radian - 1).to("degree") == pyunits.Quantity(57.29577951308232, "degree")
+
+
+def test_radian_division():
+    import ansys.units as pyunits
+
+    radian = pyunits.Quantity(2.0, "radian")
+    assert not radian.dimensions
+    assert radian.is_dimensionless
+    assert radian / 2 == pyunits.Quantity(1.0, "radian")
+    assert (radian / 2).to("degree") == pyunits.Quantity(57.29577951308232, "degree")
+
+
+def test_radian_multiplication():
+    import ansys.units as pyunits
+
+    radian = pyunits.Quantity(2.0, "radian")
+    assert not radian.dimensions
+    assert radian.is_dimensionless
+    assert radian * 2 == pyunits.Quantity(4.0, "radian")
+    assert (radian * 2).to("degree") == pyunits.Quantity(229.1831180523293, "degree")
+
+
+def test_radian_power():
+    import ansys.units as pyunits
+
+    radian = pyunits.Quantity(2.0, "radian")
+    assert not radian.dimensions
+    assert radian.is_dimensionless
+    assert radian**2 == pyunits.Quantity(4.0, "radian^2")
+    assert (radian**2).to("degree^2") == pyunits.Quantity(
+        13131.225400046977, "degree^2"
+    )
