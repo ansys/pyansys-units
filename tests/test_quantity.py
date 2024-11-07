@@ -593,7 +593,8 @@ def test_quantity_table():
     assert api_test.units == Unit("kg m^-1.5 s^-2.5 A^3 cd W^2 K^-2")
 
 
-def testing_units_to_dimensions():
+def testing_units_to_dimensions(monkeypatch):
+    monkeypatch.setenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", "1")
     print(f"{'*' * 25} {testing_units_to_dimensions.__name__} {'*' * 25}")
     dims = BaseDimensions
 

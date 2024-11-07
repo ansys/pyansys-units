@@ -22,6 +22,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Optional, Union
 
 from ansys.units import (
@@ -99,10 +100,12 @@ class Unit:
             self._dimensions = Dimensions(_dimensions)
             if dimensions and self._dimensions != dimensions:
                 raise InconsistentDimensions()
+            self._dimensions = self._remove_angle_as_dim(self._dimensions)
 
         elif dimensions:
             self._dimensions = dimensions
             self._name = _dim_to_units(dimensions=dimensions, system=system)
+            self._dimensions = self._remove_angle_as_dim(self._dimensions)
         else:
             self._name = ""
             self._dimensions = Dimensions()
@@ -116,6 +119,14 @@ class Unit:
         self._si_units, self._si_scaling_factor, self._si_offset = _si_data(
             units=self.name
         )
+
+    def _remove_angle_as_dim(self, dimensions):
+        if not os.getenv("PYANSYS_UNITS_ANGLE_AS_DIMENSION", None):
+            if BaseDimensions.ANGLE in dimensions._dimensions:
+                del dimensions._dimensions[BaseDimensions.ANGLE]
+            if BaseDimensions.SOLID_ANGLE in dimensions._dimensions:
+                del dimensions._dimensions[BaseDimensions.SOLID_ANGLE]
+        return dimensions
 
     def _to_string(self):
         """
