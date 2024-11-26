@@ -44,7 +44,6 @@ meter = Quantity(value=1, units="m")
 ### Defining a quantity using base dimensions
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity, BaseDimensions, Dimensions
 
 dims = BaseDimensions
