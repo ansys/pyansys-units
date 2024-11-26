@@ -58,7 +58,6 @@ acceleration.units.name  # "m s^-2"
 ### Defining a quantity using UnitRegistry
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity, UnitRegistry
 
 ureg = UnitRegistry()
