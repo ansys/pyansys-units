@@ -24,7 +24,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "importlib-metadata >=4.0",
+    "importlib-metadata>=4.0",
+    "quarto-cli==1.5.57",
+    "pdf2image==1.17.0",
     "pyyaml>=6.0",
 ]
 
