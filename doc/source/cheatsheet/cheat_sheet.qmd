@@ -36,7 +36,6 @@ jupyter:
 ### Defining a quantity using unit strings
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity, UnitRegistry
 
 meter = Quantity(value=1, units="m")
