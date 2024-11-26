@@ -68,7 +68,6 @@ meter = Quantity(value=1, units=ureg.m)
 ### Defining a quantity using NumPy array
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity, UnitRegistry
 
 length_array_quantity = Quantity(value=[1.0, 6.0, 7.0], units="m")
@@ -83,7 +82,6 @@ speed  # Quantity ([0.5 3. 3.5], "m s^-1")
 ### Defining a quantity using the quantity table
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity
 
 torque = Quantity(5, quantity_table={"Torque": 1})
@@ -96,7 +94,6 @@ torque.units.si_units  # "kg m^2 s^-2"
 ### Arithmetic operations
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity
 import math
 
@@ -119,7 +116,6 @@ math.sin(deg)  # 1.0
 ### Pre-defined unit systems
 
 ```{python}
-#| eval: false
 from ansys.units import UnitSystem
 
 si = UnitSystem(system="SI")
@@ -135,7 +131,6 @@ bt.LENGTH # "ft"
 ### Custom unit systems
 
 ```{python}
-#| eval: false
 from ansys.units import BaseDimensions, UnitSystem, UnitRegistry
 
 ureg = UnitRegistry()
@@ -157,7 +152,6 @@ sys.LENGTH
 ### Convert quantity to other units
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity
 
 flbs = Quantity(1, "lb ft^-1 s^-1")
@@ -171,7 +165,6 @@ pas.units.name  # 'Pa s'
 ### Convert units using unit systems
 
 ```{python}
-#| eval: false
 from ansys.units import Unit, UnitSystem
 
 si = Unit("m s^-1")
@@ -182,7 +175,6 @@ si.convert(bt)
 ### Temperature and temperature difference
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity, UnitRegistry
 
 ureg = UnitRegistry()
@@ -201,7 +193,6 @@ delta_K_sb_delta_K = delta_K - delta_K  # (0.0, "delta_K")
 ### Temperature values below absolute zero
 
 ```{python}
-#| eval: false
 from ansys.units import Quantity, UnitRegistry
 
 ureg = UnitRegistry()
@@ -215,7 +206,6 @@ R = Quantity(value=-2, units=ureg.R) # (-2, delta_R)
 ### Angle as non-dimension
 
 ```{python}
-#| eval: false
 import ansys.units as pyunits
 
 degree = pyunits.Quantity(1.0, "degree")
@@ -226,7 +216,6 @@ degree + 1 # Quantity (58.29577951308232, "degree")
 ### Angle as dimension
 
 ```{python}
-#| eval: false
 import os
 os.environ["PYANSYS_UNITS_ANGLE_AS_DIMENSION"] = "1"
 import ansys.units as pyunits
