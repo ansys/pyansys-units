@@ -1,7 +1,8 @@
 ---
 title: PyAnsys Units cheat sheet
 format: cheat_sheet-pdf
-version: 0.1.0
+params:
+  version: main
 footer: PyAnsys Units
 footerlinks:
   - urls: 'https://units.docs.pyansys.com/version/stable/'
