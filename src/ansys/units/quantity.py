@@ -256,14 +256,18 @@ class Quantity:
 
         return self.to(to_units=new_unit)
 
-    def _relative_unit_check(self, __value, op: operator = operator.add) -> Quantity:
+    def _relative_unit_check(
+        self, other, r_add_sub: bool, op: operator = operator.add
+    ) -> Quantity:
         """
         Checks relative units for temperature differences.
 
         Parameters
         ----------
-        __value : float, int, Quantity
+        other : float, int, Quantity
             The value to be added or subtracted to self.
+        r_add_sub : bool
+            Whether called in __radd__ or __rsub__.
         op : operator, optional
             The operation being performed. Default is addition.
 
@@ -272,25 +276,29 @@ class Quantity:
         Quantity
             Quantity instance changed to or from relative units.
         """
-        if not isinstance(__value, Quantity):
-            __value = Quantity(__value)
+        if not isinstance(other, Quantity):
+            other = Quantity(other)
 
         # Checks the temperatures at the unit level.
-        new_units, other_units = op(self.units, __value.units) or (
+        new_units, other_units = op(self.units, other.units) or (
             self.units,
-            __value.units,
+            other.units,
         )
 
         # If value does not equal relative units, use the corrected absolute units.
-        if __value.units.dimensions != other_units.dimensions:
-            value = __value.to(new_units).value
+        if other.units.dimensions != other_units.dimensions:
+            value = other.to(new_units).value
         # If both values are temperatures, use the corrected relative units.
-        elif __value.units.dimensions != self.units.dimensions:
-            value = __value.to(other_units).value
+        elif other.units.dimensions != self.units.dimensions:
+            value = other.to(other_units).value
         else:
-            value = __value.to(self.units).value
+            value = (
+                other.to(other_units).value if r_add_sub else other.to(self.units).value
+            )
 
         new_value = op(self.value, value)
+        if r_add_sub:
+            return Quantity(value=new_value, units=other_units)
         return Quantity(value=new_value, units=new_units)
 
     def __float__(self):
@@ -325,59 +333,59 @@ class Quantity:
     def __repr__(self):
         return f'Quantity ({self.value}, "{self._unit.name}")'
 
-    def __pow__(self, __value):
-        new_value = self.value**__value
-        new_units = self._unit**__value
+    def __pow__(self, other):
+        new_value = self.value**other
+        new_units = self._unit**other
         return Quantity(value=new_value, units=new_units)
 
-    def __mul__(self, __value):
-        if isinstance(__value, Quantity):
-            new_value = self.value * __value.value
-            new_units = self._unit * __value._unit
+    def __mul__(self, other):
+        if isinstance(other, Quantity):
+            new_value = self.value * other.value
+            new_units = self._unit * other._unit
             return Quantity(
                 value=new_value,
                 units=new_units,
             )
-        if isinstance(__value, Unit):
-            base_quantity = Quantity(1, __value)
+        if isinstance(other, Unit):
+            base_quantity = Quantity(1, other)
             return self * base_quantity
 
-        if isinstance(__value, (float, int)):
-            return Quantity(value=self.value * __value, units=self.units)
+        if isinstance(other, (float, int)):
+            return Quantity(value=self.value * other, units=self.units)
 
-    def __rmul__(self, __value):
-        return self.__mul__(__value)
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
-    def __truediv__(self, __value):
-        if isinstance(__value, Quantity):
-            new_value = self.value / __value.value
-            new_units = self._unit / __value._unit
+    def __truediv__(self, other):
+        if isinstance(other, Quantity):
+            new_value = self.value / other.value
+            new_units = self._unit / other._unit
             return Quantity(
                 value=new_value,
                 units=new_units,
             )
 
-        if isinstance(__value, Unit):
-            base_quantity = Quantity(1, __value)
+        if isinstance(other, Unit):
+            base_quantity = Quantity(1, other)
             return self / base_quantity
 
-        if isinstance(__value, (float, int)):
-            return Quantity(value=self.value / __value, units=self._unit)
+        if isinstance(other, (float, int)):
+            return Quantity(value=self.value / other, units=self._unit)
 
-    def __rtruediv__(self, __value):
-        return Quantity(__value, "") / self
+    def __rtruediv__(self, other):
+        return Quantity(other, "") / self
 
-    def __add__(self, __value):
-        return self._relative_unit_check(__value)
+    def __add__(self, other):
+        return self._relative_unit_check(other, r_add_sub=False)
 
-    def __radd__(self, __value):
-        return self.__add__(__value)
+    def __radd__(self, other):
+        return self._relative_unit_check(other, r_add_sub=True)
 
-    def __sub__(self, __value):
-        return self._relative_unit_check(__value, op=operator.sub)
+    def __sub__(self, other):
+        return self._relative_unit_check(other, r_add_sub=False, op=operator.sub)
 
-    def __rsub__(self, __value):
-        return self.__sub__(__value)
+    def __rsub__(self, other):
+        return self._relative_unit_check(other, r_add_sub=True, op=operator.sub)
 
     def __neg__(self):
         return Quantity(-self.value, self._unit)
@@ -393,49 +401,49 @@ class Quantity:
         ):
             raise IncompatibleQuantities(self, other)
 
-    def _compute_single_value_comparison(self, __value, op: operator):
+    def _compute_single_value_comparison(self, other, op: operator):
         """Compares quantity values."""
         return (
-            op(get_si_value(self), __value)
+            op(get_si_value(self), other)
             if self.is_dimensionless
-            else op(get_si_value(self), get_si_value(__value))
+            else op(get_si_value(self), get_si_value(other))
         )
 
-    def __gt__(self, __value):
-        self.validate_matching_dimensions(__value)
-        return self._compute_single_value_comparison(__value, op=operator.gt)
+    def __gt__(self, other):
+        self.validate_matching_dimensions(other)
+        return self._compute_single_value_comparison(other, op=operator.gt)
 
-    def __ge__(self, __value):
-        self.validate_matching_dimensions(__value)
-        return self._compute_single_value_comparison(__value, op=operator.ge)
+    def __ge__(self, other):
+        self.validate_matching_dimensions(other)
+        return self._compute_single_value_comparison(other, op=operator.ge)
 
-    def __lt__(self, __value):
-        self.validate_matching_dimensions(__value)
-        return self._compute_single_value_comparison(__value, op=operator.lt)
+    def __lt__(self, other):
+        self.validate_matching_dimensions(other)
+        return self._compute_single_value_comparison(other, op=operator.lt)
 
-    def __le__(self, __value):
-        self.validate_matching_dimensions(__value)
-        return self._compute_single_value_comparison(__value, op=operator.le)
+    def __le__(self, other):
+        self.validate_matching_dimensions(other)
+        return self._compute_single_value_comparison(other, op=operator.le)
 
-    def __eq__(self, __value):
-        self.validate_matching_dimensions(__value)
+    def __eq__(self, other):
+        self.validate_matching_dimensions(other)
         if all(
             (
                 isinstance(self.value, float),
                 any(
                     (
                         isinstance(x, float)
-                        for x in (__value, getattr(__value, "value", None))
+                        for x in (other, getattr(other, "value", None))
                     )
                 ),
             )
         ):
-            return self._compute_single_value_comparison(__value, op=operator.eq)
+            return self._compute_single_value_comparison(other, op=operator.eq)
         # no type-checking here since array_equal happily processes anything
-        return _array and _array.array_equal(get_si_value(self), get_si_value(__value))
+        return _array and _array.array_equal(get_si_value(self), get_si_value(other))
 
-    def __ne__(self, __value):
-        return not self.__eq__(__value)
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 def get_si_value(quantity: Quantity) -> float:

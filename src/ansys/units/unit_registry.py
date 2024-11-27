@@ -77,10 +77,10 @@ class UnitRegistry:
             returned_string += f"{key}, "
         return returned_string
 
-    def __setattr__(self, __name: str, unit: any) -> None:
-        if hasattr(self, __name):
-            raise UnitAlreadyRegistered(__name)
-        self.__dict__[__name] = unit
+    def __setattr__(self, name: str, unit: any) -> None:
+        if hasattr(self, name):
+            raise UnitAlreadyRegistered(name)
+        self.__dict__[name] = unit
 
     def __iter__(self):
         for item in self.__dict__:
