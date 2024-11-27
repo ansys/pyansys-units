@@ -13,5 +13,6 @@ code to work with physical quantities.
 
    quantity
    strings
+   angles
    temperature
 

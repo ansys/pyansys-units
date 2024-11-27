@@ -193,6 +193,11 @@ def test_degree_addition():
     assert degree.is_dimensionless
     assert degree + 1 == pyunits.Quantity(58.29577951308232, "degree")
 
+    assert pyunits.Quantity(0, "degree") + 3 == pyunits.Quantity(
+        171.88733853924697, "degree"
+    )
+    assert 3 + pyunits.Quantity(0, "degree") == pyunits.Quantity(3, "")
+
 
 def test_degree_subtraction():
     import ansys.units as pyunits
@@ -238,6 +243,9 @@ def test_radian_addition():
     assert radian.is_dimensionless
     assert radian + 1 == pyunits.Quantity(2.0, "radian")
     assert (radian + 1).to("degree") == pyunits.Quantity(114.59155902616465, "degree")
+
+    assert pyunits.Quantity(0, "radian") + 3 == pyunits.Quantity(3.0, "radian")
+    assert 3 + pyunits.Quantity(0, "radian") == pyunits.Quantity(3.0, "")
 
 
 def test_radian_subtraction():

@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 # Check https://flit.readthedocs.io/en/latest/pyproject_toml.html for all available sections
 name = "ansys-units"
-version = "0.3.2"
+version = "0.3.3"
 description = "Pythonic interface for units, unit systems, and unit conversions."
 readme = "README.rst"
 requires-python = ">=3.9,<4"
@@ -24,7 +24,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "importlib-metadata >=4.0",
+    "importlib-metadata>=4.0",
+    "quarto-cli==1.5.57",
+    "pdf2image==1.17.0",
     "pyyaml>=6.0",
 ]
 
@@ -33,7 +35,7 @@ doc = [
     "ansys-sphinx-theme==1.2.0",
     "matplotlib==3.9.2",
     "numpydoc==1.8.0",
-    "Sphinx==8.1.3",
+    "Sphinx==7.4.7",
     "sphinx-copybutton==0.5.2",
     "sphinx-gallery==0.18.0",
     "sphinx-toggleprompt==0.5.2",

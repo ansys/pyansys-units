@@ -143,13 +143,13 @@ class Unit:
             returned_string += f"{key}: {attrs[key]}\n"
         return returned_string
 
-    def _new_units(self, __value, op):
+    def _new_units(self, value, op):
         """
         Generate a new units instance depending on mathematical operation.
 
         Parameters
         ----------
-        __value : int | float | Unit
+        value : int | float | Unit
             The given operand.
         op : str
             '*', '/', '**'.
@@ -163,15 +163,15 @@ class Unit:
         if op == "**":
             for term in self.name.split(" "):
                 multiplier, base, exponent = _filter_unit_term(term)
-                exponent *= __value
+                exponent *= value
                 new_units += f"{multiplier}{base}^{exponent} "
         if op == "/":
             new_units = self.name
-            for term in __value.name.split(" "):
+            for term in value.name.split(" "):
                 multiplier, base, exponent = _filter_unit_term(term)
                 new_units += f" {multiplier}{base}^{exponent*-1}"
         if op == "*":
-            new_units = f"{self.name} {__value.name}"
+            new_units = f"{self.name} {value.name}"
         return Unit(_condense(new_units))
 
     def compatible_units(self) -> set[str]:
@@ -296,31 +296,31 @@ class Unit:
     def __repr__(self):
         return self._to_string()
 
-    def __add__(self, __value):
-        return self._temp_precheck(__value)
+    def __add__(self, value):
+        return self._temp_precheck(value)
 
-    def __mul__(self, __value):
-        if isinstance(__value, Unit):
-            return self._new_units(__value, op="*")
-
-        else:
-            return NotImplemented
-
-    def __rmul__(self, __value):
-        return self.__mul__(__value)
-
-    def __sub__(self, __value):
-        return self._temp_precheck(__value, op="-")
-
-    def __truediv__(self, __value):
-        if isinstance(__value, Unit):
-            return self._new_units(__value, op="/")
+    def __mul__(self, value):
+        if isinstance(value, Unit):
+            return self._new_units(value, op="*")
 
         else:
             return NotImplemented
 
-    def __pow__(self, __value):
-        return self._new_units(__value, op="**")
+    def __rmul__(self, value):
+        return self.__mul__(value)
+
+    def __sub__(self, value):
+        return self._temp_precheck(value, op="-")
+
+    def __truediv__(self, value):
+        if isinstance(value, Unit):
+            return self._new_units(value, op="/")
+
+        else:
+            return NotImplemented
+
+    def __pow__(self, value):
+        return self._new_units(value, op="**")
 
     def __eq__(self, other_unit):
         if not isinstance(other_unit, Unit) and self.name:

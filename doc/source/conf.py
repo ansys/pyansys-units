@@ -33,6 +33,11 @@ html_theme_options = {
         "version_match": get_version_match(__version__),
     },
     "check_switcher": False,
+    "cheatsheet": {
+        "file": "cheatsheet/cheat_sheet.qmd",
+        "pages": ["index", "getting_started/index", "user_guide/index"],
+        "title": "PyAnsys Units cheat sheet",
+    },
 }
 
 # Sphinx extensions
