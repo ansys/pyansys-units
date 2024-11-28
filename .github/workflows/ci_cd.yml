@@ -103,6 +103,7 @@ jobs:
   doc-deploy-dev:
     name: "Deploy development documentation"
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     needs: [build-library]
     steps:
       - uses: ansys/actions/doc-deploy-dev@v8
