@@ -31,8 +31,8 @@ dependencies = [
 
 [project.optional-dependencies]
 doc = [
-    "ansys-sphinx-theme==1.2.4",
-    "quarto-cli==1.6.39",
+    "ansys-sphinx-theme==1.2.6",
+    "quarto-cli==1.6.40",
     "matplotlib==3.10.0",
     "numpydoc==1.8.0",
     "Sphinx==7.4.7",
@@ -46,7 +46,7 @@ tests = [
     "pytest-mock==3.14.0",
 ]
 lists = [
-    "numpy==2.2.1",
+    "numpy==2.2.2",
 ]
 
 [project.urls]
