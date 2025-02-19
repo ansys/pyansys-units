@@ -38,6 +38,7 @@ doc = [
     "sphinx-copybutton==0.5.2",
     "sphinx-gallery==0.18.0",
     "sphinx-toggleprompt==0.5.2",
+    "pdf2image==1.17.0",
 ]
 tests = [
     "pytest==8.3.3",
