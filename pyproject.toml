@@ -43,7 +43,7 @@ tests = [
     "pytest==8.3.4",
     "pytest-cov==6.0.0",
     "pytest-mock==3.14.0",
-    "pint==0.17",
+    "pint==0.24.4",
 ]
 lists = [
     "numpy==2.2.2",
