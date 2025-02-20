@@ -37,7 +37,7 @@ Download `poppler zip file <https://github.com/oschwartz10612/poppler-windows/re
     pip install -e .[doc]
     quarto install tinytex --no-prompt --update-path
     cd doc
-    make.bat html
+    make html
 
 Linux
 ~~~~~
