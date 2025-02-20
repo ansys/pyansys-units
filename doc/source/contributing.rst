@@ -28,7 +28,7 @@ Build the PyAnsys Units documentation locally by running these commands in the
 root directory of the repository:
 
 Windows
-
+~~~~~~~
 
 Download `poppler zip file <https://github.com/oschwartz10612/poppler-windows/releases/tag/v24.08.0-0>`_ and add the bin directory to your PATH.
 
