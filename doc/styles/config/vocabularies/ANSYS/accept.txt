@@ -7,3 +7,4 @@ delta_
 rankine
 fahrenheit
 substrings
+poppler
