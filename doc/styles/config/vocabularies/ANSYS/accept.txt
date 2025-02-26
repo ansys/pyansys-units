@@ -9,5 +9,4 @@ fahrenheit
 substrings
 poppler
 Matplotlib
-numpy
 NumPy

@@ -50,10 +50,10 @@ The following example demonstrates how to plot data using `NumPy <https://numpy.
 
 
 .. image:: ../_static/plot_np_array.png
-   :alt: Plot example using numpy arrays
+   :alt: Plot example using NumPy arrays
 
 
-Using numpy arrays and no units
+Using NumPy arrays and no units
 *******************************
 
 The following example demonstrates how to plot data without units.
@@ -74,5 +74,5 @@ The following example demonstrates how to plot data without units.
     plt.show()
 
 .. image:: ../_static/plot_no_units.png
-   :alt: Plot example using numpy arrays and no units
+   :alt: Plot example using NumPy arrays and no units
 
