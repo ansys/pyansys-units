@@ -307,3 +307,53 @@ ten_m = Quantity(10, units="m")
 
 joules = ten_N * ten_m
 joules  # >>> Quantity (100.0, "J")
+
+
+###############################################################################
+# Plotting with Matplotlib
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+# You can plot quantities using the QuantityPlotter class.
+
+# Basic usage
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from ansys.units import Quantity, QuantityPlotter, UnitRegistry
+
+ureg = UnitRegistry()
+
+x_quantity = Quantity([1, 2, 3], "m")
+y_quantity = Quantity([4, 5, 6], "kg")
+data = QuantityPlotter(x_quantity, y_quantity)
+fig, ax = plt.subplots()
+data.plot(ax)
+plt.show()
+
+# sphinx_gallery_thumbnail_path = '../_static/plot_basic.png'
+
+# Example usage with numpy arrays
+
+y = Quantity(value=np.linspace(0, 30), units=ureg.m)
+x = Quantity(value=np.linspace(0, 5), units=ureg.kg)
+data = QuantityPlotter(x, y)
+fig, ax = plt.subplots()
+ax.axhline(Quantity(10, ureg.m).value, color="tab:red")
+ax.axvline(Quantity(2, ureg.kg).value, color="tab:green")
+data.plot(ax)
+plt.show()
+
+# sphinx_gallery_thumbnail_path = '../_static/plot_np_array.png'
+
+# Example usage with numpy arrays and no units
+
+y = Quantity(value=np.linspace(0, 30))
+x = Quantity(value=np.linspace(0, 5))
+data = QuantityPlotter(x, y)
+fig, ax = plt.subplots()
+ax.axhline(Quantity(10, ureg.m).value, color="tab:red")
+ax.axvline(Quantity(2, ureg.kg).value, color="tab:green")
+data.plot(ax)
+plt.show()
+
+# sphinx_gallery_thumbnail_path = '../_static/plot_no_units.png'
