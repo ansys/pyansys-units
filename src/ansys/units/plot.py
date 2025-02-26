@@ -19,12 +19,11 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 """Plot Quantity objects with matplotlib."""
 
 import matplotlib.pyplot as plt
 
-from ansys.units import Quantity
+import ansys.units as units
 
 
 class QuantityPlotter:
@@ -42,14 +41,19 @@ class QuantityPlotter:
     --------
     >>> import matplotlib.pyplot as plt
     >>> from ansys.units import Quantity, QuantityPlotter, UnitRegistry
+    >>> import numpy as np
+    >>>
+    >>> ureg = UnitRegistry()
+    >>>
+    >>> # Basic usage
     >>> x_quantity = Quantity([1, 2, 3], 'm')
     >>> y_quantity = Quantity([4, 5, 6], 'kg')
     >>> data = QuantityPlotter(x_quantity, y_quantity)
     >>> fig, ax = plt.subplots()
     >>> data.plot(ax)
     >>> plt.show()
+    >>>
     >>> # Example usage with numpy arrays
-    >>> ureg = UnitRegistry()
     >>> y = Quantity(value=np.linspace(0, 30), units=ureg.m)
     >>> x = Quantity(value=np.linspace(0, 5), units=ureg.kg)
     >>> data = QuantityPlotter(x, y)
@@ -61,14 +65,14 @@ class QuantityPlotter:
     """
 
     def __init__(self, x_quantity, y_quantity):
-        if isinstance(x_quantity, Quantity):
+        if isinstance(x_quantity, units.Quantity):
             self.x_quantity_value = x_quantity.value
             self.x_quantity_unit = x_quantity.units._name
         else:
             self.x_quantity_value = x_quantity
             self.x_quantity_unit = None
 
-        if isinstance(y_quantity, Quantity):
+        if isinstance(y_quantity, units.Quantity):
             self.y_quantity_value = y_quantity.value
             self.y_quantity_unit = y_quantity.units._name
         else:

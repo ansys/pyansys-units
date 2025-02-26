@@ -36,9 +36,11 @@ The following example demonstrates how to plot data using `NumPy <https://numpy.
 .. code:: python
 
     import matplotlib.pyplot as plt
+    import numpy as np
     from ansys.units import Quantity, QuantityPlotter, UnitRegistry
 
     ureg = UnitRegistry()
+
     y = Quantity(value=np.linspace(0, 30), units=ureg.m)
     x = Quantity(value=np.linspace(0, 5), units=ureg.kg)
     data = QuantityPlotter(x, y)
@@ -61,9 +63,11 @@ The following example demonstrates how to plot data without units.
 .. code:: python
 
     import matplotlib.pyplot as plt
+    import numpy as np
     from ansys.units import Quantity, QuantityPlotter, UnitRegistry
 
     ureg = UnitRegistry()
+
     y = Quantity(value=np.linspace(0, 30))
     x = Quantity(value=np.linspace(0, 5))
     data = QuantityPlotter(x, y)
