@@ -28,10 +28,10 @@ The following example demonstrates how to plot data using lists.
    :alt: Basic plot example
 
 
-Using numpy arrays
+Using NumPy arrays
 ******************
 
-The following example demonstrates how to plot data using numpy arrays.
+The following example demonstrates how to plot data using `NumPy <https://numpy.org/doc/stable/>`_ arrays.
 
 .. code:: python
 
