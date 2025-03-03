@@ -35,7 +35,7 @@ doc = [
     "quarto-cli==1.6.42",
     "matplotlib==3.10.1",
     "numpydoc==1.8.0",
-    "Sphinx==7.4.7",
+    "Sphinx==8.2.3",
     "sphinx-copybutton==0.5.2",
     "sphinx-gallery==0.19.0",
     "sphinx-toggleprompt==0.6.0",
