@@ -60,7 +60,7 @@ jobs:
         python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
       - name: Install test requirements
-        run: pip install -r requirements/requirements_test.txt
+        run: pip install -r matplotlib>=3.6.0
 
       - uses: ansys/actions/build-wheelhouse@v8
         with:
@@ -79,7 +79,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Install test requirements
-        run: pip install -r requirements/requirements_test.txt
+        run: pip install matplotlib>=3.6.0
 
       - uses: ansys/actions/tests-pytest@v8
         with:

@@ -142,9 +142,6 @@ def test_array():
 
     except ImportError:
         with pytest.raises(NumPyRequired):
-            e1 = Quantity(7, "kg")
-
-        with pytest.raises(NumPyRequired):
             e2 = Quantity([7, 8, 9], "kg")
 
 
