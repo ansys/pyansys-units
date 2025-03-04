@@ -40,7 +40,6 @@ from ansys.units._constants import (  # noqa: F401
 )
 from ansys.units.base_dimensions import BaseDimensions  # noqa: F401
 from ansys.units.dimensions import Dimensions  # noqa: F401
-from ansys.units.plot import QuantityPlotter  # noqa: F401
 from ansys.units.quantity import Quantity, get_si_value  # noqa: F401
 from ansys.units.systems import UnitSystem  # noqa: F401
 from ansys.units.unit import Unit  # noqa: F401

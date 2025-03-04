@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 import operator
 from typing import Union
 
@@ -36,6 +37,17 @@ try:
     _array = np
 except ImportError:
     _array = None
+
+try:
+    from matplotlib.units import AxisInfo, ConversionInterface, registry
+
+    _ci = ConversionInterface
+    _ai = AxisInfo
+    _registry = registry
+except ModuleNotFoundError:
+    _ci = object
+    _ai = None
+    _registry = dict()
 
 
 class Quantity:
@@ -88,6 +100,9 @@ class Quantity:
             or (quantity_table and dimensions)
         ):
             raise ExcessiveParameters()
+
+        self._value = value
+        self.unit = units
 
         if copy_from:
             if value:
@@ -310,22 +325,10 @@ class Quantity:
             dims(dimensions={base_dims.SOLID_ANGLE: 1.0}),
         ]:
             return get_si_value(self)
-        raise InvalidFloatUsage()
-
-    def __array__(self):
-        if _array:
-            if isinstance(self.value, (float)):
-                return _array.array([self.value])
-            return self.value
-        else:
-            raise NumPyRequired()
 
     def __getitem__(self, idx):
-        if _array:
-            value = float(self.__array__()[idx])
-            return Quantity(value, self.units)
-        else:
-            raise NumPyRequired()
+        if isinstance(self.value, Iterable):
+            return Quantity(value=float(self.value[idx]), units=self.units)
 
     def __str__(self):
         return f'({self.value}, "{self._unit.name}")'
@@ -525,3 +528,29 @@ class RequiresUniqueDimensions(ValueError):
         super().__init__(
             f"For '{unit.name}' to be added '{other_unit.name}' must be removed."
         )
+
+
+class QuantityConverter(_ci):
+
+    @staticmethod
+    def convert(value, unit, axis):
+        if isinstance(value, Quantity):
+            return value._value
+        else:
+            return [quantity._value for quantity in value]
+
+    @staticmethod
+    def axisinfo(unit, axis):
+        return _ai(label=unit)
+
+    @staticmethod
+    def default_units(x, axis):
+        "Return the default unit for x or None"
+        if isinstance(x, Quantity):
+            attr = getattr(x, "unit", None)
+        else:
+            attr = getattr(x[0], "unit", None)
+        return attr.name if isinstance(attr, Unit) else attr
+
+
+_registry[Quantity] = QuantityConverter()
