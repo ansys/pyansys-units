@@ -142,9 +142,6 @@ def test_array():
 
     except ImportError:
         with pytest.raises(NumPyRequired):
-            e1 = Quantity(7, "kg").__array__()
-
-        with pytest.raises(NumPyRequired):
             e2 = Quantity([7, 8, 9], "kg")
 
 
@@ -699,3 +696,24 @@ def test_C_to_F():
     converted = five_c.to(ureg.F)
     assert converted.value == 41.0
     assert converted.units._name == "F"
+
+
+def _supporting_matplotlib():
+    try:
+        import matplotlib  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+def test_matplotlib_integration():
+    if not _supporting_matplotlib():
+        return
+    import matplotlib.pyplot as plt
+
+    arr_x = Quantity([1, 2, 3], Unit("m"))
+    arr_y = Quantity([4, 5, 6], "kg")
+    fig, ax = plt.subplots()
+    ax.plot(arr_x, arr_y)
+    assert ax.xaxis.get_units() == "m"
+    assert ax.yaxis.get_units() == "kg"

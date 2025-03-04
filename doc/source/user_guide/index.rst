@@ -15,4 +15,5 @@ code to work with physical quantities.
    strings
    angles
    temperature
+   plot
 

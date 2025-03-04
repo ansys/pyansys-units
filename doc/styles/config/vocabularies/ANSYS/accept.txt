@@ -8,3 +8,5 @@ rankine
 fahrenheit
 substrings
 poppler
+Matplotlib
+NumPy
