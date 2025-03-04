@@ -45,9 +45,7 @@ try:
     _ai = AxisInfo
     _registry = registry
 except ModuleNotFoundError:
-    _ci = object
-    _ai = None
-    _registry = dict()
+    _ci, _ai, _registry = object, None, dict()
 
 
 class Quantity:
