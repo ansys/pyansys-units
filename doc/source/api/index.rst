@@ -13,4 +13,3 @@ This section describes the public classes, functions, and attributes in the PyAn
     config
     unit
     unit_registry
-    plot
