@@ -59,6 +59,9 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
+      - name: Install test requirements
+        run: pip install -r requirements/requirements_test.txt
+
       - uses: ansys/actions/build-wheelhouse@v8
         with:
           library-name: ${{ env.LIBRARY_NAME }}
@@ -75,9 +78,13 @@ jobs:
         python-version: ['3.10', '3.11', '3.12', '3.13']
       fail-fast: false
     steps:
+      - name: Install test requirements
+        run: pip install -r requirements/requirements_test.txt
+
       - uses: ansys/actions/tests-pytest@v8
         with:
           pytest-markers: '-m "not developer_only"'
+
 
   doc-build:
     name: "Build documentation"
