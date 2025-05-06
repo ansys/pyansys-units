@@ -30,13 +30,13 @@ Example
 
 .. code-block:: python
 
-    >>> from ansys.units.quantity_descriptor import QuantityDescriptorCatalog
-    >>> from ansys.fluent.core.quantity_strategies import FluentSVarStrategy
+    from ansys.units.quantity_descriptor import QuantityDescriptorCatalog
+    from ansys.fluent.core.quantity_strategies import FluentSVarStrategy
 
-    >>> quantity = QuantityDescriptorCatalog.PRESSURE
-    >>> strategy = FluentSVarStrategy()
+    quantity = QuantityDescriptorCatalog.PRESSURE
+    strategy = FluentSVarStrategy()
 
-    >>> print(strategy.to_string(quantity))
+    print(strategy.to_string(quantity))
 """
 
 from .quantity_descriptor import QuantityDescriptor, QuantityDescriptorCatalog
