@@ -31,7 +31,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 
 
-class Dimension(Enum):
+class QuantityDescriptorDimension(Enum):
     """Enumerates physical dimensions."""
 
     PRESSURE = auto()
@@ -42,17 +42,17 @@ class Dimension(Enum):
 
 @dataclass(frozen=True)
 class QuantityDescriptor:
-    """Defines a physical quantity."""
+    """Defines a physical quantity descriptor."""
 
     name: str  # Human-readable name
-    dimension: Dimension
+    dimension: QuantityDescriptorDimension
     si_unit: str  # Preferred SI unit (e.g., "Pa", "m/s", "K")
 
 
 class QuantityDescriptorCatalog:
-    """A catalogue of physical quantities."""
+    """A catalogue of physical quantity descriptors."""
 
-    PRESSURE = QuantityDescriptor("static pressure", Dimension.PRESSURE, "Pa")
-    VELOCITY_X = QuantityDescriptor("velocity x", Dimension.VELOCITY, "m/s")
-    TEMPERATURE = QuantityDescriptor("temperature", Dimension.TEMPERATURE, "K")
+    PRESSURE = QuantityDescriptor("static pressure", QuantityDescriptorDimension.PRESSURE, "Pa")
+    VELOCITY_X = QuantityDescriptor("velocity x", QuantityDescriptorDimension.VELOCITY, "m/s")
+    TEMPERATURE = QuantityDescriptor("temperature", QuantityDescriptorDimension.TEMPERATURE, "K")
     # Add more quantities as needed

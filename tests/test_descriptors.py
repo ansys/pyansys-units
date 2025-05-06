@@ -1,4 +1,4 @@
-# Copyright (C) 2021 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,32 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Package initialization for ansys.units.quantity_descriptor.
+from ansys.units import QuantityDescriptor
 
-Exports the QuantityDescriptorCatalog catalog and core interfaces for working with
-physical quantities in a product-agnostic way.
 
-Example
--------
-
-.. code-block:: python
-
-    >>> from ansys.units.quantity_descriptor import QuantityDescriptorCatalog
-    >>> from ansys.fluent.core.quantity_strategies import FluentSVarStrategy
-
-    >>> quantity = QuantityDescriptorCatalog.PRESSURE
-    >>> strategy = FluentSVarStrategy()
-
-    >>> print(strategy.to_string(quantity))
-"""
-
-from .quantity_descriptor import QuantityDescriptorCatalog, QuantityDescriptor
-from .strategy import ConversionStrategy, MappingConversionStrategy
-
-__all__ = [
-    "QuantityDescriptor",
-    "QuantityDescriptorCatalog",
-    "ConversionStrategy",
-    "MappingConversionStrategy"
-]
+def test_descriptors():
+    qd = QuantityDescriptor("velocity", None, None)
