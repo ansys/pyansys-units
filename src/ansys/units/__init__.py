@@ -30,21 +30,18 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 
 import os
 
-
-from ansys.units.base_dimensions import BaseDimensions 
-from ansys.units.dimensions import Dimensions 
-from ansys.units.quantity import Quantity, get_si_value 
-from ansys.units.systems import UnitSystem 
-from ansys.units.unit import Unit 
-from ansys.units.unit_registry import UnitRegistry 
-
+from ansys.units.base_dimensions import BaseDimensions
+from ansys.units.dimensions import Dimensions
+from ansys.units.quantity import Quantity, get_si_value
 from ansys.units.quantity_descriptor import (
+    ConversionStrategy,
+    MappingConversionStrategy,
     QuantityDescriptor,
     QuantityDescriptorCatalog,
-    ConversionStrategy,
-    MappingConversionStrategy
 )
-
+from ansys.units.systems import UnitSystem
+from ansys.units.unit import Unit
+from ansys.units.unit_registry import UnitRegistry
 
 _THIS_DIRNAME = os.path.dirname(__file__)
 _README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"))
@@ -65,6 +62,5 @@ __all__ = [
     "QuantityDescriptor",
     "QuantityDescriptorCatalog",
     "ConversionStrategy",
-    "MappingConversionStrategy"
+    "MappingConversionStrategy",
 ]
-

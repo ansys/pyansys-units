@@ -20,32 +20,50 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import pytest 
-from ansys.units import QuantityDescriptor, QuantityDescriptorCatalog, MappingConversionStrategy
+import pytest
+
+from ansys.units import (
+    MappingConversionStrategy,
+    QuantityDescriptor,
+    QuantityDescriptorCatalog,
+)
 
 
 def test_create_descriptors():
     vel = QuantityDescriptor("velocity", None, None)
     assert vel.name == "velocity"
 
+
 def test_descriptor_strategies():
-    
+
     class JapaneseAPIStrategy(MappingConversionStrategy):
         _mapping = {
             QuantityDescriptorCatalog.PRESSURE: "atsuryoku",
             QuantityDescriptorCatalog.TEMPERATURE: "ondo",
         }
 
-    assert JapaneseAPIStrategy().to_string(QuantityDescriptorCatalog.PRESSURE) == "atsuryoku"
-    assert JapaneseAPIStrategy().to_string(QuantityDescriptorCatalog.TEMPERATURE) == "ondo"
+    assert (
+        JapaneseAPIStrategy().to_string(QuantityDescriptorCatalog.PRESSURE)
+        == "atsuryoku"
+    )
+    assert (
+        JapaneseAPIStrategy().to_string(QuantityDescriptorCatalog.TEMPERATURE) == "ondo"
+    )
 
     with pytest.raises(ValueError):
         JapaneseAPIStrategy().to_string(QuantityDescriptorCatalog.VELOCITY_X)
-        
-    assert JapaneseAPIStrategy().to_quantity("atsuryoku") == QuantityDescriptorCatalog.PRESSURE
-    assert JapaneseAPIStrategy().to_quantity("ondo") == QuantityDescriptorCatalog.TEMPERATURE
+
+    assert (
+        JapaneseAPIStrategy().to_quantity("atsuryoku")
+        == QuantityDescriptorCatalog.PRESSURE
+    )
+    assert (
+        JapaneseAPIStrategy().to_quantity("ondo")
+        == QuantityDescriptorCatalog.TEMPERATURE
+    )
 
     assert JapaneseAPIStrategy().to_quantity("x-houkou-no-sokudo") is None
+
 
 def test_extend_descriptor_catalog():
     catalog = QuantityDescriptorCatalog()

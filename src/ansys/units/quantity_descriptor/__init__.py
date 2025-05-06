@@ -1,4 +1,4 @@
-# Copyright (C) 2021 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,7 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 """
 Package initialization for ansys.units.quantity_descriptor.
 
@@ -40,12 +39,12 @@ Example
     >>> print(strategy.to_string(quantity))
 """
 
-from .quantity_descriptor import QuantityDescriptorCatalog, QuantityDescriptor
+from .quantity_descriptor import QuantityDescriptor, QuantityDescriptorCatalog
 from .strategy import ConversionStrategy, MappingConversionStrategy
 
 __all__ = [
     "QuantityDescriptor",
     "QuantityDescriptorCatalog",
     "ConversionStrategy",
-    "MappingConversionStrategy"
+    "MappingConversionStrategy",
 ]

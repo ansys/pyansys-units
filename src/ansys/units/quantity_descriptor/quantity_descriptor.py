@@ -1,4 +1,4 @@
-# Copyright (C) 2021 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,7 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 """
 Defines the core QuantityDescriptor class and predefined quantities.
 
@@ -52,7 +51,13 @@ class QuantityDescriptor:
 class QuantityDescriptorCatalog:
     """A catalogue of physical quantity descriptors."""
 
-    PRESSURE = QuantityDescriptor("static pressure", QuantityDescriptorDimension.PRESSURE, "Pa")
-    VELOCITY_X = QuantityDescriptor("velocity x", QuantityDescriptorDimension.VELOCITY, "m/s")
-    TEMPERATURE = QuantityDescriptor("temperature", QuantityDescriptorDimension.TEMPERATURE, "K")
+    PRESSURE = QuantityDescriptor(
+        "static pressure", QuantityDescriptorDimension.PRESSURE, "Pa"
+    )
+    VELOCITY_X = QuantityDescriptor(
+        "velocity x", QuantityDescriptorDimension.VELOCITY, "m/s"
+    )
+    TEMPERATURE = QuantityDescriptor(
+        "temperature", QuantityDescriptorDimension.TEMPERATURE, "K"
+    )
     # Add more quantities as needed
