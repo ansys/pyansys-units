@@ -24,4 +24,5 @@ from ansys.units import QuantityDescriptor
 
 
 def test_descriptors():
-    qd = QuantityDescriptor("velocity", None, None)
+    vel = QuantityDescriptor("velocity", None, None)
+    assert vel.name == "velocity"
