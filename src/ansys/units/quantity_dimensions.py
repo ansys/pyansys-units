@@ -70,9 +70,6 @@ class QuantityDimensions:
 
     Examples
     --------
-    >>> QuantityDimensions.FORCE
-    Dimensions(dimensions={BaseDimensions.MASS: 1.0, BaseDimensions.LENGTH: 1.0, BaseDimensions.TIME: -2.0})
-
     >>> QuantityDimensions.VELOCITY
     Dimensions(dimensions={BaseDimensions.LENGTH: 1.0, BaseDimensions.TIME: -1.0})
     """
