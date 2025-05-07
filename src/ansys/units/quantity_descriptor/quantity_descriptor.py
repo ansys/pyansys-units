@@ -29,40 +29,54 @@ This module provides a structured, extensible way to represent physical quantiti
 from dataclasses import dataclass
 from enum import Enum
 
-from ansys.units import BaseDimensions, Dimensions, QuantityDimensions
+from ansys.units.base_dimensions import BaseDimensions
+from ansys.units.dimensions import Dimensions
+from ansys.units.quantity_dimensions import QuantityDimensions
 
 
 @dataclass(frozen=True)
 class QuantityDescriptor:
     """Defines a physical quantity descriptor."""
-
-    name: str  # Human-readable name
+    name: str
     dimension: Dimensions
-    si_unit: str  # Preferred SI unit (e.g., "Pa", "m/s", "K")
 
     def __hash__(self):
-        # Use a tuple of the attributes to compute the hash.
-        # N.b. `Dimensions` is not directly hashable.
-        return hash((self.name, str(self.dimension), self.si_unit))
+        return hash((self.name, str(self.dimension)))
+
+
+def _build_quantity_descriptors_from_dimensions() -> dict[str, QuantityDescriptor]:
+    catalog = {}
+    for attr_name in dir(QuantityDimensions):
+        if not attr_name.isupper():
+            continue
+        dimension = getattr(QuantityDimensions, attr_name)
+        if isinstance(dimension, Dimensions):
+            catalog[attr_name] = QuantityDescriptor(
+                name=attr_name.lower(),
+                dimension=dimension
+            )
+    return catalog
+
 
 class QuantityCatalog:
     """A catalogue of physical quantity descriptors."""
 
-    _qd = QuantityDimensions
+    # Load from generator
+    _generated = _build_quantity_descriptors_from_dimensions()
 
-    PRESSURE = QuantityDescriptor(
-        "pressure",
-        _qd.PRESSURE,
-        "Pa"
-    )
-    VELOCITY_X = QuantityDescriptor(
-        "velocity x",
-        _qd.VELOCITY,
-        "m/s"
-    )
-    TEMPERATURE = QuantityDescriptor(
-        "temperature",
-        _qd.TEMPERATURE,
-        "K"
-    )
-    # Add more quantities as needed
+    # Inject generated descriptors as class attributes
+    for key, descriptor in _generated.items():
+        locals()[key] = descriptor
+
+    # Add custom descriptors (e.g., velocity components)
+    VELOCITY_X = QuantityDescriptor("velocity x", QuantityDimensions.VELOCITY)
+    VELOCITY_Y = QuantityDescriptor("velocity y", QuantityDimensions.VELOCITY)
+    VELOCITY_Z = QuantityDescriptor("velocity z", QuantityDimensions.VELOCITY)
+
+    @classmethod
+    def all(cls) -> list[QuantityDescriptor]:
+        """Return all defined QuantityDescriptors (excluding internal attributes)."""
+        return [
+            v for k, v in cls.__dict__.items()
+            if isinstance(v, QuantityDescriptor)
+        ]

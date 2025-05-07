@@ -26,11 +26,12 @@ from ansys.units import (
     MappingConversionStrategy,
     QuantityDescriptor,
     QuantityCatalog,
+    QuantityDimensions
 )
 
 
 def test_create_descriptors():
-    vel = QuantityDescriptor("velocity", None, None)
+    vel = QuantityDescriptor("velocity", None)
     assert vel.name == "velocity"
 
 
@@ -67,5 +68,5 @@ def test_descriptor_strategies():
 
 def test_extend_descriptor_catalog():
     catalog = QuantityCatalog()
-    setattr(catalog, "FORCE", QuantityDescriptor("force", None, "N"))
-    assert catalog.FORCE.name == "force"
+    setattr(catalog, "WALL_SHEAR_STRESS", QuantityDescriptor("wall_shear_stress", QuantityDimensions.STRESS))
+    assert catalog.WALL_SHEAR_STRESS.name == "wall_shear_stress"
