@@ -22,7 +22,7 @@
 
 import pytest
 
-from ansys.units import BaseDimensions, Dimensions
+from ansys.units import BaseDimensions, Dimensions, QuantityDimensions
 from ansys.units.dimensions import IncorrectDimensions
 
 
@@ -132,3 +132,12 @@ def test_error_messages():
     d1 = Dimensions(dimensions={dims.LENGTH: 2})
     e1 = IncorrectDimensions()
     assert str(e1) == f"The `dimensions` key must be a 'BaseDimensions' object"
+
+
+def test_quantity_dimensions():
+    qd = QuantityDimensions
+    base = BaseDimensions
+    assert qd.ELECTRICAL_POTENTIAL == qd.CURRENT * qd.ELECTRICAL_RESISTANCE
+    assert qd.FORCE == Dimensions(
+        dimensions={base.MASS: 1, base.LENGTH: 1, base.TIME: -2}
+    )

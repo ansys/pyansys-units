@@ -27,16 +27,9 @@ This module provides a structured, extensible way to represent physical quantiti
 """
 
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 
-
-class QuantityDescriptorDimension(Enum):
-    """Enumerates physical dimensions."""
-
-    PRESSURE = auto()
-    VELOCITY = auto()
-    TEMPERATURE = auto()
-    # etc.
+from ansys.units import BaseDimensions, Dimensions
 
 
 @dataclass(frozen=True)
@@ -44,20 +37,32 @@ class QuantityDescriptor:
     """Defines a physical quantity descriptor."""
 
     name: str  # Human-readable name
-    dimension: QuantityDescriptorDimension
+    dimension: Dimensions
     si_unit: str  # Preferred SI unit (e.g., "Pa", "m/s", "K")
 
+    def __hash__(self):
+        # Use a tuple of the attributes to compute the hash.
+        # N.b. `Dimensions` is not directly hashable.
+        return hash((self.name, str(self.dimension), self.si_unit))
 
 class QuantityDescriptorCatalog:
     """A catalogue of physical quantity descriptors."""
 
+    _b = BaseDimensions
+
     PRESSURE = QuantityDescriptor(
-        "static pressure", QuantityDescriptorDimension.PRESSURE, "Pa"
+        "pressure",
+        Dimensions(dimensions={_b.MASS: 1, _b.LENGTH: -1, _b.TIME: -2}),
+        "Pa"
     )
     VELOCITY_X = QuantityDescriptor(
-        "velocity x", QuantityDescriptorDimension.VELOCITY, "m/s"
+        "velocity x",
+        Dimensions(dimensions={_b.LENGTH: 1, _b.TIME: -1}),
+        "m/s"
     )
     TEMPERATURE = QuantityDescriptor(
-        "temperature", QuantityDescriptorDimension.TEMPERATURE, "K"
+        "temperature",
+        Dimensions(dimensions={_b.TEMPERATURE: 1}),
+        "K"
     )
     # Add more quantities as needed
