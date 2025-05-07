@@ -29,7 +29,7 @@ This module provides a structured, extensible way to represent physical quantiti
 from dataclasses import dataclass
 from enum import Enum
 
-from ansys.units import BaseDimensions, Dimensions
+from ansys.units import BaseDimensions, Dimensions, QuantityDimensions
 
 
 @dataclass(frozen=True)
@@ -48,21 +48,21 @@ class QuantityDescriptor:
 class QuantityDescriptorCatalog:
     """A catalogue of physical quantity descriptors."""
 
-    _b = BaseDimensions
+    _qd = QuantityDimensions
 
     PRESSURE = QuantityDescriptor(
         "pressure",
-        Dimensions(dimensions={_b.MASS: 1, _b.LENGTH: -1, _b.TIME: -2}),
+        _qd.PRESSURE,
         "Pa"
     )
     VELOCITY_X = QuantityDescriptor(
         "velocity x",
-        Dimensions(dimensions={_b.LENGTH: 1, _b.TIME: -1}),
+        _qd.VELOCITY,
         "m/s"
     )
     TEMPERATURE = QuantityDescriptor(
         "temperature",
-        Dimensions(dimensions={_b.TEMPERATURE: 1}),
+        _qd.TEMPERATURE,
         "K"
     )
     # Add more quantities as needed
