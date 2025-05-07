@@ -28,7 +28,6 @@ This module provides a structured, extensible way to represent physical quantiti
 
 from dataclasses import dataclass
 
-from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_dimensions import QuantityDimensions
 
