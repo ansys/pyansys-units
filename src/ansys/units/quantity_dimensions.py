@@ -19,6 +19,30 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Defines immutable objects representing SI base and derived physical dimensions.
+
+This module provides globally defined `Dimensions` instances corresponding to the
+seven SI base quantities (e.g., mass, time) and many commonly used derived quantities
+(e.g., force, energy, pressure). These dimension definitions are used internally
+for dimensional analysis, quantity construction, and validation.
+
+Each dimension is represented as a `Dimensions` object, which captures the
+dimensional exponents of base quantities such as mass, length, and time.
+
+This module is not intended for direct modification at runtime. All objects
+are statically defined and immutable.
+
+Examples
+--------
+from ansys.units.dimensions import Dimensions
+from ansys.units.quantity_dimensions import QuantityDimensions
+
+force = QuantityDimensions.FORCE
+pressure = QuantityDimensions.PRESSURE
+pressure == force / QuantityDimensions.AREA
+True
+"""
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
@@ -29,6 +53,26 @@ def _make_base_dimensions(dimension: BaseDimensions) -> Dimensions:
     return Dimensions(dimensions={dimension: 1.0})
 
 class QuantityDimensions:
+    """
+    Defines immutable dimension objects for standard physical quantities.
+
+    This class encapsulates SI base dimensions (e.g., MASS, TIME) and
+    commonly used derived dimensions (e.g., FORCE, PRESSURE, ENERGY),
+    using `Dimensions` instances.
+
+    These objects support arithmetic operations (multiplication, division,
+    exponentiation) to enable dimensional composition and analysis.
+
+    All attributes are class-level constants and should be treated as immutable.
+
+    Examples
+    --------
+    >>> QuantityDimensions.FORCE
+    Dimensions(dimensions={BaseDimensions.MASS: 1.0, BaseDimensions.LENGTH: 1.0, BaseDimensions.TIME: -2.0})
+
+    >>> QuantityDimensions.VELOCITY
+    Dimensions(dimensions={BaseDimensions.LENGTH: 1.0, BaseDimensions.TIME: -1.0})
+    """
 
     # Dimensions of base quantities
     MASS = _make_base_dimensions(BaseDimensions.MASS)
@@ -45,11 +89,11 @@ class QuantityDimensions:
     TEMPERATURE_DIFFERENCE = _make_base_dimensions(BaseDimensions.TEMPERATURE_DIFFERENCE)
 
     # Dimensions of derived quantities
+
+    # Kinematics and mechanics
     AREA = LENGTH ** 2
     VOLUME = LENGTH ** 3
     FREQUENCY = TIME ** -1
-
-    # Kinematics and mechanics
     VELOCITY = LENGTH / TIME
     ACCELERATION = VELOCITY / TIME
     FORCE = MASS * ACCELERATION
@@ -72,39 +116,27 @@ class QuantityDimensions:
     KINEMATIC_VISCOSITY = AREA / TIME
     DYNAMIC_VISCOSITY = PRESSURE * TIME
     MASS_FLOW_RATE = MASS / TIME
-    MASS_CONTROL = MASS / TIME ** 3  # kg⋅m/s^3
-    ANGULAR_VELOCITY = TIME ** -1  # rad/s
-    ANGULAR_ACCELERATION = TIME ** -2  # rad/s^2
-    FREQUENCY_DRIFT = TIME ** -2  # Hz/s
-    VOLUMETRIC_FLOW = VOLUME / TIME  # m^3/s
-    YANK = FORCE / TIME  # N/s = m⋅kg⋅s^-3
-    WAVENUMBER = LENGTH ** -1  # m^-1
-    AREA_DENSITY = MASS / AREA  # kg/m^2
-    DENSITY = MASS / VOLUME  # kg/m^3
-    SPECIFIC_VOLUME = VOLUME / MASS  # m^3/kg
-    ACTION = ENERGY * TIME  # J⋅s = m^2⋅kg⋅s^-1
-    SPECIFIC_ENERGY = ENERGY / MASS  # J/kg = m^2⋅s^-2
-    ENERGY_DENSITY = ENERGY / VOLUME  # J/m^3 = m^-1⋅kg⋅s^-2
-    SURFACE_TENSION = FORCE / LENGTH  # N/m = kg⋅s^-2
-    HEAT_FLUX_DENSITY = POWER / AREA  # W/m^2 = kg⋅s^-3
-    KINEMATIC_VISCOSITY = AREA / TIME  # m^2/s
-    DYNAMIC_VISCOSITY = PRESSURE * TIME  # Pa⋅s = m^-1⋅kg⋅s^-1
-    LINEAR_MASS_DENSITY = MASS / LENGTH  # kg/m
-    MASS_FLOW_RATE = MASS / TIME  # kg/s
-    RADIANCE = POWER / (SOLID_ANGLE * AREA)  # W/(sr⋅m^2) = kg⋅s^-3
-    SPECTRAL_POWER = POWER / LENGTH  # W/m = m⋅kg⋅s^-3
-    ABSORBED_DOSE_RATE = AREA / TIME ** 3  # Gy/s = m^2⋅s^-3
-    FUEL_EFFICIENCY = LENGTH ** -2  # m^-2
-    SPECTRAL_IRRADIANCE = POWER / VOLUME  # W/m^3 = m^-1⋅kg⋅s^-3
-    ENERGY_FLUX_DENSITY = ENERGY / (AREA * TIME)  # J/(m^2⋅s) = kg⋅s^-3
-    COMPRESSIBILITY = PRESSURE ** -1  # Pa^-1 = m⋅kg^-1⋅s^2
-    RADIANT_EXPOSURE = ENERGY / AREA  # J/m^2 = kg⋅s^-2
-    MOMENT_OF_INERTIA = MASS * AREA  # kg⋅m^2
-    SPECIFIC_ANGULAR_MOMENTUM = ANGULAR_MOMENTUM / MASS  # N⋅m⋅s/kg = m^2⋅s^-1
-    RADIANT_INTENSITY = POWER / SOLID_ANGLE  # W/sr = m^2⋅kg⋅s^-3
-    SPECTRAL_INTENSITY = POWER / (SOLID_ANGLE * LENGTH)  # W/(sr⋅m) = m⋅kg⋅s^-3
-
-
+    MASS_CONTROL = MASS / TIME ** 3
+    FREQUENCY_DRIFT = TIME ** -2
+    YANK = FORCE / TIME
+    WAVENUMBER = LENGTH ** -1
+    AREA_DENSITY = MASS / AREA
+    ACTION = ENERGY * TIME
+    SPECIFIC_ENERGY = ENERGY / MASS
+    HEAT_FLUX_DENSITY = POWER / AREA
+    LINEAR_MASS_DENSITY = MASS / LENGTH
+    RADIANCE = POWER / (SOLID_ANGLE * AREA)
+    SPECTRAL_POWER = POWER / LENGTH
+    ABSORBED_DOSE_RATE = AREA / TIME ** 3
+    FUEL_EFFICIENCY = LENGTH ** -2
+    SPECTRAL_IRRADIANCE = POWER / VOLUME
+    ENERGY_FLUX_DENSITY = ENERGY / (AREA * TIME)
+    COMPRESSIBILITY = PRESSURE ** -1
+    RADIANT_EXPOSURE = ENERGY / AREA
+    MOMENT_OF_INERTIA = MASS * AREA
+    SPECIFIC_ANGULAR_MOMENTUM = ANGULAR_MOMENTUM / MASS
+    RADIANT_INTENSITY = POWER / SOLID_ANGLE
+    SPECTRAL_INTENSITY = POWER / (SOLID_ANGLE * LENGTH)
 
     # Electromagnetics
     ELECTRIC_CHARGE = TIME * CURRENT
