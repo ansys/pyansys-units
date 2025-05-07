@@ -39,7 +39,7 @@ Example
     print(strategy.to_string(quantity))
 """
 
-from .quantity_descriptor import QuantityDescriptor, QuantityCatalog
+from .quantity_descriptor import QuantityCatalog, QuantityDescriptor
 from .strategy import ConversionStrategy, MappingConversionStrategy
 
 __all__ = [

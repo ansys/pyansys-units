@@ -24,9 +24,9 @@ import pytest
 
 from ansys.units import (
     MappingConversionStrategy,
-    QuantityDescriptor,
     QuantityCatalog,
-    QuantityDimensions
+    QuantityDescriptor,
+    QuantityDimensions,
 )
 
 
@@ -43,30 +43,23 @@ def test_descriptor_strategies():
             QuantityCatalog.TEMPERATURE: "ondo",
         }
 
-    assert (
-        JapaneseAPIStrategy().to_string(QuantityCatalog.PRESSURE)
-        == "atsuryoku"
-    )
-    assert (
-        JapaneseAPIStrategy().to_string(QuantityCatalog.TEMPERATURE) == "ondo"
-    )
+    assert JapaneseAPIStrategy().to_string(QuantityCatalog.PRESSURE) == "atsuryoku"
+    assert JapaneseAPIStrategy().to_string(QuantityCatalog.TEMPERATURE) == "ondo"
 
     with pytest.raises(ValueError):
         JapaneseAPIStrategy().to_string(QuantityCatalog.VELOCITY_X)
 
-    assert (
-        JapaneseAPIStrategy().to_quantity("atsuryoku")
-        == QuantityCatalog.PRESSURE
-    )
-    assert (
-        JapaneseAPIStrategy().to_quantity("ondo")
-        == QuantityCatalog.TEMPERATURE
-    )
+    assert JapaneseAPIStrategy().to_quantity("atsuryoku") == QuantityCatalog.PRESSURE
+    assert JapaneseAPIStrategy().to_quantity("ondo") == QuantityCatalog.TEMPERATURE
 
     assert JapaneseAPIStrategy().to_quantity("x-houkou-no-sokudo") is None
 
 
 def test_extend_descriptor_catalog():
     catalog = QuantityCatalog()
-    setattr(catalog, "WALL_SHEAR_STRESS", QuantityDescriptor("wall_shear_stress", QuantityDimensions.STRESS))
+    setattr(
+        catalog,
+        "WALL_SHEAR_STRESS",
+        QuantityDescriptor("wall_shear_stress", QuantityDimensions.STRESS),
+    )
     assert catalog.WALL_SHEAR_STRESS.name == "wall_shear_stress"

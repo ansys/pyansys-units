@@ -37,6 +37,7 @@ from ansys.units.quantity_dimensions import QuantityDimensions
 @dataclass(frozen=True)
 class QuantityDescriptor:
     """Defines a physical quantity descriptor."""
+
     name: str
     dimension: Dimensions
 
@@ -52,8 +53,7 @@ def _build_quantity_descriptors_from_dimensions() -> dict[str, QuantityDescripto
         dimension = getattr(QuantityDimensions, attr_name)
         if isinstance(dimension, Dimensions):
             catalog[attr_name] = QuantityDescriptor(
-                name=attr_name.lower(),
-                dimension=dimension
+                name=attr_name.lower(), dimension=dimension
             )
     return catalog
 
@@ -76,7 +76,4 @@ class QuantityCatalog:
     @classmethod
     def all(cls) -> list[QuantityDescriptor]:
         """Return all defined QuantityDescriptors (excluding internal attributes)."""
-        return [
-            v for k, v in cls.__dict__.items()
-            if isinstance(v, QuantityDescriptor)
-        ]
+        return [v for k, v in cls.__dict__.items() if isinstance(v, QuantityDescriptor)]

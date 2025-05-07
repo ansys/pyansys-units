@@ -33,13 +33,13 @@ import os
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity import Quantity, get_si_value
-from ansys.units.quantity_dimensions import QuantityDimensions
 from ansys.units.quantity_descriptor import (
     ConversionStrategy,
     MappingConversionStrategy,
-    QuantityDescriptor,
     QuantityCatalog,
+    QuantityDescriptor,
 )
+from ansys.units.quantity_dimensions import QuantityDimensions
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
 from ansys.units.unit_registry import UnitRegistry
