@@ -25,7 +25,7 @@ import pytest
 from ansys.units import (
     MappingConversionStrategy,
     QuantityDescriptor,
-    QuantityDescriptorCatalog,
+    QuantityCatalog,
 )
 
 
@@ -38,34 +38,34 @@ def test_descriptor_strategies():
 
     class JapaneseAPIStrategy(MappingConversionStrategy):
         _mapping = {
-            QuantityDescriptorCatalog.PRESSURE: "atsuryoku",
-            QuantityDescriptorCatalog.TEMPERATURE: "ondo",
+            QuantityCatalog.PRESSURE: "atsuryoku",
+            QuantityCatalog.TEMPERATURE: "ondo",
         }
 
     assert (
-        JapaneseAPIStrategy().to_string(QuantityDescriptorCatalog.PRESSURE)
+        JapaneseAPIStrategy().to_string(QuantityCatalog.PRESSURE)
         == "atsuryoku"
     )
     assert (
-        JapaneseAPIStrategy().to_string(QuantityDescriptorCatalog.TEMPERATURE) == "ondo"
+        JapaneseAPIStrategy().to_string(QuantityCatalog.TEMPERATURE) == "ondo"
     )
 
     with pytest.raises(ValueError):
-        JapaneseAPIStrategy().to_string(QuantityDescriptorCatalog.VELOCITY_X)
+        JapaneseAPIStrategy().to_string(QuantityCatalog.VELOCITY_X)
 
     assert (
         JapaneseAPIStrategy().to_quantity("atsuryoku")
-        == QuantityDescriptorCatalog.PRESSURE
+        == QuantityCatalog.PRESSURE
     )
     assert (
         JapaneseAPIStrategy().to_quantity("ondo")
-        == QuantityDescriptorCatalog.TEMPERATURE
+        == QuantityCatalog.TEMPERATURE
     )
 
     assert JapaneseAPIStrategy().to_quantity("x-houkou-no-sokudo") is None
 
 
 def test_extend_descriptor_catalog():
-    catalog = QuantityDescriptorCatalog()
+    catalog = QuantityCatalog()
     setattr(catalog, "FORCE", QuantityDescriptor("force", None, "N"))
     assert catalog.FORCE.name == "force"

@@ -38,7 +38,7 @@ from ansys.units.quantity_descriptor import (
     ConversionStrategy,
     MappingConversionStrategy,
     QuantityDescriptor,
-    QuantityDescriptorCatalog,
+    QuantityCatalog,
 )
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
@@ -62,7 +62,7 @@ __all__ = [
     "UnitRegistry",
     "QuantityDimensions",
     "QuantityDescriptor",
-    "QuantityDescriptorCatalog",
+    "QuantityCatalog",
     "ConversionStrategy",
     "MappingConversionStrategy",
 ]

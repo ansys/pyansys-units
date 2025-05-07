@@ -22,7 +22,7 @@
 """
 Package initialization for ansys.units.quantity_descriptor.
 
-Exports the QuantityDescriptorCatalog catalog and core interfaces for working with
+Exports the QuantityCatalog catalog and core interfaces for working with
 physical quantities in a product-agnostic way.
 
 Example
@@ -30,21 +30,21 @@ Example
 
 .. code-block:: python
 
-    from ansys.units.quantity_descriptor import QuantityDescriptorCatalog
+    from ansys.units.quantity_descriptor import QuantityCatalog
     from ansys.fluent.core.quantity_strategies import FluentSVarStrategy
 
-    quantity = QuantityDescriptorCatalog.PRESSURE
+    quantity = QuantityCatalog.PRESSURE
     strategy = FluentSVarStrategy()
 
     print(strategy.to_string(quantity))
 """
 
-from .quantity_descriptor import QuantityDescriptor, QuantityDescriptorCatalog
+from .quantity_descriptor import QuantityDescriptor, QuantityCatalog
 from .strategy import ConversionStrategy, MappingConversionStrategy
 
 __all__ = [
     "QuantityDescriptor",
-    "QuantityDescriptorCatalog",
+    "QuantityCatalog",
     "ConversionStrategy",
     "MappingConversionStrategy",
 ]

@@ -45,7 +45,7 @@ class QuantityDescriptor:
         # N.b. `Dimensions` is not directly hashable.
         return hash((self.name, str(self.dimension), self.si_unit))
 
-class QuantityDescriptorCatalog:
+class QuantityCatalog:
     """A catalogue of physical quantity descriptors."""
 
     _qd = QuantityDimensions
