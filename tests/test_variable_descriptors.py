@@ -24,9 +24,9 @@ import pytest
 
 from ansys.units import (
     MappingConversionStrategy,
+    QuantityDimensions,
     VariableCatalog,
     VariableDescriptor,
-    QuantityDimensions,
 )
 
 
@@ -64,5 +64,3 @@ def test_extend_descriptor_catalog():
 def test_get_custom_descriptor_from_catalog():
     catalog = VariableCatalog()
     assert catalog.VELOCITY_Y.name == "velocity_y"
-
-

@@ -33,16 +33,16 @@ import os
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity import Quantity, get_si_value
+from ansys.units.quantity_dimensions import QuantityDimensions
+from ansys.units.systems import UnitSystem
+from ansys.units.unit import Unit
+from ansys.units.unit_registry import UnitRegistry
 from ansys.units.variable_descriptor import (
     ConversionStrategy,
     MappingConversionStrategy,
     VariableCatalog,
     VariableDescriptor,
 )
-from ansys.units.quantity_dimensions import QuantityDimensions
-from ansys.units.systems import UnitSystem
-from ansys.units.unit import Unit
-from ansys.units.unit_registry import UnitRegistry
 
 _THIS_DIRNAME = os.path.dirname(__file__)
 _README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"))

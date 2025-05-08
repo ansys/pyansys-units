@@ -22,8 +22,9 @@
 """
 Defines the core VariableDescriptor class and predefined quantities.
 
-This module provides a structured, extensible way to represent variables based on physical quantities
-(e.g., pressure, velocity) independently of any product-specific naming conventions.
+This module provides a structured, extensible way to represent variables based on
+physical quantities (e.g., pressure, velocity) independently of any product-specific
+naming conventions.
 """
 
 from dataclasses import dataclass
@@ -42,7 +43,7 @@ class VariableDescriptor:
     def __hash__(self):
         return hash((self.name, str(self.dimension)))
 
-    
+
 def _validate_and_transform_variable(variable: str) -> str:
     """
     Validate and transform a variable name.
@@ -76,8 +77,8 @@ def _build_variable_descriptors_from_dimensions() -> dict[str, VariableDescripto
     """
     Generate a dictionary of variable descriptors from QuantityDimensions.
 
-    This function iterates over all uppercase attributes in QuantityDimensions
-    and creates VariableDescriptor instances for each valid dimension.
+    This function iterates over all uppercase attributes in QuantityDimensions and
+    creates VariableDescriptor instances for each valid dimension.
     """
     catalog = {}
     for attr_name in dir(QuantityDimensions):
@@ -127,14 +128,16 @@ class VariableCatalog:
                 "Please choose a unique name."
             )
         transformed_name = _validate_and_transform_variable(variable)
-        setattr(
-            cls,
-            variable,
-            VariableDescriptor(transformed_name, dimension)
-        )
+        setattr(cls, variable, VariableDescriptor(transformed_name, dimension))
 
         
-# Add custom descriptors (e.g., velocity components)
-VariableCatalog.add("VELOCITY_X", QuantityDimensions.VELOCITY)
-VariableCatalog.add("VELOCITY_Y", QuantityDimensions.VELOCITY)
-VariableCatalog.add("VELOCITY_Z", QuantityDimensions.VELOCITY)
+# Add custom descriptors
+variables = [
+    ("VELOCITY_X", QuantityDimensions.VELOCITY),
+    ("VELOCITY_Y", QuantityDimensions.VELOCITY),
+    ("VELOCITY_Z", QuantityDimensions.VELOCITY),
+    # ... more entries
+]
+
+for name, dimension in variables:
+    VariableCatalog.add(name, dimension)

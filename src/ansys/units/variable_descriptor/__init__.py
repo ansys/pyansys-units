@@ -39,8 +39,8 @@ Example
     print(strategy.to_string(quantity))
 """
 
-from .variable_descriptor import VariableCatalog, VariableDescriptor
 from .strategy import ConversionStrategy, MappingConversionStrategy
+from .variable_descriptor import VariableCatalog, VariableDescriptor
 
 __all__ = [
     "VariableDescriptor",
