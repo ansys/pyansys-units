@@ -42,6 +42,35 @@ class VariableDescriptor:
     def __hash__(self):
         return hash((self.name, str(self.dimension)))
 
+    
+def _validate_and_transform_variable(variable: str) -> str:
+    """
+    Validate and transform a variable name.
+
+    Ensures the variable name is uppercase and returns its lowercase equivalent.
+
+    Parameters
+    ----------
+    variable : str
+        The name of the variable.
+
+    Returns
+    -------
+    str
+        The lowercase equivalent of the variable name.
+
+    Raises
+    ------
+    ValueError
+        If the variable name is not uppercase.
+    """
+    if not variable.isupper():
+        raise ValueError(
+            f"Variable names in VariableCatalog must be uppercase. "
+            f"Invalid name: '{variable}'."
+        )
+    return variable.lower()
+
 
 def _build_variable_descriptors_from_dimensions() -> dict[str, VariableDescriptor]:
     """
@@ -52,12 +81,10 @@ def _build_variable_descriptors_from_dimensions() -> dict[str, VariableDescripto
     """
     catalog = {}
     for attr_name in dir(QuantityDimensions):
-        if not attr_name.isupper():
-            continue
         dimension = getattr(QuantityDimensions, attr_name)
         if isinstance(dimension, Dimensions):
             catalog[attr_name] = VariableDescriptor(
-                name=attr_name.lower(), dimension=dimension
+                name=_validate_and_transform_variable(attr_name), dimension=dimension
             )
     return catalog
 
@@ -76,7 +103,7 @@ class VariableCatalog:
     def all(cls) -> list[VariableDescriptor]:
         """Return all defined `VariableDescriptor`s (excluding internal attributes)."""
         return [v for k, v in cls.__dict__.items() if isinstance(v, VariableDescriptor)]
-    
+
     @classmethod
     def add(cls, variable: str, dimension: Dimensions) -> None:
         """
@@ -94,21 +121,18 @@ class VariableCatalog:
         ValueError
             The variable name is not uppercase or already exists.
         """
-        if not variable.isupper():
-            raise ValueError(
-                f"Variable names in VariableCatalog must be uppercase. "
-                f"Invalid name: '{variable}'."
-            )
         if hasattr(cls, variable):
             raise ValueError(
                 f"Variable name '{variable}' already exists in VariableCatalog. "
                 "Please choose a unique name."
             )
+        transformed_name = _validate_and_transform_variable(variable)
         setattr(
             cls,
             variable,
-            VariableDescriptor(variable.lower(), dimension)
+            VariableDescriptor(transformed_name, dimension)
         )
+
         
 # Add custom descriptors (e.g., velocity components)
 VariableCatalog.add("VELOCITY_X", QuantityDimensions.VELOCITY)
