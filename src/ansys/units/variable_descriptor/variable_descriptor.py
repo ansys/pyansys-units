@@ -73,5 +73,14 @@ class VariableCatalog:
 
     @classmethod
     def all(cls) -> list[VariableDescriptor]:
-        """Return all defined QuantityDescriptors (excluding internal attributes)."""
+        """Return all defined `VariableDescriptor`s (excluding internal attributes)."""
         return [v for k, v in cls.__dict__.items() if isinstance(v, VariableDescriptor)]
+    
+    @classmethod
+    def add(cls, variable: str, dimension:Dimensions) -> None:
+        """Add a variable to the catalogue."""
+        setattr(
+            cls,
+            variable,
+            VariableDescriptor(variable.lower(), dimension)
+        )

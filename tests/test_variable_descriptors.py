@@ -57,9 +57,10 @@ def test_descriptor_strategies():
 
 def test_extend_descriptor_catalog():
     catalog = VariableCatalog()
-    setattr(
-        catalog,
-        "WALL_SHEAR_STRESS",
-        VariableDescriptor("wall_shear_stress", QuantityDimensions.STRESS),
-    )
+    catalog.add("WALL_SHEAR_STRESS", QuantityDimensions.STRESS)
+    # setattr(
+    #     catalog,
+    #     "WALL_SHEAR_STRESS",
+    #     VariableDescriptor("wall_shear_stress", QuantityDimensions.STRESS),
+    # )
     assert catalog.WALL_SHEAR_STRESS.name == "wall_shear_stress"
