@@ -262,6 +262,15 @@ variables = [
     ("X_FACE_AREA", _D.AREA),
     ("Y_FACE_AREA", _D.AREA),
     ("Z_FACE_AREA", _D.AREA),
+    # cell info
+    ("ACTIVE_CELL_PARTITION", Dimensions()),
+    ("CELL_ELEMENT_TYPE", Dimensions()),
+    ("CELL_ID", Dimensions()),
+    ("CELL_WEIGHT", Dimensions()),
+    ("CELL_ZONE_INDEX", Dimensions()),
+    ("CELL_ZONE_TYPE", Dimensions()),
+    ("PARTITION_NEIGHBOURS", Dimensions()),
+    ("STORED_CELL_PARTITIION", Dimensions()),
 ]
 
 for name, dimension in variables:
