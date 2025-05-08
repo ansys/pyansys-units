@@ -130,7 +130,7 @@ class VariableCatalog:
         transformed_name = _validate_and_transform_variable(variable)
         setattr(cls, variable, VariableDescriptor(transformed_name, dimension))
 
-        
+
 # Add custom descriptors
 _D = QuantityDimensions
 variables = [
