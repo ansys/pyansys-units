@@ -60,3 +60,9 @@ def test_extend_descriptor_catalog():
     catalog.add("WALL_SHEAR_STRESS", QuantityDimensions.STRESS)
     assert catalog.WALL_SHEAR_STRESS.name == "wall_shear_stress"
 
+
+def test_get_custom_descriptor_from_catalog():
+    catalog = VariableCatalog()
+    assert catalog.VELOCITY_Y.name == "velocity_y"
+
+

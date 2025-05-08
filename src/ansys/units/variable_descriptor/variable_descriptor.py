@@ -72,11 +72,6 @@ class VariableCatalog:
     for key, descriptor in _generated.items():
         locals()[key] = descriptor
 
-    # Add custom descriptors (e.g., velocity components)
-    VELOCITY_X = VariableDescriptor("velocity x", QuantityDimensions.VELOCITY)
-    VELOCITY_Y = VariableDescriptor("velocity y", QuantityDimensions.VELOCITY)
-    VELOCITY_Z = VariableDescriptor("velocity z", QuantityDimensions.VELOCITY)
-
     @classmethod
     def all(cls) -> list[VariableDescriptor]:
         """Return all defined `VariableDescriptor`s (excluding internal attributes)."""
@@ -114,3 +109,8 @@ class VariableCatalog:
             variable,
             VariableDescriptor(variable.lower(), dimension)
         )
+        
+# Add custom descriptors (e.g., velocity components)
+VariableCatalog.add("VELOCITY_X", QuantityDimensions.VELOCITY)
+VariableCatalog.add("VELOCITY_Y", QuantityDimensions.VELOCITY)
+VariableCatalog.add("VELOCITY_Z", QuantityDimensions.VELOCITY)
