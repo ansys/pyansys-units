@@ -132,11 +132,80 @@ class VariableCatalog:
 
         
 # Add custom descriptors
+_D = QuantityDimensions
 variables = [
-    ("VELOCITY_X", QuantityDimensions.VELOCITY),
-    ("VELOCITY_Y", QuantityDimensions.VELOCITY),
-    ("VELOCITY_Z", QuantityDimensions.VELOCITY),
-    # ... more entries
+    # pressure
+    ("ABSOLUTE_PRESSURE", _D.PRESSURE),
+    ("DYNAMIC_PRESSURE", _D.PRESSURE),
+    # ("STATIC_PRESSURE", _D.PRESSURE),
+    ("TOTAL_PRESSURE", _D.PRESSURE),
+    ("PRESSURE_COEFFICIENT", Dimensions()),
+    # velocity
+    ("AXIAL_VELOCITY", _D.VELOCITY),
+    ("CELL_CONVECTIVE_COURANT_NUMBER", Dimensions()),
+    ("CELL_REYNOLDS_NUMBER", Dimensions()),
+    # The dominant meaning of helicity comes from 
+    # particle physics where it is dimensionless.
+    # In CFD, where it has a different
+    # meaning, it usually has dimension L^2T^-2.
+    # In Fluent it is LT^-2. 
+    ("FLUENT_FLUID_HELICITY", _D.ACCELERATION),
+    # Lambda 2 criterion is documented as dimensionless
+    # but is T^-2 in Fluent.
+    ("FLUENT_LAMBDA_2_CRITERION", _D.TIME ** -2),
+    ("MESH_VELOCITY", _D.VELOCITY),
+    ("MESH_VELOCITY_MAG", _D.VELOCITY),
+    ("MESH_VELOCITY_X", _D.VELOCITY),
+    ("MESH_VELOCITY_Y", _D.VELOCITY),
+    ("MESH_VELOCITY_Z", _D.VELOCITY),
+    # What Fluent calls the raw Q-criterion (to distinguish from
+    # normalized) is just the Q-criterion so we omit the raw part.
+    ("Q_CRITERION", _D.TIME ** -2),
+    ("Q_CRITERION_NORMALIZED", Dimensions()),
+    ("RADIAL_VELOCITY", _D.VELOCITY),
+    ("TANGENTIAL_VELOCITY", _D.VELOCITY),
+    ("VELOCITY_ANGLE", _D.ANGLE),
+    ("VELOCITY_MAGNITUDE", _D.VELOCITY),
+    ("VELOCITY_X", _D.VELOCITY),
+    ("VELOCITY_Y", _D.VELOCITY),
+    ("VELOCITY_Z", _D.VELOCITY),
+    ("VORTICITY",  _D.TIME ** -1),
+    ("VORTICITY_MAG", _D.TIME ** -1),
+    ("VORTICITY_X", _D.TIME ** -1),
+    ("VORTICITY_Y", _D.TIME ** -1),
+    ("VORTICITY_Z", _D.TIME ** -1),
+    # density
+    ("FLUENT_FLUID_DENSITY_ALL", _D.DENSITY),
+    # properties
+    # consider moving to the quantity_dimensions.
+    ("PRANDTL_NUMBER", Dimensions()),
+    # turbulence
+    ("EFFECTIVE_PRANDTL_NUMBER", Dimensions()),
+    ("EFFECTIVE_THERMAL_CONDUCTIVITY", _D.THERMAL_CONDUCTIVITY),
+    ("EFFECTIVE_VISCOSITY", _D.DYNAMIC_VISCOSITY),
+    ("PRODUCTION_OF_K", _D.MASS * _D.LENGTH ** -1 * _D.TIME ** -3),
+    ("SPECIFIC_DISSIPATION_RATE", _D.TIME ** -1),
+    ("TURBULENT_DISSIPATION_RATE", _D.LENGTH ** 2 * _D.TIME ** 3),
+    ("TURBULENT_INTENSITY", Dimensions()),
+    ("TURBULENT_VISCOSITY", _D.DYNAMIC_VISCOSITY),
+    ("TURBULENT_VISCOSITY_RATIO", Dimensions()),
+    ("TURBULENT_REYNOLDS_NUMBER", Dimensions()),
+    ("TURBULENT_KINETIC_ENERGY",  _D.LENGTH ** 2 * _D.TIME ** -2),
+    ("WALL_Y_PLUS", Dimensions()),
+    ("WALL_Y_STAR", Dimensions()),
+    # wall fluxes
+    ("SURFACE_HEAT_TRANSFER_COEFFICIENT", _D.POWER * _D.LENGTH ** -2 * _D.TEMPERATURE ** -1),
+    ("SKIN_FRICTION_COEFFICIENT", Dimensions()),
+    ("SURFACE_HEAT_FLUX", _D.HEAT_FLUX_DENSITY),
+    ("SURFACE_NUSSELT_NUMBER", Dimensions()),
+    ("SURFACE_STANTON_NUMBER", Dimensions()),
+    ("WALL_ADJACENT_HEAT_TRANSFER_COEFFICIENT", _D.POWER * _D.LENGTH ** -2 * _D.TEMPERATURE ** -1),
+    ("WALL_SHEAR_STRESS", _D.STRESS),
+    ("WALL_SHEAR_STRESS_MAG", _D.STRESS),
+    ("WALL_SHEAR_STRESS_X", _D.STRESS),
+    ("WALL_SHEAR_STRESS_Y", _D.STRESS),
+    ("WALL_SHEAR_STRESS_Z", _D.STRESS),
+    ("Y_PLUS_BASED_HEAT_TRANSFER_COEFFICIENT", _D.POWER * _D.LENGTH ** -2 * _D.TEMPERATURE ** -1)
 ]
 
 for name, dimension in variables:
