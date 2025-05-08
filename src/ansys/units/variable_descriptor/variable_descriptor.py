@@ -44,6 +44,12 @@ class VariableDescriptor:
 
 
 def _build_variable_descriptors_from_dimensions() -> dict[str, VariableDescriptor]:
+    """
+    Generate a dictionary of variable descriptors from QuantityDimensions.
+
+    This function iterates over all uppercase attributes in QuantityDimensions
+    and creates VariableDescriptor instances for each valid dimension.
+    """
     catalog = {}
     for attr_name in dir(QuantityDimensions):
         if not attr_name.isupper():
@@ -57,7 +63,7 @@ def _build_variable_descriptors_from_dimensions() -> dict[str, VariableDescripto
 
 
 class VariableCatalog:
-    """A catalogue of variable descriptors."""
+    """A catalog of variable descriptors."""
 
     # Load from generator
     _generated = _build_variable_descriptors_from_dimensions()
@@ -77,8 +83,32 @@ class VariableCatalog:
         return [v for k, v in cls.__dict__.items() if isinstance(v, VariableDescriptor)]
     
     @classmethod
-    def add(cls, variable: str, dimension:Dimensions) -> None:
-        """Add a variable to the catalogue."""
+    def add(cls, variable: str, dimension: Dimensions) -> None:
+        """
+        Add a variable to the catalog.
+
+        Parameters
+        ----------
+        variable : str
+            The name of the variable (must be uppercase).
+        dimension : Dimensions
+            The dimension of the variable.
+
+        Raises
+        ------
+        ValueError
+            The variable name is not uppercase or already exists.
+        """
+        if not variable.isupper():
+            raise ValueError(
+                f"Variable names in VariableCatalog must be uppercase. "
+                f"Invalid name: '{variable}'."
+            )
+        if hasattr(cls, variable):
+            raise ValueError(
+                f"Variable name '{variable}' already exists in VariableCatalog. "
+                "Please choose a unique name."
+            )
         setattr(
             cls,
             variable,
