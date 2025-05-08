@@ -20,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """
-Defines the core QuantityDescriptor class and predefined quantities.
+Defines the core VariableDescriptor class and predefined quantities.
 
-This module provides a structured, extensible way to represent physical quantities
+This module provides a structured, extensible way to represent variables based on physical quantities
 (e.g., pressure, velocity) independently of any product-specific naming conventions.
 """
 
@@ -33,8 +33,8 @@ from ansys.units.quantity_dimensions import QuantityDimensions
 
 
 @dataclass(frozen=True)
-class QuantityDescriptor:
-    """Defines a physical quantity descriptor."""
+class VariableDescriptor:
+    """Defines a physical quantity variable descriptor."""
 
     name: str
     dimension: Dimensions
@@ -43,35 +43,35 @@ class QuantityDescriptor:
         return hash((self.name, str(self.dimension)))
 
 
-def _build_quantity_descriptors_from_dimensions() -> dict[str, QuantityDescriptor]:
+def _build_variable_descriptors_from_dimensions() -> dict[str, VariableDescriptor]:
     catalog = {}
     for attr_name in dir(QuantityDimensions):
         if not attr_name.isupper():
             continue
         dimension = getattr(QuantityDimensions, attr_name)
         if isinstance(dimension, Dimensions):
-            catalog[attr_name] = QuantityDescriptor(
+            catalog[attr_name] = VariableDescriptor(
                 name=attr_name.lower(), dimension=dimension
             )
     return catalog
 
 
-class QuantityCatalog:
-    """A catalogue of physical quantity descriptors."""
+class VariableCatalog:
+    """A catalogue of variable descriptors."""
 
     # Load from generator
-    _generated = _build_quantity_descriptors_from_dimensions()
+    _generated = _build_variable_descriptors_from_dimensions()
 
     # Inject generated descriptors as class attributes
     for key, descriptor in _generated.items():
         locals()[key] = descriptor
 
     # Add custom descriptors (e.g., velocity components)
-    VELOCITY_X = QuantityDescriptor("velocity x", QuantityDimensions.VELOCITY)
-    VELOCITY_Y = QuantityDescriptor("velocity y", QuantityDimensions.VELOCITY)
-    VELOCITY_Z = QuantityDescriptor("velocity z", QuantityDimensions.VELOCITY)
+    VELOCITY_X = VariableDescriptor("velocity x", QuantityDimensions.VELOCITY)
+    VELOCITY_Y = VariableDescriptor("velocity y", QuantityDimensions.VELOCITY)
+    VELOCITY_Z = VariableDescriptor("velocity z", QuantityDimensions.VELOCITY)
 
     @classmethod
-    def all(cls) -> list[QuantityDescriptor]:
+    def all(cls) -> list[VariableDescriptor]:
         """Return all defined QuantityDescriptors (excluding internal attributes)."""
-        return [v for k, v in cls.__dict__.items() if isinstance(v, QuantityDescriptor)]
+        return [v for k, v in cls.__dict__.items() if isinstance(v, VariableDescriptor)]

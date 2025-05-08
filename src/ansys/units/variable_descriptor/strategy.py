@@ -20,42 +20,42 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """
-Defines the ConversionStrategy base class for translating `QuantityDescriptor` objects.
+Defines the ConversionStrategy base class for translating `VariableDescriptor` objects.
 
-Each concrete strategy maps `QuantityDescriptor` instances to the string representations
+Each concrete strategy maps `VariableDescriptor` instances to the string representations
 required by a specific system.
 """
 
 from abc import ABC, abstractmethod
 import types
 
-from ansys.units.quantity_descriptor.quantity_descriptor import QuantityDescriptor
+from ansys.units.variable_descriptor.variable_descriptor import VariableDescriptor
 
 
 class ConversionStrategy(ABC):
     """
-    Abstract base class for `QuantityDescriptor` conversion strategies.
+    Abstract base class for `VariableDescriptor` conversion strategies.
 
     This class defines the interface for all conversion strategies. Derived classes
-    must implement the methods defined here to handle the conversion of `QuantityDescriptor`
+    must implement the methods defined here to handle the conversion of `VariableDescriptor`
     objects to and from their string representations, as well as to check if a
-    `QuantityDescriptor` is supported.
+    `VariableDescriptor` is supported.
     """
 
     @abstractmethod
-    def to_string(self, quantity: QuantityDescriptor | str | None) -> str | None:
+    def to_string(self, quantity: VariableDescriptor | str | None) -> str | None:
         """
-        Convert a `QuantityDescriptor` to its string representation.
+        Convert a `VariableDescriptor` to its string representation.
 
         Parameters
         ----------
-        quantity : QuantityDescriptor | str
-            The `QuantityDescriptor` to convert, or a string representation.
+        quantity : VariableDescriptor | str
+            The `VariableDescriptor` to convert, or a string representation.
 
         Returns
         -------
         str
-            The string representation of the `QuantityDescriptor`.
+            The string representation of the `VariableDescriptor`.
 
         Raises
         ------
@@ -65,19 +65,19 @@ class ConversionStrategy(ABC):
         pass
 
     @abstractmethod
-    def to_quantity(self, quantity: QuantityDescriptor | str) -> QuantityDescriptor:
+    def to_quantity(self, quantity: VariableDescriptor | str) -> VariableDescriptor:
         """
-        Convert a string to its corresponding `QuantityDescriptor`.
+        Convert a string to its corresponding `VariableDescriptor`.
 
         Parameters
         ----------
-        quantity : QuantityDescriptor | str
-            The string representation to convert, or a `QuantityDescriptor`.
+        quantity : VariableDescriptor | str
+            The string representation to convert, or a `VariableDescriptor`.
 
         Returns
         -------
-        QuantityDescriptor
-            The corresponding `QuantityDescriptor` instance.
+        VariableDescriptor
+            The corresponding `VariableDescriptor` instance.
 
         Raises
         ------
@@ -87,19 +87,19 @@ class ConversionStrategy(ABC):
         pass
 
     @abstractmethod
-    def supports(self, quantity: QuantityDescriptor) -> bool:
+    def supports(self, quantity: VariableDescriptor) -> bool:
         """
-        Check if the given `QuantityDescriptor` is supported by the strategy.
+        Check if the given `VariableDescriptor` is supported by the strategy.
 
         Parameters
         ----------
-        quantity : QuantityDescriptor
-            The `QuantityDescriptor` to check.
+        quantity : VariableDescriptor
+            The `VariableDescriptor` to check.
 
         Returns
         -------
         bool
-            `True` if the `QuantityDescriptor` is supported, `False` otherwise.
+            `True` if the `VariableDescriptor` is supported, `False` otherwise.
 
         Raises
         ------
@@ -111,33 +111,33 @@ class ConversionStrategy(ABC):
 
 class MappingConversionStrategy(ConversionStrategy):
     """
-    Intermediate base class for implementing QuantityDescriptor conversion strategies.
+    Intermediate base class for implementing VariableDescriptor conversion strategies.
 
     This class simplifies the creation of concrete strategy classes by providing
     default implementations for common methods. Classes inheriting from this base
-    class only need to define a `_mapping` dictionary that maps `QuantityDescriptor`
+    class only need to define a `_mapping` dictionary that maps `VariableDescriptor`
     instances to their corresponding string representations.
 
     Attributes
     ----------
     _reverse_mapping : dict
         A lazily initialized reverse mapping of `_mapping`, used for converting
-        strings back to `QuantityDescriptor` instances.
+        strings back to `VariableDescriptor` instances.
 
     Methods
     -------
-    to_string(quantity: QuantityDescriptor | str) -> str
-        Converts a `QuantityDescriptor` to its string representation. Raises a
+    to_string(quantity: VariableDescriptor | str) -> str
+        Converts a `VariableDescriptor` to its string representation. Raises a
         `ValueError` if the quantity is not supported.
-    to_quantity(quantity: QuantityDescriptor | str) -> QuantityDescriptor
-        Converts a string to its corresponding `QuantityDescriptor`.
-    supports(quantity: QuantityDescriptor) -> bool
-        Checks if the given `QuantityDescriptor` is supported by the strategy.
+    to_quantity(quantity: VariableDescriptor | str) -> VariableDescriptor
+        Converts a string to its corresponding `VariableDescriptor`.
+    supports(quantity: VariableDescriptor) -> bool
+        Checks if the given `VariableDescriptor` is supported by the strategy.
 
     Raises
     ------
     ValueError
-        If a `QuantityDescriptor` is not supported during conversion to a string.
+        If a `VariableDescriptor` is not supported during conversion to a string.
     """
 
     def __init__(self):
@@ -155,40 +155,40 @@ class MappingConversionStrategy(ConversionStrategy):
         Get the reverse mapping of `_mapping`.
 
         The reverse mapping is a dictionary that maps string representations
-        back to their corresponding `QuantityDescriptor` instances. It is lazily
+        back to their corresponding `VariableDescriptor` instances. It is lazily
         initialized on first access.
 
         Returns
         -------
         dict
-            A dictionary mapping string representations to `QuantityDescriptor` instances.
+            A dictionary mapping string representations to `VariableDescriptor` instances.
         """
         if self.__reverse_mapping is None:
             self.__reverse_mapping = {x: y for y, x in self._mapping.items()}
         return self.__reverse_mapping
 
-    def to_string(self, quantity: QuantityDescriptor | str | None) -> str | None:
+    def to_string(self, quantity: VariableDescriptor | str | None) -> str | None:
         """
-        Convert a `QuantityDescriptor` to its string representation.
+        Convert a `VariableDescriptor` to its string representation.
 
         If the input is already a string, it is returned as-is. If the input
-        is a `QuantityDescriptor` and is supported by the strategy, its string
+        is a `VariableDescriptor` and is supported by the strategy, its string
         representation is returned. Otherwise, a `ValueError` is raised.
 
         Parameters
         ----------
-        quantity : QuantityDescriptor | str
-            The `QuantityDescriptor` to convert, or a string representation.
+        quantity : VariableDescriptor | str
+            The `VariableDescriptor` to convert, or a string representation.
 
         Returns
         -------
         str
-            The string representation of the `QuantityDescriptor`.
+            The string representation of the `VariableDescriptor`.
 
         Raises
         ------
         ValueError
-            If the `QuantityDescriptor` is not supported by the strategy.
+            If the `VariableDescriptor` is not supported by the strategy.
         """
         if isinstance(quantity, (str, types.NoneType)):
             return quantity
@@ -196,41 +196,41 @@ class MappingConversionStrategy(ConversionStrategy):
             raise ValueError(f"{quantity.name} not supported.")
         return self._mapping[quantity]
 
-    def to_quantity(self, quantity: QuantityDescriptor | str) -> QuantityDescriptor:
+    def to_quantity(self, quantity: VariableDescriptor | str) -> VariableDescriptor:
         """
-        Convert a string to its corresponding `QuantityDescriptor`.
+        Convert a string to its corresponding `VariableDescriptor`.
 
-        If the input is already a `QuantityDescriptor`, it is returned as-is.
-        Otherwise, the string is converted to a `QuantityDescriptor` using the
+        If the input is already a `VariableDescriptor`, it is returned as-is.
+        Otherwise, the string is converted to a `VariableDescriptor` using the
         reverse mapping.
 
         Parameters
         ----------
-        quantity : QuantityDescriptor | str
-            The string representation to convert, or a `QuantityDescriptor`.
+        quantity : VariableDescriptor | str
+            The string representation to convert, or a `VariableDescriptor`.
 
         Returns
         -------
-        QuantityDescriptor
-            The corresponding `QuantityDescriptor` instance, or `None` if the
+        VariableDescriptor
+            The corresponding `VariableDescriptor` instance, or `None` if the
             string is not found in the reverse mapping.
         """
-        if isinstance(quantity, QuantityDescriptor):
+        if isinstance(quantity, VariableDescriptor):
             return quantity
         return self._reverse_mapping.get(quantity)
 
-    def supports(self, quantity: QuantityDescriptor) -> bool:
+    def supports(self, quantity: VariableDescriptor) -> bool:
         """
-        Check if the given `QuantityDescriptor` is supported by the strategy.
+        Check if the given `VariableDescriptor` is supported by the strategy.
 
         Parameters
         ----------
-        quantity : QuantityDescriptor
-            The `QuantityDescriptor` to check.
+        quantity : VariableDescriptor
+            The `VariableDescriptor` to check.
 
         Returns
         -------
         bool
-            `True` if the `QuantityDescriptor` is supported, `False` otherwise.
+            `True` if the `VariableDescriptor` is supported, `False` otherwise.
         """
         return quantity in self._mapping

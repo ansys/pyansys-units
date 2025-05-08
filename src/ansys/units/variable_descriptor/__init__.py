@@ -20,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """
-Package initialization for ansys.units.quantity_descriptor.
+Package initialization for ansys.units.variable_descriptor.
 
-Exports the QuantityCatalog catalog and core interfaces for working with
+Exports the VariableCatalog catalog and core interfaces for working with
 physical quantities in a product-agnostic way.
 
 Example
@@ -30,21 +30,21 @@ Example
 
 .. code-block:: python
 
-    from ansys.units.quantity_descriptor import QuantityCatalog
+    from ansys.units.variable_descriptor import VariableCatalog
     from ansys.fluent.core.quantity_strategies import FluentSVarStrategy
 
-    quantity = QuantityCatalog.PRESSURE
+    quantity = VariableCatalog.PRESSURE
     strategy = FluentSVarStrategy()
 
     print(strategy.to_string(quantity))
 """
 
-from .quantity_descriptor import QuantityCatalog, QuantityDescriptor
+from .variable_descriptor import VariableCatalog, VariableDescriptor
 from .strategy import ConversionStrategy, MappingConversionStrategy
 
 __all__ = [
-    "QuantityDescriptor",
-    "QuantityCatalog",
+    "VariableDescriptor",
+    "VariableCatalog",
     "ConversionStrategy",
     "MappingConversionStrategy",
 ]

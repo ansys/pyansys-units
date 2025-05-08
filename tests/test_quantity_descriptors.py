@@ -24,14 +24,14 @@ import pytest
 
 from ansys.units import (
     MappingConversionStrategy,
-    QuantityCatalog,
-    QuantityDescriptor,
+    VariableCatalog,
+    VariableDescriptor,
     QuantityDimensions,
 )
 
 
 def test_create_descriptors():
-    vel = QuantityDescriptor("velocity", None)
+    vel = VariableDescriptor("velocity", None)
     assert vel.name == "velocity"
 
 
@@ -39,27 +39,27 @@ def test_descriptor_strategies():
 
     class JapaneseAPIStrategy(MappingConversionStrategy):
         _mapping = {
-            QuantityCatalog.PRESSURE: "atsuryoku",
-            QuantityCatalog.TEMPERATURE: "ondo",
+            VariableCatalog.PRESSURE: "atsuryoku",
+            VariableCatalog.TEMPERATURE: "ondo",
         }
 
-    assert JapaneseAPIStrategy().to_string(QuantityCatalog.PRESSURE) == "atsuryoku"
-    assert JapaneseAPIStrategy().to_string(QuantityCatalog.TEMPERATURE) == "ondo"
+    assert JapaneseAPIStrategy().to_string(VariableCatalog.PRESSURE) == "atsuryoku"
+    assert JapaneseAPIStrategy().to_string(VariableCatalog.TEMPERATURE) == "ondo"
 
     with pytest.raises(ValueError):
-        JapaneseAPIStrategy().to_string(QuantityCatalog.VELOCITY_X)
+        JapaneseAPIStrategy().to_string(VariableCatalog.VELOCITY_X)
 
-    assert JapaneseAPIStrategy().to_quantity("atsuryoku") == QuantityCatalog.PRESSURE
-    assert JapaneseAPIStrategy().to_quantity("ondo") == QuantityCatalog.TEMPERATURE
+    assert JapaneseAPIStrategy().to_quantity("atsuryoku") == VariableCatalog.PRESSURE
+    assert JapaneseAPIStrategy().to_quantity("ondo") == VariableCatalog.TEMPERATURE
 
     assert JapaneseAPIStrategy().to_quantity("x-houkou-no-sokudo") is None
 
 
 def test_extend_descriptor_catalog():
-    catalog = QuantityCatalog()
+    catalog = VariableCatalog()
     setattr(
         catalog,
         "WALL_SHEAR_STRESS",
-        QuantityDescriptor("wall_shear_stress", QuantityDimensions.STRESS),
+        VariableDescriptor("wall_shear_stress", QuantityDimensions.STRESS),
     )
     assert catalog.WALL_SHEAR_STRESS.name == "wall_shear_stress"
