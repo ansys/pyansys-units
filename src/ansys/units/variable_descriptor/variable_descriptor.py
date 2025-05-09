@@ -106,7 +106,7 @@ class VariableCatalog:
         return [v for k, v in cls.__dict__.items() if isinstance(v, VariableDescriptor)]
 
     @classmethod
-    def add(cls, variable: str, dimension: Dimensions, subcategory: str|None = None) -> None:
+    def add(cls, variable: str, dimension: Dimensions, subcategory: str | None = None) -> None:
         """
         Add a variable to the catalog.
 
@@ -117,21 +117,33 @@ class VariableCatalog:
         dimension : Dimensions
             The dimension of the variable.
         subcategory: str|None
-            The optionall subcategory for the variable.
+            The optional subcategory for the variable.
 
         Raises
         ------
         ValueError
             The variable name is not uppercase or already exists.
         """
-        category = cls
-        if hasattr(category, variable):
+        # Validate and transform the variable name
+        transformed_name = _validate_and_transform_variable(variable)
+
+        # Determine the target category (main catalog or subcategory)
+        target = cls
+        if subcategory:
+            # Ensure the subcategory exists as an attribute
+            if not hasattr(cls, subcategory):
+                setattr(cls, subcategory, type(subcategory, (object,), {}))
+            target = getattr(cls, subcategory)
+
+        # Check if the variable already exists in the target category
+        if hasattr(target, variable):
             raise ValueError(
-                f"Variable name '{variable}' already exists in VariableCatalog. "
+                f"Variable name '{variable}' already exists in the '{subcategory or 'main'}' catalog. "
                 "Please choose a unique name."
             )
-        transformed_name = _validate_and_transform_variable(variable)
-        setattr(category, variable, VariableDescriptor(transformed_name, dimension))
+
+        # Add the variable to the target category
+        setattr(target, variable, VariableDescriptor(transformed_name, dimension))
 
 
 # Add custom descriptors
