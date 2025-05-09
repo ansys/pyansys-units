@@ -101,9 +101,29 @@ class VariableCatalog:
         locals()[key] = descriptor
 
     @classmethod
-    def all(cls) -> list[VariableDescriptor]:
-        """Return all defined `VariableDescriptor`s (excluding internal attributes)."""
-        return [v for k, v in cls.__dict__.items() if isinstance(v, VariableDescriptor)]
+    def all(cls) -> dict[str, list[VariableDescriptor]]:
+        """
+        Return all defined `VariableDescriptor`s, organized by subcategory.
+
+        Returns
+        -------
+        dict[str, list[VariableDescriptor]]
+            A dictionary where keys are subcategory names (or "main" for the top-level catalog)
+            and values are lists of `VariableDescriptor` instances.
+        """
+        result = {"main": []}
+
+        for key, value in cls.__dict__.items():
+            if isinstance(value, VariableDescriptor):
+                result["main"].append(value)
+            elif isinstance(value, type) and issubclass(value, object) and value is not object:
+                # Collect descriptors from subcategories
+                subcategory_name = key
+                result[subcategory_name] = [
+                    v for k, v in value.__dict__.items() if isinstance(v, VariableDescriptor)
+                ]
+
+        return result
 
     @classmethod
     def add(cls, variable: str, dimension: Dimensions, subcategory: str | None = None) -> None:
