@@ -58,9 +58,17 @@ def _make_base_dimensions(dimension: BaseDimensions) -> Dimensions:
 def _expand_vector_quantities(cls):
     for name in getattr(cls, "_vector_quantities", []):
         value = getattr(cls, name)
+        # cartesian
         setattr(cls, f"{name}_X", value)
         setattr(cls, f"{name}_Y", value)
         setattr(cls, f"{name}_Z", value)
+        # cylindrical - reuses Z and adds rho and phi
+        setattr(cls, f"{name}_RHO", value)
+        setattr(cls, f"{name}_PHI", value)
+        # spherical - reuses phi and adds r and theta
+        setattr(cls, f"{name}_R", value)
+        setattr(cls, f"{name}_THETA", value)
+        # magnitude
         setattr(cls, f"{name}_MAGNITUDE", value)
     return cls
 
@@ -253,4 +261,4 @@ class QuantityDimensions:
     CYLINDRICAL_COORDINATE_ABSOLUTE_ANGLE = ANGLE
 
     # List of vector quantities
-    _vector_quantities = ['VELOCITY', 'ACCELERATION']
+    _vector_quantities = ['VELOCITY', 'ACCELERATION', 'VORTICITY']
