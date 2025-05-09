@@ -31,7 +31,7 @@ Example
 .. code-block:: python
 
     from ansys.units.variable_descriptor import VariableCatalog
-    from ansys.fluent.core.quantity_strategies import FluentSVarStrategy
+    from ansys.fluent.core.variable_strategies import FluentSVarStrategy
 
     quantity = VariableCatalog.PRESSURE
     strategy = FluentSVarStrategy()

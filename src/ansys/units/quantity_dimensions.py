@@ -59,16 +59,10 @@ def _expand_vector_quantities(cls):
     angle = _make_base_dimensions(BaseDimensions.ANGLE)
     for name in getattr(cls, "_vector_quantities", []):
         value = getattr(cls, name)
-        # cartesian
+        # cartesian only added by default
         setattr(cls, f"{name}_X", value)
         setattr(cls, f"{name}_Y", value)
         setattr(cls, f"{name}_Z", value)
-        # cylindrical - reuses Z and adds rho and phi
-        setattr(cls, f"{name}_RHO", value)
-        setattr(cls, f"{name}_PHI", angle)
-        # spherical - reuses phi and adds r and theta
-        setattr(cls, f"{name}_R", value)
-        setattr(cls, f"{name}_THETA", angle)
         # magnitude
         setattr(cls, f"{name}_MAGNITUDE", value)
     return cls
@@ -268,4 +262,5 @@ class QuantityDimensions:
         "ANGULAR_MOMENTUM",
         "TORQUE",
         "FORCE",
+        "WALL_SHEAR_STRESS",
     ]

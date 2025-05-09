@@ -49,10 +49,10 @@ def test_descriptor_strategies():
     with pytest.raises(ValueError):
         JapaneseAPIStrategy().to_string(VariableCatalog.VELOCITY_X)
 
-    assert JapaneseAPIStrategy().to_quantity("atsuryoku") == VariableCatalog.PRESSURE
-    assert JapaneseAPIStrategy().to_quantity("ondo") == VariableCatalog.TEMPERATURE
+    assert JapaneseAPIStrategy().to_variable_descriptor("atsuryoku") == VariableCatalog.PRESSURE
+    assert JapaneseAPIStrategy().to_variable_descriptor("ondo") == VariableCatalog.TEMPERATURE
 
-    assert JapaneseAPIStrategy().to_quantity("x-houkou-no-sokudo") is None
+    assert JapaneseAPIStrategy().to_variable_descriptor("x-houkou-no-sokudo") is None
 
 
 def test_extend_descriptor_catalog():

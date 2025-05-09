@@ -43,13 +43,13 @@ class ConversionStrategy(ABC):
     """
 
     @abstractmethod
-    def to_string(self, quantity: VariableDescriptor | str | None) -> str | None:
+    def to_string(self, variable: VariableDescriptor | str | None) -> str | None:
         """
         Convert a `VariableDescriptor` to its string representation.
 
         Parameters
         ----------
-        quantity : VariableDescriptor | str
+        variable : VariableDescriptor | str
             The `VariableDescriptor` to convert, or a string representation.
 
         Returns
@@ -65,13 +65,13 @@ class ConversionStrategy(ABC):
         pass
 
     @abstractmethod
-    def to_quantity(self, quantity: VariableDescriptor | str) -> VariableDescriptor:
+    def to_variable_descriptor(self, variable: VariableDescriptor | str) -> VariableDescriptor:
         """
         Convert a string to its corresponding `VariableDescriptor`.
 
         Parameters
         ----------
-        quantity : VariableDescriptor | str
+        variable : VariableDescriptor | str
             The string representation to convert, or a `VariableDescriptor`.
 
         Returns
@@ -87,13 +87,13 @@ class ConversionStrategy(ABC):
         pass
 
     @abstractmethod
-    def supports(self, quantity: VariableDescriptor) -> bool:
+    def supports(self, variable: VariableDescriptor) -> bool:
         """
         Check if the given `VariableDescriptor` is supported by the strategy.
 
         Parameters
         ----------
-        quantity : VariableDescriptor
+        variable : VariableDescriptor
             The `VariableDescriptor` to check.
 
         Returns
@@ -126,12 +126,12 @@ class MappingConversionStrategy(ConversionStrategy):
 
     Methods
     -------
-    to_string(quantity: VariableDescriptor | str) -> str
+    to_string(variable: VariableDescriptor | str) -> str
         Converts a `VariableDescriptor` to its string representation. Raises a
-        `ValueError` if the quantity is not supported.
-    to_quantity(quantity: VariableDescriptor | str) -> VariableDescriptor
+        `ValueError` if the variable is not supported.
+    to_variable_descriptor(variable: VariableDescriptor | str) -> VariableDescriptor
         Converts a string to its corresponding `VariableDescriptor`.
-    supports(quantity: VariableDescriptor) -> bool
+    supports(variable: VariableDescriptor) -> bool
         Checks if the given `VariableDescriptor` is supported by the strategy.
 
     Raises
@@ -167,7 +167,7 @@ class MappingConversionStrategy(ConversionStrategy):
             self.__reverse_mapping = {x: y for y, x in self._mapping.items()}
         return self.__reverse_mapping
 
-    def to_string(self, quantity: VariableDescriptor | str | None) -> str | None:
+    def to_string(self, variable: VariableDescriptor | str | None) -> str | None:
         """
         Convert a `VariableDescriptor` to its string representation.
 
@@ -177,7 +177,7 @@ class MappingConversionStrategy(ConversionStrategy):
 
         Parameters
         ----------
-        quantity : VariableDescriptor | str
+        variable : VariableDescriptor | str
             The `VariableDescriptor` to convert, or a string representation.
 
         Returns
@@ -190,13 +190,13 @@ class MappingConversionStrategy(ConversionStrategy):
         ValueError
             If the `VariableDescriptor` is not supported by the strategy.
         """
-        if isinstance(quantity, (str, types.NoneType)):
-            return quantity
-        if not self.supports(quantity):
-            raise ValueError(f"{quantity.name} not supported.")
-        return self._mapping[quantity]
+        if isinstance(variable, (str, types.NoneType)):
+            return variable
+        if not self.supports(variable):
+            raise ValueError(f"{variable.name} not supported.")
+        return self._mapping[variable]
 
-    def to_quantity(self, quantity: VariableDescriptor | str) -> VariableDescriptor:
+    def to_variable_descriptor(self, variable: VariableDescriptor | str) -> VariableDescriptor:
         """
         Convert a string to its corresponding `VariableDescriptor`.
 
@@ -206,7 +206,7 @@ class MappingConversionStrategy(ConversionStrategy):
 
         Parameters
         ----------
-        quantity : VariableDescriptor | str
+        variable : VariableDescriptor | str
             The string representation to convert, or a `VariableDescriptor`.
 
         Returns
@@ -215,17 +215,17 @@ class MappingConversionStrategy(ConversionStrategy):
             The corresponding `VariableDescriptor` instance, or `None` if the
             string is not found in the reverse mapping.
         """
-        if isinstance(quantity, VariableDescriptor):
-            return quantity
-        return self._reverse_mapping.get(quantity)
+        if isinstance(variable, VariableDescriptor):
+            return variable
+        return self._reverse_mapping.get(variable)
 
-    def supports(self, quantity: VariableDescriptor) -> bool:
+    def supports(self, variable: VariableDescriptor) -> bool:
         """
         Check if the given `VariableDescriptor` is supported by the strategy.
 
         Parameters
         ----------
-        quantity : VariableDescriptor
+        variable : VariableDescriptor
             The `VariableDescriptor` to check.
 
         Returns
@@ -233,4 +233,4 @@ class MappingConversionStrategy(ConversionStrategy):
         bool
             `True` if the `VariableDescriptor` is supported, `False` otherwise.
         """
-        return quantity in self._mapping
+        return variable in self._mapping

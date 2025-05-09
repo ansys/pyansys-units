@@ -188,6 +188,7 @@ fluent_variables = [
     ("MASS_IMBALANCE", _D.MASS * _D.TIME**-1),
     # derivatives
     ("PRESSURE_HESSIAN_INDICATOR", Dimensions()),
+    ("VELOCITY_ANGLE", _D.ANGLE),
     ("DVELOCITY_DX", _D.TIME**-1),
     ("DVELOCITY_DX_MAGNITUDE", _D.TIME**-1),
     ("DVELOCITY_DX_X", _D.TIME**-1),
