@@ -56,6 +56,7 @@ def _make_base_dimensions(dimension: BaseDimensions) -> Dimensions:
 
 
 def _expand_vector_quantities(cls):
+    angle = _make_base_dimensions(BaseDimensions.ANGLE)
     for name in getattr(cls, "_vector_quantities", []):
         value = getattr(cls, name)
         # cartesian
@@ -64,13 +65,14 @@ def _expand_vector_quantities(cls):
         setattr(cls, f"{name}_Z", value)
         # cylindrical - reuses Z and adds rho and phi
         setattr(cls, f"{name}_RHO", value)
-        setattr(cls, f"{name}_PHI", value)
+        setattr(cls, f"{name}_PHI", angle)
         # spherical - reuses phi and adds r and theta
         setattr(cls, f"{name}_R", value)
-        setattr(cls, f"{name}_THETA", value)
+        setattr(cls, f"{name}_THETA", angle)
         # magnitude
         setattr(cls, f"{name}_MAGNITUDE", value)
     return cls
+
 
 @_expand_vector_quantities
 class QuantityDimensions:
@@ -250,15 +252,20 @@ class QuantityDimensions:
     WALL_SHEAR_STRESS = STRESS
 
     # Coordinates
-    COORDINATE = LENGTH
-    COORDINATE_MAGNITUDE = LENGTH
-    CARTESIAN_COORDINATE_X = LENGTH
-    CARTESIAN_COORDINATE_Y = LENGTH
-    CARTESIAN_COORDINATE_Z = LENGTH
-    CYLINDRICAL_COORDINATE_RADIUS = LENGTH
-    CYLINDRICAL_COORDINATE_AXIS = LENGTH
-    CYLINDRICAL_COORDINATE_ANGLE = ANGLE
-    CYLINDRICAL_COORDINATE_ABSOLUTE_ANGLE = ANGLE
+    POSITION = LENGTH
 
-    # List of vector quantities
-    _vector_quantities = ['VELOCITY', 'ACCELERATION', 'VORTICITY']
+    # List of vector quantities. The only impact
+    # of not adding a vector quantity here is that
+    # the code will not autogenerate attributes
+    # <quantity>_X etc for that quantity.
+    _vector_quantities = [
+        "VELOCITY",
+        "ACCELERATION",
+        "VORTICITY",
+        "POSITION",
+        "MESH_VELOCITY",
+        "MOMENTUM",
+        "ANGULAR_MOMENTUM",
+        "TORQUE",
+        "FORCE",
+    ]

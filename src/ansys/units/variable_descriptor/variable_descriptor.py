@@ -106,7 +106,7 @@ class VariableCatalog:
         return [v for k, v in cls.__dict__.items() if isinstance(v, VariableDescriptor)]
 
     @classmethod
-    def add(cls, variable: str, dimension: Dimensions) -> None:
+    def add(cls, variable: str, dimension: Dimensions, subcategory: str|None = None) -> None:
         """
         Add a variable to the catalog.
 
@@ -116,48 +116,38 @@ class VariableCatalog:
             The name of the variable (must be uppercase).
         dimension : Dimensions
             The dimension of the variable.
+        subcategory: str|None
+            The optionall subcategory for the variable.
 
         Raises
         ------
         ValueError
             The variable name is not uppercase or already exists.
         """
-        if hasattr(cls, variable):
+        category = cls
+        if hasattr(category, variable):
             raise ValueError(
                 f"Variable name '{variable}' already exists in VariableCatalog. "
                 "Please choose a unique name."
             )
         transformed_name = _validate_and_transform_variable(variable)
-        setattr(cls, variable, VariableDescriptor(transformed_name, dimension))
+        setattr(category, variable, VariableDescriptor(transformed_name, dimension))
 
 
 # Add custom descriptors
 _D = QuantityDimensions
-variables = [
+fluent_variables = [
     # velocity
     # The dominant meaning of helicity comes from
     # particle physics where it is dimensionless.
     # In CFD, where it has a different
     # meaning, it usually has dimension L^2 T^-2.
     # In Fluent it is L T^-2.
-    ("FLUENT_FLUID_HELICITY", _D.ACCELERATION),
+    ("HELICITY", _D.ACCELERATION),
     # Lambda 2 criterion is documented as dimensionless
     # but is T^-2 in Fluent.
-    ("FLUENT_LAMBDA_2_CRITERION", _D.TIME**-2),
-    ("MESH_VELOCITY_MAGNITUDE", _D.VELOCITY),
-    ("MESH_VELOCITY_X", _D.VELOCITY),
-    ("MESH_VELOCITY_Y", _D.VELOCITY),
-    ("MESH_VELOCITY_Z", _D.VELOCITY),
-    # What Fluent calls the raw Q-criterion (to distinguish from
-    # normalized) is just the Q-criterion so we omit the raw part.
-    ("VELOCITY_ANGLE", _D.ANGLE),
-    # density
-    ("FLUENT_FLUID_DENSITY_ALL", _D.DENSITY),
-    # wall fluxes
-    ("WALL_SHEAR_STRESS_MAGNITUDE", _D.STRESS),
-    ("WALL_SHEAR_STRESS_X", _D.STRESS),
-    ("WALL_SHEAR_STRESS_Y", _D.STRESS),
-    ("WALL_SHEAR_STRESS_Z", _D.STRESS),
+    ("LAMBDA_2_CRITERION", _D.TIME**-2),
+    ("DENSITY_ALL", _D.DENSITY),
     (
         "Y_PLUS_BASED_HEAT_TRANSFER_COEFFICIENT",
         _D.POWER * _D.LENGTH**-2 * _D.TEMPERATURE**-1,
@@ -181,6 +171,13 @@ variables = [
     ("DVELOCITY_DZ_X", _D.TIME**-1),
     ("DVELOCITY_DZ_Y", _D.TIME**-1),
     ("DVELOCITY_DZ_Z", _D.TIME**-1),
+]
+
+for name, dimension in fluent_variables:
+    VariableCatalog.add(name, dimension, "fluent")
+
+
+mesh_variables = [
     # mesh
     ("ANISOTROPIC_ADAPTION_CELLS", Dimensions()),
     ("BOUNDARY_CELL_DISTANCE", Dimensions()),
@@ -214,5 +211,5 @@ variables = [
     ("STORED_CELL_PARTITIION", Dimensions()),
 ]
 
-for name, dimension in variables:
-    VariableCatalog.add(name, dimension)
+for name, dimension in mesh_variables:
+    VariableCatalog.add(name, dimension, "mesh")
