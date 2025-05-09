@@ -151,10 +151,6 @@ variables = [
     # What Fluent calls the raw Q-criterion (to distinguish from
     # normalized) is just the Q-criterion so we omit the raw part.
     ("VELOCITY_ANGLE", _D.ANGLE),
-    ("VELOCITY_MAGNITUDE", _D.VELOCITY),
-    ("VELOCITY_X", _D.VELOCITY),
-    ("VELOCITY_Y", _D.VELOCITY),
-    ("VELOCITY_Z", _D.VELOCITY),
     ("VORTICITY_MAGNITUDE", _D.TIME**-1),
     ("VORTICITY_X", _D.TIME**-1),
     ("VORTICITY_Y", _D.TIME**-1),

@@ -55,6 +55,16 @@ def _make_base_dimensions(dimension: BaseDimensions) -> Dimensions:
     return Dimensions(dimensions={dimension: 1.0})
 
 
+def _expand_vector_quantities(cls):
+    for name in getattr(cls, "_vector_quantities", []):
+        value = getattr(cls, name)
+        setattr(cls, f"{name}_X", value)
+        setattr(cls, f"{name}_Y", value)
+        setattr(cls, f"{name}_Z", value)
+        setattr(cls, f"{name}_MAGNITUDE", value)
+    return cls
+
+@_expand_vector_quantities
 class QuantityDimensions:
     """
     Defines immutable dimension objects for standard physical quantities.
@@ -242,3 +252,5 @@ class QuantityDimensions:
     CYLINDRICAL_COORDINATE_ANGLE = ANGLE
     CYLINDRICAL_COORDINATE_ABSOLUTE_ANGLE = ANGLE
 
+    # List of vector quantities
+    _vector_quantities = ['VELOCITY', 'ACCELERATION']
