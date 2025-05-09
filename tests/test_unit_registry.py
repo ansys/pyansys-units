@@ -25,7 +25,8 @@ import tempfile
 
 import pytest
 
-from ansys.units import Unit, UnitRegistry, _base_units
+from ansys.units import Unit, UnitRegistry
+from ansys.units._constants import _base_units
 from ansys.units.unit_registry import UnitAlreadyRegistered
 
 
