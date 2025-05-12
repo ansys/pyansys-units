@@ -65,7 +65,9 @@ class ConversionStrategy(ABC):
         pass
 
     @abstractmethod
-    def to_variable_descriptor(self, variable: VariableDescriptor | str) -> VariableDescriptor:
+    def to_variable_descriptor(
+        self, variable: VariableDescriptor | str
+    ) -> VariableDescriptor:
         """
         Convert a string to its corresponding `VariableDescriptor`.
 
@@ -196,7 +198,9 @@ class MappingConversionStrategy(ConversionStrategy):
             raise ValueError(f"{variable.name} not supported.")
         return self._mapping[variable]
 
-    def to_variable_descriptor(self, variable: VariableDescriptor | str) -> VariableDescriptor:
+    def to_variable_descriptor(
+        self, variable: VariableDescriptor | str
+    ) -> VariableDescriptor:
         """
         Convert a string to its corresponding `VariableDescriptor`.
 

@@ -116,17 +116,25 @@ class VariableCatalog:
         for key, value in cls.__dict__.items():
             if isinstance(value, VariableDescriptor):
                 result["main"].append(value)
-            elif isinstance(value, type) and issubclass(value, object) and value is not object:
+            elif (
+                isinstance(value, type)
+                and issubclass(value, object)
+                and value is not object
+            ):
                 # Collect descriptors from subcategories
                 subcategory_name = key
                 result[subcategory_name] = [
-                    v for k, v in value.__dict__.items() if isinstance(v, VariableDescriptor)
+                    v
+                    for k, v in value.__dict__.items()
+                    if isinstance(v, VariableDescriptor)
                 ]
 
         return result
 
     @classmethod
-    def add(cls, variable: str, dimension: Dimensions, subcategory: str | None = None) -> None:
+    def add(
+        cls, variable: str, dimension: Dimensions, subcategory: str | None = None
+    ) -> None:
         """
         Add a variable to the catalog.
 
