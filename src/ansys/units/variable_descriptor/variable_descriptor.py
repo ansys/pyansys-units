@@ -184,6 +184,7 @@ fluent_variables = [
         "Y_PLUS_BASED_HEAT_TRANSFER_COEFFICIENT",
         _D.POWER * _D.LENGTH**-2 * _D.TEMPERATURE**-1,
     ),
+    ("TOTAL_ENTHALPY_DEVIATION", _D.SPECIFIC_ENTHALPY),
     # residuals
     ("MASS_IMBALANCE", _D.MASS * _D.TIME**-1),
     # derivatives
