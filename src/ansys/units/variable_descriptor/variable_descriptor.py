@@ -166,8 +166,8 @@ class VariableCatalog:
         # Check if the variable already exists in the target category
         if hasattr(target, variable):
             raise ValueError(
-                f"Variable name '{variable}' already exists in the '{subcategory or 'main'}' catalog. "
-                "Please choose a unique name."
+                f"Variable name '{variable}' already exists in the '{subcategory or 'main'}' "
+                "catalog. Please choose a unique name."
             )
 
         # Add the variable to the target category
