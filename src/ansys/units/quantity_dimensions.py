@@ -36,12 +36,12 @@ are statically defined and immutable.
 
 Examples
 --------
-from ansys.units.dimensions import Dimensions
-from ansys.units.quantity_dimensions import QuantityDimensions
+>>> from ansys.units.dimensions import Dimensions
+>>> from ansys.units.quantity_dimensions import QuantityDimensions
 
-force = QuantityDimensions.FORCE
-pressure = QuantityDimensions.PRESSURE
-pressure == force / QuantityDimensions.AREA
+>>> force = QuantityDimensions.FORCE
+>>> pressure = QuantityDimensions.PRESSURE
+>>> pressure == force / QuantityDimensions.AREA
 True
 """
 
