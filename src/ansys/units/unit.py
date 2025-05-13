@@ -28,6 +28,8 @@ from typing import Optional, Union
 from ansys.units import (
     BaseDimensions,
     Dimensions,
+)
+from ansys.units._constants import (
     _base_units,
     _derived_units,
     _multipliers,

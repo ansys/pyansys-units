@@ -19,48 +19,30 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Pyunits is a pythonic interface for units, unit systems, and unit conversions."""
+"""
+Package initialization for ansys.units.variable_descriptor.
 
-try:
-    import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
-    import importlib_metadata
+Exports the VariableCatalog catalog and core interfaces for working with
+physical quantities in a product-agnostic way.
 
-__version__ = importlib_metadata.version(__name__.replace(".", "-"))
+Example
+-------
 
-import os
+.. code-block:: python
 
-from ansys.units.base_dimensions import BaseDimensions
-from ansys.units.dimensions import Dimensions
-from ansys.units.quantity import Quantity, get_si_value
-from ansys.units.quantity_dimensions import QuantityDimensions
-from ansys.units.systems import UnitSystem
-from ansys.units.unit import Unit
-from ansys.units.unit_registry import UnitRegistry
-from ansys.units.variable_descriptor import (
-    ConversionStrategy,
-    MappingConversionStrategy,
-    VariableCatalog,
-    VariableDescriptor,
-)
+    from ansys.units.variable_descriptor import VariableCatalog
+    from ansys.fluent.core.variable_strategies import FluentSVarNamingStrategy
 
-_THIS_DIRNAME = os.path.dirname(__file__)
-_README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"))
+    quantity = VariableCatalog.PRESSURE
+    strategy = FluentSVarNamingStrategy()
 
-if os.path.exists(_README_FILE):
-    with open(_README_FILE, encoding="utf8") as f:
-        __doc__ = f.read()
+    print(strategy.to_string(quantity))
+"""
 
+from .strategy import ConversionStrategy, MappingConversionStrategy
+from .variable_descriptor import VariableCatalog, VariableDescriptor
 
 __all__ = [
-    "BaseDimensions",
-    "Dimensions",
-    "Quantity",
-    "get_si_value",
-    "UnitSystem",
-    "Unit",
-    "UnitRegistry",
-    "QuantityDimensions",
     "VariableDescriptor",
     "VariableCatalog",
     "ConversionStrategy",
