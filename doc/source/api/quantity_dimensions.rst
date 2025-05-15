@@ -1,7 +1,7 @@
 .. _ref_quantity_dimensions:
 
 =====================
-Quantity Dimensions
+Quantity dimensions
 =====================
 
 .. automodule:: ansys.units.quantity_dimensions

@@ -1,7 +1,7 @@
 .. _ref_variable_descriptor:
 
 =====================
-Variable Descriptors
+Variable descriptor
 =====================
 
 .. automodule:: ansys.units.variable_descriptor
