@@ -110,10 +110,8 @@ class VariableCatalog:
         Returns
         -------
         dict[str, list[VariableDescriptor]]
-            A dictionary where keys are subcategory names (or "main" for the top-level catalog)
-            and values are lists of
-            :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor`
-            instances.
+        A dictionary where keys are subcategory names (or "main" for the top-level catalog)
+        and values are lists of :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor` instances.  # noqa: E501
         """
         result = {"main": []}
 
