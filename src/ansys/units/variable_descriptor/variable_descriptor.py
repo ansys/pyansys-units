@@ -103,13 +103,13 @@ class VariableCatalog:
     @classmethod
     def all(cls) -> dict[str, list[VariableDescriptor]]:
         """
-        Return all defined VariableDescriptors, organized by subcategory.
+        Return all defined `VariableDescriptor`s, organized by subcategory.
 
         Returns
         -------
         dict[str, list[VariableDescriptor]]
             A dictionary where keys are subcategory names (or "main" for the top-level catalog)
-            and values are lists of VariableDescriptor instances.
+            and values are lists of `VariableDescriptor` instances.
         """
         result = {"main": []}
 

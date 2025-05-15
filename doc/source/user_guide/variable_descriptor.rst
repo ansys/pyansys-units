@@ -39,7 +39,7 @@ VariableCatalog
    :undoc-members:
    :show-inheritance:
 
-A registry of predefined ``VariableDescriptor`` instances for commonly used quantities. These are typically accessed directly by name, such as ``VariableCatalog.PRESSURE``.
+A registry of predefined ``VariableDescriptor`` instances for commonly used quantities. These are typically accessed directly by name, such as ``VariableCatalog``.``PRESSURE``.
 
 ConversionStrategy
 ~~~~~~~~~~~~~~~~~~
@@ -83,4 +83,4 @@ Use Cases
 
 - Abstracting physical quantities from product-specific naming
 - Providing consistent and validated input/output definitions
-- Bridging Ansys APIs, UIs, and internal computation frameworks
+- Bridging Ansys APIs, user interfaces, and internal computation frameworks
