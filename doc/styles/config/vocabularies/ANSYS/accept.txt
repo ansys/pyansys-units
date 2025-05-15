@@ -10,3 +10,4 @@ substrings
 poppler
 Matplotlib
 NumPy
+subpackage
