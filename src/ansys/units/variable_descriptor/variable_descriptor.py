@@ -103,14 +103,16 @@ class VariableCatalog:
     @classmethod
     def all(cls) -> dict[str, list[VariableDescriptor]]:
         """
-        Return all defined `VariableDescriptor`s, organized by subcategory.
+        Return all defined
+        :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor`
+        objects, organized by subcategory.
 
         Returns
         -------
-        dict[str, list[
-        `:class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor`]]
-            A dictionary where keys are subcategory names (or "main" for the top-level catalog)
-            and values are lists of `VariableDescriptor` instances.
+        dict[str, list[VariableDescriptor]]
+        A dictionary where keys are subcategory names (or "main" for the top-level catalog)
+        and values are lists of
+        :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor` instances.
         """
         result = {"main": []}
 
