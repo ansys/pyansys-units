@@ -75,10 +75,7 @@ class Dimensions:
         str
             A string version of the dimensions.
         """
-        dims = {x.name: y for x, y in self}
-        if not dims:
-            dims = ""
-        return str(dims)
+        return str({x.name: y for x, y in self})
 
     def __str__(self):
         return self._to_string()

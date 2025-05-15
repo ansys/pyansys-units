@@ -97,20 +97,22 @@ class VariableCatalog:
     _generated = _build_variable_descriptors_from_dimensions()
 
     # Inject generated descriptors as class attributes
-    for key, descriptor in _generated.items():
-        locals()[key] = descriptor
+    for _key, _descriptor in _generated.items():
+        locals()[_key] = _descriptor
 
     @classmethod
     def all(cls) -> dict[str, list[VariableDescriptor]]:
         """
-        Return all defined `VariableDescriptor`s, organized by subcategory.
+        Return all defined
+        :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor`
+        objects, organized by subcategory.
 
         Returns
         -------
         dict[str, list[VariableDescriptor]]
             A dictionary where keys are subcategory names (or "main" for the top-level catalog)
-            and values are lists of `VariableDescriptor` instances.
-        """
+            and values are lists of :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor` instances.
+        """  # noqa: E501
         result = {"main": []}
 
         for key, value in cls.__dict__.items():
@@ -160,7 +162,18 @@ class VariableCatalog:
         if subcategory:
             # Ensure the subcategory exists as an attribute
             if not hasattr(cls, subcategory):
-                setattr(cls, subcategory, type(subcategory, (object,), {}))
+                # Create the subcategory and assign a docstring
+                subcategory_class = type(
+                    subcategory,
+                    (object,),
+                    {
+                        "__doc__": (
+                            f"Dictionary of variable descriptors for {subcategory}-related "
+                            f"quantities."
+                        )
+                    },
+                )
+                setattr(cls, subcategory, subcategory_class)
             target = getattr(cls, subcategory)
 
         # Check if the variable already exists in the target category

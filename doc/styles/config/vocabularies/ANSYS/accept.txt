@@ -10,3 +10,6 @@ substrings
 poppler
 Matplotlib
 NumPy
+subpackage
+hashable
+subclassing
