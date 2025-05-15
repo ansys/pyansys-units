@@ -164,7 +164,18 @@ class VariableCatalog:
         if subcategory:
             # Ensure the subcategory exists as an attribute
             if not hasattr(cls, subcategory):
-                setattr(cls, subcategory, type(subcategory, (object,), {}))
+                # Create the subcategory and assign a docstring
+                subcategory_class = type(
+                    subcategory,
+                    (object,),
+                    {
+                        "__doc__": (
+                            f"Dictionary of variable descriptors for {subcategory}-related "
+                            f"quantities."
+                        )
+                    },
+                )
+                setattr(cls, subcategory, subcategory_class)
             target = getattr(cls, subcategory)
 
         # Check if the variable already exists in the target category
@@ -259,10 +270,3 @@ mesh_variables = [
 
 for name, dimension in mesh_variables:
     VariableCatalog.add(name, dimension, "mesh")
-
-VariableCatalog.mesh.__doc__ = (
-    "Dictionary of variable descriptors for mesh-related quantities."
-)
-VariableCatalog.fluent.__doc__ = (
-    "Dictionary of variable descriptors for Fluent naming strategy."
-)
