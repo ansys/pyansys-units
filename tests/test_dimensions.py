@@ -61,7 +61,7 @@ def test_to_string():
     assert str(d1) == repr(d1)
 
     d2 = Dimensions()
-    assert repr(d2) == ""
+    assert repr(d2) == "{}"
     assert str(d2) == repr(d2)
 
 

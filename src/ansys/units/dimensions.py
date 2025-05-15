@@ -77,7 +77,7 @@ class Dimensions:
         """
         dims = {x.name: y for x, y in self}
         if not dims:
-            dims = ""
+            dims = {}
         return str(dims)
 
     def __str__(self):

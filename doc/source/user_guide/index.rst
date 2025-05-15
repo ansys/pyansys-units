@@ -16,4 +16,5 @@ code to work with physical quantities.
    angles
    temperature
    plot
-
+   quantity_dimensions
+   variable_descriptor

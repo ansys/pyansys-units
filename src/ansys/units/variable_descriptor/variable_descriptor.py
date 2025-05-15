@@ -255,3 +255,10 @@ mesh_variables = [
 
 for name, dimension in mesh_variables:
     VariableCatalog.add(name, dimension, "mesh")
+
+VariableCatalog.mesh.__doc__ = (
+    "Dictionary of variable descriptors for mesh-related quantities."
+)
+VariableCatalog.fluent.__doc__ = (
+    "Dictionary of variable descriptors for Fluent naming strategy."
+)
