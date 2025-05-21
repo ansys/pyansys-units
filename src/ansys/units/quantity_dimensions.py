@@ -250,6 +250,7 @@ class QuantityDimensions:
     POSITION = LENGTH
 
     # --- Material Properties ---
+    # https://en.wikipedia.org/wiki/List_of_materials_properties
 
     # Acoustical properties
     ACOUSTICAL_ABSORPTION = Dimensions()  # dimensionless (fraction or dB)
@@ -317,7 +318,7 @@ class QuantityDimensions:
     COEFFICIENT_OF_RESTITUTION = Dimensions()  # dimensionless
     COMPRESSIVE_STRENGTH = STRESS  # Pa
     CREEP = STRAIN_RATE  # 1/s
-    DENSITY = DENSITY  # kg/m^3
+    # DENSITY = DENSITY  # kg/m^3
     DUCTILITY = Dimensions()  # dimensionless (percent elongation)
     DURABILITY = Dimensions()  # dimensionless (qualitative)
     ELASTICITY = Dimensions()  # dimensionless (qualitative)
@@ -368,14 +369,13 @@ class QuantityDimensions:
     SPECIFIC_ACTIVITY = (MASS * TIME) ** -1  # Bq/kg
 
     # Thermal properties
-    COEFFICIENT_OF_THERMAL_EXPANSION = TEMPERATURE**-1  # 1/K
     EMISSIVITY = Dimensions()  # dimensionless
     HEAT_OF_VAPORIZATION = ENERGY / MASS  # J/kg
     MELTING_POINT = TEMPERATURE  # K
     SPECIFIC_HEAT_CAPACITY = SPECIFIC_HEAT_CAPACITY  # J/(kg·K)
     THERMAL_CONDUCTIVITY = THERMAL_CONDUCTIVITY  # W/(m·K)
     THERMAL_DIFFUSIVITY = AREA / TIME  # m^2/s
-    THERMAL_EXPANSION = LENGTH / (LENGTH * TEMPERATURE)  # 1/K
+    THERMAL_EXPANSION_COEFFICIENT = TEMPERATURE**-1  # 1/K
     VAPOR_PRESSURE = PRESSURE  # Pa
 
     # List of vector quantities. The only impact
