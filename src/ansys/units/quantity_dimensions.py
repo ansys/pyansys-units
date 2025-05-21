@@ -249,6 +249,135 @@ class QuantityDimensions:
     # Coordinates
     POSITION = LENGTH
 
+    # --- Material Properties ---
+
+    # Acoustical properties
+    ACOUSTICAL_ABSORPTION = Dimensions()  # dimensionless (fraction or dB)
+    SPEED_OF_SOUND = VELOCITY
+    SOUND_REFLECTION = Dimensions()  # dimensionless (coefficient)
+    SOUND_TRANSFER = Dimensions()  # dimensionless (coefficient)
+    THIRD_ORDER_ELASTICITY = (
+        STRESS  # same as stress (Pa), but higher order tensors in practice
+    )
+
+    # Atomic properties
+    ATOMIC_MASS = MASS
+    ATOMIC_NUMBER = Dimensions()  # dimensionless (count)
+    RELATIVE_ATOMIC_MASS = Dimensions()  # dimensionless (ratio)
+    STANDARD_ATOMIC_WEIGHT = Dimensions()  # dimensionless (ratio)
+
+    # Chemical properties
+    CORROSION_RESISTANCE = Dimensions()  # dimensionless (qualitative)
+    HYGROSCOPY = Dimensions()  # dimensionless (qualitative)
+    PH = Dimensions()  # dimensionless (logarithmic)
+    REACTIVITY = Dimensions()  # dimensionless (qualitative)
+    SPECIFIC_INTERNAL_SURFACE_AREA = LENGTH**-1  # m^-1
+    SURFACE_ENERGY = ENERGY / AREA  # J/m^2
+    SURFACE_TENSION = FORCE / LENGTH  # N/m
+
+    # Electrical properties
+    CAPACITANCE = ELECTRICAL_CAPACITANCE  # F = s^4·A^2/(kg·m^2)
+    DIELECTRIC_CONSTANT = Dimensions()  # dimensionless (relative permittivity)
+    DIELECTRIC_STRENGTH = ELECTRICAL_POTENTIAL / LENGTH  # V/m
+    ELECTRICAL_RESISTIVITY = ELECTRICAL_RESISTANCE * LENGTH  # Ω·m
+    ELECTRICAL_CONDUCTIVITY = ELECTRICAL_RESISTANCE**-1 / LENGTH  # S/m
+    ELECTRIC_SUSCEPTIBILITY = Dimensions()  # dimensionless
+    ELECTROCALORIC_COEFFICIENT = TEMPERATURE / ELECTRICAL_POTENTIAL  # K/V
+    ELECTROSTRICTION = Dimensions()  # dimensionless (strain per E^2)
+    MAGNETOELECTRIC_POLARIZABILITY = ELECTRICAL_POTENTIAL / (
+        LENGTH * MAGNETIC_FLUX
+    )  # V/(m·Wb)
+    NERNST_COEFFICIENT = ELECTRICAL_POTENTIAL / (
+        TEMPERATURE * MAGNETIC_INDUCTION
+    )  # V/(K·T)
+    PERMITTIVITY = ELECTRICAL_CAPACITANCE / LENGTH  # F/m
+    PIEZOELECTRIC_CONSTANTS = ELECTRICAL_POTENTIAL / LENGTH / STRESS  # V/(m·Pa)
+    PYROELECTRICITY = CURRENT / (AREA * TEMPERATURE)  # A/(m^2·K)
+    SEEBECK_COEFFICIENT = ELECTRICAL_POTENTIAL / TEMPERATURE  # V/K
+
+    # Magnetic properties
+    CURIE_TEMPERATURE = TEMPERATURE
+    DIAMAGNETISM = Dimensions()  # dimensionless (susceptibility)
+    HALL_COEFFICIENT = LENGTH**3 / (CURRENT * TIME)  # m^3/(A·s)
+    HYSTERESIS = Dimensions()  # dimensionless (qualitative)
+    MAGNETOSTRICTION = Dimensions()  # dimensionless (strain)
+    MAGNETOCALORIC_COEFFICIENT = TEMPERATURE / MAGNETIC_INDUCTION  # K/T
+    MAGNETOTHERMOELECTRIC_POWER = ELECTRICAL_POTENTIAL / (
+        TEMPERATURE * MAGNETIC_INDUCTION
+    )  # V/(K·T)
+    MAGNETORESISTANCE = Dimensions()  # dimensionless (ratio)
+    MAXIMUM_ENERGY_PRODUCT = ENERGY / VOLUME  # J/m^3
+    PERMEABILITY = MAGNETIC_PERMEABILITY  # H/m
+    PIEZOMAGNETISM = MAGNETIC_INDUCTION / STRESS  # T/Pa
+    PYROMAGNETIC_COEFFICIENT = MAGNETIC_INDUCTION / TEMPERATURE  # T/K
+    SPIN_HALL_EFFECT = ELECTRICAL_RESISTANCE  # Ω (spin Hall angle is dimensionless)
+
+    # Mechanical properties
+    BULK_MODULUS = PRESSURE  # Pa
+    COEFFICIENT_OF_RESTITUTION = Dimensions()  # dimensionless
+    COMPRESSIVE_STRENGTH = STRESS  # Pa
+    CREEP = STRAIN_RATE  # 1/s
+    DENSITY = DENSITY  # kg/m^3
+    DUCTILITY = Dimensions()  # dimensionless (percent elongation)
+    DURABILITY = Dimensions()  # dimensionless (qualitative)
+    ELASTICITY = Dimensions()  # dimensionless (qualitative)
+    FATIGUE_LIMIT = STRESS  # Pa
+    FLEXURAL_MODULUS = STRESS  # Pa
+    FLEXURAL_STRENGTH = STRESS  # Pa
+    FRACTURE_TOUGHNESS = ENERGY / AREA  # J/m^2
+    FRICTION_COEFFICIENT = Dimensions()  # dimensionless
+    HARDNESS = STRESS  # Pa (approximate)
+    MALLEABILITY = Dimensions()  # dimensionless (qualitative)
+    MASS_DIFFUSIVITY = AREA / TIME  # m^2/s
+    PLASTICITY = Dimensions()  # dimensionless (qualitative)
+    POISSON_RATIO = Dimensions()  # dimensionless
+    RESILIENCE = STRESS  # Pa (energy per volume)
+    SHEAR_MODULUS = STRESS  # Pa
+    SHEAR_STRENGTH = STRESS  # Pa
+    SLIP = Dimensions()  # dimensionless (qualitative)
+    SPECIFIC_MODULUS = STRESS / DENSITY  # m^2/s^2
+    SPECIFIC_STRENGTH = ENERGY / MASS  # J/kg
+    SPECIFIC_WEIGHT = FORCE / VOLUME  # N/m^3
+    SURFACE_ROUGHNESS = LENGTH  # m
+    TENSILE_STRENGTH = STRESS  # Pa
+    TOUGHNESS = ENERGY / VOLUME  # J/m^3
+    VISCOSITY = DYNAMIC_VISCOSITY  # Pa·s
+    YIELD_STRENGTH = STRESS  # Pa
+    YOUNG_MODULUS = STRESS  # Pa
+
+    # Optical properties
+    ABSORBANCE = Dimensions()  # dimensionless (logarithmic)
+    BIREFRINGENCE = Dimensions()  # dimensionless (difference in refractive index)
+    COLOR = Dimensions()  # dimensionless (qualitative)
+    ELECTRO_OPTIC_EFFECT = (
+        Dimensions()
+    )  # dimensionless (change in refractive index per V/m)
+    LUMINOSITY = LUMINOUS_FLUX  # lm
+    OPTICAL_ACTIVITY = LENGTH / MASS  # m/g (or rad/(g·cm^2))
+    PHOTOELASTICITY = STRESS**-1  # 1/Pa
+    PHOTOSENSITIVITY = Dimensions()  # dimensionless (qualitative)
+    REFLECTIVITY = Dimensions()  # dimensionless (fraction)
+    REFRACTIVE_INDEX = Dimensions()  # dimensionless
+    SCATTERING = Dimensions()  # dimensionless (cross-section per volume)
+    TRANSMITTANCE = Dimensions()  # dimensionless (fraction)
+
+    # Radiological properties
+    ATTENUATION_COEFFICIENT = LENGTH**-1  # m^-1
+    HALF_LIFE = TIME  # s
+    NEUTRON_CROSS_SECTION = LENGTH**2  # m^2
+    SPECIFIC_ACTIVITY = (MASS * TIME) ** -1  # Bq/kg
+
+    # Thermal properties
+    COEFFICIENT_OF_THERMAL_EXPANSION = TEMPERATURE**-1  # 1/K
+    EMISSIVITY = Dimensions()  # dimensionless
+    HEAT_OF_VAPORIZATION = ENERGY / MASS  # J/kg
+    MELTING_POINT = TEMPERATURE  # K
+    SPECIFIC_HEAT_CAPACITY = SPECIFIC_HEAT_CAPACITY  # J/(kg·K)
+    THERMAL_CONDUCTIVITY = THERMAL_CONDUCTIVITY  # W/(m·K)
+    THERMAL_DIFFUSIVITY = AREA / TIME  # m^2/s
+    THERMAL_EXPANSION = LENGTH / (LENGTH * TEMPERATURE)  # 1/K
+    VAPOR_PRESSURE = PRESSURE  # Pa
+
     # List of vector quantities. The only impact
     # of not adding a vector quantity here is that
     # the code will not autogenerate attributes
