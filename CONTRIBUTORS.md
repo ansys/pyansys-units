@@ -8,8 +8,8 @@
 
 * [Adam Boutin](https://github.com/ansaboutin)
 * [Alexander Carvalho](https://github.com/acarvalh-work)
-* [Dan Williams](https://github.com/dnwillia-work)
 * [Dan Williams](https://github.com/dnwillia)
+* [Dan Williams](https://github.com/dnwillia-work)
 * [Jorge Martínez](https://github.com/jorgepiloto)
 * [Kathy Pippert](https://github.com/PipKat)
 * [Mainak Kundu](https://github.com/mkundu1)
