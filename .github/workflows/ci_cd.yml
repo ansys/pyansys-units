@@ -24,7 +24,7 @@ jobs:
     name: "Code style"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/code-style@v9
+      - uses: ansys/actions/code-style@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Running documentation style checks"
-        uses: ansys/actions/doc-style@v9
+        uses: ansys/actions/doc-style@v10
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           vale-version: "3.4.1"
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@v9
+        uses: ansys/actions/check-pr-title@v10
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -72,7 +72,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: ansys/actions/build-wheelhouse@v9
+      - uses: ansys/actions/build-wheelhouse@v10
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           operating-system: ${{ matrix.os }}
@@ -88,7 +88,7 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
       fail-fast: false
     steps:
-      - uses: ansys/actions/tests-pytest@v9
+      - uses: ansys/actions/tests-pytest@v10
         with:
           pytest-markers: '-m "not developer_only"'
 
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [doc-style]
     steps:
-      - uses: ansys/actions/doc-build@v9
+      - uses: ansys/actions/doc-build@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           check-links: false
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [doc-build, tests]
     steps:
-      - uses: ansys/actions/build-library@v9
+      - uses: ansys/actions/build-library@v10
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -119,7 +119,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: [build-library]
     steps:
-      - uses: ansys/actions/doc-deploy-dev@v9
+      - uses: ansys/actions/doc-deploy-dev@v10
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -133,21 +133,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Release to the private PyPI repository"
-        uses: ansys/actions/release-pypi-private@v9
+        uses: ansys/actions/release-pypi-private@v10
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           twine-username: "__token__"
           twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
       - name: "Release to the public PyPI repository"
-        uses: ansys/actions/release-pypi-public@v9
+        uses: ansys/actions/release-pypi-public@v10
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           twine-username: "__token__"
           twine-token: ${{ secrets.PYPI_TOKEN }}
 
       - name: "Release to GitHub"
-        uses: ansys/actions/release-github@v9
+        uses: ansys/actions/release-github@v10
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -159,7 +159,7 @@ jobs:
     needs: [release]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@v9
+        uses: ansys/actions/doc-deploy-stable@v10
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
