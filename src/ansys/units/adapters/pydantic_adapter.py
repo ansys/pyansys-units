@@ -30,7 +30,7 @@ from ansys.units.quantity import Quantity
 class QuantityPydanticAdapter(Quantity):
     """A wrapper for Quantity that allows for pydantic representation."""
 
-    def __init__(self, value: list[float], units: str, **kwargs):
+    def __init__(self, value: float | list[float], units: str, **kwargs):
         """Initialize the QuantityPydanticAdapter."""
         super().__init__(value=value, units=units)
         self.extra_fields = kwargs
