@@ -25,7 +25,7 @@ import os
 
 import yaml
 
-from ansys.units import Unit
+from ansys.units.unit import Unit
 
 
 class UnitRegistry:

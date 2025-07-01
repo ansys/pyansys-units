@@ -23,8 +23,8 @@
 
 from __future__ import annotations
 
-from ansys.units import BaseDimensions
 from ansys.units._constants import _base_units, _unit_systems
+from ansys.units.base_dimensions import BaseDimensions
 
 
 class UnitSystem:
