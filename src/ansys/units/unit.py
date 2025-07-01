@@ -25,16 +25,14 @@ from __future__ import annotations
 import os
 from typing import Optional, Union
 
-from ansys.units import (
-    BaseDimensions,
-    Dimensions,
-)
 from ansys.units._constants import (
     _base_units,
     _derived_units,
     _multipliers,
     _quantity_units_table,
 )
+from ansys.units.base_dimensions import BaseDimensions
+from ansys.units.dimensions import Dimensions
 from ansys.units.systems import UnitSystem
 
 

@@ -27,7 +27,8 @@ from collections.abc import Iterable
 import operator
 from typing import Union
 
-from ansys.units import BaseDimensions, Dimensions
+from ansys.units.base_dimensions import BaseDimensions
+from ansys.units.dimensions import Dimensions
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
 

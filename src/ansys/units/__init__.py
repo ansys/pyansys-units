@@ -30,6 +30,7 @@ __version__ = importlib_metadata.version(__name__.replace(".", "-"))
 
 import os
 
+from ansys.units.adapters.pydantic_adapter import PydanticQuantityModel
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity import Quantity, get_si_value

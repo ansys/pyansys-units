@@ -91,6 +91,8 @@ jobs:
       - uses: ansys/actions/tests-pytest@v10
         with:
           pytest-markers: '-m "not developer_only"'
+          python-version: ${{ matrix.python-version }}
+          use-python-cache: false
 
   doc-build:
     name: "Build documentation"

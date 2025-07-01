@@ -25,7 +25,7 @@ from __future__ import annotations
 
 from typing import Union
 
-from ansys.units import BaseDimensions
+from ansys.units.base_dimensions import BaseDimensions
 
 
 class Dimensions:
