@@ -92,7 +92,7 @@ jobs:
         with:
           pytest-markers: '-m "not developer_only"'
           python-version: ${{ matrix.python-version }}
-          group-dependencies-name: "lists"
+          optional-dependencies-name: lists, tests
           use-python-cache: false
 
   doc-build:
