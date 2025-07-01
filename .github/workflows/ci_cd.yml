@@ -91,7 +91,7 @@ jobs:
       - name: Run tests
         run: |
           python -m pip install ansys-units[lists,tests]
-          python -m pytest --cache-clear --cov=ansys.units --cov-report=xml:cov_xml.xml --cov-report=html tests/
+          python -m pytest --cache-clear --cov=ansys.units --cov-report=xml:cov_xml.xml --cov-report=html
 
   doc-build:
     name: "Build documentation"
