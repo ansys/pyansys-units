@@ -24,7 +24,7 @@
 from pydantic import BaseModel
 from pydantic_core import core_schema
 
-from ansys.units import Quantity
+from ansys.units.quantity import Quantity
 
 
 class QuantityPydanticAdapter(Quantity):
