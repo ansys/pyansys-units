@@ -92,6 +92,10 @@ jobs:
         with:
           pytest-markers: '-m "not developer_only"'
 
+      - name: Install Dependencies
+        run: |
+          pip install numpy==2.2.3
+
   doc-build:
     name: "Build documentation"
     runs-on: ubuntu-latest
