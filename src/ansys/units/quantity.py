@@ -27,6 +27,8 @@ from collections.abc import Iterable
 import operator
 from typing import Union
 
+from pydantic_core import core_schema
+
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.systems import UnitSystem
@@ -92,6 +94,7 @@ class Quantity:
         quantity_table: dict = None,
         dimensions: Dimensions = None,
         copy_from: Quantity = None,
+        **kwargs,
     ):
         if (
             (units and quantity_table)
@@ -147,6 +150,8 @@ class Quantity:
             if unit.name != units.name and self.dimensions == unit.dimensions:
                 self._value = self.to(unit).value
                 self._unit = unit
+
+        self.extra_fields = kwargs
 
     @classmethod
     def preferred_units(
@@ -446,6 +451,51 @@ class Quantity:
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source_type, handler):
+        """Define the pydantic core schema for QuantityPydanticAdapter."""
+
+        def validate_quantity_type(obj):
+            if isinstance(obj, cls):
+                return obj
+            if isinstance(obj, Quantity):
+                return cls(
+                    value=(
+                        obj._value.tolist()
+                        if hasattr(obj._chosen_unitsvalue, "tolist")
+                        else obj.value
+                    ),
+                    units=obj.units.name,
+                )
+            if isinstance(obj, dict):
+                value = obj.get("value")
+                units = obj.get("units")
+                extras = {k: v for k, v in obj.items() if k not in {"value", "units"}}
+                return cls(value=value, units=units, **extras)
+            raise TypeError(
+                "Expected dict, Quantity, or QuantityPydanticAdapter instance."
+            )
+
+        def serialize(instance):
+            base = {"value": instance.value, "units": instance.units.name}
+            return {**base, **instance.extra_fields}
+
+        return core_schema.no_info_plain_validator_function(
+            validate_quantity_type,
+            json_schema_input_schema=core_schema.model_fields_schema(
+                {
+                    "value": core_schema.list_schema(
+                        items_schema=core_schema.float_schema()
+                    ),
+                    "units": core_schema.str_schema(),
+                },
+                extras_schema=core_schema.any_schema(),
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                serialize, return_schema=core_schema.dict_schema()
+            ),
+        )
 
 
 def get_si_value(quantity: Quantity) -> float:

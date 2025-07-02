@@ -20,7 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.units.adapters.pydantic_adapter import PydanticQuantityModel
+from pydantic import BaseModel
+
+from ansys.units import Quantity
+
+
+class PydanticQuantityModel(BaseModel):
+    quantity: Quantity
 
 
 def test_pydantic_quantity():
