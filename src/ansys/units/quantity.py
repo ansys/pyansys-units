@@ -137,10 +137,12 @@ class Quantity:
         if not isinstance(units, Unit):
             units = Unit(units)
 
+        min_value = value if isinstance(value, (int, float)) else min(value)
+
         if (
             (units.name in ["K", "R"] and value < 0)
-            or (units.name == "C" and value < -273.15)
-            or (units.name == "F" and value < -459.67)
+            or (units.name == "C" and min_value < -273.15)
+            or (units.name == "F" and min_value < -459.67)
         ):
             units = Unit(f"delta_{units.name}")
 

@@ -717,3 +717,9 @@ def test_matplotlib_integration():
     ax.plot(arr_x, arr_y)
     assert ax.xaxis.get_units() == "m"
     assert ax.yaxis.get_units() == "kg"
+
+
+def test_temperature_list():
+    temp = Quantity(value=[1.0, 2.0, 3.0], units="C")
+    assert temp.value.tolist() == [1.0, 2.0, 3.0]
+    assert temp.units == Unit("C")
