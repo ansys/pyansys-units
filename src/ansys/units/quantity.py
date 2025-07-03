@@ -138,7 +138,7 @@ class Quantity:
             units = Unit(units)
 
         min_value = value if isinstance(value, float) else min(value)
-        
+
         if (
             (units.name in ["K", "R"] and value < 0)
             or (units.name == "C" and min_value < -273.15)
