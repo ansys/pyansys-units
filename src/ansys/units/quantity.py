@@ -137,7 +137,7 @@ class Quantity:
         if not isinstance(units, Unit):
             units = Unit(units)
 
-        min_value = value if isinstance(value, float) else min(value)
+        min_value = value if isinstance(value, (int, float)) else min(value)
 
         if (
             (units.name in ["K", "R"] and value < 0)
