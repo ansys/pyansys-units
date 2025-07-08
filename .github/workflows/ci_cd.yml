@@ -89,7 +89,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Unit testing
-        working-directory: tests/
+        working-directory: ../tests/
         run: |
           python -m pip install -e .[doc,tests,lists]
           poetry run pytest -v --cov=ansys.units --cov-report=term --cov-report=xml --cov-report=html -m "not developer_only"
