@@ -27,8 +27,6 @@ from collections.abc import Iterable
 import operator
 from typing import Union
 
-from pydantic_core import core_schema
-
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.systems import UnitSystem
@@ -40,6 +38,13 @@ try:
     _array = np
 except ImportError:
     _array = None
+
+try:
+    from pydantic_core import core_schema
+
+    _core_schema = core_schema
+except ImportError:
+    _core_schema = None
 
 try:
     from matplotlib.units import AxisInfo, ConversionInterface, registry
@@ -483,19 +488,22 @@ class Quantity:
             base = {"value": instance.value, "units": instance.units.name}
             return {**base, **instance.extra_fields}
 
-        return core_schema.no_info_plain_validator_function(
+        if _core_schema is None:
+            raise PydanticRequired()
+
+        return _core_schema.no_info_plain_validator_function(
             validate_quantity_type,
-            json_schema_input_schema=core_schema.model_fields_schema(
+            json_schema_input_schema=_core_schema.model_fields_schema(
                 {
-                    "value": core_schema.list_schema(
-                        items_schema=core_schema.float_schema()
+                    "value": _core_schema.list_schema(
+                        items_schema=_core_schema.float_schema()
                     ),
-                    "units": core_schema.str_schema(),
+                    "units": _core_schema.str_schema(),
                 },
-                extras_schema=core_schema.any_schema(),
+                extras_schema=_core_schema.any_schema(),
             ),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                serialize, return_schema=core_schema.dict_schema()
+            serialization=_core_schema.plain_serializer_function_ser_schema(
+                serialize, return_schema=_core_schema.dict_schema()
             ),
         )
 
@@ -561,6 +569,15 @@ class NumPyRequired(ModuleNotFoundError):
 
     def __init__(self):
         super().__init__("To use NumPy arrays and lists install NumPy.")
+
+
+class PydanticRequired(ModuleNotFoundError):
+    """Raised when pydantic or pydantic_core is unavailable."""
+
+    def __init__(self):
+        super().__init__(
+            "To use pydantic features, install it using 'pip install ansys-units[doc]'."
+        )
 
 
 class InvalidFloatUsage(FloatingPointError):

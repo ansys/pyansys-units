@@ -25,8 +25,6 @@ classifiers = [
 
 dependencies = [
     "importlib-metadata>=4.0",
-    "pydantic>=2.11.7",
-    "pydantic_core>=2.33.2",
     "pyyaml>=6.0",
 ]
 
@@ -37,6 +35,8 @@ doc = [
     "quarto-cli==1.7.32",
     "matplotlib==3.10.1",
     "numpydoc==1.9.0",
+    "pydantic>=2.11.7",
+    "pydantic_core>=2.33.2",
     "Sphinx==7.4.7",
     "sphinx-copybutton==0.5.2",
     "sphinx-gallery==0.19.0",
