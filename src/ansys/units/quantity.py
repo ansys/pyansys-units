@@ -576,7 +576,7 @@ class PydanticRequired(ModuleNotFoundError):
 
     def __init__(self):
         super().__init__(
-            "To use pydantic features, install it using 'pip install ansys-units[doc]'."
+            "To use pydantic features, install it using 'pip install ansys-units[additional]'."
         )
 
 
