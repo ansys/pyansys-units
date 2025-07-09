@@ -93,6 +93,7 @@ jobs:
           pytest-markers: '-m "not developer_only"'
           python-version: ${{ matrix.python-version }}
           use-python-cache: false
+          optional-dependencies-name: additional,tests
 
   doc-build:
     name: "Build documentation"
