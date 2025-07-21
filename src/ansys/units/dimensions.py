@@ -128,6 +128,10 @@ class Dimensions:
     def __bool__(self):
         return bool(self._dimensions)
 
+    def __getitem__(self, key):
+        dimension_name = BaseDimensions[key]
+        return self._dimensions[dimension_name]
+
 
 class IncorrectDimensions(ValueError):
     """Raised on initialization if a dimension is not of type ``BaseDimensions``."""

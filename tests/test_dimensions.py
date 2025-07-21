@@ -141,3 +141,10 @@ def test_quantity_dimensions():
     assert qd.FORCE == Dimensions(
         dimensions={base.MASS: 1, base.LENGTH: 1, base.TIME: -2}
     )
+
+
+def test_quantity_dimensions_subscription():
+    dims = BaseDimensions
+    d2 = Dimensions(dimensions={dims.MASS: 1.0, dims.LENGTH: -1.0})
+    assert d2["MASS"] == 1.0
+    assert d2["LENGTH"] == -1.0
