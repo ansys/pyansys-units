@@ -16,5 +16,6 @@
 * [Maxime Rey](https://github.com/MaxJPRey)
 * [Prithwish Mukherjee](https://github.com/prmukherj)
 * [Revathy Venugopal](https://github.com/Revathyvenugopal162)
+* [Riccardo Manno](https://github.com/rmanno91)
 * [Roberto Pastor Muela](https://github.com/RobPasMue)
 * [Sean Pearson](https://github.com/seanpearsonuk)
