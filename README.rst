@@ -153,7 +153,7 @@ You can instantiate unit systems with one of two methods:
 
    # Use a pre-defined unit system
 
-   si = ansunits.UnitSystem(unit_sys="SI")
+   si = ansunits.UnitSystem(system="SI")
 
    si.base_units  # ['kg', 'm', 's', 'K', 'delta_K', 'radian', 'mol', 'cd', 'A', 'sr']
 
