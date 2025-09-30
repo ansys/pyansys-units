@@ -39,14 +39,16 @@ doc = [
     "sphinx-toggleprompt==0.6.0",
 ]
 tests = [
-    "numpy==2.2.3",
+    "numpy==2.2.3; python_version >'3.10'",  # TODO: Limit to be removed once Python 3.10 support is dropped
+    "numpy==1.26.4; python_version <= '3.10'",  # TODO: Dependency to be removed once Python 3.10 support is dropped
     "pytest==8.4.1",
     "pytest-cov==6.2.1",
     "pytest-mock==3.14.1",
     "pint==0.24.4",
 ]
 additional = [
-    "numpy==2.2.3",
+    "numpy==2.2.3; python_version >'3.10'",  # TODO: Limit to be removed once Python 3.10 support is dropped
+    "numpy==1.26.4; python_version <= '3.10'",  # TODO: Dependency to be removed once Python 3.10 support is dropped
     "pydantic>=2.11.7",
     "pydantic_core>=2.33.2",
 ]
@@ -54,7 +56,7 @@ additional = [
 [project.urls]
 Source = "https://github.com/ansys/pyansys-units"
 Issues = "https://github.com/ansys/pyansys-units/issues"
-Documentation = "https://ansunits.docs.pyansys.com"
+Documentation = "https://units.docs.pyansys.com/"
 Releases = "https://github.com/ansys/pyansys-units/releases"
 
 [tool.flit.module]
