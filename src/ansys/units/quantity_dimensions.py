@@ -204,7 +204,7 @@ class QuantityDimensions:
     SPECIFIC_TOTAL_ENERGY = TOTAL_ENERGY / MASS
     SPECIFIC_INTERNAL_ENERGY = INTERNAL_ENERGY / MASS
     TOTAL_TEMPERATURE = TEMPERATURE
-    Volume_Fraction_Primary_Phase = Dimensions()
+    VOLUME_FRACTION_PRIMARY_PHASE = Dimensions()
 
     # Turbulence
     PRANDTL_NUMBER = Dimensions()
