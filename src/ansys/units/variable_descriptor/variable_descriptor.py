@@ -226,6 +226,8 @@ fluent_variables = [
     ("DVELOCITY_DZ_X", _D.TIME**-1),
     ("DVELOCITY_DZ_Y", _D.TIME**-1),
     ("DVELOCITY_DZ_Z", _D.TIME**-1),
+    ("VOLUME_FRACTION_PRIMARY_PHASE", _D.VOLUME_FRACTION),
+    ("VOLUME_FRACTION_SECONDARY_PHASE", _D.VOLUME_FRACTION),
 ]
 
 for name, dimension in fluent_variables:
