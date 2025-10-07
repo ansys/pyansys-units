@@ -52,7 +52,7 @@ try:
     _ci = ConversionInterface
     _ai = AxisInfo
     _registry = registry
-except ModuleNotFoundError:
+except ImportError:
     _ci, _ai, _registry = object, None, dict()
 
 
