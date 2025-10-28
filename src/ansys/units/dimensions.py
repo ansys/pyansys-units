@@ -23,8 +23,6 @@
 
 from __future__ import annotations
 
-from typing import Union
-
 from ansys.units.base_dimensions import BaseDimensions
 
 
@@ -51,8 +49,8 @@ class Dimensions:
 
     def __init__(
         self,
-        dimensions: dict[BaseDimensions, Union[int, float]] = None,
-        copy_from: Dimensions = None,
+        dimensions: dict[BaseDimensions, int | float] | None = None,
+        copy_from: Dimensions | None = None,
     ):
         dimensions = dimensions or {}
         self._dimensions = {

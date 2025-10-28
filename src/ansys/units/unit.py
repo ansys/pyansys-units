@@ -25,7 +25,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 import functools
 import os
-from typing import TYPE_CHECKING, Optional, Sequence, Union, overload
+from typing import TYPE_CHECKING
 
 from ansys.units._constants import (
     _base_units,
@@ -98,12 +98,12 @@ class Unit:
 
     def __init__(
         self,
-        units: Optional[str] = None,
-        config: Optional[dict] = None,
-        dimensions: Optional[Dimensions] = None,
-        system: Union[UnitSystem, str] = None,
-        table: Optional[Mapping[QuantityKey, float]] = None,
-        copy_from: Optional[Unit] = None,
+        units: str | None = None,
+        config: dict | None = None,
+        dimensions: Dimensions | None = None,
+        system: UnitSystem | str = None,
+        table: Mapping[QuantityKey, float] | None = None,
+        copy_from: Unit | None = None,
     ):
         if copy_from:
             if (units) and units != copy_from.name:
@@ -214,7 +214,7 @@ class Unit:
         compatible_units.discard(self.name)
         return compatible_units
 
-    def _temp_precheck(self, other_unit, op: str = "+") -> Optional[tuple["Unit", "Unit"]]:
+    def _temp_precheck(self, other_unit, op: str = "+") -> tuple["Unit", "Unit"] | None:
         """
         Validate units for temperature differences.
 
@@ -353,7 +353,7 @@ class Unit:
             return Quantity(value=value, units=self**-1)
         return NotImplemented  # other cases should have already handled this so nothing to do
 
-    def __pow__(self, value: Union["Unit", float]) -> "Unit":
+    def __pow__(self, value: "Unit" | float) -> "Unit":
         new_units = ""
         for term in self.name.split(" "):
             multiplier, base, exponent = _filter_unit_term(term)
@@ -432,7 +432,7 @@ def _dim_to_units(
 
 def _units_to_dim(
     units: str, exponent: float = None, dimensions: dict = None
-) -> dict[BaseDimensions : Union[int, float]]:
+) -> dict[BaseDimensions : int | float]:
     """
     Convert a unit string into a Dimensions instance.
 

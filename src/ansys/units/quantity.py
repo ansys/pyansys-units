@@ -25,7 +25,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator, Mapping, Sequence
 import operator
-from typing import TYPE_CHECKING, Any, Generic, Optional, Protocol, TypeVar, Union, overload, runtime_checkable
+from typing import TYPE_CHECKING, Any, Generic, Protocol, TypeVar, overload, runtime_checkable
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
@@ -80,8 +80,8 @@ if TYPE_CHECKING:
 
     ValT = TypeVar(
         "ValT",
-        bound=Union[float, ArrayLike],
-        default=Union[float, ArrayLike],
+        bound=float | ArrayLike,
+        default=float | ArrayLike,
         covariant=True,
     )
 else:
@@ -128,7 +128,7 @@ class Quantity(Generic[ValT]):
     def __init__(
         self,
         value: ValT,
-        units: Optional[Union[Unit, str]] = None,
+        units: Unit | str | None = None,
         **kwargs: Any,
     ) -> None: ...
 
@@ -169,12 +169,12 @@ class Quantity(Generic[ValT]):
 
     def __init__(
         self,
-        value: Optional[ValT] = None,
-        units: Union[Unit, str, None] = None,
+        value: ValT | None = None,
+        units: Unit | str | None = None,
         *,
-        quantity_table: Optional[Mapping[QuantityKey, float]] = None,
-        dimensions: Optional[Dimensions] = None,
-        copy_from: Optional[Quantity] = None,
+        quantity_table: Mapping[QuantityKey, float] | None = None,
+        dimensions: Dimensions | None = None,
+        copy_from: Quantity | None = None,
         **kwargs: Any,
     ):
         if (
@@ -238,7 +238,7 @@ class Quantity(Generic[ValT]):
 
     @classmethod
     def preferred_units(
-        cls, units: list[Union[Unit, str]], remove: bool = False
+        cls, units: list[Unit | str], remove: bool = False
     ) -> None:
         """
         Add or remove preferred units.
@@ -288,7 +288,7 @@ class Quantity(Generic[ValT]):
         """True if the quantity is dimensionless."""
         return not bool(self.dimensions)
 
-    def to(self, to_units: Union[Unit, str]) -> "Quantity":
+    def to(self, to_units: Unit | str) -> "Quantity":
         """
         Perform quantity conversions.
 
@@ -360,7 +360,7 @@ class Quantity(Generic[ValT]):
 
     def _relative_unit_check(
         self,
-        _other: Union[Quantity[ValT], float],
+        _other: Quantity[ValT] | float,
         r_add_sub: bool,
         op: Callable[[Any, Any], Any] = operator.add,
     ) -> Quantity[ValT]:
@@ -430,7 +430,7 @@ class Quantity(Generic[ValT]):
         new_units = self.units**other
         return Quantity(value=new_value, units=new_units)
 
-    def __mul__(self, other: Union["Quantity", Unit, float, int]) -> "Quantity":
+    def __mul__(self, other: "Quantity" | Unit | float | int) -> "Quantity":
         if isinstance(other, Quantity):
             new_value = self.value * other.value
             new_units = self._unit * other._unit
