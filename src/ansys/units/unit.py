@@ -35,6 +35,7 @@ from ansys.units._constants import (
 )
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
+from ansys.units.quantity_tables.keys import QuantityKey
 from ansys.units.systems import UnitSystem
 
 if TYPE_CHECKING:
@@ -86,21 +87,23 @@ class Unit:
     {'LENGTH': 1.0, 'TIME': -1.0}
     >>> speed = Quantity(value=5, units=fps)
     >>> speed
-    Quantity (5.0, "ft s^-1")
-
-    See also
-    --------
-    :mod:`ansys.units.common` for a collection of predefined units for use.
+    Quantity(5.0, "ft s^-1")
     """
+
+    # See also
+    # --------
+    # :mod:`ansys.units.common`
+    # for a collection of predefined units for use.
+    # """
 
     def __init__(
         self,
-        units: str = None,
-        config: dict = None,
-        dimensions: Dimensions = None,
+        units: Optional[str] = None,
+        config: Optional[dict] = None,
+        dimensions: Optional[Dimensions] = None,
         system: Union[UnitSystem, str] = None,
-        table: dict = None,
-        copy_from: Unit = None,
+        table: Optional[Mapping[QuantityKey, float]] = None,
+        copy_from: Optional[Unit] = None,
     ):
         if copy_from:
             if (units) and units != copy_from.name:

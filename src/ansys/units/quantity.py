@@ -29,6 +29,7 @@ from typing import TYPE_CHECKING, Any, Generic, Optional, Protocol, TypeVar, Uni
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
+from ansys.units.quantity_tables.keys import QuantityKey
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
 
@@ -123,14 +124,58 @@ class Quantity(Generic[ValT]):
 
     _chosen_units = []
 
+    @overload
     def __init__(
         self,
-        value: Union[int, float] = None,
-        units: Union[Unit, str] = None,
-        quantity_table: dict = None,
-        dimensions: Dimensions = None,
-        copy_from: Quantity = None,
-        **kwargs,
+        value: ValT,
+        units: Optional[Union[Unit, str]] = None,
+        **kwargs: Any,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        value: ValT,
+        *,
+        dimensions: Dimensions,
+        **kwargs: Any,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        value: ValT,
+        *,
+        quantity_table: Mapping[QuantityKey, float],
+        **kwargs: Any,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        *,
+        copy_from: "Quantity[ValT]",
+        **kwargs: Any,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        value: ValT,
+        *,
+        copy_from: "Quantity",
+        **kwargs: Any,
+    ) -> None: ...
+
+    def __init__(
+        self,
+        value: Optional[ValT] = None,
+        units: Union[Unit, str, None] = None,
+        *,
+        quantity_table: Optional[Mapping[QuantityKey, float]] = None,
+        dimensions: Optional[Dimensions] = None,
+        copy_from: Optional[Quantity] = None,
+        **kwargs: Any,
     ):
         if (
             (units and quantity_table)
@@ -449,7 +494,7 @@ class Quantity(Generic[ValT]):
         ):
             raise IncompatibleQuantities(self, other)
 
-    def _compute_single_value_comparison(self, other, op: operator):
+    def _compute_single_value_comparison(self, other: Quantity, op: Callable[[Any, Any], bool]):
         """Compares quantity values."""
         return (
             op(get_si_value(self), other)
