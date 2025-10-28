@@ -45,15 +45,29 @@ This example shows you how to perform these tasks:
 # Import the ``ansys.units`` package.
 
 from ansys.units import BaseDimensions, Dimensions, Quantity, UnitSystem
+from ansys.units.common import *
 from ansys.units.quantity import get_si_value
 
 ###############################################################################
 # Create quantities
 # ~~~~~~~~~~~~~~~~~
-# You can instantiate quantities using one of three methods:
+# You can instantiate quantities using one of four methods:
+# - Unit operations from common : float, Unit
 # - Unit strings : str, Unit
 # - Dimensions : Dimensions
 # - Quantity table : dict
+
+# Unit operations
+
+volume = 1 * m**3
+
+acceleration = 3 * m * s**-2
+
+torque = 5 * N * m
+
+pressure = 250 * Pa  # there are even some derived units
+
+combined = (2 * N) / (m**2) + (3 * Pa)
 
 # Unit strings
 

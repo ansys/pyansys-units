@@ -22,6 +22,7 @@
 """Provides ``QuantityType`` class."""
 
 import os
+from typing import Any
 
 import yaml
 
@@ -42,13 +43,13 @@ qc_path = os.path.join(file_dir, "cfg.yaml")
 with open(qc_path, "r") as qc_yaml:
     qc_data = yaml.safe_load(qc_yaml)
 
-_multipliers: dict = qc_data["multipliers"]
-_unit_systems: dict = qc_data["unit_systems"]
-_base_units: dict = qc_data["base_units"]
-_derived_units: dict = qc_data["derived_units"]
+_multipliers: dict[str, Any] = qc_data["multipliers"]
+_unit_systems: dict[str, Any] = qc_data["unit_systems"]
+_base_units: dict[str, Any] = qc_data["base_units"]
+_derived_units: dict[str, Any] = qc_data["derived_units"]
 
 table_path = os.path.join(file_dir, "quantity_tables/si_table.yaml")
 
 with open(table_path, "r") as table:
     table_data = yaml.safe_load(table)
-_quantity_units_table: dict = table_data["quantity_units_table"]
+_quantity_units_table: dict[str, Any] = table_data["quantity_units_table"]

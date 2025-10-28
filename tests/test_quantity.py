@@ -232,7 +232,7 @@ def test_complex_temperature_difference_to():
 
 def test_repr():
     v = Quantity(1.0, "m")
-    assert v.__repr__() == 'Quantity (1.0, "m")'
+    assert v.__repr__() == 'Quantity(1.0, "m")'
 
 
 def test_math():
@@ -349,6 +349,7 @@ def test_neg():
     q0 = Quantity(10.0, "m s^-1")
     q1 = -q0
     assert q1.value == -10.0
+    assert q1.units == Unit("m s^-1")
 
 
 def test_ne():
@@ -398,8 +399,8 @@ def test_dimensionless_div():
     length_1 = Quantity(50, "mm")
     length_2 = Quantity(40, "inch")
     result = length_1 / length_2
-    result.value == 1.25
-    result.units == "mm inch^-1"
+    assert result.value == 1.25
+    assert result.units == "mm inch^-1"
 
 
 def test_quantity_divided_by_unit():

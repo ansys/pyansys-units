@@ -57,3 +57,14 @@ repos:
     - id: add-license-headers
       args:
       - --start_year=2023
+
+- repo: local
+  hooks:
+    - id: generate-common
+      name: Generate common units
+      entry: python scripts/generate_common.py
+      language: python
+      files: ^(src/ansys/units/(cfg\.yaml|_constants\.py)|scripts/generate_common\.py)$
+      pass_filenames: false
+      always_run: false
+
