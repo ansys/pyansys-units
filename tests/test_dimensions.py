@@ -96,6 +96,11 @@ def test_eq():
     d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     d2 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     assert d1 == d2
+
+    d1 = Dimensions(dimensions={dims.LENGTH: 0, dims.TEMPERATURE_DIFFERENCE: 1})
+    d2 = Dimensions(dimensions={dims.LENGTH: 0, dims.TEMPERATURE_DIFFERENCE: 1})
+    assert d1 == d2
+
     d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TEMPERATURE: 1})
     d2 = Dimensions(dimensions={dims.LENGTH: 1, dims.TEMPERATURE_DIFFERENCE: 1})
 
