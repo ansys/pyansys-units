@@ -23,8 +23,10 @@
 # SOFTWARE.
 
 from pathlib import Path
-import ansys.units._constants
+
 import yaml
+
+import ansys.units._constants
 
 src = Path(__file__).parent.parent / "src" / "ansys" / "units"
 si_table = src / "quantity_tables" / "si_table.yaml"

@@ -22,6 +22,7 @@
 """Provides the ``UnitSystem`` class."""
 
 from __future__ import annotations
+
 from collections.abc import Mapping
 
 from ansys.units._constants import _base_units, _unit_systems
@@ -215,7 +216,9 @@ class UnitSystem:
     def __eq__(self, other_sys: object) -> bool:
         if not isinstance(other_sys, UnitSystem):
             return False
-        return all(getattr(other_sys, attr) == value for attr, value in self.__dict__.items())
+        return all(
+            getattr(other_sys, attr) == value for attr, value in self.__dict__.items()
+        )
 
 
 class NotBaseUnit(ValueError):

@@ -22,6 +22,7 @@
 """Provides the ``Dimensions`` class."""
 
 from __future__ import annotations
+
 from collections.abc import Mapping
 
 from ansys.units.base_dimensions import BaseDimensions
@@ -110,7 +111,9 @@ class Dimensions:
         return Dimensions(results)
 
     def __eq__(self, __value: object) -> bool:
-        return isinstance(__value, Dimensions) and self._dimensions == __value._dimensions
+        return (
+            isinstance(__value, Dimensions) and self._dimensions == __value._dimensions
+        )
 
     def __bool__(self) -> bool:
         return bool(self._dimensions)

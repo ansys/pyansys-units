@@ -25,7 +25,15 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator, Mapping, Sequence
 import operator
-from typing import TYPE_CHECKING, Any, Generic, Protocol, TypeVar, overload, runtime_checkable
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Protocol,
+    TypeVar,
+    overload,
+    runtime_checkable,
+)
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
@@ -56,6 +64,7 @@ try:
 except ImportError:
     _ci, _ai, _registry = object, None, dict()
 
+
 @runtime_checkable
 class ArrayLike(Protocol):
     """Protocol for numpy-like arrays."""
@@ -74,9 +83,10 @@ class ArrayLike(Protocol):
     def __lt__(self, other: float | ArrayLike) -> bool: ...
     def tolist(self) -> Sequence[object]: ...
 
+
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
-    from typing_extensions import TypeVar, Self
+    from typing_extensions import Self, TypeVar
 
     ValT = TypeVar(
         "ValT",
@@ -232,9 +242,7 @@ class Quantity(Generic[ValT]):
         self.extra_fields = kwargs
 
     @classmethod
-    def preferred_units(
-        cls, units: list[Unit | str], remove: bool = False
-    ) -> None:
+    def preferred_units(cls, units: list[Unit | str], remove: bool = False) -> None:
         """
         Add or remove preferred units.
 
@@ -376,7 +384,7 @@ class Quantity(Generic[ValT]):
         Quantity
             Quantity instance changed to or from relative units.
         """
-        other =  _other if isinstance(_other, Quantity) else Quantity(_other)
+        other = _other if isinstance(_other, Quantity) else Quantity(_other)
 
         # Checks the temperatures at the unit level.
         new_units, other_units = op(self.units, other.units) or (
@@ -489,7 +497,9 @@ class Quantity(Generic[ValT]):
         ):
             raise IncompatibleQuantities(self, other)
 
-    def _compute_single_value_comparison(self, other: Quantity, op: Callable[[Any, Any], bool]):
+    def _compute_single_value_comparison(
+        self, other: Quantity, op: Callable[[Any, Any], bool]
+    ):
         """Compares quantity values."""
         return (
             op(get_si_value(self), other)
@@ -528,7 +538,11 @@ class Quantity(Generic[ValT]):
         ):
             return self._compute_single_value_comparison(other, op=operator.eq)
         # no type-checking here since array_equal happily processes anything
-        return _array and _array.array_equal(get_si_value(self), get_si_value(other)) or False
+        return (
+            _array
+            and _array.array_equal(get_si_value(self), get_si_value(other))
+            or False
+        )
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source_type, handler):
