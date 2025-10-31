@@ -45,7 +45,7 @@ This example shows you how to perform these tasks:
 # Import the ``ansys.units`` package.
 
 from ansys.units import BaseDimensions, Dimensions, Quantity, UnitSystem
-from ansys.units.common import *
+from ansys.units.common import *  # noqa: F403
 from ansys.units.quantity import get_si_value
 
 ###############################################################################
