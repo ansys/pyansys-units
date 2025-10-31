@@ -62,16 +62,14 @@ repos:
   hooks:
     - id: generate-common
       name: Generate common units
-      entry: python scripts/generate_common.py
-      language: python
+      entry: uv run python scripts/generate_common.py
       files: ^(src/ansys/units/(cfg\.yaml|_constants\.py)|scripts/generate_common\.py)$
       pass_filenames: false
       always_run: false
 
     - id: generate-quantity-keys
       name: Generate quantity keys
-      entry: python scripts/generate_keys.py
-      language: python
+      entry: uv run python scripts/generate_keys.py
       files: ^(src/ansys/units/quantity_tables/.*\.yaml|scripts/generate_keys\.py)$
       pass_filenames: false
       always_run: false
@@ -79,7 +77,7 @@ repos:
     - id: check-generated-files
       name: Check generated files are up-to-date
       entry: |
-        git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py || (echo "Generated files are out of date. Run scripts/generate_common.py and scripts/generate_keys.py" && exit 1)
+        git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py
       language: system
       files: ^src/ansys/units/(common\.py|quantity_tables/keys\.py)$
       pass_filenames: false
