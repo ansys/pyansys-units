@@ -27,6 +27,7 @@ jobs:
       - uses: ansys/actions/code-style@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          skip-install: false
 
   doc-style:
     name: Documentation Style Check
