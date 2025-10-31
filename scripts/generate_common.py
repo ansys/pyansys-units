@@ -24,13 +24,10 @@
 
 from keyword import iskeyword
 from pathlib import Path
-import sys
-
-src = Path(__file__).parent.parent / "src"
-sys.path.insert(0, str(src))
 
 from ansys.units._constants import _base_units, _derived_units
 
+src = Path(__file__).parent.parent / "src"
 common = src / "ansys" / "units" / "common.py"
 all = (*_base_units, *_derived_units)
 
@@ -67,6 +64,10 @@ __all__ = (
 {"\n".join(f'    "{key if not iskeyword(key) else key + "_"}",' for key in all)}
 )
 
-{"\n".join(f'{key if not iskeyword(key) else key + "_"} = Unit("{key}")  #: A predefined unit for a {key}' for key in all)}
+{"\n".join(
+    f'''{
+        key if not iskeyword(key) else key + "_"
+    } = Unit("{key}")  #: A predefined unit for a {key}''' for key in all
+)}
 """
 )

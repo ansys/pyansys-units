@@ -23,15 +23,12 @@
 # SOFTWARE.
 
 from pathlib import Path
-import sys
 
 import yaml
 
-src = Path(__file__).parent.parent / "src"
-sys.path.insert(0, str(src))
-
 from ansys.units._constants import _base_units, _derived_units
 
+src = Path(__file__).parent.parent / "src"
 units = src / "ansys" / "units"
 si_table = units / "quantity_tables" / "si_table.yaml"
 keys_path = units / "quantity_tables" / "keys.py"

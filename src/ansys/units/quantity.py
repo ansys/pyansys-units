@@ -610,7 +610,10 @@ def get_si_value(quantity: Quantity[ValT]) -> ValT:
         factor = quantity.units.si_scaling_factor
         return _array.array([_convert(x, offset, factor) for x in quantity.value])
     raise ValueError(
-        "quantity cannot be converted to a meaningful SI representation. Perhaps you didn't install numpy"
+        (
+            "quantity cannot be converted to a meaningful SI representation. "
+            "Perhaps you didn't install numpy"
+        )
     )
 
 
