@@ -451,7 +451,7 @@ class Quantity(Generic[ValT]):
 
     __rmul__ = __mul__
 
-    def __truediv__(self, other) -> "Quantity":
+    def __truediv__(self, other: "Quantity | float | Unit") -> "Quantity":
         if isinstance(other, Quantity):
             new_value = self.value / other.value
             new_units = self._unit / other._unit
@@ -468,7 +468,7 @@ class Quantity(Generic[ValT]):
             return Quantity(value=self.value / other, units=self._unit)
         return NotImplemented
 
-    def __rtruediv__(self, other):
+    def __rtruediv__(self, other: "Quantity | float | Unit") -> "Quantity":
         return Quantity(other, "") / self
 
     def __add__(self, other):
