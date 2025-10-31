@@ -127,8 +127,8 @@ get_si_value(dynamic_viscosity)  # >>> 50.0
 
 import math
 
-q1 = Quantity(10.0, "m s^-1")
-q2 = Quantity(5.0, "m s^-1")
+q1 = 10 * m * s**-1
+q2 = 5.0 * m * s**-1
 
 # Subtraction
 
@@ -168,37 +168,37 @@ q8.units.name  # >>> "m^2 s^-2"
 
 # Roots
 
-q9 = Quantity(5.0, "")
+q9 = Quantity(5.0)
 
 math.sqrt(q9)  # >>> 2.2360679775
 
 # Trigonometry
 
-math.sin(Quantity(90, "degree"))  # >>> 1.0
-math.cos(Quantity(math.pi, "radian"))  # >>> -1.0
+math.sin(90 * degree)  # >>> 1.0
+math.cos(math.pi * radian)  # >>> -1.0
 
 ###############################################################################
 # Perform conversions
 # ~~~~~~~~~~~~~~~~~~~
 # To check the compatible units use the 'compatible_units' method.
 
-slug = Quantity(value=5, units="slug")
-slug.compatible_units()  # >>> {'lbm', 'g', 'lb', 'kg'}
+five_slug = 5 * slug
+five_slug.compatible_units()  # >>> {'lbm', 'g', 'lb', 'kg'}
 
 # You can perform conversions on quantities with compatible units.
 
-kg = slug.to(kg)
+five_slug_in_kg = five_slug.to(kg)
 
-kg.value  # >>> 72.96951468603184
-kg.units.name  # >>> "kg"
+five_slug_in_kg.value  # >>> 72.96951468603184
+five_slug_in_kg.units.name  # >>> "kg"
 
-m = Quantity(value=25, units="m")
-cm = m.to(cm)
+twenty_five_ms = 25 * m
+cm = twenty_five_ms.to(cm)
 
 cm.value  # >>> 2500
 cm.units.name  # >>> "cm"
 
-dvis = Quantity(1.0, "lb ft^-1 s^-1")  # you can use the unit strings
+dvis = 1.0 * lb * ft**-1 * s**-1
 pas = dvis.to(Pa * s)
 
 pas.value  # >>> 1.4881639435695542
@@ -295,7 +295,7 @@ SOLID_ANGLE: sr
 # You can create a unit system independently and apply it to quantities.
 
 si = UnitSystem()
-feet_per_second = Quantity(value=11.2, units="ft s^-1")
+feet_per_second = 11.2 * ft * s**-1
 
 meters_per_second = feet_per_second.convert(si)
 
@@ -308,13 +308,13 @@ meters_per_second.units  # >>> "m s^-1"
 # ~~~~~~~~~~~~~~~~~~~~~
 # Specify a list of units that quantities will automatically convert to.
 
-Quantity.preferred_units(units=["J"])
+Quantity.preferred_units(units=[J])
 
 torque = Quantity(1, quantity_table={"Torque": 1})
 torque  # >>> Quantity (1.0, "J")
 
-ten_N = Quantity(10, units="N")
-ten_m = Quantity(10, units="m")
+ten_N = 10 * N
+ten_m = 10 * m
 
 joules = ten_N * ten_m
 joules  # >>> Quantity (100.0, "J")
