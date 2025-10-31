@@ -242,7 +242,9 @@ class Quantity(Generic[ValT]):
         self.extra_fields = kwargs
 
     @classmethod
-    def preferred_units(cls, units: Sequence[Unit | UnitKey], remove: bool = False) -> None:
+    def preferred_units(
+        cls, units: Sequence[Unit | UnitKey], remove: bool = False
+    ) -> None:
         """
         Add or remove preferred units.
 

@@ -42,9 +42,10 @@ all = (*ansys.units._constants._base_units, *ansys.units._constants._derived_uni
 keys_path.touch(exist_ok=True)
 keys_path.write_text(
     f"""\
-# This file is @generated
 # Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+
 # SPDX-License-Identifier: MIT
+#
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +64,7 @@ keys_path.write_text(
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+# This file is @generated
 from typing import Literal
 
 UnitKey = Literal[
