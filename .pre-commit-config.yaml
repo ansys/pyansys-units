@@ -70,7 +70,7 @@ repos:
 
     - id: generate-quantity-keys
       name: Generate quantity keys
-      entry: python scripts/generate_quantity_keys.py
+      entry: python scripts/generate_keys.py
       language: python
       files: ^(src/ansys/units/quantity_tables/.*\.yaml|scripts/generate_keys\.py)$
       pass_filenames: false

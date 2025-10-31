@@ -24,11 +24,15 @@
 
 from keyword import iskeyword
 from pathlib import Path
+import sys
 
-import ansys.units._constants
+src = Path(__file__).parent.parent / "src"
+sys.path.insert(0, str(src))
 
-common = Path(__file__).parent.parent / "src" / "ansys" / "units" / "common.py"
-all = (*ansys.units._constants._base_units, *ansys.units._constants._derived_units)
+from ansys.units._constants import _base_units, _derived_units
+
+common = src / "ansys" / "units" / "common.py"
+all = (*_base_units, *_derived_units)
 
 common.touch(exist_ok=True)
 common.write_text(

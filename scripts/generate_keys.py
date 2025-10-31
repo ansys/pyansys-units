@@ -23,20 +23,24 @@
 # SOFTWARE.
 
 from pathlib import Path
+import sys
 
 import yaml
 
-import ansys.units._constants
+src = Path(__file__).parent.parent / "src"
+sys.path.insert(0, str(src))
 
-src = Path(__file__).parent.parent / "src" / "ansys" / "units"
-si_table = src / "quantity_tables" / "si_table.yaml"
-keys_path = src / "quantity_tables" / "keys.py"
+from ansys.units._constants import _base_units, _derived_units
+
+units = src / "ansys" / "units"
+si_table = units / "quantity_tables" / "si_table.yaml"
+keys_path = units / "quantity_tables" / "keys.py"
 
 with si_table.open("r") as fp:
     table_data = yaml.safe_load(fp)
 
 common = Path(__file__).parent.parent / "src" / "ansys" / "units" / "common.py"
-all = (*ansys.units._constants._base_units, *ansys.units._constants._derived_units)
+all = (*_base_units, *_derived_units)
 
 
 keys_path.touch(exist_ok=True)
@@ -65,6 +69,7 @@ keys_path.write_text(
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 # This file is @generated
+
 from typing import Literal
 
 UnitKey = Literal[
