@@ -24,6 +24,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from typing import Literal
 
 from ansys.units._constants import _base_units, _unit_systems
 from ansys.units.base_dimensions import BaseDimensions
@@ -63,14 +64,12 @@ class UnitSystem:
     def __init__(
         self,
         base_units: Mapping[BaseDimensions, UnitKey] | None = None,
-        system: str | None = None,
+        system: Literal["SI", "CGS", "BT"] = "SI",
         copy_from: UnitSystem | None = None,
     ):
         if copy_from:
             self._units = copy_from._units
         else:
-            if not system:
-                system = "SI"
             if system not in _unit_systems:
                 raise InvalidUnitSystem(system)
             else:
