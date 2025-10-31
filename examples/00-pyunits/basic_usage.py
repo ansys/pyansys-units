@@ -92,14 +92,11 @@ torque = Quantity(value=5, dimensions=tor_dims)
 
 # Quantity table
 
-vol_dict = {"Volume": 1}
-volume = Quantity(value=1, quantity_table=vol_dict)
+volume = Quantity(value=1, quantity_table={"Volume": 1})
 
-acc_dict = {"Acceleration": 1}
-acceleration = Quantity(value=3, quantity_table=acc_dict)
+acceleration = Quantity(value=3, quantity_table={"Acceleration": 1})
 
-tor_dict = {"Torque": 1}
-torque = Quantity(value=5, quantity_table=tor_dict)
+torque = Quantity(value=5, quantity_table={"Torque": 1})
 
 ###############################################################################
 # Specify quantity properties
@@ -114,8 +111,7 @@ torque = Quantity(value=5, quantity_table=tor_dict)
 # 6. is_dimensionless : bool
 
 
-dv_dict = {"DynamicViscosity": 1}
-dynamic_viscosity = Quantity(value=50, quantity_table=dv_dict)
+dynamic_viscosity = Quantity(value=50, quantity_table={"DynamicViscosity": 1})
 
 dynamic_viscosity.value  # >>> 50.0
 dynamic_viscosity.units.name  # >>> "Pa s"
@@ -150,7 +146,7 @@ q4.units.name  # >>> "m s^-1"
 
 q5 = q2 / q1
 q5.value  # >>> 2.0
-q5.units.name  # >>> None
+q5.units.name  # >>> ''
 
 # Multiplication
 
@@ -191,19 +187,19 @@ slug.compatible_units()  # >>> {'lbm', 'g', 'lb', 'kg'}
 
 # You can perform conversions on quantities with compatible units.
 
-kg = slug.to("kg")
+kg = slug.to(kg)
 
 kg.value  # >>> 72.96951468603184
 kg.units.name  # >>> "kg"
 
 m = Quantity(value=25, units="m")
-cm = m.to("cm")
+cm = m.to(cm)
 
 cm.value  # >>> 2500
 cm.units.name  # >>> "cm"
 
-dvis = Quantity(1.0, "lb ft^-1 s^-1")
-pas = dvis.to("Pa s")
+dvis = Quantity(1.0, "lb ft^-1 s^-1")  # you can use the unit strings
+pas = dvis.to(Pa * s)
 
 pas.value  # >>> 1.4881639435695542
 pas.units.name  # >>> "Pa s"
@@ -221,8 +217,7 @@ pas.units.name  # >>> "Pa s"
 # Custom units
 
 dims = BaseDimensions
-sys_units = {dims.MASS: "slug", dims.LENGTH: "ft"}
-sys = UnitSystem(base_units=sys_units, system="SI")
+sys = UnitSystem(base_units={dims.MASS: "slug", dims.LENGTH: "ft"}, system="SI")
 sys
 """
 MASS: slug
@@ -275,8 +270,7 @@ SOLID_ANGLE: sr
 
 # Combinations of these
 
-sys_units = {dims.MASS: "slug", dims.LENGTH: "ft", dims.ANGLE: "degree"}
-cgs_modified = UnitSystem(base_units=sys_units, copy_from=cgs)
+cgs_modified = UnitSystem(base_units={dims.MASS: "slug", dims.LENGTH: "ft", dims.ANGLE: "degree"}, copy_from=cgs)
 cgs_modified
 """
 MASS: slug

@@ -23,17 +23,19 @@
 # SOFTWARE.
 
 from pathlib import Path
-
+import ansys.units._constants
 import yaml
 
-quantity_tables = (
-    Path(__file__).parent.parent / "src" / "ansys" / "units" / "quantity_tables"
-)
-si_table = quantity_tables / "si_table.yaml"
-keys_path = quantity_tables / "keys.py"
+src = Path(__file__).parent.parent / "src" / "ansys" / "units"
+si_table = src / "quantity_tables" / "si_table.yaml"
+keys_path = src / "quantity_tables" / "keys.py"
 
 with si_table.open("r") as fp:
     table_data = yaml.safe_load(fp)
+
+common = Path(__file__).parent.parent / "src" / "ansys" / "units" / "common.py"
+all = (*ansys.units._constants._base_units, *ansys.units._constants._derived_units)
+
 
 keys_path.touch(exist_ok=True)
 keys_path.write_text(
@@ -61,6 +63,10 @@ keys_path.write_text(
 # SOFTWARE.
 
 from typing import Literal
+
+UnitKey = Literal[
+{"\n".join(f'    "{key}",' for key in all)}
+]
 
 QuantityKey = Literal[
 {"\n".join(f'    "{key}",' for key in table_data["quantity_units_table"])}

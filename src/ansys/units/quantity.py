@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, Any, Generic, Protocol, TypeVar, overload, run
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
-from ansys.units.quantity_tables.keys import QuantityKey
+from ansys.units.quantity_tables.keys import QuantityKey, UnitKey
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
 
@@ -128,8 +128,7 @@ class Quantity(Generic[ValT]):
     def __init__(
         self,
         value: ValT,
-        units: Unit | str | None = None,
-        **kwargs: Any,
+        units: Unit | UnitKey | str | None = None,
     ) -> None: ...
 
     @overload
@@ -138,7 +137,6 @@ class Quantity(Generic[ValT]):
         value: ValT,
         *,
         dimensions: Dimensions,
-        **kwargs: Any,
     ) -> None: ...
 
     @overload
@@ -147,7 +145,6 @@ class Quantity(Generic[ValT]):
         value: ValT,
         *,
         quantity_table: Mapping[QuantityKey, float],
-        **kwargs: Any,
     ) -> None: ...
 
     @overload
@@ -155,7 +152,6 @@ class Quantity(Generic[ValT]):
         self,
         *,
         copy_from: "Quantity[ValT]",
-        **kwargs: Any,
     ) -> None: ...
 
     @overload
@@ -164,7 +160,6 @@ class Quantity(Generic[ValT]):
         value: ValT,
         *,
         copy_from: "Quantity",
-        **kwargs: Any,
     ) -> None: ...
 
     def __init__(
@@ -279,12 +274,12 @@ class Quantity(Generic[ValT]):
         return self._unit
 
     @property
-    def dimensions(self):
+    def dimensions(self) -> Dimensions:
         """The quantity's dimensions."""
         return self._unit.dimensions
 
     @property
-    def is_dimensionless(self):
+    def is_dimensionless(self) -> bool:
         """True if the quantity is dimensionless."""
         return not bool(self.dimensions)
 
