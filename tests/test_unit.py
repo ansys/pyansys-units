@@ -195,7 +195,8 @@ def test_unit_divide_by_quantity():
     q = Quantity(7, "kg")
     C = Unit("C")
 
-    assert C.__truediv__(q) == NotImplemented
+    with pytest.raises(AttributeError):
+        assert C.__truediv__(q)  # type: ignore
 
 
 def test_unit_div():
