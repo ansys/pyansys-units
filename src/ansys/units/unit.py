@@ -432,7 +432,7 @@ def _dim_to_units(
 
 def _units_to_dim(
     units: str, exponent: float = None, dimensions: dict = None
-) -> dict[BaseDimensions : int | float]:
+) -> dict[BaseDimensions, int | float]:
     """
     Convert a unit string into a Dimensions instance.
 
