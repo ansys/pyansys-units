@@ -32,12 +32,12 @@ repos:
   hooks:
   - id: codespell
 
-# - repo: https://github.com/PyCQA/docformatter
-#   rev: v1.7.5
-#   hooks:
-#     - id: docformatter
-#       additional_dependencies: [tomli]
-#       language: system
+- repo: https://github.com/PyCQA/docformatter
+  rev: v1.7.5
+  hooks:
+    - id: docformatter
+      additional_dependencies: [tomli]
+      language: system
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v5.0.0
