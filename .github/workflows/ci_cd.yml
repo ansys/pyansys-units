@@ -13,6 +13,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  packages: read
+  pull-requests: read
+  issues: read
+
 env:
   MAIN_PYTHON_VERSION: "3.10"
   DOCUMENTATION_CNAME: "units.docs.pyansys.com"
