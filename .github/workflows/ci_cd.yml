@@ -52,6 +52,16 @@ jobs:
           hide-log: false
           bandit-configfile: "pyproject.toml"
 
+  actions-security:
+    name: "Actions Security"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ansys/actions/check-actions-security@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
+        with:
+          generate-summary: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          auditing-level: "high"
+
   pr-name:
     if: github.event_name == 'pull_request'
     name: Check the name of the PR
