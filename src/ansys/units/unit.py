@@ -337,6 +337,8 @@ class Unit:
         return self._temp_precheck(value, op="-")
 
     def __truediv__(self, value: Unit) -> Unit:
+        if not isinstance(value, Unit):
+            return NotImplemented
         new_units = ""
         new_units = self.name
         for term in value.name.split(" "):
