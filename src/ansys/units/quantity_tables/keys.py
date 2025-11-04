@@ -93,26 +93,18 @@ LengthKey = Literal[
     "in",
 ]
 
-TimeKey = Literal[
-    "s",
-]
+TimeKey = Literal["s",]
 
-CurrentKey = Literal[
-    "A",
-]
+CurrentKey = Literal["A",]
 
 ChemicalAmountKey = Literal[
     "mol",
     "slugmol",
 ]
 
-LightKey = Literal[
-    "cd",
-]
+LightKey = Literal["cd",]
 
-SolidAngleKey = Literal[
-    "sr",
-]
+SolidAngleKey = Literal["sr",]
 
 AngleKey = Literal[
     "radian",

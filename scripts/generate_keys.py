@@ -26,6 +26,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import yaml
+import black
 
 from ansys.units._constants import _base_units, _derived_units
 
@@ -47,7 +48,8 @@ for key, value in _base_units.items():
 
 keys_path.touch(exist_ok=True)
 keys_path.write_text(
-    f"""\
+    black.format_file_contents(
+        f"""\
 # Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 
 # SPDX-License-Identifier: MIT
@@ -79,16 +81,19 @@ UnitKey = Literal[
 ]
 
 {
-        "\n\n".join(
-            f'''{dim.title().replace("_", "")}Key = Literal[
+            "\n\n".join(
+                f'''{dim.title().replace("_", "")}Key = Literal[
 {"\n".join(f'    "{unit}",' for unit in values)}
 ]'''
-            for dim, values in dims.items()
-        )
-    }
+                for dim, values in dims.items()
+            )
+        }
 
 QuantityKey = Literal[
 {"\n".join(f'    "{key}",' for key in table_data["quantity_units_table"])}
 ]
-"""
+""",
+        fast=True,
+        mode=black.Mode(),
+    )
 )

@@ -25,6 +25,8 @@
 from keyword import iskeyword
 from pathlib import Path
 
+import black
+
 from ansys.units._constants import _base_units, _derived_units
 
 src = Path(__file__).parent.parent / "src"
@@ -33,7 +35,8 @@ all = (*_base_units, *_derived_units)
 
 common.touch(exist_ok=True)
 common.write_text(
-    f"""\
+    black.format_file_contents(
+        f"""\
 # Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 
 # SPDX-License-Identifier: MIT
@@ -64,10 +67,16 @@ __all__ = (
 {"\n".join(f'    "{key if not iskeyword(key) else key + "_"}",' for key in all)}
 )
 
-{"\n".join(
-    f'''{
-        key if not iskeyword(key) else key + "_"
-    } = Unit("{key}")  #: A predefined unit for a {key}''' for key in all
-)}
-"""
+{
+            "\n".join(
+                f'''{key if not iskeyword(key) else key + "_"} = Unit("{
+                    key
+                }")  #: A predefined unit for a {key}'''
+                for key in all
+            )
+        }
+""",
+        fast=True,
+        mode=black.Mode(),
+    )
 )
