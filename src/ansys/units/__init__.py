@@ -21,12 +21,12 @@
 # SOFTWARE.
 """Pyunits is a pythonic interface for units, unit systems, and unit conversions."""
 
-try:
-    import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
-    import importlib_metadata
+import importlib.metadata
 
-__version__ = importlib_metadata.version(__name__.replace(".", "-"))
+try:
+    __version__ = importlib.metadata.version(__name__.replace(".", "-"))
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "script-running"  # should never hit this unless you're running the generation scripts
 
 import os
 

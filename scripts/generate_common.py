@@ -2,6 +2,7 @@
 # requires-python = ">=3.12"
 # dependencies = [
 #     "black",
+#     "PyYAML",
 # ]
 # ///
 # Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
@@ -25,14 +26,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import sys
 from keyword import iskeyword
 from pathlib import Path
 
 import black
 
+src = Path(__file__).parent.parent / "src"
+sys.path.insert(0, str(src))
+
 from ansys.units._constants import _base_units, _derived_units
 
-src = Path(__file__).parent.parent / "src"
 common = src / "ansys" / "units" / "common.py"
 all = (*_base_units, *_derived_units)
 
