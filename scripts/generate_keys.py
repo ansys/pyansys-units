@@ -1,5 +1,8 @@
 # /// script
 # requires-python = ">=3.12"
+# dependencies = [
+#     "black>=23.3.0",
+# ]
 # ///
 # Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
@@ -25,8 +28,8 @@
 from collections import defaultdict
 from pathlib import Path
 
-import yaml
 import black
+import yaml
 
 from ansys.units._constants import _base_units, _derived_units
 
