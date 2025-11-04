@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "black>=23.3.0",
+#     "black",
 # ]
 # ///
 # Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.

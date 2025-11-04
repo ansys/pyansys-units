@@ -63,7 +63,7 @@ repos:
   hooks:
     - id: generate-common
       name: Generate common units
-      entry: uv run python scripts/generate_common.py
+      entry: uv run scripts/generate_common.py
       language: system
       files: ^(src/ansys/units/(cfg\.yaml|_constants\.py)|scripts/generate_common\.py)$
       pass_filenames: false
@@ -71,7 +71,7 @@ repos:
 
     - id: generate-quantity-keys
       name: Generate quantity keys
-      entry: uv run python scripts/generate_keys.py
+      entry: uv run scripts/generate_keys.py
       language: system
       files: ^(src/ansys/units/quantity_tables/.*\.yaml|scripts/generate_keys\.py)$
       pass_filenames: false
