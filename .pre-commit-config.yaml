@@ -25,7 +25,6 @@ repos:
   rev: 7.1.1
   hooks:
   - id: flake8
-    args: ['--per-file-ignores', 'scripts/generate_*.py:E122']
 
 - repo: https://github.com/codespell-project/codespell
   rev: v2.3.0
