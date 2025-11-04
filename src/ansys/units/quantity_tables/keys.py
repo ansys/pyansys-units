@@ -77,6 +77,62 @@ UnitKey = Literal[
     "coulomb",
 ]
 
+MassKey = Literal[
+    "kg",
+    "g",
+    "lb",
+    "lbm",
+    "slug",
+]
+
+LengthKey = Literal[
+    "m",
+    "cm",
+    "ft",
+    "inch",
+    "in",
+]
+
+TimeKey = Literal[
+    "s",
+]
+
+CurrentKey = Literal[
+    "A",
+]
+
+ChemicalAmountKey = Literal[
+    "mol",
+    "slugmol",
+]
+
+LightKey = Literal[
+    "cd",
+]
+
+SolidAngleKey = Literal[
+    "sr",
+]
+
+AngleKey = Literal[
+    "radian",
+    "degree",
+]
+
+TemperatureKey = Literal[
+    "K",
+    "C",
+    "F",
+    "R",
+]
+
+TemperatureDifferenceKey = Literal[
+    "delta_K",
+    "delta_C",
+    "delta_F",
+    "delta_R",
+]
+
 QuantityKey = Literal[
     "Mass",
     "Length",

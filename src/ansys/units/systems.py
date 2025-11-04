@@ -28,7 +28,7 @@ from typing import Literal
 
 from ansys.units._constants import _base_units, _unit_systems
 from ansys.units.base_dimensions import BaseDimensions
-from ansys.units.quantity_tables.keys import UnitKey
+from ansys.units.quantity_tables.keys import *  # noqa: F403
 
 
 class UnitSystem:
@@ -116,93 +116,93 @@ class UnitSystem:
         setattr(self, f"_{unit_type.name}", unit)
 
     @property
-    def MASS(self) -> UnitKey:
+    def MASS(self) -> MassKey:
         """Mass unit of the unit system."""
         return self._MASS
 
     @MASS.setter
-    def MASS(self, new_unit: UnitKey) -> None:
+    def MASS(self, new_unit: MassKey) -> None:
         self._set_type(unit_type=BaseDimensions.MASS, unit=new_unit)
 
     @property
-    def LENGTH(self) -> UnitKey:
+    def LENGTH(self) -> LengthKey:
         """Length unit of the unit system."""
         return self._LENGTH
 
     @LENGTH.setter
-    def LENGTH(self, new_unit: UnitKey) -> None:
+    def LENGTH(self, new_unit: LengthKey) -> None:
         self._set_type(unit_type=BaseDimensions.LENGTH, unit=new_unit)
 
     @property
-    def TIME(self) -> UnitKey:
+    def TIME(self) -> TimeKey:
         """Time unit of the unit system."""
         return self._TIME
 
     @TIME.setter
-    def TIME(self, new_unit: UnitKey) -> None:
+    def TIME(self, new_unit: TimeKey) -> None:
         self._set_type(unit_type=BaseDimensions.TIME, unit=new_unit)
 
     @property
-    def TEMPERATURE(self) -> UnitKey:
+    def TEMPERATURE(self) -> TemperatureKey:
         """Temperature unit of the unit system."""
         return self._TEMPERATURE
 
     @TEMPERATURE.setter
-    def TEMPERATURE(self, new_unit: UnitKey) -> None:
+    def TEMPERATURE(self, new_unit: TemperatureKey) -> None:
         self._set_type(unit_type=BaseDimensions.TEMPERATURE, unit=new_unit)
 
     @property
-    def TEMPERATURE_DIFFERENCE(self) -> UnitKey:
+    def TEMPERATURE_DIFFERENCE(self) -> TemperatureDifferenceKey:
         """Temperature unit of the unit system."""
         return self._TEMPERATURE_DIFFERENCE
 
     @TEMPERATURE_DIFFERENCE.setter
-    def TEMPERATURE_DIFFERENCE(self, new_mass: UnitKey) -> None:
+    def TEMPERATURE_DIFFERENCE(self, new_mass: TemperatureDifferenceKey) -> None:
         self._set_type(unit_type=BaseDimensions.TEMPERATURE_DIFFERENCE, unit=new_mass)
 
     @property
-    def ANGLE(self) -> UnitKey:
+    def ANGLE(self) -> AngleKey:
         """Angle unit of the unit system."""
         return self._ANGLE
 
     @ANGLE.setter
-    def ANGLE(self, new_mass: UnitKey) -> None:
+    def ANGLE(self, new_mass: AngleKey) -> None:
         self._set_type(unit_type=BaseDimensions.ANGLE, unit=new_mass)
 
     @property
-    def CHEMICAL_AMOUNT(self) -> UnitKey:
+    def CHEMICAL_AMOUNT(self) -> ChemicalAmountKey:
         """Chemical Amount unit of the unit system."""
         return self._CHEMICAL_AMOUNT
 
     @CHEMICAL_AMOUNT.setter
-    def CHEMICAL_AMOUNT(self, new_mass: UnitKey) -> None:
+    def CHEMICAL_AMOUNT(self, new_mass: ChemicalAmountKey) -> None:
         self._set_type(unit_type=BaseDimensions.CHEMICAL_AMOUNT, unit=new_mass)
 
     @property
-    def LIGHT(self) -> UnitKey:
+    def LIGHT(self) -> LightKey:
         """Light unit of the unit system."""
         return self._LIGHT
 
     @LIGHT.setter
-    def LIGHT(self, new_mass: UnitKey) -> None:
+    def LIGHT(self, new_mass: LightKey) -> None:
         self._set_type(unit_type=BaseDimensions.LIGHT, unit=new_mass)
 
     @property
-    def CURRENT(self) -> UnitKey:
+    def CURRENT(self) -> CurrentKey:
         """Current unit of the unit system."""
         return self._CURRENT
 
     @CURRENT.setter
-    def CURRENT(self, new_mass: UnitKey) -> None:
+    def CURRENT(self, new_mass: CurrentKey) -> None:
         self._set_type(unit_type=BaseDimensions.CURRENT, unit=new_mass)
 
     @property
-    def SOLID_ANGLE(self) -> UnitKey:
+    def SOLID_ANGLE(self) -> SolidAngleKey:
         """Solid Angle unit of the unit system."""
         return self._SOLID_ANGLE
 
     @SOLID_ANGLE.setter
-    def SOLID_ANGLE(self, new_mass: UnitKey) -> None:
+    def SOLID_ANGLE(self, new_mass: SolidAngleKey) -> None:
         self._set_type(unit_type=BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
     def __repr__(self) -> str:
