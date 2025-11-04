@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 
 from ansys.units.base_dimensions import BaseDimensions
 
