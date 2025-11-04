@@ -42,7 +42,7 @@ all = (*_base_units, *_derived_units)
 
 common.touch(exist_ok=True)
 common.write_text(
-    black.format_file_contents(
+    black.format_str(
         f"""\
 # Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 
@@ -83,7 +83,6 @@ __all__ = (
             )
         }
 """,
-        fast=True,
         mode=black.Mode(),
     )
 )

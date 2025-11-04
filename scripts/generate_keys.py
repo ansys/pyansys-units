@@ -55,7 +55,7 @@ for key, value in _base_units.items():
 
 keys_path.touch(exist_ok=True)
 keys_path.write_text(
-    black.format_file_contents(
+    black.format_str(
         f"""\
 # Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 
@@ -100,7 +100,6 @@ QuantityKey = Literal[
 {"\n".join(f'    "{key}",' for key in table_data["quantity_units_table"])}
 ]
 """,
-        fast=True,
         mode=black.Mode(),
     )
 )
