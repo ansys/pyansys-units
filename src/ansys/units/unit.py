@@ -77,6 +77,11 @@ class Unit:
     si_offset
     dimensions
 
+    See Also
+    --------
+    :mod:`ansys.units.common`
+        A collection of predefined units for use.
+
     Examples
     --------
     >>> from ansys.units import Unit, Quantity
@@ -89,12 +94,6 @@ class Unit:
     >>> speed
     Quantity(5.0, "ft s^-1")
     """
-
-    # See also
-    # --------
-    # :mod:`ansys.units.common`
-    # for a collection of predefined units for use.
-    # """
 
     def __init__(
         self,
