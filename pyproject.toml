@@ -122,3 +122,4 @@ skips = [
 reportUnknownMemberType = false
 reportExplicitAny = false
 reportPrivateUsage = false
+ignore = ["doc"]
