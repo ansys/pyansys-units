@@ -23,7 +23,7 @@
 
 from collections.abc import Generator
 import os
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import yaml
 
@@ -78,8 +78,9 @@ class UnitRegistry:
         for key in attrs:
             returned_string += f"{key}, "
         return returned_string
-    
+
     if TYPE_CHECKING:
+
         def __getattr__(self, name: str) -> Unit: ...
 
     def __setattr__(self, name: str, unit: Any) -> None:
