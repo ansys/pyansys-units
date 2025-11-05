@@ -111,19 +111,10 @@ class Dimensions:
             results[item[0]] *= __value
         return Dimensions(results)
 
-    def __eq__(self, __value):
-        dims = __value._dimensions.copy()
-        for dim, value in self:
-            if dim in dims:
-                dims[dim] -= value
-            else:
-                return False
-        if [False for v in dims.values() if v != 0]:
-            return False
-        return True
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
+    def __eq__(self, __value: object) -> bool:
+        return (
+            isinstance(__value, Dimensions) and self._dimensions == __value._dimensions
+        )
 
     def __bool__(self):
         return bool(self._dimensions)
