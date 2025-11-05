@@ -111,6 +111,18 @@ jobs:
           python-version: ${{ matrix.python-version }}
           use-python-cache: false
           optional-dependencies-name: additional,tests
+  
+  types:
+    name: "Types"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ansys/actions/build-library@v10
+        with:
+          library-name: ${{ env.LIBRARY_NAME }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: "Check Typehints"
+        run: basedpyright
 
   doc-build:
     name: "Build documentation"

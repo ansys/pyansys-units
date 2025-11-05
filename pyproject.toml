@@ -117,3 +117,8 @@ skips = [
     "B604",
     "B607",
     ]
+
+[tool.basedpyright]
+reportUnknownMemberType = false
+reportExplicitAny = false
+reportPrivateUsage = false
