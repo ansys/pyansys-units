@@ -419,7 +419,9 @@ class Quantity(Generic[ValT]):
             dims(dimensions={base_dims.SOLID_ANGLE: 1.0}),
         ]:
             return get_si_value(self)
-        return self.value
+        raise ValueError(
+            "Cannot convert to a float as the Quantity is not dimensionless or a (solid) angle"
+        )
 
     def __getitem__(self: Quantity[ArrayLike], idx: int) -> Quantity[float]:
         return Quantity(value=float(self.value[idx]), units=self.units)
