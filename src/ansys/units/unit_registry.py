@@ -80,6 +80,7 @@ class UnitRegistry:
         return returned_string
 
     if TYPE_CHECKING:
+
         def __getattr__(self, name: str) -> Unit: ...
 
     def __setattr__(self, name: str, unit: Any) -> None:

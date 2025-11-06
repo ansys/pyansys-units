@@ -49,12 +49,15 @@ with open(qc_path, "r") as qc_yaml:
 _multipliers: dict[str, float] = qc_data["multipliers"]
 _unit_systems: dict["Systems", dict["BaseUnit", "UnitKey"]] = qc_data["unit_systems"]
 
+
 class _BaseUnitInfo(TypedDict):
     type: "BaseUnit"
     si_scaling_factor: float
     si_offset: float
 
+
 _base_units: dict[str, _BaseUnitInfo] = qc_data["base_units"]
+
 
 class _DerivedUnitInfo(TypedDict):
     composition: str
