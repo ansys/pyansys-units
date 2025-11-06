@@ -197,3 +197,22 @@ QuantityKey = Literal[
     "Volume",
     "VolumetricFlowRate",
 ]
+
+BaseUnit = Literal[
+    "MASS",
+    "LENGTH",
+    "TIME",
+    "TEMPERATURE",
+    "TEMPERATURE_DIFFERENCE",
+    "ANGLE",
+    "CHEMICAL_AMOUNT",
+    "LIGHT",
+    "CURRENT",
+    "SOLID_ANGLE",
+]
+
+Systems = Literal[
+    "SI",
+    "CGS",
+    "BT",
+]
