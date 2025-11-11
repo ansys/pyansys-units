@@ -475,7 +475,7 @@ def _units_to_dim(
     return dimensions
 
 
-def _table_to_units(table: dict) -> str:
+def _table_to_units(table: Mapping[QuantityKey, int]) -> str:
     """
     Convert a quantity table item into a unit string.
 

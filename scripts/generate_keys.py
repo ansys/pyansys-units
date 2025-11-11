@@ -36,7 +36,7 @@ import yaml
 src = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(src))
 
-from ansys.units._constants import _base_units, _derived_units
+from ansys.units._constants import _base_units, _derived_units, _unit_systems
 
 units = src / "ansys" / "units"
 si_table = units / "quantity_tables" / "si_table.yaml"
@@ -98,6 +98,14 @@ UnitKey = Literal[
 
 QuantityKey = Literal[
 {"\n".join(f'    "{key}",' for key in table_data["quantity_units_table"])}
+]
+
+BaseUnit = Literal[
+{"\n".join(f'    "{key}",' for key in _unit_systems["SI"])}
+]
+
+Systems = Literal[
+{"\n".join(f'    "{key}",' for key in _unit_systems)}
 ]
 """,
         mode=black.Mode(),
