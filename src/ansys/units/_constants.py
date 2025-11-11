@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING, TypedDict
 import yaml
 
 if TYPE_CHECKING:
-    from ansys.units.quantity_tables.keys import *
+    from ansys.units.quantity_tables.keys import *  # noqa: F403
 
 
 class _QuantityType:
