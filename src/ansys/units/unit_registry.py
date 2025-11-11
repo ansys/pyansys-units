@@ -21,7 +21,9 @@
 # SOFTWARE.
 """Provides the ``UnitRegistry`` class."""
 
+from collections.abc import Generator
 import os
+from typing import TYPE_CHECKING, Any
 
 import yaml
 
@@ -53,7 +55,7 @@ class UnitRegistry:
     >>> ureg.foot_per_sec = fps
     """
 
-    def __init__(self, config="cfg.yaml", other: dict = None):
+    def __init__(self, config: str = "cfg.yaml", other: dict[str, Unit] | None = None):
         unitdict = other or {}
 
         if config:
@@ -77,14 +79,17 @@ class UnitRegistry:
             returned_string += f"{key}, "
         return returned_string
 
-    def __setattr__(self, name: str, unit: any) -> None:
+    if TYPE_CHECKING:
+
+        def __getattr__(self, name: str) -> Unit: ...
+
+    def __setattr__(self, name: str, unit: Any) -> None:
         if hasattr(self, name):
             raise UnitAlreadyRegistered(name)
         self.__dict__[name] = unit
 
-    def __iter__(self):
-        for item in self.__dict__:
-            yield getattr(self, item)
+    def __iter__(self) -> Generator[str]:
+        yield from self.__dict__
 
 
 class UnitAlreadyRegistered(ValueError):

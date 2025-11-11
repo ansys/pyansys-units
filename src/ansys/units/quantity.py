@@ -23,12 +23,21 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterator, Mapping, Sequence
 import operator
-from typing import Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Protocol,
+    TypeVar,
+    overload,
+    runtime_checkable,
+)
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
+from ansys.units.quantity_tables.keys import QuantityKey, UnitKey
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
 
@@ -56,7 +65,40 @@ except ImportError:
     _ci, _ai, _registry = object, None, dict()
 
 
-class Quantity:
+@runtime_checkable
+class ArrayLike(Protocol):
+    """Protocol for numpy-like arrays."""
+
+    def __getitem__(self, idx: int) -> object: ...
+    def __len__(self) -> int: ...
+    def __iter__(self) -> Iterator["SupportsRichComparison"]: ...
+    def __add__(self, other: float | ArrayLike) -> "Self": ...
+    def __sub__(self, other: float | ArrayLike) -> "Self": ...
+    def __neg__(self) -> "Self": ...
+    def __mul__(self, other: float | ArrayLike) -> "Self": ...
+    def __rmul__(self, other: float | ArrayLike) -> "Self": ...
+    def __pow__(self, other: float) -> "Self": ...
+    def __truediv__(self, other: float | ArrayLike) -> "Self": ...
+    def __rtruediv__(self, other: float | ArrayLike) -> "Self": ...
+    def __lt__(self, other: float | ArrayLike) -> bool: ...
+    def tolist(self) -> Sequence[object]: ...
+
+
+if TYPE_CHECKING:
+    from _typeshed import SupportsRichComparison
+    from typing_extensions import Self, TypeVar
+
+    ValT = TypeVar(
+        "ValT",
+        bound=float | ArrayLike,
+        default=float | ArrayLike,
+        covariant=True,
+    )
+else:
+    ValT = TypeVar("ValT")
+
+
+class Quantity(Generic[ValT]):
     """
     A class representing a physical quantity's value and associated units.
 
@@ -92,14 +134,53 @@ class Quantity:
 
     _chosen_units = []
 
+    @overload
     def __init__(
         self,
-        value: Union[int, float] = None,
-        units: Union[Unit, str] = None,
-        quantity_table: dict = None,
-        dimensions: Dimensions = None,
-        copy_from: Quantity = None,
-        **kwargs,
+        value: ValT,
+        units: Unit | UnitKey | str | None = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        value: ValT,
+        *,
+        dimensions: Dimensions,
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        value: ValT,
+        *,
+        quantity_table: Mapping[QuantityKey, float],
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        *,
+        copy_from: "Quantity[ValT]",
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        value: ValT,
+        *,
+        copy_from: "Quantity",
+    ) -> None: ...
+
+    def __init__(
+        self,
+        value: ValT | None = None,
+        units: Unit | str | None = None,
+        *,
+        quantity_table: Mapping[QuantityKey, float] | None = None,
+        dimensions: Dimensions | None = None,
+        copy_from: Quantity | None = None,
+        **kwargs: Any,
     ):
         if (
             (units and quantity_table)
@@ -162,7 +243,7 @@ class Quantity:
 
     @classmethod
     def preferred_units(
-        cls, units: list[Union[Unit, str]], remove: bool = False
+        cls, units: Sequence[Unit | UnitKey], remove: bool = False
     ) -> None:
         """
         Add or remove preferred units.
@@ -193,7 +274,7 @@ class Quantity:
                 cls._chosen_units.append(unit)
 
     @property
-    def value(self):
+    def value(self) -> ValT:
         """Value in contained units."""
         return self._value
 
@@ -203,16 +284,16 @@ class Quantity:
         return self._unit
 
     @property
-    def dimensions(self):
+    def dimensions(self) -> Dimensions:
         """The quantity's dimensions."""
         return self._unit.dimensions
 
     @property
-    def is_dimensionless(self):
+    def is_dimensionless(self) -> bool:
         """True if the quantity is dimensionless."""
         return not bool(self.dimensions)
 
-    def to(self, to_units: Union[Unit, str]) -> "Quantity":
+    def to(self, to_units: Unit | str) -> "Quantity":
         """
         Perform quantity conversions.
 
@@ -283,8 +364,11 @@ class Quantity:
         return self.to(to_units=new_unit)
 
     def _relative_unit_check(
-        self, other, r_add_sub: bool, op: operator = operator.add
-    ) -> Quantity:
+        self,
+        _other: Quantity[ValT] | float,
+        r_add_sub: bool,
+        op: Callable[[Any, Any], Any] = operator.add,
+    ) -> Quantity[ValT]:
         """
         Checks relative units for temperature differences.
 
@@ -302,8 +386,7 @@ class Quantity:
         Quantity
             Quantity instance changed to or from relative units.
         """
-        if not isinstance(other, Quantity):
-            other = Quantity(other)
+        other = _other if isinstance(_other, Quantity) else Quantity(_other)
 
         # Checks the temperatures at the unit level.
         new_units, other_units = op(self.units, other.units) or (
@@ -327,7 +410,7 @@ class Quantity:
             return Quantity(value=new_value, units=other_units)
         return Quantity(value=new_value, units=new_units)
 
-    def __float__(self):
+    def __float__(self: Quantity[float]) -> float:
         base_dims = BaseDimensions
         dims = Dimensions
         if self.dimensions in [
@@ -336,23 +419,25 @@ class Quantity:
             dims(dimensions={base_dims.SOLID_ANGLE: 1.0}),
         ]:
             return get_si_value(self)
+        raise ValueError(
+            "Cannot convert to a float as the Quantity is not dimensionless or a (solid) angle"
+        )
 
-    def __getitem__(self, idx):
-        if isinstance(self.value, Iterable):
-            return Quantity(value=float(self.value[idx]), units=self.units)
+    def __getitem__(self: Quantity[ArrayLike], idx: int) -> Quantity[float]:
+        return Quantity(value=float(self.value[idx]), units=self.units)
 
     def __str__(self):
-        return f'({self.value}, "{self._unit.name}")'
+        return f"{self.value} {self.units.name}"
 
     def __repr__(self):
-        return f'Quantity ({self.value}, "{self._unit.name}")'
+        return f'Quantity({self.value}, "{self.units.name}")'
 
-    def __pow__(self, other):
+    def __pow__(self, other: float) -> Quantity["ValT"]:
         new_value = self.value**other
-        new_units = self._unit**other
+        new_units = self.units**other
         return Quantity(value=new_value, units=new_units)
 
-    def __mul__(self, other):
+    def __mul__(self, other: "Quantity" | Unit | float | int) -> "Quantity":
         if isinstance(other, Quantity):
             new_value = self.value * other.value
             new_units = self._unit * other._unit
@@ -366,11 +451,11 @@ class Quantity:
 
         if isinstance(other, (float, int)):
             return Quantity(value=self.value * other, units=self.units)
+        return NotImplemented
 
-    def __rmul__(self, other):
-        return self.__mul__(other)
+    __rmul__ = __mul__
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: "Quantity | float | Unit") -> "Quantity":
         if isinstance(other, Quantity):
             new_value = self.value / other.value
             new_units = self._unit / other._unit
@@ -385,8 +470,9 @@ class Quantity:
 
         if isinstance(other, (float, int)):
             return Quantity(value=self.value / other, units=self._unit)
+        return NotImplemented
 
-    def __rtruediv__(self, other):
+    def __rtruediv__(self, other: "Quantity | float | Unit") -> "Quantity":
         return Quantity(other, "") / self
 
     def __add__(self, other):
@@ -415,7 +501,9 @@ class Quantity:
         ):
             raise IncompatibleQuantities(self, other)
 
-    def _compute_single_value_comparison(self, other, op: operator):
+    def _compute_single_value_comparison(
+        self, other: Quantity, op: Callable[[Any, Any], bool]
+    ):
         """Compares quantity values."""
         return (
             op(get_si_value(self), other)
@@ -423,23 +511,23 @@ class Quantity:
             else op(get_si_value(self), get_si_value(other))
         )
 
-    def __gt__(self, other):
+    def __gt__(self, other: Quantity) -> bool:
         self.validate_matching_dimensions(other)
         return self._compute_single_value_comparison(other, op=operator.gt)
 
-    def __ge__(self, other):
+    def __ge__(self, other: Quantity) -> bool:
         self.validate_matching_dimensions(other)
         return self._compute_single_value_comparison(other, op=operator.ge)
 
-    def __lt__(self, other):
+    def __lt__(self, other: Quantity) -> bool:
         self.validate_matching_dimensions(other)
         return self._compute_single_value_comparison(other, op=operator.lt)
 
-    def __le__(self, other):
+    def __le__(self, other: Quantity) -> bool:
         self.validate_matching_dimensions(other)
         return self._compute_single_value_comparison(other, op=operator.le)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         self.validate_matching_dimensions(other)
         if all(
             (
@@ -454,10 +542,11 @@ class Quantity:
         ):
             return self._compute_single_value_comparison(other, op=operator.eq)
         # no type-checking here since array_equal happily processes anything
-        return _array and _array.array_equal(get_si_value(self), get_si_value(other))
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
+        return (
+            _array
+            and _array.array_equal(get_si_value(self), get_si_value(other))
+            or False
+        )
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source_type, handler):
@@ -508,10 +597,10 @@ class Quantity:
         )
 
 
-def get_si_value(quantity: Quantity) -> float:
+def get_si_value(quantity: Quantity[ValT]) -> ValT:
     """Returns a quantity's value in SI units."""
 
-    def _convert(value, offset, factor):
+    def _convert(value: float, offset: float, factor: float):
         return float((value + offset) * factor)
 
     if isinstance(quantity.value, float):
@@ -522,6 +611,12 @@ def get_si_value(quantity: Quantity) -> float:
         offset = quantity.units.si_offset
         factor = quantity.units.si_scaling_factor
         return _array.array([_convert(x, offset, factor) for x in quantity.value])
+    raise ValueError(
+        (
+            "quantity cannot be converted to a meaningful SI representation. "
+            "Perhaps you didn't install numpy"
+        )
+    )
 
 
 class ExcessiveParameters(ValueError):
@@ -599,7 +694,6 @@ class RequiresUniqueDimensions(ValueError):
 
 
 class QuantityConverter(_ci):
-
     @staticmethod
     def convert(value, unit, axis):
         if isinstance(value, Quantity):

@@ -22,8 +22,12 @@
 """Provides ``QuantityType`` class."""
 
 import os
+from typing import TYPE_CHECKING, TypedDict
 
 import yaml
+
+if TYPE_CHECKING:
+    from ansys.units.quantity_tables.keys import *  # noqa: F403
 
 
 class _QuantityType:
@@ -42,13 +46,28 @@ qc_path = os.path.join(file_dir, "cfg.yaml")
 with open(qc_path, "r") as qc_yaml:
     qc_data = yaml.safe_load(qc_yaml)
 
-_multipliers: dict = qc_data["multipliers"]
-_unit_systems: dict = qc_data["unit_systems"]
-_base_units: dict = qc_data["base_units"]
-_derived_units: dict = qc_data["derived_units"]
+_multipliers: dict[str, float] = qc_data["multipliers"]
+_unit_systems: dict["Systems", dict["BaseUnit", "UnitKey"]] = qc_data["unit_systems"]
+
+
+class _BaseUnitInfo(TypedDict):
+    type: "BaseUnit"
+    si_scaling_factor: float
+    si_offset: float
+
+
+_base_units: dict[str, _BaseUnitInfo] = qc_data["base_units"]
+
+
+class _DerivedUnitInfo(TypedDict):
+    composition: str
+    factor: float
+
+
+_derived_units: dict[str, _DerivedUnitInfo] = qc_data["derived_units"]
 
 table_path = os.path.join(file_dir, "quantity_tables/si_table.yaml")
 
 with open(table_path, "r") as table:
     table_data = yaml.safe_load(table)
-_quantity_units_table: dict = table_data["quantity_units_table"]
+_quantity_units_table: dict["QuantityKey", str] = table_data["quantity_units_table"]

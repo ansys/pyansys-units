@@ -22,8 +22,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+import functools
 import os
-from typing import Optional, Union
+from typing import TYPE_CHECKING
 
 from ansys.units._constants import (
     _base_units,
@@ -33,7 +35,18 @@ from ansys.units._constants import (
 )
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
+from ansys.units.quantity_tables.keys import QuantityKey
 from ansys.units.systems import UnitSystem
+
+if TYPE_CHECKING:
+    from ansys.units.quantity import Quantity, ValT
+
+
+@functools.cache
+def _get_quantity_and_array():
+    from ansys.units.quantity import Quantity, _array
+
+    return Quantity, _array
 
 
 class Unit:
@@ -64,6 +77,11 @@ class Unit:
     si_offset
     dimensions
 
+    See Also
+    --------
+    :mod:`ansys.units.common`
+        A collection of predefined units for use.
+
     Examples
     --------
     >>> from ansys.units import Unit, Quantity
@@ -74,17 +92,17 @@ class Unit:
     {'LENGTH': 1.0, 'TIME': -1.0}
     >>> speed = Quantity(value=5, units=fps)
     >>> speed
-    Quantity (5.0, "ft s^-1")
+    Quantity(5.0, "ft s^-1")
     """
 
     def __init__(
         self,
-        units: str = None,
-        config: dict = None,
-        dimensions: Dimensions = None,
-        system: Union[UnitSystem, str] = None,
-        table: dict = None,
-        copy_from: Unit = None,
+        units: str | None = None,
+        config: dict | None = None,
+        dimensions: Dimensions | None = None,
+        system: UnitSystem | str = None,
+        table: Mapping[QuantityKey, float] | None = None,
+        copy_from: Unit | None = None,
     ):
         if copy_from:
             if (units) and units != copy_from.name:
@@ -169,7 +187,7 @@ class Unit:
             new_units = self.name
             for term in value.name.split(" "):
                 multiplier, base, exponent = _filter_unit_term(term)
-                new_units += f" {multiplier}{base}^{exponent*-1}"
+                new_units += f" {multiplier}{base}^{exponent * -1}"
         if op == "*":
             new_units = f"{self.name} {value.name}"
         return Unit(_condense(new_units))
@@ -195,7 +213,7 @@ class Unit:
         compatible_units.discard(self.name)
         return compatible_units
 
-    def _temp_precheck(self, other_unit, op: str = "+") -> Optional[Unit]:
+    def _temp_precheck(self, other_unit, op: str = "+") -> tuple["Unit", "Unit"] | None:
         """
         Validate units for temperature differences.
 
@@ -263,7 +281,7 @@ class Unit:
 
     @property
     def dimensions(self) -> Dimensions:
-        """Then units base dimensions."""
+        """The units base dimensions."""
         return self._dimensions
 
     def convert(self, system: UnitSystem) -> Unit:
@@ -290,39 +308,62 @@ class Unit:
 
         return Unit(dimensions=self.dimensions, system=system)
 
-    def __str__(self):
-        return self._to_string()
+    def __str__(self) -> str:
+        return self.name
 
-    def __repr__(self):
-        return self._to_string()
+    def __repr__(self) -> str:
+        return f"Unit({self.name!r})"
 
-    def __add__(self, value):
+    def __add__(self, value) -> tuple["Unit", "Unit"]:
         return self._temp_precheck(value)
 
-    def __mul__(self, value):
+    def __mul__(self, value: "Unit") -> "Unit":
         if isinstance(value, Unit):
-            return self._new_units(value, op="*")
+            new_units = f"{self.name} {value.name}"
+            return Unit(_condense(new_units))
 
         else:
             return NotImplemented
 
-    def __rmul__(self, value):
-        return self.__mul__(value)
+    def __rmul__(self, value: "ValT") -> "Quantity[ValT]":
+        Quantity, _array = _get_quantity_and_array()
+        if isinstance(value, (float, int)) or (
+            _array and isinstance(value, _array.ndarray)
+        ):
+            return Quantity(value=value, units=self)
+        return NotImplemented  # other cases should have already handled this so nothing to do
 
-    def __sub__(self, value):
+    def __sub__(self, value: "Unit") -> tuple["Unit", "Unit"]:
         return self._temp_precheck(value, op="-")
 
-    def __truediv__(self, value):
-        if isinstance(value, Unit):
-            return self._new_units(value, op="/")
-
-        else:
+    def __truediv__(self, value: Unit) -> Unit:
+        if not isinstance(value, Unit):
             return NotImplemented
+        new_units = ""
+        new_units = self.name
+        for term in value.name.split(" "):
+            multiplier, base, exponent = _filter_unit_term(term)
+            new_units += f" {multiplier}{base}^{exponent * -1}"
+        return Unit(_condense(new_units))
 
-    def __pow__(self, value):
-        return self._new_units(value, op="**")
+    def __rtruediv__(self, value: "ValT") -> "Quantity[ValT]":
+        Quantity, _array = _get_quantity_and_array()
+        if isinstance(value, (float, int)) or (
+            _array and isinstance(value, _array.ndarray)
+        ):
+            return Quantity(value=value, units=self**-1)
+        return NotImplemented  # other cases should have already handled this so nothing to do
 
-    def __eq__(self, other_unit):
+    def __pow__(self, value: "Unit" | float) -> "Unit":
+        new_units = ""
+        for term in self.name.split(" "):
+            multiplier, base, exponent = _filter_unit_term(term)
+            exponent *= value
+            new_units += f"{multiplier}{base}^{exponent} "
+
+        return Unit(_condense(new_units))
+
+    def __eq__(self, other_unit: object) -> bool:
         if not isinstance(other_unit, Unit) and self.name:
             return False
         if isinstance(other_unit, Unit):
@@ -333,9 +374,6 @@ class Unit:
             ]
             return all(checks)
         return True
-
-    def __ne__(self, other_unit):
-        return not self.__eq__(other_unit=other_unit)
 
 
 def _get_config(name: str) -> dict:
@@ -395,7 +433,7 @@ def _dim_to_units(
 
 def _units_to_dim(
     units: str, exponent: float = None, dimensions: dict = None
-) -> dict[BaseDimensions : Union[int, float]]:
+) -> dict[BaseDimensions, int | float]:
     """
     Convert a unit string into a Dimensions instance.
 
@@ -437,7 +475,7 @@ def _units_to_dim(
     return dimensions
 
 
-def _table_to_units(table: dict) -> str:
+def _table_to_units(table: Mapping[QuantityKey, int]) -> str:
     """
     Convert a quantity table item into a unit string.
 
@@ -462,7 +500,7 @@ def _table_to_units(table: dict) -> str:
         for term in terms.split(" "):
             multiplier, base, exponent = _filter_unit_term(term)
 
-            base_unit += f"{multiplier}{base}^{exponent*value} "
+            base_unit += f"{multiplier}{base}^{exponent * value} "
 
     return _condense(base_unit)
 
@@ -513,7 +551,7 @@ def _si_map(unit_term: str) -> str:
             return term
 
 
-def _condense(units=str) -> str:
+def _condense(units: str) -> str:
     """
     Condense a unit string by collecting like terms.
 

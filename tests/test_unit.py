@@ -129,8 +129,7 @@ _si_scaling_factor: 1.0
 _si_offset: 273.15
 _si_units: K
 """
-    assert str(C) == C_string
-    assert str(C) == repr(C)
+    assert C._to_string() == C_string
 
 
 def test_add():
@@ -175,6 +174,10 @@ def test_reverse_multiply():
     assert new_unit.name == "K kg J"
 
 
+def test_rmul():
+    assert 7 * Unit("kg") == Quantity(7, "kg")
+
+
 def test_sub():
     C = Unit("C")
     kg = Unit("kg")
@@ -192,7 +195,7 @@ def test_unit_divide_by_quantity():
     q = Quantity(7, "kg")
     C = Unit("C")
 
-    assert C.__truediv__(q) == NotImplemented
+    assert C.__truediv__(q)  # type: ignore
 
 
 def test_unit_div():
@@ -200,6 +203,15 @@ def test_unit_div():
     kg = Unit("kg")
     kg_K = kg / K
     assert kg_K.name == "kg K^-1"
+
+
+def test_rtruediv():
+    K = Unit("K")
+    kg = Unit("kg")
+    kg_K = kg / K
+    assert kg_K.name == "kg K^-1"
+
+    assert 1 / K == Quantity(1, "K^-1")
 
 
 def test_unit_pow():

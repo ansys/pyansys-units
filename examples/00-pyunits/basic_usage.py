@@ -45,15 +45,29 @@ This example shows you how to perform these tasks:
 # Import the ``ansys.units`` package.
 
 from ansys.units import BaseDimensions, Dimensions, Quantity, UnitSystem
+from ansys.units.common import *  # noqa: F403
 from ansys.units.quantity import get_si_value
 
 ###############################################################################
 # Create quantities
 # ~~~~~~~~~~~~~~~~~
-# You can instantiate quantities using one of three methods:
+# You can instantiate quantities using one of four methods:
+# - Unit operations from common : float, Unit
 # - Unit strings : str, Unit
 # - Dimensions : Dimensions
 # - Quantity table : dict
+
+# Unit operations
+
+volume = 1 * m**3
+
+acceleration = 3 * m * s**-2
+
+torque = 5 * N * m
+
+pressure = 250 * Pa  # there are even some derived units
+
+combined = (2 * N) / (m**2) + (3 * Pa)
 
 # Unit strings
 
@@ -78,14 +92,11 @@ torque = Quantity(value=5, dimensions=tor_dims)
 
 # Quantity table
 
-vol_dict = {"Volume": 1}
-volume = Quantity(value=1, quantity_table=vol_dict)
+volume = Quantity(value=1, quantity_table={"Volume": 1})
 
-acc_dict = {"Acceleration": 1}
-acceleration = Quantity(value=3, quantity_table=acc_dict)
+acceleration = Quantity(value=3, quantity_table={"Acceleration": 1})
 
-tor_dict = {"Torque": 1}
-torque = Quantity(value=5, quantity_table=tor_dict)
+torque = Quantity(value=5, quantity_table={"Torque": 1})
 
 ###############################################################################
 # Specify quantity properties
@@ -100,8 +111,7 @@ torque = Quantity(value=5, quantity_table=tor_dict)
 # 6. is_dimensionless : bool
 
 
-dv_dict = {"DynamicViscosity": 1}
-dynamic_viscosity = Quantity(value=50, quantity_table=dv_dict)
+dynamic_viscosity = Quantity(value=50, quantity_table={"DynamicViscosity": 1})
 
 dynamic_viscosity.value  # >>> 50.0
 dynamic_viscosity.units.name  # >>> "Pa s"
@@ -117,8 +127,8 @@ get_si_value(dynamic_viscosity)  # >>> 50.0
 
 import math
 
-q1 = Quantity(10.0, "m s^-1")
-q2 = Quantity(5.0, "m s^-1")
+q1 = 10 * m * s**-1
+q2 = 5.0 * m * s**-1
 
 # Subtraction
 
@@ -136,7 +146,7 @@ q4.units.name  # >>> "m s^-1"
 
 q5 = q2 / q1
 q5.value  # >>> 2.0
-q5.units.name  # >>> None
+q5.units.name  # >>> ''
 
 # Multiplication
 
@@ -158,38 +168,38 @@ q8.units.name  # >>> "m^2 s^-2"
 
 # Roots
 
-q9 = Quantity(5.0, "")
+q9 = Quantity(5.0)
 
 math.sqrt(q9)  # >>> 2.2360679775
 
 # Trigonometry
 
-math.sin(Quantity(90, "degree"))  # >>> 1.0
-math.cos(Quantity(math.pi, "radian"))  # >>> -1.0
+math.sin(90 * degree)  # >>> 1.0
+math.cos(math.pi * radian)  # >>> -1.0
 
 ###############################################################################
 # Perform conversions
 # ~~~~~~~~~~~~~~~~~~~
 # To check the compatible units use the 'compatible_units' method.
 
-slug = Quantity(value=5, units="slug")
-slug.compatible_units()  # >>> {'lbm', 'g', 'lb', 'kg'}
+five_slug = 5 * slug
+five_slug.compatible_units()  # >>> {'lbm', 'g', 'lb', 'kg'}
 
 # You can perform conversions on quantities with compatible units.
 
-kg = slug.to("kg")
+five_slug_in_kg = five_slug.to(kg)
 
-kg.value  # >>> 72.96951468603184
-kg.units.name  # >>> "kg"
+five_slug_in_kg.value  # >>> 72.96951468603184
+five_slug_in_kg.units.name  # >>> "kg"
 
-m = Quantity(value=25, units="m")
-cm = m.to("cm")
+twenty_five_ms = 25 * m
+cm = twenty_five_ms.to(cm)
 
 cm.value  # >>> 2500
 cm.units.name  # >>> "cm"
 
-dvis = Quantity(1.0, "lb ft^-1 s^-1")
-pas = dvis.to("Pa s")
+dvis = 1.0 * lb * ft**-1 * s**-1
+pas = dvis.to(Pa * s)
 
 pas.value  # >>> 1.4881639435695542
 pas.units.name  # >>> "Pa s"
@@ -207,8 +217,7 @@ pas.units.name  # >>> "Pa s"
 # Custom units
 
 dims = BaseDimensions
-sys_units = {dims.MASS: "slug", dims.LENGTH: "ft"}
-sys = UnitSystem(base_units=sys_units, system="SI")
+sys = UnitSystem(base_units={dims.MASS: "slug", dims.LENGTH: "ft"}, system="SI")
 sys
 """
 MASS: slug
@@ -261,8 +270,10 @@ SOLID_ANGLE: sr
 
 # Combinations of these
 
-sys_units = {dims.MASS: "slug", dims.LENGTH: "ft", dims.ANGLE: "degree"}
-cgs_modified = UnitSystem(base_units=sys_units, copy_from=cgs)
+cgs_modified = UnitSystem(
+    base_units={dims.MASS: "slug", dims.LENGTH: "ft", dims.ANGLE: "degree"},
+    copy_from=cgs,
+)
 cgs_modified
 """
 MASS: slug
@@ -284,7 +295,7 @@ SOLID_ANGLE: sr
 # You can create a unit system independently and apply it to quantities.
 
 si = UnitSystem()
-feet_per_second = Quantity(value=11.2, units="ft s^-1")
+feet_per_second = 11.2 * ft * s**-1
 
 meters_per_second = feet_per_second.convert(si)
 
@@ -297,13 +308,13 @@ meters_per_second.units  # >>> "m s^-1"
 # ~~~~~~~~~~~~~~~~~~~~~
 # Specify a list of units that quantities will automatically convert to.
 
-Quantity.preferred_units(units=["J"])
+Quantity.preferred_units(units=[J])
 
 torque = Quantity(1, quantity_table={"Torque": 1})
 torque  # >>> Quantity (1.0, "J")
 
-ten_N = Quantity(10, units="N")
-ten_m = Quantity(10, units="m")
+ten_N = 10 * N
+ten_m = 10 * m
 
 joules = ten_N * ten_m
 joules  # >>> Quantity (100.0, "J")

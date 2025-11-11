@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-from typing import Union
+from collections.abc import Generator, Mapping
 
 from ansys.units.base_dimensions import BaseDimensions
 
@@ -51,11 +51,11 @@ class Dimensions:
 
     def __init__(
         self,
-        dimensions: dict[BaseDimensions, Union[int, float]] = None,
-        copy_from: Dimensions = None,
+        dimensions: Mapping[BaseDimensions, float] | None = None,
+        copy_from: Dimensions | None = None,
     ):
         dimensions = dimensions or {}
-        self._dimensions = {
+        self._dimensions: dict[BaseDimensions, float] = {
             **(copy_from._dimensions if copy_from else {}),
             **(dimensions),
         }
@@ -77,17 +77,16 @@ class Dimensions:
         """
         return str({x.name: y for x, y in self})
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._to_string()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self._to_string()
 
-    def __iter__(self):
-        for item in self._dimensions.items():
-            yield item
+    def __iter__(self) -> Generator[tuple[BaseDimensions, float]]:
+        yield from self._dimensions.items()
 
-    def __mul__(self, other):
+    def __mul__(self, other: Dimensions) -> Dimensions:
         results = self._dimensions.copy()
         for dim, value in other:
             if dim in results:
@@ -96,7 +95,7 @@ class Dimensions:
                 results[dim] = value
         return Dimensions(results)
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: Dimensions) -> Dimensions:
         results = self._dimensions.copy()
         for dim, value in other:
             if dim in results:
@@ -105,7 +104,7 @@ class Dimensions:
                 results[dim] = -value
         return Dimensions(results)
 
-    def __pow__(self, __value):
+    def __pow__(self, __value: float) -> Dimensions:
         results = self._dimensions.copy()
         for item in self:
             results[item[0]] *= __value
@@ -119,7 +118,7 @@ class Dimensions:
     def __bool__(self):
         return bool(self._dimensions)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> float:
         dimension_name = BaseDimensions[key]
         return self._dimensions[dimension_name]
 
