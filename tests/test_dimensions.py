@@ -97,13 +97,15 @@ def test_eq():
     d2 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     assert d1 == d2
 
+    d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: 0})
+    d2 = Dimensions(dimensions={dims.LENGTH: 1})
+    assert d1 == d2
+
     d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TEMPERATURE: 1})
     d2 = Dimensions(dimensions={dims.LENGTH: 1, dims.TEMPERATURE_DIFFERENCE: 1})
 
-    assert (d1 == d2) == False
+    assert d1 != d2
 
-
-def test_ne():
     dims = BaseDimensions
     d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     d2 = Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: -3})
