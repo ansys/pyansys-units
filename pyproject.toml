@@ -51,7 +51,7 @@ additional = [
     "pydantic_core>=2.33.2",
 ]
 # getting versions of matplotlib and numpy that are compatible is hard so we have this for CI
-_types = [
+ci_types = [
     "matplotlib==3.10.7",
     "pydantic>=2.11.7",
     "pydantic_core>=2.33.2",
@@ -59,6 +59,7 @@ _types = [
     "pytest-cov==7.0.0",
     "pytest-mock==3.15.1",
     "pint==0.24.4",
+    "black==24.10.0",
 ]
 
 [project.urls]
@@ -132,4 +133,5 @@ skips = [
 reportUnknownMemberType = false
 reportExplicitAny = false
 reportPrivateUsage = false
+reportUnusedCallResult = false
 ignore = ["doc"]
