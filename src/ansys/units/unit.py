@@ -25,11 +25,13 @@ from __future__ import annotations
 from collections.abc import Mapping
 import functools
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ansys.units._constants import (
     _base_units,
+    _BaseUnitInfo,
     _derived_units,
+    _DerivedUnitInfo,
     _multipliers,
     _quantity_units_table,
 )
@@ -98,7 +100,7 @@ class Unit:
     def __init__(
         self,
         units: str | None = None,
-        config: dict | None = None,
+        config: Mapping[str, Any] | None = None,
         dimensions: Dimensions | None = None,
         system: UnitSystem | str = None,
         table: Mapping[QuantityKey, float] | None = None,
@@ -376,7 +378,7 @@ class Unit:
         return True
 
 
-def _get_config(name: str) -> dict:
+def _get_config(name: str) -> _BaseUnitInfo | _DerivedUnitInfo | None:
     """
     Retrieve unit configuration from '_base_units' or '_derived_units'.
 
@@ -432,8 +434,12 @@ def _dim_to_units(
 
 
 def _units_to_dim(
-    units: str, exponent: float = None, dimensions: dict = None
-) -> dict[BaseDimensions, int | float]:
+    units: str,
+    exponent: float = 1.0,
+    dimensions: Mapping[
+        BaseDimensions, float
+    ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
+) -> dict[BaseDimensions, float]:
     """
     Convert a unit string into a Dimensions instance.
 
@@ -446,8 +452,7 @@ def _units_to_dim(
     dict
         Dimensions dictionary
     """
-    exponent = exponent or 1.0
-    dimensions = dimensions or {}
+    dimensions = dict(dimensions)
     # Split unit string into terms and parse data associated with individual terms
     for term in units.split(" "):
         _, unit_term, unit_term_exponent = _filter_unit_term(term)
@@ -590,7 +595,7 @@ def _condense(units: str) -> str:
     return units.rstrip()
 
 
-def _filter_unit_term(unit_term: str) -> tuple:
+def _filter_unit_term(unit_term: str) -> tuple[str, str, float]:
     """
     Separate multiplier, base, and exponent from a unit term.
 

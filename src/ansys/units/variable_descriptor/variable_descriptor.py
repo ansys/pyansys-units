@@ -28,6 +28,7 @@ naming conventions.
 """
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_dimensions import QuantityDimensions
@@ -99,6 +100,10 @@ class VariableCatalog:
     # Inject generated descriptors as class attributes
     for _key, _descriptor in _generated.items():
         locals()[_key] = _descriptor
+
+    if TYPE_CHECKING:
+        # would be nice if there was keyof QuantityDimensions
+        def __getattr__(self, key: str) -> VariableDescriptor: ...
 
     @classmethod
     def all(cls) -> dict[str, list[VariableDescriptor]]:

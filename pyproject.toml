@@ -50,6 +50,17 @@ additional = [
     "pydantic>=2.11.7",
     "pydantic_core>=2.33.2",
 ]
+# getting versions of matplotlib and numpy that are compatible is hard so we have this for CI
+ci_types = [
+    "matplotlib==3.10.7",
+    "pydantic>=2.11.7",
+    "pydantic_core>=2.33.2",
+    "pytest==8.4.2",
+    "pytest-cov==7.0.0",
+    "pytest-mock==3.15.1",
+    "pint==0.24.4",
+    "black==24.10.0",
+]
 
 [project.urls]
 Source = "https://github.com/ansys/pyansys-units"
@@ -117,3 +128,10 @@ skips = [
     "B604",
     "B607",
     ]
+
+[tool.basedpyright]
+reportUnknownMemberType = false
+reportExplicitAny = false
+reportPrivateUsage = false
+reportUnusedCallResult = false
+ignore = ["doc"]
