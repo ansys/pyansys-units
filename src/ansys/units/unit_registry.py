@@ -27,8 +27,8 @@ from typing import TYPE_CHECKING, Any
 
 import yaml
 
-from ansys.units.unit import Unit
 from ansys.units._constants import _BaseUnitInfo, _DerivedUnitInfo
+from ansys.units.unit import Unit
 
 
 class UnitRegistry:
@@ -59,7 +59,9 @@ class UnitRegistry:
     def __init__(
         self,
         config: str = "cfg.yaml",
-        other: Mapping[str, Mapping[str, Any]] = {},  # pyright: ignore[reportCallInDefaultInitializer]
+        other: Mapping[
+            str, Mapping[str, Any]
+        ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
     ):
         unitdict = dict(other)
 
@@ -69,7 +71,7 @@ class UnitRegistry:
 
             with open(qc_path, "r") as qc_yaml:
                 qc_data = yaml.safe_load(qc_yaml)
-                _base_units: dict[str, _BaseUnitInfo]  = qc_data["base_units"]
+                _base_units: dict[str, _BaseUnitInfo] = qc_data["base_units"]
                 _derived_units: dict[str, _DerivedUnitInfo] = qc_data["derived_units"]
 
             unitdict |= _base_units | _derived_units

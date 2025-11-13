@@ -29,11 +29,11 @@ from typing import TYPE_CHECKING, Any
 
 from ansys.units._constants import (
     _base_units,
+    _BaseUnitInfo,
     _derived_units,
+    _DerivedUnitInfo,
     _multipliers,
     _quantity_units_table,
-    _BaseUnitInfo,
-    _DerivedUnitInfo,
 )
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
@@ -436,7 +436,9 @@ def _dim_to_units(
 def _units_to_dim(
     units: str,
     exponent: float = 1.0,
-    dimensions: Mapping[BaseDimensions, float] = {},  # pyright: ignore[reportCallInDefaultInitializer]
+    dimensions: Mapping[
+        BaseDimensions, float
+    ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
 ) -> dict[BaseDimensions, float]:
     """
     Convert a unit string into a Dimensions instance.
