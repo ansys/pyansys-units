@@ -125,7 +125,7 @@ jobs:
         run: uv tool install basedpyright
 
       - name: "Install extras"
-        run: uv pip install -e ".[tests,additional]"
+        run: uv pip install -e ".[tests,additional]" --system
 
       - name: "Check Typehints"
         run: basedpyright
