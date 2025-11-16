@@ -10,6 +10,7 @@
 * [Alexander Carvalho](https://github.com/acarvalh-work)
 * [Dan Williams](https://github.com/dnwillia)
 * [Dan Williams](https://github.com/dnwillia-work)
+* [James Hilton-Balfe](https://github.com/Gobot1234)
 * [Jorge Martínez](https://github.com/jorgepiloto)
 * [Kathy Pippert](https://github.com/PipKat)
 * [Mainak Kundu](https://github.com/mkundu1)
