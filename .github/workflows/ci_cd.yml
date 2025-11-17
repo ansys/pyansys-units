@@ -120,7 +120,7 @@ jobs:
       - uses: ansys/actions/build-library@v10
         with:
           library-name: ${{ env.LIBRARY_NAME }}-types
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: "Install basedpyright"
         run: uv tool install basedpyright
