@@ -126,7 +126,7 @@ jobs:
         run: uv tool install basedpyright
 
       - name: "Install extras"
-        run: uv pip install -e ".[ci_types]"
+        run: uv pip install -e ".[ci_types]" --system
 
       - name: "Check Type hints"
         run: basedpyright
