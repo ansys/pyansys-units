@@ -59,7 +59,7 @@ ci_types = [
     "pytest-cov==7.0.0",
     "pytest-mock==3.15.1",
     "pint==0.24.4",
-    "black==24.10.0",
+    "black==25.11.0",
 ]
 
 [project.urls]
