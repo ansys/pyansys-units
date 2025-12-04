@@ -93,7 +93,7 @@ these commands:
 Getting started
 ---------------
 
-PyAnsys Units supports flexible instantiation of ``Quantity`` objects along with symbolic calcuations using the standard operators:
+PyAnsys Units supports flexible instantiation of ``Quantity`` objects along with symbolic calculations using the standard operators:
 
 .. code:: python
 
