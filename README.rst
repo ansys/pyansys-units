@@ -98,7 +98,7 @@ PyAnsys Units supports flexible instantiation of ``Quantity`` objects along with
 .. code:: python
 
    import ansys.units as ansunits
-   from ansys.units.common import *
+   from ansys.units.common import m
 
    # Using the pre-defined units in ansys.units.common
 
