@@ -146,7 +146,7 @@ a list of floats or a ``NumPy`` array:
 
 .. code:: python
 
-    from ansys.units.common import *
+    from ansys.units.common import m, s
     import numpy as np
 
     length_array_quantity = np.array([1.0, 6.0, 7.0]) * m
@@ -190,7 +190,7 @@ Perform arithmetic operations:
 
 .. code:: python
 
-   from ansys.units.common import *
+   from ansys.units.common import degree, m, s
 
    deg = 90 * degree
    math.sin(deg)  # 1.0
@@ -209,7 +209,7 @@ Directly convert values to another set of units:
 
 .. code:: python
 
-   from ansys.units.common import *
+   from ansys.units.common import lb, ft, s, Pa
 
    flbs = 1 * lb / ft / s
    flbs.value  # 1
@@ -223,7 +223,7 @@ Use a custom unit system to perform conversions:
 .. code:: python
 
    import ansys.units as ansunits
-   from ansys.units.common import *
+   from ansys.units.common import kg, m, s
 
    ureg = ansunits.UnitRegistry()
    dims = ansunits.BaseDimensions
@@ -238,7 +238,7 @@ Use a custom unit system to perform conversions:
        }
    )
 
-   v = 10 * kg * m s**2
+   v = 10 * kg * m * s**2
    v2 = sys.convert(v)
 
    v2.value  # 2.2480894309971045
