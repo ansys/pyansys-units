@@ -35,11 +35,14 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           skip-install: false
 
+      - name: "Make venv"
+        run: uv venv
+
       - name: "Install basedpyright"
         run: uv tool install basedpyright
 
       - name: "Install extras"
-        run: uv pip install -e ".[ci_types]" --system
+        run: uv pip install -e ".[ci_types]"
 
       - name: "Check Type hints"
         run: basedpyright
