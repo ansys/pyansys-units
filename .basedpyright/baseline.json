@@ -5096,8 +5096,8 @@
             {
                 "code": "reportArgumentType",
                 "range": {
-                    "startColumn": 71,
-                    "endColumn": 83,
+                    "startColumn": 8,
+                    "endColumn": 20,
                     "lineCount": 1
                 }
             },

@@ -260,8 +260,13 @@ def test_unconfigured_units():
 def test_errors():
     with pytest.raises(UnknownTableItem):
         Unit(
-            table={"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
-        )  # pyright: ignore[reportArgumentType]
+            table={
+                "Bread": 2,
+                "Chicken": 1,
+                "Eggs": 7,
+                "Milk": -4,
+            }  # pyright: ignore[reportArgumentType]
+        )
 
 
 def test_error_messages():
