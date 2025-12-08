@@ -127,7 +127,9 @@ def test_errors():
     Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: 1})
 
     with pytest.raises(IncorrectDimensions):
-        Dimensions(dimensions={dims.MASS: 1, 11: 1})  # pyright: ignore[reportArgumentType]
+        Dimensions(
+            dimensions={dims.MASS: 1, 11: 1}
+        )  # pyright: ignore[reportArgumentType]
 
 
 def test_error_messages():

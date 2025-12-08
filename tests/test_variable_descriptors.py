@@ -36,7 +36,6 @@ def test_create_descriptors():
 
 
 def test_descriptor_strategies():
-
     class JapaneseAPIStrategy(MappingConversionStrategy):
         _mapping = {
             VariableCatalog.PRESSURE: "atsuryoku",

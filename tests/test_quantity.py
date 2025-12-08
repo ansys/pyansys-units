@@ -157,8 +157,11 @@ def test_array_compare():
     if not _supporting_numpy():
         return
     import numpy as np
+
     why_7s_scary: NDArray[np.integer] = np.array([7, 8, 9])
-    assert Quantity[float | ArrayLike](why_7s_scary, "kg") == Quantity(why_7s_scary, "kg")
+    assert Quantity[float | ArrayLike](why_7s_scary, "kg") == Quantity(
+        why_7s_scary, "kg"
+    )
     assert Quantity(why_7s_scary, "kg") != Quantity(np.array([1, 2, 3]), "kg")
     with pytest.raises(IncompatibleDimensions):
         Quantity(why_7s_scary, "kg") != Quantity(why_7s_scary, "m")
@@ -182,6 +185,7 @@ def test_array_to():
     if not _supporting_numpy():
         return
     import numpy as np
+
     to = Quantity(np.array([1, 2]), "in").to("m")
     assert to.value[0] == get_si_value(Quantity(1, "in"))
     assert to.value[1] == get_si_value(Quantity(2, "in"))

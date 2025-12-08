@@ -88,7 +88,8 @@ class UnitRegistry:
 
     if TYPE_CHECKING:
 
-        def __getattr__(self, name: str) -> Unit: ...
+        def __getattr__(self, name: str) -> Unit:
+            ...
 
     def __setattr__(self, name: str, unit: Any) -> None:
         if hasattr(self, name):

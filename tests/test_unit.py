@@ -251,9 +251,7 @@ def test_copy_units_with_incompatable_dimensions():
 
 
 def test_unconfigured_units():
-
     with pytest.raises(UnconfiguredUnit):
-
         Quantity(value=1, units="k")
 
         Quantity(value=1, units="kg m^2 k")
@@ -261,7 +259,9 @@ def test_unconfigured_units():
 
 def test_errors():
     with pytest.raises(UnknownTableItem):
-        Unit(table={"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4})  # pyright: ignore[reportArgumentType]
+        Unit(
+            table={"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
+        )  # pyright: ignore[reportArgumentType]
 
 
 def test_error_messages():
