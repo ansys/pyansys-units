@@ -103,8 +103,7 @@ class VariableCatalog:
 
     if TYPE_CHECKING:
         # would be nice if there was keyof QuantityDimensions
-        def __getattr__(self, key: str) -> VariableDescriptor:
-            ...
+        def __getattr__(self, key: str) -> VariableDescriptor: ...
 
     @classmethod
     def all(cls) -> dict[str, list[VariableDescriptor]]:

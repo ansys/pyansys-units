@@ -20,8 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.units import __version__
 import importlib.metadata
+
+from ansys.units import __version__
 
 
 def test_pkg_version():
