@@ -140,7 +140,7 @@ def test_add():
 
     assert delta_temp == Unit("delta_C")
     assert temp_C == Unit("C")
-    assert kg + kg == None
+    assert kg + kg is None
 
     with pytest.raises(ProhibitedTemperatureOperation):
         C + C
@@ -186,7 +186,7 @@ def test_sub():
 
     assert C == Unit("C")
     assert delta_C == Unit("delta_C")
-    assert kg - kg == None
+    assert kg - kg is None
 
     with pytest.raises(IncorrectUnits):
         C - kg
@@ -236,7 +236,7 @@ def test_ne():
 def test_excessive_parameters_not_allowed():
     dims = BaseDimensions
     with pytest.raises(InconsistentDimensions):
-        C = Unit("kg", dimensions=Dimensions({dims.LENGTH: 1}))
+        Unit("kg", dimensions=Dimensions({dims.LENGTH: 1}))
 
 
 def test_incorrect_unit_with_multiplier():
@@ -254,15 +254,14 @@ def test_unconfigured_units():
 
     with pytest.raises(UnconfiguredUnit):
 
-        q2 = Quantity(value=1, units="k")
+        Quantity(value=1, units="k")
 
-        q3 = Quantity(value=1, units="kg m^2 k")
+        Quantity(value=1, units="kg m^2 k")
 
 
 def test_errors():
-    qm_table = {"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
-    with pytest.raises(UnknownTableItem) as e_info:
-        qm = Unit(table=qm_table)
+    with pytest.raises(UnknownTableItem):
+        Unit(table={"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4})  # pyright: ignore[reportArgumentType]
 
 
 def test_error_messages():

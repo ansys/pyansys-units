@@ -123,18 +123,18 @@ def test_dimensional():
 
 def test_errors():
     dims = BaseDimensions
-    d1 = Dimensions(dimensions={dims.LENGTH: 2})
-    d2 = Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: 1})
+    Dimensions(dimensions={dims.LENGTH: 2})
+    Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: 1})
 
-    with pytest.raises(IncorrectDimensions) as e_info:
-        d3 = Dimensions(dimensions={dims.MASS: 1, 11: 1})
+    with pytest.raises(IncorrectDimensions):
+        Dimensions(dimensions={dims.MASS: 1, 11: 1})  # pyright: ignore[reportArgumentType]
 
 
 def test_error_messages():
     dims = BaseDimensions
-    d1 = Dimensions(dimensions={dims.LENGTH: 2})
+    Dimensions(dimensions={dims.LENGTH: 2})
     e1 = IncorrectDimensions()
-    assert str(e1) == f"The `dimensions` key must be a 'BaseDimensions' object"
+    assert str(e1) == "The `dimensions` key must be a 'BaseDimensions' object"
 
 
 def test_quantity_dimensions():
