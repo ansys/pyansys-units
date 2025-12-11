@@ -28,7 +28,9 @@ import operator
 from typing import (
     TYPE_CHECKING,
     Any,
+    ClassVar,
     Generic,
+    Literal,
     Protocol,
     TypeVar,
     overload,
@@ -69,18 +71,30 @@ except ImportError:
 class ArrayLike(Protocol):
     """Protocol for numpy-like arrays."""
 
-    def __getitem__(self, idx: int) -> object: ...
+    def __getitem__(self, idx: int, /) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __iter__(self) -> Iterator["SupportsRichComparison"]: ...
-    def __add__(self, other: float | ArrayLike) -> "Self": ...
-    def __sub__(self, other: float | ArrayLike) -> "Self": ...
+
+    def __add__(self, other: float | ArrayLike, /) -> "Self": ...
+
+    def __sub__(self, other: float | ArrayLike, /) -> "Self": ...
+
     def __neg__(self) -> "Self": ...
-    def __mul__(self, other: float | ArrayLike) -> "Self": ...
-    def __rmul__(self, other: float | ArrayLike) -> "Self": ...
+
+    def __mul__(self, other: float | ArrayLike, /) -> "Self": ...
+
+    def __rmul__(self, other: float | ArrayLike, /) -> "Self": ...
+
     def __pow__(self, other: float) -> "Self": ...
-    def __truediv__(self, other: float | ArrayLike) -> "Self": ...
-    def __rtruediv__(self, other: float | ArrayLike) -> "Self": ...
-    def __lt__(self, other: float | ArrayLike) -> bool: ...
+
+    def __truediv__(self, other: float | ArrayLike, /) -> "Self": ...
+
+    def __rtruediv__(self, other: float | ArrayLike, /) -> "Self": ...
+
+    def __lt__(self, other: float | ArrayLike, /) -> bool: ...
+
     def tolist(self) -> Sequence[object]: ...
 
 
@@ -132,7 +146,7 @@ class Quantity(Generic[ValT]):
     is_dimensionless
     """
 
-    _chosen_units = []
+    _chosen_units: ClassVar[list[Unit]] = []
 
     @overload
     def __init__(
@@ -422,6 +436,16 @@ class Quantity(Generic[ValT]):
         raise ValueError(
             "Cannot convert to a float as the Quantity is not dimensionless or a (solid) angle"
         )
+
+    if TYPE_CHECKING:
+
+        def __iter__(self: Quantity[ArrayLike]) -> Iterator[Quantity[float]]: ...
+
+    def __bool__(self) -> Literal[True]:
+        return True
+
+    def __len__(self: Quantity[ArrayLike]) -> int:
+        return len(self.value)
 
     def __getitem__(self: Quantity[ArrayLike], idx: int) -> Quantity[float]:
         return Quantity(value=float(self.value[idx]), units=self.units)

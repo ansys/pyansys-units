@@ -20,17 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import importlib.metadata
+
 from ansys.units import __version__
 
 
 def test_pkg_version():
-    try:
-        import importlib.metadata as importlib_metadata
-    except ModuleNotFoundError:  # pragma: no cover
-        import importlib_metadata
-
     # Read from the pyproject.toml
     # major, minor, patch
-    read_version = importlib_metadata.version("ansys-units")
+    read_version = importlib.metadata.version("ansys-units")
 
     assert __version__ == read_version
