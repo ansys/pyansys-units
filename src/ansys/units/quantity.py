@@ -30,6 +30,7 @@ from typing import (
     Any,
     ClassVar,
     Generic,
+    Literal,
     Protocol,
     TypeVar,
     overload,
@@ -439,6 +440,9 @@ class Quantity(Generic[ValT]):
     if TYPE_CHECKING:
 
         def __iter__(self: Quantity[ArrayLike]) -> Iterator[Quantity[float]]: ...
+
+    def __bool__(self) -> Literal[True]:
+        return True
 
     def __len__(self: Quantity[ArrayLike]) -> int:
         return len(self.value)
