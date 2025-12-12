@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@v10
+        uses: ansys/actions/check-pr-title@v10.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
