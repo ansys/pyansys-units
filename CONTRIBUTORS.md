@@ -20,3 +20,4 @@
 * [Riccardo Manno](https://github.com/rmanno91)
 * [Roberto Pastor Muela](https://github.com/RobPasMue)
 * [Sean Pearson](https://github.com/seanpearsonuk)
+* [Sébastien Morais](https://github.com/SMoraisAnsys)
