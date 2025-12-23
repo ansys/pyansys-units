@@ -27,7 +27,10 @@ required by a specific system.
 """
 
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 import types
+
+from typing_extensions import override
 
 from ansys.units.variable_descriptor.variable_descriptor import VariableDescriptor
 
@@ -67,7 +70,7 @@ class ConversionStrategy(ABC):
     @abstractmethod
     def to_variable_descriptor(
         self, variable: VariableDescriptor | str
-    ) -> VariableDescriptor:
+    ) -> VariableDescriptor | None:
         """
         Convert a string to its corresponding `VariableDescriptor`.
 
@@ -149,7 +152,8 @@ class MappingConversionStrategy(ConversionStrategy):
         This constructor initializes the reverse mapping attribute to `None`.
         The reverse mapping is lazily initialized when accessed via the `_reverse_mapping` property.
         """
-        self.__reverse_mapping = None
+        self._mapping: Mapping[VariableDescriptor, str]
+        self.__reverse_mapping: Mapping[str, VariableDescriptor] | None = None
 
     @property
     def _reverse_mapping(self):
@@ -169,6 +173,7 @@ class MappingConversionStrategy(ConversionStrategy):
             self.__reverse_mapping = {x: y for y, x in self._mapping.items()}
         return self.__reverse_mapping
 
+    @override
     def to_string(self, variable: VariableDescriptor | str | None) -> str | None:
         """
         Convert a `VariableDescriptor` to its string representation.
@@ -198,9 +203,10 @@ class MappingConversionStrategy(ConversionStrategy):
             raise ValueError(f"{variable.name} not supported.")
         return self._mapping[variable]
 
+    @override
     def to_variable_descriptor(
         self, variable: VariableDescriptor | str
-    ) -> VariableDescriptor:
+    ) -> VariableDescriptor | None:
         """
         Convert a string to its corresponding `VariableDescriptor`.
 
@@ -223,6 +229,7 @@ class MappingConversionStrategy(ConversionStrategy):
             return variable
         return self._reverse_mapping.get(variable)
 
+    @override
     def supports(self, variable: VariableDescriptor) -> bool:
         """
         Check if the given `VariableDescriptor` is supported by the strategy.
