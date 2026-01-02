@@ -21,58 +21,51 @@
 # SOFTWARE.
 
 
-try:
-    from pydantic import BaseModel
-
-    _base_model = BaseModel
-except ImportError:
-    _base_model = None
+from pydantic import BaseModel
 
 from ansys.units import Quantity
 
 
-class PydanticQuantityModel(_base_model):
+class PydanticQuantityModel(BaseModel):
     quantity: Quantity
 
 
 def test_pydantic_quantity():
     """Test the PydanticQuantityModel serialization and deserialization."""
 
-    if _base_model:
-        # Create an instance of PydanticQuantityModel
-        measurement = PydanticQuantityModel(
-            quantity={"value": 42.0, "units": "m s^-1", "source": "any"}
-        )
+    # Create an instance of PydanticQuantityModel
+    measurement = PydanticQuantityModel(
+        quantity={"value": 42.0, "units": "m s^-1", "source": "any"}
+    )
 
-        # Serialize the object to a dict
-        serialized = measurement.model_dump()
+    # Serialize the object to a dict
+    serialized = measurement.model_dump()
 
-        # Assert that the serialized data matches the expected structure
-        assert serialized == {
-            "quantity": {"value": 42.0, "units": "m s^-1", "source": "any"}
-        }
+    # Assert that the serialized data matches the expected structure
+    assert serialized == {
+        "quantity": {"value": 42.0, "units": "m s^-1", "source": "any"}
+    }
 
-        # Deserialize back to an object
-        deserialized = PydanticQuantityModel(**serialized)
+    # Deserialize back to an object
+    deserialized = PydanticQuantityModel(**serialized)
 
-        # Assert that the deserialized object matches the original
-        assert deserialized == measurement
+    # Assert that the deserialized object matches the original
+    assert deserialized == measurement
 
 
 def test_pydantic_quantity_array():
     """Test the PydanticQuantityModel serialization and deserialization."""
 
-    if _base_model:
-        # Create an instance of PydanticQuantityModel
-        measurement = PydanticQuantityModel(
-            quantity={"value": [42.0, 43.0, 44.0], "units": "m s^-1", "source": "any"}
-        )
+    # Create an instance of PydanticQuantityModel
+    measurement = PydanticQuantityModel(
+        quantity={"value": [42.0, 43.0, 44.0], "units": "m s^-1", "source": "any"}
+    )
 
-        # Serialize the object to a dict
-        serialized = measurement.model_dump()
+    # Serialize the object to a dict
+    serialized = measurement.model_dump()
 
-        # Deserialize back to an object
-        deserialized = PydanticQuantityModel(**serialized)
+    # Deserialize back to an object
+    deserialized = PydanticQuantityModel(**serialized)
 
-        # Assert that the deserialized object matches the original
-        assert deserialized == measurement
+    # Assert that the deserialized object matches the original
+    assert deserialized == measurement
