@@ -34,15 +34,12 @@ from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_dimensions import QuantityDimensions
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, unsafe_hash=True)
 class VariableDescriptor:
     """Defines a physical quantity variable descriptor."""
 
     name: str
     dimension: Dimensions
-
-    def __hash__(self):
-        return hash((self.name, str(self.dimension)))
 
 
 def _validate_and_transform_variable(variable: str) -> str:
