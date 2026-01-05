@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -436,9 +436,7 @@ def _dim_to_units(
 def _units_to_dim(
     units: str,
     exponent: float = 1.0,
-    dimensions: Mapping[
-        BaseDimensions, float
-    ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
+    dimensions: Mapping[BaseDimensions, float] = {},  # pyright: ignore[reportCallInDefaultInitializer]
 ) -> dict[BaseDimensions, float]:
     """
     Convert a unit string into a Dimensions instance.
