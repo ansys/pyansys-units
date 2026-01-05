@@ -59,9 +59,7 @@ class UnitRegistry:
     def __init__(
         self,
         config: str = "cfg.yaml",
-        other: Mapping[
-            str, Mapping[str, Any]
-        ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
+        other: Mapping[str, Mapping[str, Any]] = {},  # pyright: ignore[reportCallInDefaultInitializer]
     ):
         unitdict = dict(other)
 
