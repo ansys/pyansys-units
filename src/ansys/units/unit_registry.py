@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -59,9 +59,7 @@ class UnitRegistry:
     def __init__(
         self,
         config: str = "cfg.yaml",
-        other: Mapping[
-            str, Mapping[str, Any]
-        ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
+        other: Mapping[str, Mapping[str, Any]] = {},  # pyright: ignore[reportCallInDefaultInitializer]
     ):
         unitdict = dict(other)
 

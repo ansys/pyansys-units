@@ -5,7 +5,7 @@
 #     "PyYAML",
 # ]
 # ///
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -44,7 +44,7 @@ common.touch(exist_ok=True)
 common.write_text(
     black.format_str(
         f"""\
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 
 # SPDX-License-Identifier: MIT
 #
