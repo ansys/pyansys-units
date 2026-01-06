@@ -76,11 +76,27 @@ repos:
       pass_filenames: false
       always_run: false
 
+    - id: generate-expanded-vector-quantities
+      name: Generate expanded vector quantities
+      entry: uv run scripts/generate_expanded_vector_quantities.py
+      language: system
+      files: ^(src/ansys/units/quantity_dimensions\.py|scripts/generate_expanded_vector_quantities\.py)$
+      pass_filenames: false
+      always_run: false
+
+    - id: generate-variable-descriptors
+      name: Generate variable descriptors
+      entry: uv run scripts/generate_variable_descriptor.py
+      language: system
+      files: ^(src/ansys/units/(quantity_dimensions|base_dimensions)\.py|scripts/generate_variable_descriptor\.py)$
+      pass_filenames: false
+      always_run: false
+
     - id: check-generated-files
       name: Check generated files are up-to-date
       entry: |
-        git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py
+        git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py src/ansys/units/quantity_dimensions.py src/ansys/units/variable_descriptor/variable_descriptor.py
       language: system
-      files: ^src/ansys/units/(common\.py|quantity_tables/keys\.py)$
+      files: ^src/ansys/units/(common\.py|quantity_tables/keys\.py|quantity_dimensions\.py|variable_descriptor/variable_descriptor\.py)$
       pass_filenames: false
       always_run: false
