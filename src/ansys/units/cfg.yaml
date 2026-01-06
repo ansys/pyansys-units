@@ -281,3 +281,6 @@ derived_units:
   coulomb:
     composition: A s
     factor: 1
+  tonne:
+    composition: kg
+    factor: 1000

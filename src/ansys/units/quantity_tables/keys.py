@@ -75,6 +75,7 @@ UnitKey = Literal[
     "BTU",
     "cal",
     "coulomb",
+    "tonne",
 ]
 
 MassKey = Literal[
