@@ -30,6 +30,7 @@ naming conventions.
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Generic, Literal, final
+
 from typing_extensions import TypeVar
 
 from ansys.units import BaseDimensions

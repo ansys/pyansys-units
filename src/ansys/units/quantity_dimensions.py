@@ -46,6 +46,7 @@ True
 """
 
 from typing import final
+
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 

@@ -28,9 +28,9 @@
 # SOFTWARE.
 
 import inspect
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
 
 import black
 
@@ -144,7 +144,9 @@ def _generate_main_variables() -> str:
     ):
         dim_str = _dimension_to_string(dimension)
         lines.append(
-            f"    {attr_name} = VariableDescriptor[Literal[_R.{'VECTOR' if attr_name in QuantityDimensions._vector_quantities else 'SCALAR'}]](Dimensions({dim_str}))"
+            f"""    {attr_name} = VariableDescriptor[Literal[_R.{
+                        'VECTOR' if attr_name in QuantityDimensions._vector_quantities else 'SCALAR'  # noqa: E501
+                    }]](Dimensions({dim_str}))"""
         )
 
     return "\n".join(lines)
@@ -163,7 +165,9 @@ def _generate_subcategory_class(
 
     for var_name, dimension in variables_list:
         lines.append(
-            f"        {var_name} = VariableDescriptor[Literal[_R.{'VECTOR' if var_name in QuantityDimensions._vector_quantities else 'SCALAR'}]]({dimension})"
+            f"""        {var_name} = VariableDescriptor[Literal[_R.{
+                            'VECTOR' if var_name in QuantityDimensions._vector_quantities else 'SCALAR'  # noqa: E501
+                        }]]({dimension})"""
         )
 
     return "\n".join(lines)
