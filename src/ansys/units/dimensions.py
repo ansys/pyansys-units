@@ -24,7 +24,8 @@
 from __future__ import annotations
 
 from collections.abc import Generator, Mapping
-from typing import override
+
+from typing_extensions import override
 
 from ansys.units.base_dimensions import BaseDimensions
 
