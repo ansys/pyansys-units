@@ -153,3 +153,12 @@ def test_quantity_dimensions_subscription():
     d2 = Dimensions(dimensions={dims.MASS: 1.0, dims.LENGTH: -1.0})
     assert d2["MASS"] == 1.0
     assert d2["LENGTH"] == -1.0
+
+def test_dimensions_hash():
+    dims = BaseDimensions
+    d1 = Dimensions(dimensions={dims.MASS: 1.0, dims.LENGTH: -1.0})
+    d2 = Dimensions(dimensions={dims.LENGTH: -1.0, dims.MASS: 1.0})
+    assert hash(d1) == hash(d2)
+
+    d3 = Dimensions(dimensions={dims.MASS: 1.0, dims.LENGTH: -2.0})
+    assert hash(d1) != hash(d3)
