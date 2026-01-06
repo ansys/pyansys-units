@@ -78,7 +78,7 @@ Adhere to code style
 PyAnsys Units is compliant with the `PyAnsys coding style
 <https://dev.docs.pyansys.com/coding-style/index.html>`_. It uses
 `pre-commit <https://pre-commit.com/>`_ to check the code style and `uv <https://docs.astral.sh/uv/>`
-to do some code autogeneration. You can install and activate this tool with these commands:
+to do some code auto-generation. You can install and activate this tool with these commands:
 
 .. code:: console
 
