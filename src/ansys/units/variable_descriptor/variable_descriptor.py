@@ -41,12 +41,6 @@ class VariableDescriptor:
     name: str
     dimension: Dimensions
 
-<<<<<<< jhilton/has-dimensions
-=======
-    def __hash__(self) -> int:
-        return hash((self.name, str(self.dimension)))
-
->>>>>>> main
 
 def _validate_and_transform_variable(variable: str) -> str:
     """
