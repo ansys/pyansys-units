@@ -67,7 +67,6 @@ repos:
       files: ^(src/ansys/units/(cfg\.yaml|_constants\.py)|scripts/generate_common\.py)$
       pass_filenames: false
       always_run: false
-      additional_dependencies: [typing-extensions>=4.5.0]
 
     - id: generate-quantity-keys
       name: Generate quantity keys
@@ -76,7 +75,6 @@ repos:
       files: ^(src/ansys/units/quantity_tables/.*\.yaml|scripts/generate_keys\.py)$
       pass_filenames: false
       always_run: false
-      additional_dependencies: [typing-extensions>=4.5.0]
 
     - id: check-generated-files
       name: Check generated files are up-to-date

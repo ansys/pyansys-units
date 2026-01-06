@@ -3,6 +3,7 @@
 # dependencies = [
 #     "black",
 #     "PyYAML",
+#     "typing-extensions>=4.5.0",
 # ]
 # ///
 # Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
