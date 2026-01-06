@@ -22,8 +22,8 @@ classifiers = [
 ]
 
 dependencies = [
-    "importlib-metadata>=4.0",
     "pyyaml>=6.0",
+    "typing-extensions>=4.5.0",
 ]
 
 [project.optional-dependencies]
