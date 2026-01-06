@@ -62,7 +62,9 @@ class Dimensions:
         }
 
         for x, y in dimensions.items():
-            if not isinstance(x, BaseDimensions):  # pyright: ignore[reportUnnecessaryIsInstance]
+            if not isinstance(
+                x, BaseDimensions
+            ):  # pyright: ignore[reportUnnecessaryIsInstance]
                 raise IncorrectDimensions()
             if y == 0:
                 del self._dimensions[x]
