@@ -75,6 +75,7 @@ __all__ = (
     "BTU",
     "cal",
     "coulomb",
+    "tonne",
 )
 
 kg = Unit("kg")  #: A predefined unit for a kg
@@ -127,3 +128,4 @@ gal = Unit("gal")  #: A predefined unit for a gal
 BTU = Unit("BTU")  #: A predefined unit for a BTU
 cal = Unit("cal")  #: A predefined unit for a cal
 coulomb = Unit("coulomb")  #: A predefined unit for a coulomb
+tonne = Unit("tonne")  #: A predefined unit for a tonne
