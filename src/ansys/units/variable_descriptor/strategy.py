@@ -28,7 +28,6 @@ required by a specific system.
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
-import types
 
 from typing_extensions import override
 
@@ -114,7 +113,7 @@ class ConversionStrategy(ABC):
         pass
 
 
-class MappingConversionStrategy(ConversionStrategy):
+class MappingConversionStrategy(ConversionStrategy, ABC):
     """
     Intermediate base class for implementing VariableDescriptor conversion strategies.
 
@@ -145,6 +144,8 @@ class MappingConversionStrategy(ConversionStrategy):
         If a `VariableDescriptor` is not supported during conversion to a string.
     """
 
+    _mapping: Mapping[VariableDescriptor, str]
+
     def __init__(self):
         """
         Initialize the MappingConversionStrategy.
@@ -152,7 +153,6 @@ class MappingConversionStrategy(ConversionStrategy):
         This constructor initializes the reverse mapping attribute to `None`.
         The reverse mapping is lazily initialized when accessed via the `_reverse_mapping` property.
         """
-        self._mapping: Mapping[VariableDescriptor, str]
         self.__reverse_mapping: Mapping[str, VariableDescriptor] | None = None
 
     @property

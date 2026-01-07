@@ -20,9 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import final
+
 import pytest
 
 from ansys.units import (
+    Dimensions,
     MappingConversionStrategy,
     QuantityDimensions,
     VariableCatalog,
@@ -31,11 +34,15 @@ from ansys.units import (
 
 
 def test_create_descriptors():
-    vel = VariableDescriptor("velocity", None)
-    assert vel.name == "velocity"
+    @final
+    class _:
+        velocity = VariableDescriptor(Dimensions())
+
+    assert _.velocity.name == "velocity"
 
 
 def test_descriptor_strategies():
+    @final
     class JapaneseAPIStrategy(MappingConversionStrategy):
         _mapping = {
             VariableCatalog.PRESSURE: "atsuryoku",
