@@ -28,6 +28,7 @@ required by a specific system.
 
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
+import types
 
 from typing_extensions import override
 
