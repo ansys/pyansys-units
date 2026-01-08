@@ -20,9 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import final
+
 import pytest
 
 from ansys.units import (
+    Dimensions,
     MappingConversionStrategy,
     QuantityDimensions,
     VariableCatalog,
@@ -31,11 +34,15 @@ from ansys.units import (
 
 
 def test_create_descriptors():
-    vel = VariableDescriptor("velocity", None)
-    assert vel.name == "velocity"
+    @final
+    class _:
+        VELOCITY = VariableDescriptor(Dimensions())
+
+    assert _.VELOCITY.name == "velocity"
 
 
 def test_descriptor_strategies():
+    @final
     class JapaneseAPIStrategy(MappingConversionStrategy):
         _mapping = {
             VariableCatalog.PRESSURE: "atsuryoku",
@@ -63,7 +70,12 @@ def test_descriptor_strategies():
 def test_extend_descriptor_catalog():
     catalog = VariableCatalog()
     catalog.add("WALL_SHEAR_STRESS_2", QuantityDimensions.STRESS)
-    assert catalog.WALL_SHEAR_STRESS_2.name == "wall_shear_stress_2"
+    # ignore this is acceptable as most users shouldn't really be dynamically adding these,
+    # it's far better to subclass
+    assert (
+        catalog.WALL_SHEAR_STRESS_2.name  # pyright: ignore[reportAttributeAccessIssue]
+        == "wall_shear_stress_2"
+    )
 
 
 def test_get_custom_descriptor_from_catalog():
