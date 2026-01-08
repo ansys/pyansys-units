@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides the ``UnitRegistry`` class."""
+"""Provides the ``UnitRegistry`` class and dynamic unit registration."""
 
 from collections.abc import Generator, Mapping
 import os
@@ -27,8 +27,64 @@ from typing import TYPE_CHECKING, Any
 
 import yaml
 
-from ansys.units._constants import _BaseUnitInfo, _DerivedUnitInfo
+from ansys.units._constants import (
+    _BaseUnitInfo,
+)
+from ansys.units._constants import (
+    _DerivedUnitInfo,
+)
+from ansys.units._constants import _base_units as _CONST_BASE_UNITS
+from ansys.units._constants import _derived_units as _CONST_DERIVED_UNITS
 from ansys.units.unit import Unit
+
+_REGISTERED_UNITS: dict[str, _DerivedUnitInfo] = {}
+
+
+def register_unit(*, unit: str, composition: str, factor: float) -> None:
+    """
+    Register a new derived unit available to future ``UnitRegistry`` instances.
+
+    Parameters
+    ----------
+    unit: str
+        The symbol/name of the new unit (e.g., "Q").
+    composition: str
+        A valid unit composition using existing configured units (e.g., "N m").
+    factor: float
+        Scale factor that relates the composition to this unit.
+
+    Raises
+    ------
+    UnitAlreadyRegistered
+        If a unit with the same name already exists (built-in or previously registered).
+    ValueError
+        If ``unit`` is empty or ``factor`` is not finite.
+    """
+    name = (unit or "").strip()
+    if not name:
+        raise ValueError("`unit` must be a non-empty string.")
+    if (
+        not isinstance(factor, (int, float))
+        or factor != factor
+        or factor in (float("inf"), float("-inf"))
+    ):
+        raise ValueError("`factor` must be a finite number.")
+
+    # Check against built-ins loaded at import time and already-registered units
+    if (
+        name in _CONST_BASE_UNITS
+        or name in _CONST_DERIVED_UNITS
+        or name in _REGISTERED_UNITS
+    ):
+        raise UnitAlreadyRegistered(name)
+
+    # Light validation: ensure the composition can be parsed by constructing a Unit
+    # from the composition string (this uses configured base/derived units only).
+    _ = Unit(
+        units=composition
+    )  # may raise for invalid composition; that's OK to propagate
+
+    _REGISTERED_UNITS[name] = {"composition": composition, "factor": float(factor)}
 
 
 class UnitRegistry:
@@ -76,8 +132,27 @@ class UnitRegistry:
 
             unitdict |= _base_units | _derived_units
 
+        # Include any dynamically registered units
+        if _REGISTERED_UNITS:
+            unitdict |= _REGISTERED_UNITS
+
         for unit in unitdict:
-            setattr(self, unit, Unit(unit, unitdict[unit]))
+            cfg = unitdict[unit]
+            if unit in _CONST_BASE_UNITS or unit in _CONST_DERIVED_UNITS:
+                setattr(self, unit, Unit(unit, cfg))
+            else:
+                # For dynamically registered units not present in constants, build
+                # from their composition so dimensions/si data are correct, then
+                # override the name to the desired symbol and attach config.
+                if isinstance(cfg, Mapping) and "composition" in cfg:
+                    composed = Unit(units=cfg["composition"])
+                    obj = Unit(copy_from=composed)
+                    obj._name = unit
+                    for key in cfg:
+                        setattr(obj, f"_{key}", cfg[key])
+                    setattr(self, unit, obj)
+                else:
+                    setattr(self, unit, Unit(unit, cfg))
 
     def __str__(self):
         returned_string = ""
