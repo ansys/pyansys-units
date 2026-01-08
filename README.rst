@@ -93,11 +93,19 @@ these commands:
 Getting started
 ---------------
 
-PyAnsys Units supports flexible instantiation of ``Quantity`` objects:
+PyAnsys Units supports flexible instantiation of ``Quantity`` objects along with symbolic calculations using the standard operators:
 
 .. code:: python
 
    import ansys.units as ansunits
+   from ansys.units.common import m
+
+   # Using the pre-defined units in ansys.units.common
+
+   volume = 1 * m**3
+
+   volume.value  # 1.0
+   volume.units.name  # "m^3"
 
    # Using unit strings
 
@@ -138,14 +146,14 @@ a list of floats or a ``NumPy`` array:
 
 .. code:: python
 
-    from ansys.units import Quantity
+    from ansys.units.common import m, s
     import numpy as np
 
-    length_array_quantity = Quantity(value=[1.0, 6.0, 7.0], units="m")
-    length_array_quantity[1]  # Quantity (6.0, "m")
-    time = Quantity(value=2, units="s")
+    length_array_quantity = np.array([1.0, 6.0, 7.0]) * m
+    length_array_quantity[1]  # Quantity(6.0, "m")
+    time = 2 * s
     speed = length_array_quantity / time
-    speed  # Quantity ([0.5 3. 3.5], "m s^-1")
+    speed  # Quantity([0.5 3. 3.5], "m s^-1")
 
 You can instantiate unit systems with one of two methods:
 
@@ -153,7 +161,7 @@ You can instantiate unit systems with one of two methods:
 
    # Use a pre-defined unit system
 
-   si = ansunits.UnitSystem(unit_sys="SI")
+   si = ansunits.UnitSystem(system="SI")
 
    si.base_units  # ['kg', 'm', 's', 'K', 'delta_K', 'radian', 'mol', 'cd', 'A', 'sr']
 
@@ -182,13 +190,13 @@ Perform arithmetic operations:
 
 .. code:: python
 
-   import ansys.units as ansunits
+   from ansys.units.common import degree, m, s
 
-   deg = ansunits.Quantity(90, "degree")
+   deg = 90 * degree
    math.sin(deg)  # 1.0
 
-   v1 = ansunits.Quantity(10.0, "m s^-1")
-   v2 = ansunits.Quantity(5.0, "m s^-1")
+   v1 = 10.0 * m / s
+   v2 = 5.0 * m / s
 
    v3 = v1 - v2
    v3.value  # 5.0
@@ -201,12 +209,12 @@ Directly convert values to another set of units:
 
 .. code:: python
 
-   import ansys.units as ansunits
+   from ansys.units.common import lb, ft, s, Pa
 
-   flbs = ansunits.Quantity(1, "lb ft^-1 s^-1")
+   flbs = 1 * lb / ft / s
    flbs.value  # 1
 
-   pas = flbs.to("Pa s")
+   pas = flbs.to(Pa * s)
    pas.value  # 1.4881639435695542
    pas.units.name  # 'Pa s'
 
@@ -215,6 +223,7 @@ Use a custom unit system to perform conversions:
 .. code:: python
 
    import ansys.units as ansunits
+   from ansys.units.common import kg, m, s
 
    ureg = ansunits.UnitRegistry()
    dims = ansunits.BaseDimensions
@@ -229,7 +238,7 @@ Use a custom unit system to perform conversions:
        }
    )
 
-   v = ansunits.Quantity(10, "kg m s^2")
+   v = 10 * kg * m * s**2
    v2 = sys.convert(v)
 
    v2.value  # 2.2480894309971045

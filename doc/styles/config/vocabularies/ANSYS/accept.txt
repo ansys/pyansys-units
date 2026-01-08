@@ -7,3 +7,9 @@ delta_
 rankine
 fahrenheit
 substrings
+poppler
+Matplotlib
+NumPy
+subpackage
+hashable
+subclassing

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,7 +22,7 @@
 
 import pytest
 
-from ansys.units import BaseDimensions, Dimensions
+from ansys.units import BaseDimensions, Dimensions, QuantityDimensions
 from ansys.units.dimensions import IncorrectDimensions
 
 
@@ -61,7 +61,7 @@ def test_to_string():
     assert str(d1) == repr(d1)
 
     d2 = Dimensions()
-    assert repr(d2) == ""
+    assert repr(d2) == "{}"
     assert str(d2) == repr(d2)
 
 
@@ -96,13 +96,16 @@ def test_eq():
     d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     d2 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     assert d1 == d2
+
+    d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: 0})
+    d2 = Dimensions(dimensions={dims.LENGTH: 1})
+    assert d1 == d2
+
     d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TEMPERATURE: 1})
     d2 = Dimensions(dimensions={dims.LENGTH: 1, dims.TEMPERATURE_DIFFERENCE: 1})
 
-    assert (d1 == d2) == False
+    assert d1 != d2
 
-
-def test_ne():
     dims = BaseDimensions
     d1 = Dimensions(dimensions={dims.LENGTH: 1, dims.TIME: -3})
     d2 = Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: -3})
@@ -120,15 +123,43 @@ def test_dimensional():
 
 def test_errors():
     dims = BaseDimensions
-    d1 = Dimensions(dimensions={dims.LENGTH: 2})
-    d2 = Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: 1})
+    Dimensions(dimensions={dims.LENGTH: 2})
+    Dimensions(dimensions={dims.MASS: 1, dims.CURRENT: 1})
 
-    with pytest.raises(IncorrectDimensions) as e_info:
-        d3 = Dimensions(dimensions={dims.MASS: 1, 11: 1})
+    with pytest.raises(IncorrectDimensions):
+        Dimensions(
+            dimensions={dims.MASS: 1, 11: 1}  # pyright: ignore[reportArgumentType]
+        )
 
 
 def test_error_messages():
     dims = BaseDimensions
-    d1 = Dimensions(dimensions={dims.LENGTH: 2})
+    Dimensions(dimensions={dims.LENGTH: 2})
     e1 = IncorrectDimensions()
-    assert str(e1) == f"The `dimensions` key must be a 'BaseDimensions' object"
+    assert str(e1) == "The `dimensions` key must be a 'BaseDimensions' object"
+
+
+def test_quantity_dimensions():
+    qd = QuantityDimensions
+    base = BaseDimensions
+    assert qd.ELECTRICAL_POTENTIAL == qd.CURRENT * qd.ELECTRICAL_RESISTANCE
+    assert qd.FORCE == Dimensions(
+        dimensions={base.MASS: 1, base.LENGTH: 1, base.TIME: -2}
+    )
+
+
+def test_quantity_dimensions_subscription():
+    dims = BaseDimensions
+    d2 = Dimensions(dimensions={dims.MASS: 1.0, dims.LENGTH: -1.0})
+    assert d2["MASS"] == 1.0
+    assert d2["LENGTH"] == -1.0
+
+
+def test_dimensions_hash():
+    dims = BaseDimensions
+    d1 = Dimensions(dimensions={dims.MASS: 1.0, dims.LENGTH: -1.0})
+    d2 = Dimensions(dimensions={dims.LENGTH: -1.0, dims.MASS: 1.0})
+    assert hash(d1) == hash(d2)
+
+    d3 = Dimensions(dimensions={dims.MASS: 1.0, dims.LENGTH: -2.0})
+    assert hash(d1) != hash(d3)

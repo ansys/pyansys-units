@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -96,7 +96,7 @@ def test_eq():
     us1 = UnitSystem(system="BT")
     us2 = UnitSystem()
     us3 = UnitSystem(system="SI")
-    assert (us1 == us2) == False
+    assert us1 != us2
     assert us2 == us3
 
 
@@ -149,34 +149,33 @@ def test_not_base_unit_init():
     dims = BaseDimensions
 
     with pytest.raises(NotBaseUnit):
-        us1 = UnitSystem(base_units={dims.LENGTH: "N"})
+        UnitSystem(base_units={dims.LENGTH: "N"})
 
 
 def test_not_base_unit_update():
     dims = BaseDimensions
     us = UnitSystem(system="SI")
-    base_units = {dims.MASS: "N"}
 
     with pytest.raises(NotBaseUnit):
-        us.update(base_units=base_units)
+        us.update(base_units={dims.MASS: "N"})
 
 
 def test_invalid_unit_sys():
     with pytest.raises(InvalidUnitSystem):
-        us2 = UnitSystem(system="Standard")
+        UnitSystem(system="Standard")  # pyright: ignore[reportArgumentType]
 
 
 def test_wrong_unit_type():
     us = UnitSystem()
 
     with pytest.raises(IncorrectUnitType):
-        us.TIME = "m"
+        us.TIME = "m"  # pyright: ignore[reportAttributeAccessIssue]
     with pytest.raises(IncorrectUnitType):
-        us.LIGHT = "sr"
+        us.LIGHT = "sr"  # pyright: ignore[reportAttributeAccessIssue]
     with pytest.raises(IncorrectUnitType):
-        us.CURRENT = "ft"
+        us.CURRENT = "ft"  # pyright: ignore[reportAttributeAccessIssue]
     with pytest.raises(IncorrectUnitType):
-        us.SOLID_ANGLE = "radian"
+        us.SOLID_ANGLE = "radian"  # pyright: ignore[reportAttributeAccessIssue]
 
 
 def test_error_messages():

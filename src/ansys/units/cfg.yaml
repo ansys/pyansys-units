@@ -11,6 +11,8 @@
 # For micro, u is used instead of the Greek letter mu.
 
 multipliers:
+  Q: 1.0e+30
+  R: 1.0e+27
   Y: 1.0e+24
   Z: 1.0e+21
   E: 1.0e+18
@@ -31,6 +33,8 @@ multipliers:
   a: 1.0e-18
   z: 1.0e-21
   y: 1.0e-24
+  r: 1.0e-27
+  q: 1.0e-30
 
 # Unit Systems
 # ------------
@@ -277,3 +281,6 @@ derived_units:
   coulomb:
     composition: A s
     factor: 1
+  tonne:
+    composition: kg
+    factor: 1000

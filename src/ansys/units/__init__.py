@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,23 +21,29 @@
 # SOFTWARE.
 """Pyunits is a pythonic interface for units, unit systems, and unit conversions."""
 
-try:
-    import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
-    import importlib_metadata
+import importlib.metadata
 
-__version__ = importlib_metadata.version(__name__.replace(".", "-"))
+try:
+    __version__ = importlib.metadata.version(__name__.replace(".", "-"))
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "script-running"  # should never hit this unless you're running the generation scripts
 
 import os
 
-from ansys.units._constants import (  # noqa: F401
-    _base_units,
-    _derived_units,
-    _multipliers,
-    _quantity_units_table,
-    _QuantityType,
-    _unit_systems,
+from ansys.units.base_dimensions import BaseDimensions
+from ansys.units.dimensions import Dimensions
+from ansys.units.quantity import Quantity, get_si_value
+from ansys.units.quantity_dimensions import QuantityDimensions
+from ansys.units.systems import UnitSystem
+from ansys.units.unit import Unit
+from ansys.units.unit_registry import UnitRegistry
+from ansys.units.variable_descriptor import (
+    ConversionStrategy,
+    MappingConversionStrategy,
+    VariableCatalog,
+    VariableDescriptor,
 )
+
 from ansys.units.base_dimensions import BaseDimensions  # noqa: F401
 from ansys.units.dimensions import Dimensions  # noqa: F401
 from ansys.units.quantity import Quantity, get_si_value  # noqa: F401
@@ -51,3 +57,19 @@ _README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"
 if os.path.exists(_README_FILE):
     with open(_README_FILE, encoding="utf8") as f:
         __doc__ = f.read()
+
+
+__all__ = [
+    "BaseDimensions",
+    "Dimensions",
+    "Quantity",
+    "get_si_value",
+    "UnitSystem",
+    "Unit",
+    "UnitRegistry",
+    "QuantityDimensions",
+    "VariableDescriptor",
+    "VariableCatalog",
+    "ConversionStrategy",
+    "MappingConversionStrategy",
+]

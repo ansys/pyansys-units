@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -150,11 +150,11 @@ def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
     )
     radians_per_second = hz.to(ur.radian / ur.s)
     assert_rightly_but_fail(
-        2.0 * math.pi * pint_value(hz) == pytest.approx(radians_per_second),
+        2.0 * math.pi * pint_value(hz) == pytest.approx(radians_per_second.magnitude),
         "2 pi factor for Hz and rad/s",
     )
     assert_wrongly(
-        pint_value(hz) == pytest.approx(radians_per_second),
+        pint_value(hz) == pytest.approx(radians_per_second.magnitude),
         "equivalence of Hz and rad/s",
     )
     # The problem is: one radian is asserted to be unity

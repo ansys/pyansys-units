@@ -5,10 +5,10 @@ build-backend = "flit_core.buildapi"
 [project]
 # Check https://flit.readthedocs.io/en/latest/pyproject_toml.html for all available sections
 name = "ansys-units"
-version = "0.3.3"
+version = "0.10.dev0"
 description = "Pythonic interface for units, unit systems, and unit conversions."
 readme = "README.rst"
-requires-python = ">=3.9,<4"
+requires-python = ">=3.10,<3.14"
 license = {file = "LICENSE"}
 authors = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
 maintainers = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
@@ -18,41 +18,54 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3",
 ]
 
 dependencies = [
-    "importlib-metadata>=4.0",
-    "quarto-cli==1.5.57",
-    "pdf2image==1.17.0",
     "pyyaml>=6.0",
+    "typing-extensions>=4.5.0",
 ]
 
 [project.optional-dependencies]
 doc = [
-    "ansys-sphinx-theme==1.2.0",
-    "matplotlib==3.9.2",
-    "numpydoc==1.8.0",
+    "ansys-sphinx-theme==1.6.4",
+    "pdf2image==1.17.0",
+    "quarto-cli==1.8.25",
+    "matplotlib==3.10.8",
+    "numpydoc==1.10.0",
     "Sphinx==7.4.7",
     "sphinx-copybutton==0.5.2",
-    "sphinx-gallery==0.18.0",
-    "sphinx-toggleprompt==0.5.2",
+    "sphinx-gallery==0.20.0",
+    "sphinx-toggleprompt==0.6.0",
 ]
 tests = [
-    "pytest==8.3.3",
-    "pytest-cov==6.0.0",
-    "pytest-mock==3.14.0",
+    "numpy>=1.24,<3",
+    "pytest==9.0.2",
+    "pytest-cov==7.0.0",
+    "pytest-mock==3.15.1",
+    "pint==0.24.4",
 ]
-lists = [
-    "numpy==2.1.2",
+additional = [
+    "numpy>=1.24,<3",
+    "pydantic>=2.11.7",
+    "pydantic_core>=2.33.2",
+]
+# getting versions of matplotlib and numpy that are compatible is hard so we have this for CI
+ci_types = [
+    "matplotlib==3.10.8",
+    "pydantic>=2.11.7",
+    "pydantic_core>=2.33.2",
+    "pytest==9.0.2",
+    "pytest-cov==7.0.0",
+    "pytest-mock==3.15.1",
+    "pint==0.24.4",
+    "black==25.12.0",
 ]
 
 [project.urls]
 Source = "https://github.com/ansys/pyansys-units"
 Issues = "https://github.com/ansys/pyansys-units/issues"
-Documentation = "https://ansunits.docs.pyansys.com"
+Documentation = "https://units.docs.pyansys.com/"
 Releases = "https://github.com/ansys/pyansys-units/releases"
 
 [tool.flit.module]
@@ -92,3 +105,33 @@ source = ["ansys.units"]
 
 [tool.coverage.report]
 show_missing = true
+
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = [
+    "B101",
+    "B105",
+    "B106",
+    "B110",
+    "B112",
+    "B301",
+    "B307",
+    "B310",
+    "B311",
+    "B314",
+    "B403",
+    "B404",
+    "B405",
+    "B602",
+    "B603",
+    "B604",
+    "B607",
+    ]
+
+[tool.basedpyright]
+reportUnknownMemberType = false
+reportExplicitAny = false
+reportPrivateUsage = false
+reportUnusedCallResult = false
+ignore = ["doc"]

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -25,7 +25,8 @@ import tempfile
 
 import pytest
 
-from ansys.units import Unit, UnitRegistry, _base_units, register_unit
+from ansys.units import Unit, UnitRegistry, register_unit
+from ansys.units._constants import _base_units
 from ansys.units.unit_registry import UnitAlreadyRegistered
 
 

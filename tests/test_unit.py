@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -30,6 +30,7 @@ from ansys.units import (
     UnitRegistry,
     UnitSystem,
 )
+from ansys.units.quantity import get_si_value
 from ansys.units.unit import (
     InconsistentDimensions,
     IncorrectUnits,
@@ -129,8 +130,7 @@ _si_scaling_factor: 1.0
 _si_offset: 273.15
 _si_units: K
 """
-    assert str(C) == C_string
-    assert str(C) == repr(C)
+    assert C._to_string() == C_string
 
 
 def test_add():
@@ -141,7 +141,7 @@ def test_add():
 
     assert delta_temp == Unit("delta_C")
     assert temp_C == Unit("C")
-    assert kg + kg == None
+    assert kg + kg is None
 
     with pytest.raises(ProhibitedTemperatureOperation):
         C + C
@@ -151,14 +151,15 @@ def test_add():
 
 
 def test_quantity_table():
-    qm1_table = {
-        "Mass": 1,
-        "Velocity": 2.5,
-        "Current": 3,
-        "Light": 1,
-        "HeatTransferCoefficient": 2,
-    }
-    qm1 = Unit(table=qm1_table)
+    qm1 = Unit(
+        table={
+            "Mass": 1,
+            "Velocity": 2.5,
+            "Current": 3,
+            "Light": 1,
+            "HeatTransferCoefficient": 2,
+        }
+    )
     assert qm1.name == "kg m^-1.5 s^-2.5 A^3 cd W^2 K^-2"
 
 
@@ -175,6 +176,10 @@ def test_reverse_multiply():
     assert new_unit.name == "K kg J"
 
 
+def test_rmul():
+    assert 7 * Unit("kg") == Quantity(7, "kg")
+
+
 def test_sub():
     C = Unit("C")
     kg = Unit("kg")
@@ -182,7 +187,7 @@ def test_sub():
 
     assert C == Unit("C")
     assert delta_C == Unit("delta_C")
-    assert kg - kg == None
+    assert kg - kg is None
 
     with pytest.raises(IncorrectUnits):
         C - kg
@@ -192,7 +197,7 @@ def test_unit_divide_by_quantity():
     q = Quantity(7, "kg")
     C = Unit("C")
 
-    assert C.__truediv__(q) == NotImplemented
+    assert C.__truediv__(q)  # type: ignore
 
 
 def test_unit_div():
@@ -200,6 +205,15 @@ def test_unit_div():
     kg = Unit("kg")
     kg_K = kg / K
     assert kg_K.name == "kg K^-1"
+
+
+def test_rtruediv():
+    K = Unit("K")
+    kg = Unit("kg")
+    kg_K = kg / K
+    assert kg_K.name == "kg K^-1"
+
+    assert 1 / K == Quantity(1, "K^-1")
 
 
 def test_unit_pow():
@@ -223,7 +237,7 @@ def test_ne():
 def test_excessive_parameters_not_allowed():
     dims = BaseDimensions
     with pytest.raises(InconsistentDimensions):
-        C = Unit("kg", dimensions=Dimensions({dims.LENGTH: 1}))
+        Unit("kg", dimensions=Dimensions({dims.LENGTH: 1}))
 
 
 def test_incorrect_unit_with_multiplier():
@@ -238,20 +252,35 @@ def test_copy_units_with_incompatable_dimensions():
 
 
 def test_unconfigured_units():
-
     with pytest.raises(UnconfiguredUnit):
+        Quantity(value=1, units="k")
 
-        q2 = Quantity(value=1, units="k")
-
-        q3 = Quantity(value=1, units="kg m^2 k")
+        Quantity(value=1, units="kg m^2 k")
 
 
 def test_errors():
-    qm_table = {"Bread": 2, "Chicken": 1, "Eggs": 7, "Milk": -4}
-    with pytest.raises(UnknownTableItem) as e_info:
-        qm = Unit(table=qm_table)
+    with pytest.raises(UnknownTableItem):
+        Unit(
+            table={
+                "Bread": 2,
+                "Chicken": 1,
+                "Eggs": 7,
+                "Milk": -4,
+            }  # pyright: ignore[reportArgumentType]
+        )
 
 
 def test_error_messages():
     e1 = UnknownTableItem("Risk")
     assert str(e1) == "`Risk` is not a valid quantity table item."
+
+
+def test_tonne_feet_unit():
+    foot = Quantity(value=1, units="ft")
+    assert get_si_value(foot) == 0.30479999999999996
+
+    tonne = Quantity(value=1, units="tonne")
+    assert get_si_value(tonne) == 1000.0
+
+    femto_tonne = Quantity(value=1, units="ftonne")
+    assert get_si_value(femto_tonne) == 1e-12

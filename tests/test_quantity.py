@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,8 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import importlib.util
 import math
 
+from numpy.typing import NDArray
 import pytest
 
 from ansys.units import (
@@ -32,7 +34,9 @@ from ansys.units import (
     UnitRegistry,
     UnitSystem,
 )
+from ansys.units.common import Pa, kg
 from ansys.units.quantity import (  # InvalidFloatUsage,
+    ArrayLike,
     ExcessiveParameters,
     IncompatibleDimensions,
     IncompatibleQuantities,
@@ -56,7 +60,7 @@ def test_preferred_units():
 
     Quantity.preferred_units(units=["slug"], remove=True)
     Quantity.preferred_units(units=["kg"])
-    Quantity.preferred_units(units=["kg Pa"])
+    Quantity.preferred_units(units=[kg * Pa])
 
     ten_pa = Quantity(10, units="Pa")
     assert ten_pa.value == pytest.approx(0.0014503773773020918, DELTA)
@@ -75,7 +79,7 @@ def test_preferred_units():
     assert (ten_N * ten_m).value == pytest.approx(100, DELTA)
     assert (ten_N * ten_m).units == Unit(units="J")
 
-    Quantity.preferred_units(units=["J", "kg", "psi", "kg Pa"], remove=True)
+    Quantity.preferred_units(units=["J", "kg", "psi", kg * Pa], remove=True)
     assert Quantity._chosen_units == []
 
 
@@ -86,18 +90,18 @@ def test_properties():
     assert v.units == Unit("m")
     assert get_si_value(v) == 10.6
     assert v.units.si_units == "m"
-    assert v.is_dimensionless == False
+    assert not v.is_dimensionless
     assert v.dimensions == Dimensions({dims.LENGTH: 1.0})
 
 
 def test_quantity_is_immutable():
     v = Quantity(1, "m")
     with pytest.raises(AttributeError):
-        v.value = 20
+        v.value = 20  # pyright: ignore[reportAttributeAccessIssue]
     with pytest.raises(AttributeError):
-        v.units = "kg"
+        v.units = "kg"  # pyright: ignore[reportAttributeAccessIssue]
     with pytest.raises(AttributeError):
-        v.dimensions = Dimensions({})
+        v.dimensions = Dimensions({})  # pyright: ignore[reportAttributeAccessIssue]
     assert v == Quantity(1, "m")
 
 
@@ -142,31 +146,29 @@ def test_array():
 
     except ImportError:
         with pytest.raises(NumPyRequired):
-            e1 = Quantity(7, "kg").__array__()
-
-        with pytest.raises(NumPyRequired):
-            e2 = Quantity([7, 8, 9], "kg")
+            Quantity([7, 8, 9], "kg")
 
 
 def _supporting_numpy():
-    try:
-        import numpy  # noqa: F401
-    except ImportError:
-        return False
-    return True
+    return importlib.util.find_spec("numpy") is not None
 
 
 def test_array_compare():
     if not _supporting_numpy():
         return
-    assert Quantity([7, 8, 9], "kg") == Quantity([7, 8, 9], "kg")
-    assert Quantity([7, 8, 9], "kg") != Quantity([1, 2, 3], "kg")
+    import numpy as np
+
+    why_7s_scary: NDArray[np.integer] = np.array([7, 8, 9])
+    assert Quantity[float | ArrayLike](why_7s_scary, "kg") == Quantity(
+        why_7s_scary, "kg"
+    )
+    assert Quantity(why_7s_scary, "kg") != Quantity(np.array([1, 2, 3]), "kg")
     with pytest.raises(IncompatibleDimensions):
-        Quantity([7, 8, 9], "kg") != Quantity([7, 8, 9], "m")
+        Quantity(why_7s_scary, "kg") != Quantity(why_7s_scary, "m")
     with pytest.raises(IncompatibleDimensions):
-        Quantity([7, 8, 9], "kg") == Quantity([7, 8, 9], "m")
-    assert Quantity([7, 8, 9], "kg") != Quantity([7, 8, 9], "g")
-    assert Quantity([7, 8, 9], "") == Quantity([7, 8, 9], "")
+        Quantity(why_7s_scary, "kg") == Quantity(why_7s_scary, "m")
+    assert Quantity(why_7s_scary, "kg") != Quantity(why_7s_scary, "g")
+    assert Quantity(why_7s_scary, "") == Quantity(why_7s_scary, "")
     assert Quantity(1, "kg") != Quantity([1, 2, 3], "kg")
     assert Quantity([1, 2, 3], "kg") != Quantity(1, "kg")
 
@@ -182,7 +184,9 @@ def test_array_to_si_value():
 def test_array_to():
     if not _supporting_numpy():
         return
-    to = Quantity([1, 2], "in").to("m")
+    import numpy as np
+
+    to = Quantity(np.array([1, 2]), "in").to("m")
     assert to.value[0] == get_si_value(Quantity(1, "in"))
     assert to.value[1] == get_si_value(Quantity(2, "in"))
 
@@ -235,7 +239,7 @@ def test_complex_temperature_difference_to():
 
 def test_repr():
     v = Quantity(1.0, "m")
-    assert v.__repr__() == 'Quantity (1.0, "m")'
+    assert v.__repr__() == 'Quantity(1.0, "m")'
 
 
 def test_math():
@@ -259,7 +263,7 @@ def test_subtraction():
     assert get_si_value(q2 - q1) == -5.0
     assert q4.value == 3
 
-    with pytest.raises(IncorrectUnits) as e_info:
+    with pytest.raises(IncorrectUnits):
         assert q1 - q3
 
     ft = Quantity(1, "ft")
@@ -352,6 +356,7 @@ def test_neg():
     q0 = Quantity(10.0, "m s^-1")
     q1 = -q0
     assert q1.value == -10.0
+    assert q1.units == Unit("m s^-1")
 
 
 def test_ne():
@@ -401,8 +406,8 @@ def test_dimensionless_div():
     length_1 = Quantity(50, "mm")
     length_2 = Quantity(40, "inch")
     result = length_1 / length_2
-    result.value == 1.25
-    result.units == "mm inch^-1"
+    assert result.value == 1.25
+    assert result.units == Unit("mm inch^-1")
 
 
 def test_quantity_divided_by_unit():
@@ -699,3 +704,30 @@ def test_C_to_F():
     converted = five_c.to(ureg.F)
     assert converted.value == 41.0
     assert converted.units._name == "F"
+
+
+def _supporting_matplotlib():
+    try:
+        import matplotlib  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
+def test_matplotlib_integration():
+    if not _supporting_matplotlib():
+        return
+    import matplotlib.pyplot as plt
+
+    arr_x = Quantity([1, 2, 3], Unit("m"))
+    arr_y = Quantity([4, 5, 6], "kg")
+    fig, ax = plt.subplots()
+    ax.plot(arr_x, arr_y)
+    assert ax.xaxis.get_units() == "m"
+    assert ax.yaxis.get_units() == "kg"
+
+
+def test_temperature_list():
+    temp = Quantity(value=[1.0, 2.0, 3.0], units="C")
+    assert temp.value.tolist() == [1.0, 2.0, 3.0]
+    assert temp.units == Unit("C")

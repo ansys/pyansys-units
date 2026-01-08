@@ -14,10 +14,10 @@ repos:
   rev: 1.19.1
   hooks:
   - id: blacken-docs
-    additional_dependencies: [black==23.7.0]
+    additional_dependencies: [black==24.10.0]
 
 - repo: https://github.com/pycqa/isort
-  rev: 5.13.2
+  rev: 6.0.0
   hooks:
   - id: isort
 
@@ -32,7 +32,7 @@ repos:
   - id: codespell
 
 - repo: https://github.com/PyCQA/docformatter
-  rev: v1.7.5
+  rev: v1.7.7
   hooks:
     - id: docformatter
       additional_dependencies: [tomli]
@@ -52,8 +52,35 @@ repos:
     - id: check-github-workflows
 
 - repo: https://github.com/ansys/pre-commit-hooks
-  rev: v0.4.4
+  rev: v0.5.1
   hooks:
     - id: add-license-headers
       args:
-      - --start_year=2024
+      - --start_year=2023
+
+- repo: local
+  hooks:
+    - id: generate-common
+      name: Generate common units
+      entry: uv run scripts/generate_common.py
+      language: system
+      files: ^(src/ansys/units/(cfg\.yaml|_constants\.py)|scripts/generate_common\.py)$
+      pass_filenames: false
+      always_run: false
+
+    - id: generate-quantity-keys
+      name: Generate quantity keys
+      entry: uv run scripts/generate_keys.py
+      language: system
+      files: ^(src/ansys/units/quantity_tables/.*\.yaml|scripts/generate_keys\.py)$
+      pass_filenames: false
+      always_run: false
+
+    - id: check-generated-files
+      name: Check generated files are up-to-date
+      entry: |
+        git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py
+      language: system
+      files: ^src/ansys/units/(common\.py|quantity_tables/keys\.py)$
+      pass_filenames: false
+      always_run: false

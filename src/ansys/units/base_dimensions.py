@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,10 +21,10 @@
 # SOFTWARE.
 """Provides the ``BaseDimensions`` class."""
 
-from enum import Enum
+from enum import IntEnum
 
 
-class BaseDimensions(Enum):
+class BaseDimensions(IntEnum):
     """
     Supplies all valid base dimensions used in dimensional analysis.
 

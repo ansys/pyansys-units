@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,18 +20,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """
-Version of ansys-units module.
+Package initialization for ansys.units.variable_descriptor.
 
-On the ``main`` branch, use 'dev0' to denote a development version.
-For example:
-version_info = 0, 1, 'dev0'
+Exports the VariableCatalog catalog and core interfaces for working with
+physical quantities in a product-agnostic way.
+
+Example
+-------
+
+.. code-block:: python
+
+    from ansys.units.variable_descriptor import VariableCatalog
+    from ansys.fluent.core.variable_strategies import FluentSVarNamingStrategy
+
+    quantity = VariableCatalog.PRESSURE
+    strategy = FluentSVarNamingStrategy()
+
+    print(strategy.to_string(quantity))
 """
 
-try:
-    import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:  # pragma: no cover
-    import importlib_metadata
+from .strategy import ConversionStrategy, MappingConversionStrategy
+from .variable_descriptor import VariableCatalog, VariableDescriptor
 
-# Read from the pyproject.toml
-# major, minor, patch
-__version__ = importlib_metadata.version("ansys-units")
+__all__ = [
+    "VariableDescriptor",
+    "VariableCatalog",
+    "ConversionStrategy",
+    "MappingConversionStrategy",
+]

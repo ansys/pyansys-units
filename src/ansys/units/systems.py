@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,7 +23,11 @@
 
 from __future__ import annotations
 
-from ansys.units import BaseDimensions, _base_units, _unit_systems
+from collections.abc import Mapping
+
+from ansys.units._constants import _base_units, _unit_systems
+from ansys.units.base_dimensions import BaseDimensions
+from ansys.units.quantity_tables.keys import *  # noqa: F403
 
 
 class UnitSystem:
@@ -37,7 +41,7 @@ class UnitSystem:
     ----------
     base_units: dict, optional
         Units mapped to base dimensions types.
-    unit_sys: str, Unit, optional
+    system: str, Unit, optional
         Predefined unit system.
     copy_from: UnitSystem, optional
         Make a copy of a unit system.
@@ -58,15 +62,13 @@ class UnitSystem:
 
     def __init__(
         self,
-        base_units: dict[BaseDimensions, any] = None,
-        system: str = None,
-        copy_from: UnitSystem = None,
+        base_units: Mapping[BaseDimensions, UnitKey] | None = None,
+        system: Systems = "SI",
+        copy_from: UnitSystem | None = None,
     ):
         if copy_from:
             self._units = copy_from._units
         else:
-            if not system:
-                system = "SI"
             if system not in _unit_systems:
                 raise InvalidUnitSystem(system)
             else:
@@ -80,7 +82,7 @@ class UnitSystem:
             unit = self._units[unit_type.name]
             self._set_type(unit_type=unit_type, unit=unit)
 
-    def update(self, base_units: dict[BaseDimensions:any]):
+    def update(self, base_units: Mapping[BaseDimensions, UnitKey]):
         """
         Change the units of the unit system.
 
@@ -92,7 +94,7 @@ class UnitSystem:
         for unit_type, unit in base_units.items():
             self._set_type(unit_type=unit_type, unit=unit)
 
-    def _set_type(self, unit_type: BaseDimensions, unit: any):
+    def _set_type(self, unit_type: BaseDimensions, unit: UnitKey):
         """
         Checks that the unit is compatible with the unit type before being set.
 
@@ -113,107 +115,108 @@ class UnitSystem:
         setattr(self, f"_{unit_type.name}", unit)
 
     @property
-    def MASS(self):
+    def MASS(self) -> MassKey:
         """Mass unit of the unit system."""
         return self._MASS
 
     @MASS.setter
-    def MASS(self, new_unit):
+    def MASS(self, new_unit: MassKey) -> None:
         self._set_type(unit_type=BaseDimensions.MASS, unit=new_unit)
 
     @property
-    def LENGTH(self):
+    def LENGTH(self) -> LengthKey:
         """Length unit of the unit system."""
         return self._LENGTH
 
     @LENGTH.setter
-    def LENGTH(self, new_unit):
+    def LENGTH(self, new_unit: LengthKey) -> None:
         self._set_type(unit_type=BaseDimensions.LENGTH, unit=new_unit)
 
     @property
-    def TIME(self):
+    def TIME(self) -> TimeKey:
         """Time unit of the unit system."""
         return self._TIME
 
     @TIME.setter
-    def TIME(self, new_unit):
+    def TIME(self, new_unit: TimeKey) -> None:
         self._set_type(unit_type=BaseDimensions.TIME, unit=new_unit)
 
     @property
-    def TEMPERATURE(self):
+    def TEMPERATURE(self) -> TemperatureKey:
         """Temperature unit of the unit system."""
         return self._TEMPERATURE
 
     @TEMPERATURE.setter
-    def TEMPERATURE(self, new_unit):
+    def TEMPERATURE(self, new_unit: TemperatureKey) -> None:
         self._set_type(unit_type=BaseDimensions.TEMPERATURE, unit=new_unit)
 
     @property
-    def TEMPERATURE_DIFFERENCE(self):
+    def TEMPERATURE_DIFFERENCE(self) -> TemperatureDifferenceKey:
         """Temperature unit of the unit system."""
         return self._TEMPERATURE_DIFFERENCE
 
     @TEMPERATURE_DIFFERENCE.setter
-    def TEMPERATURE_DIFFERENCE(self, new_mass):
+    def TEMPERATURE_DIFFERENCE(self, new_mass: TemperatureDifferenceKey) -> None:
         self._set_type(unit_type=BaseDimensions.TEMPERATURE_DIFFERENCE, unit=new_mass)
 
     @property
-    def ANGLE(self):
+    def ANGLE(self) -> AngleKey:
         """Angle unit of the unit system."""
         return self._ANGLE
 
     @ANGLE.setter
-    def ANGLE(self, new_mass):
+    def ANGLE(self, new_mass: AngleKey) -> None:
         self._set_type(unit_type=BaseDimensions.ANGLE, unit=new_mass)
 
     @property
-    def CHEMICAL_AMOUNT(self):
+    def CHEMICAL_AMOUNT(self) -> ChemicalAmountKey:
         """Chemical Amount unit of the unit system."""
         return self._CHEMICAL_AMOUNT
 
     @CHEMICAL_AMOUNT.setter
-    def CHEMICAL_AMOUNT(self, new_mass):
+    def CHEMICAL_AMOUNT(self, new_mass: ChemicalAmountKey) -> None:
         self._set_type(unit_type=BaseDimensions.CHEMICAL_AMOUNT, unit=new_mass)
 
     @property
-    def LIGHT(self):
+    def LIGHT(self) -> LightKey:
         """Light unit of the unit system."""
         return self._LIGHT
 
     @LIGHT.setter
-    def LIGHT(self, new_mass):
+    def LIGHT(self, new_mass: LightKey) -> None:
         self._set_type(unit_type=BaseDimensions.LIGHT, unit=new_mass)
 
     @property
-    def CURRENT(self):
+    def CURRENT(self) -> CurrentKey:
         """Current unit of the unit system."""
         return self._CURRENT
 
     @CURRENT.setter
-    def CURRENT(self, new_mass):
+    def CURRENT(self, new_mass: CurrentKey) -> None:
         self._set_type(unit_type=BaseDimensions.CURRENT, unit=new_mass)
 
     @property
-    def SOLID_ANGLE(self):
+    def SOLID_ANGLE(self) -> SolidAngleKey:
         """Solid Angle unit of the unit system."""
         return self._SOLID_ANGLE
 
     @SOLID_ANGLE.setter
-    def SOLID_ANGLE(self, new_mass):
+    def SOLID_ANGLE(self, new_mass: SolidAngleKey) -> None:
         self._set_type(unit_type=BaseDimensions.SOLID_ANGLE, unit=new_mass)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         units = ""
         for unit_type in BaseDimensions:
             unit = getattr(self, f"_{unit_type.name}")
             units += f"{unit_type.name}: {unit}\n"
         return units
 
-    def __eq__(self, other_sys):
-        for attr, value in self.__dict__.items():
-            if getattr(other_sys, attr) != value:
-                return False
-        return True
+    def __eq__(self, other_sys: object) -> bool:
+        if not isinstance(other_sys, UnitSystem):
+            return False
+        return all(
+            getattr(other_sys, attr) == value for attr, value in self.__dict__.items()
+        )
 
 
 class NotBaseUnit(ValueError):

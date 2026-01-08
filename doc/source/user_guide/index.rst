@@ -15,4 +15,6 @@ code to work with physical quantities.
    strings
    angles
    temperature
-
+   plot
+   quantity_dimensions
+   variable_descriptor

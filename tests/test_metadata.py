@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -20,8 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import importlib.metadata
+
 from ansys.units import __version__
 
 
 def test_pkg_version():
-    assert __version__ == "0.3.3"
+    # Read from the pyproject.toml
+    # major, minor, patch
+    read_version = importlib.metadata.version("ansys-units")
+
+    assert __version__ == read_version

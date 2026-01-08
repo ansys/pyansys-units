@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,9 +23,11 @@
 
 from __future__ import annotations
 
-from typing import Union
+from collections.abc import Generator, Mapping
 
-from ansys.units import BaseDimensions
+from typing_extensions import override
+
+from ansys.units.base_dimensions import BaseDimensions
 
 
 class Dimensions:
@@ -51,17 +53,19 @@ class Dimensions:
 
     def __init__(
         self,
-        dimensions: dict[BaseDimensions, Union[int, float]] = None,
-        copy_from: Dimensions = None,
+        dimensions: Mapping[BaseDimensions, float] | None = None,
+        copy_from: Dimensions | None = None,
     ):
         dimensions = dimensions or {}
-        self._dimensions = {
+        self._dimensions: dict[BaseDimensions, float] = {
             **(copy_from._dimensions if copy_from else {}),
             **(dimensions),
         }
 
         for x, y in dimensions.items():
-            if not isinstance(x, BaseDimensions):
+            if not isinstance(
+                x, BaseDimensions
+            ):  # pyright: ignore[reportUnnecessaryIsInstance]
                 raise IncorrectDimensions()
             if y == 0:
                 del self._dimensions[x]
@@ -75,22 +79,20 @@ class Dimensions:
         str
             A string version of the dimensions.
         """
-        dims = {x.name: y for x, y in self}
-        if not dims:
-            dims = ""
-        return str(dims)
+        return str({x.name: y for x, y in self})
 
-    def __str__(self):
+    @override
+    def __str__(self) -> str:
         return self._to_string()
 
-    def __repr__(self):
+    @override
+    def __repr__(self) -> str:
         return self._to_string()
 
-    def __iter__(self):
-        for item in self._dimensions.items():
-            yield item
+    def __iter__(self) -> Generator[tuple[BaseDimensions, float]]:
+        yield from self._dimensions.items()
 
-    def __mul__(self, other):
+    def __mul__(self, other: Dimensions) -> Dimensions:
         results = self._dimensions.copy()
         for dim, value in other:
             if dim in results:
@@ -99,7 +101,7 @@ class Dimensions:
                 results[dim] = value
         return Dimensions(results)
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: Dimensions) -> Dimensions:
         results = self._dimensions.copy()
         for dim, value in other:
             if dim in results:
@@ -108,28 +110,28 @@ class Dimensions:
                 results[dim] = -value
         return Dimensions(results)
 
-    def __pow__(self, __value):
+    def __pow__(self, __value: float) -> Dimensions:
         results = self._dimensions.copy()
         for item in self:
             results[item[0]] *= __value
         return Dimensions(results)
 
-    def __eq__(self, __value):
-        dims = __value._dimensions.copy()
-        for dim, value in self:
-            if dim in dims:
-                dims[dim] -= value
-            else:
-                return False
-        if [False for v in dims.values() if v != 0]:
-            return False
-        return True
+    @override
+    def __eq__(self, __value: object) -> bool:
+        return (
+            isinstance(__value, Dimensions) and self._dimensions == __value._dimensions
+        )
 
-    def __ne__(self, other):
-        return not self.__eq__(other)
+    @override
+    def __hash__(self) -> int:
+        return hash(repr(sorted(self._dimensions.items())))
 
     def __bool__(self):
         return bool(self._dimensions)
+
+    def __getitem__(self, key: str) -> float:
+        dimension_name = BaseDimensions[key]
+        return self._dimensions[dimension_name]
 
 
 class IncorrectDimensions(ValueError):

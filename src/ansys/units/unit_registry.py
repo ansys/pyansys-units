@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,11 +21,15 @@
 # SOFTWARE.
 """Provides the ``UnitRegistry`` class."""
 
+from collections.abc import Generator, Mapping
 import os
+from typing import TYPE_CHECKING, Any
 
 import yaml
 
 from ansys.units import Unit, _base_units, _derived_units
+from ansys.units._constants import _BaseUnitInfo, _DerivedUnitInfo
+from ansys.units.unit import Unit
 
 
 def register_unit(unit: str, composition: str, factor):
@@ -87,10 +91,16 @@ class UnitRegistry:
     >>> ureg.foot_per_sec = fps
     """
 
-    def __init__(self, config="cfg.yaml", other: dict = None):
-        unitdict = other or {}
+    def __init__(
+        self,
+        config: str = "cfg.yaml",
+        other: Mapping[
+            str, Mapping[str, Any]
+        ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
+    ):
         global _derived_units
         unitdict.update(_derived_units)
+        unitdict = dict(other)
 
         if config:
             file_dir = os.path.dirname(__file__)
@@ -98,10 +108,10 @@ class UnitRegistry:
 
             with open(qc_path, "r") as qc_yaml:
                 qc_data = yaml.safe_load(qc_yaml)
-                _qc_base_units: dict = qc_data["base_units"]
-                _qc_derived_units: dict = qc_data["derived_units"]
+                _base_units: dict[str, _BaseUnitInfo] = qc_data["base_units"]
+                _derived_units: dict[str, _DerivedUnitInfo] = qc_data["derived_units"]
 
-            unitdict.update(**_qc_base_units, **_qc_derived_units)
+            unitdict |= _base_units | _derived_units
 
         for unit in unitdict:
             setattr(self, unit, Unit(unit, unitdict[unit]))
@@ -113,14 +123,17 @@ class UnitRegistry:
             returned_string += f"{key}, "
         return returned_string
 
-    def __setattr__(self, name: str, unit: any) -> None:
+    if TYPE_CHECKING:
+
+        def __getattr__(self, name: str) -> Unit: ...
+
+    def __setattr__(self, name: str, unit: Any) -> None:
         if hasattr(self, name):
             raise UnitAlreadyRegistered(name)
         self.__dict__[name] = unit
 
-    def __iter__(self):
-        for item in self.__dict__:
-            yield getattr(self, item)
+    def __iter__(self) -> Generator[str]:
+        yield from self.__dict__
 
 
 class UnitAlreadyRegistered(ValueError):
