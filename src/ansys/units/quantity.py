@@ -57,6 +57,7 @@ try:
 except ImportError:
     _core_schema = None
 
+import importlib
 from typing import cast
 
 _ci: type = object
@@ -64,12 +65,12 @@ _ai: type | None = None
 _registry: dict[object, object] = {}
 
 try:
-    import matplotlib.units as _mpl_units  # pyright: ignore[reportMissingImports]
+    _mpl_units = importlib.import_module("matplotlib.units")
 
     _ci = cast(type, getattr(_mpl_units, "ConversionInterface", object))
     _ai = cast(type, getattr(_mpl_units, "AxisInfo", object))
     _registry = cast(dict[object, object], getattr(_mpl_units, "registry", {}))
-except ImportError:
+except Exception:
     _ci, _ai, _registry = object, None, {}
 
 
