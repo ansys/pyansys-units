@@ -30,6 +30,7 @@ from ansys.units import (
     UnitRegistry,
     UnitSystem,
 )
+from ansys.units.quantity import get_si_value
 from ansys.units.unit import (
     InconsistentDimensions,
     IncorrectUnits,
@@ -272,3 +273,14 @@ def test_errors():
 def test_error_messages():
     e1 = UnknownTableItem("Risk")
     assert str(e1) == "`Risk` is not a valid quantity table item."
+
+
+def test_tonne_feet_unit():
+    foot = Quantity(value=1, units="ft")
+    assert get_si_value(foot) == 0.30479999999999996
+
+    tonne = Quantity(value=1, units="tonne")
+    assert get_si_value(tonne) == 1000.0
+
+    femto_tonne = Quantity(value=1, units="ftonne")
+    assert get_si_value(femto_tonne) == 1e-12
