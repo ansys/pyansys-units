@@ -130,6 +130,7 @@ skips = [
     ]
 
 [tool.basedpyright]
+include = ["src"]
 reportAny = false
 reportUnknownMemberType = false
 reportExplicitAny = false

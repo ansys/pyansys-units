@@ -64,17 +64,13 @@ _ai: type | None = None
 _registry: dict[object, object] = {}
 
 try:
-    from matplotlib.units import (  # pyright: ignore[reportMissingImports, reportUnknownVariableType]  # noqa: E501
-        AxisInfo,
-        ConversionInterface,
-        registry,
-    )
+    import matplotlib.units as _mpl_units  # pyright: ignore[reportMissingImports]
 
-    _ci = cast(type, ConversionInterface)
-    _ai = cast(type, AxisInfo)
-    _registry = cast(dict[object, object], registry)
+    _ci = cast(type, getattr(_mpl_units, "ConversionInterface", object))
+    _ai = cast(type, getattr(_mpl_units, "AxisInfo", object))
+    _registry = cast(dict[object, object], getattr(_mpl_units, "registry", {}))
 except ImportError:
-    _ci, _ai, _registry = object, None, dict()
+    _ci, _ai, _registry = object, None, {}
 
 
 @runtime_checkable
