@@ -174,40 +174,6 @@
                 }
             }
         ],
-        "./src/ansys/units/dimensions.py": [
-            {
-                "code": "reportUnnecessaryIsInstance",
-                "range": {
-                    "startColumn": 19,
-                    "endColumn": 48,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 15,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 16,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 14,
-                    "lineCount": 1
-                }
-            }
-        ],
         "./src/ansys/units/quantity.py": [
             {
                 "code": "reportImportCycles",
@@ -2123,14 +2089,6 @@
             }
         ],
         "./src/ansys/units/variable_descriptor/variable_descriptor.py": [
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 16,
-                    "lineCount": 1
-                }
-            },
             {
                 "code": "reportImplicitStringConcatenation",
                 "range": {

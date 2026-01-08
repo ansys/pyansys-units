@@ -28,19 +28,19 @@ dependencies = [
 
 [project.optional-dependencies]
 doc = [
-    "ansys-sphinx-theme==1.6.3",
+    "ansys-sphinx-theme==1.6.4",
     "pdf2image==1.17.0",
     "quarto-cli==1.8.25",
-    "matplotlib==3.10.7",
-    "numpydoc==1.9.0",
+    "matplotlib==3.10.8",
+    "numpydoc==1.10.0",
     "Sphinx==7.4.7",
     "sphinx-copybutton==0.5.2",
-    "sphinx-gallery==0.19.0",
+    "sphinx-gallery==0.20.0",
     "sphinx-toggleprompt==0.6.0",
 ]
 tests = [
     "numpy>=1.24,<3",
-    "pytest==9.0.1",
+    "pytest==9.0.2",
     "pytest-cov==7.0.0",
     "pytest-mock==3.15.1",
     "pint==0.24.4",
@@ -52,14 +52,14 @@ additional = [
 ]
 # getting versions of matplotlib and numpy that are compatible is hard so we have this for CI
 ci_types = [
-    "matplotlib==3.10.7",
+    "matplotlib==3.10.8",
     "pydantic>=2.11.7",
     "pydantic_core>=2.33.2",
-    "pytest==9.0.1",
+    "pytest==9.0.2",
     "pytest-cov==7.0.0",
     "pytest-mock==3.15.1",
     "pint==0.24.4",
-    "black==25.11.0",
+    "black==25.12.0",
 ]
 
 [project.urls]

@@ -52,15 +52,12 @@ QuantityKindT = TypeVar(
 )
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, unsafe_hash=True)
 class VariableDescriptor(Generic[QuantityKindT]):
     """Defines a physical quantity variable descriptor."""
 
     dimension: Dimensions
     name: str = field(init=False)
-
-    def __hash__(self) -> int:
-        return hash((self.name, str(self.dimension)))
 
     def __set_name__(self, _, name: str) -> None:
         object.__setattr__(self, "name", _validate_and_transform_variable(name))

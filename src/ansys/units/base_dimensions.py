@@ -21,10 +21,10 @@
 # SOFTWARE.
 """Provides the ``BaseDimensions`` class."""
 
-from enum import Enum
+from enum import IntEnum
 
 
-class BaseDimensions(Enum):
+class BaseDimensions(IntEnum):
     """
     Supplies all valid base dimensions used in dimensional analysis.
 
