@@ -22,6 +22,7 @@
 """Provides the ``UnitRegistry`` class and dynamic unit registration."""
 
 from collections.abc import Generator, Mapping
+import math
 import os
 from typing import TYPE_CHECKING, Any
 
@@ -63,11 +64,8 @@ def register_unit(*, unit: str, composition: str, factor: float) -> None:
     name = (unit or "").strip()
     if not name:
         raise ValueError("`unit` must be a non-empty string.")
-    if (
-        not isinstance(factor, (int, float))
-        or factor != factor
-        or factor in (float("inf"), float("-inf"))
-    ):
+    f = float(factor)
+    if not math.isfinite(f):
         raise ValueError("`factor` must be a finite number.")
 
     # Check against built-ins loaded at import time and already-registered units
@@ -84,7 +82,7 @@ def register_unit(*, unit: str, composition: str, factor: float) -> None:
         units=composition
     )  # may raise for invalid composition; that's OK to propagate
 
-    _REGISTERED_UNITS[name] = {"composition": composition, "factor": float(factor)}
+    _REGISTERED_UNITS[name] = {"composition": composition, "factor": f}
 
 
 class UnitRegistry:
@@ -119,7 +117,7 @@ class UnitRegistry:
             str, Mapping[str, Any]
         ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
     ):
-        unitdict = dict(other)
+        unitdict: dict[str, Mapping[str, Any]] = dict(other)
 
         if config:
             file_dir = os.path.dirname(__file__)
@@ -137,22 +135,26 @@ class UnitRegistry:
             unitdict |= _REGISTERED_UNITS
 
         for unit in unitdict:
-            cfg = unitdict[unit]
+            cfg: Mapping[str, Any] = unitdict[unit]
             if unit in _CONST_BASE_UNITS or unit in _CONST_DERIVED_UNITS:
-                setattr(self, unit, Unit(unit, cfg))
+                if hasattr(self, unit):
+                    raise UnitAlreadyRegistered(unit)
+                object.__setattr__(self, unit, Unit(unit, cfg))
             else:
                 # For dynamically registered units not present in constants, build
                 # from their composition so dimensions/si data are correct, then
                 # override the name to the desired symbol and attach config.
-                if isinstance(cfg, Mapping) and "composition" in cfg:
-                    composed = Unit(units=cfg["composition"])
+                if "composition" in cfg:
+                    composed = Unit(units=str(cfg["composition"]))
                     obj = Unit(copy_from=composed)
                     obj._name = unit
-                    for key in cfg:
-                        setattr(obj, f"_{key}", cfg[key])
-                    setattr(self, unit, obj)
+                    if hasattr(self, unit):
+                        raise UnitAlreadyRegistered(unit)
+                    object.__setattr__(self, unit, obj)
                 else:
-                    setattr(self, unit, Unit(unit, cfg))
+                    if hasattr(self, unit):
+                        raise UnitAlreadyRegistered(unit)
+                    object.__setattr__(self, unit, Unit(unit, cfg))
 
     def __str__(self):
         returned_string = ""

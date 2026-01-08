@@ -26,7 +26,7 @@ from ansys.units import UnitRegistry, register_unit
 from ansys.units.unit_registry import UnitAlreadyRegistered
 
 
-def test_register_unit(monkeypatch):
+def test_register_unit():
     # ensure a clean registry for this test and restore afterwards
     import ansys.units.unit_registry as urmod
 
