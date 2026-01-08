@@ -50,6 +50,24 @@
                 }
             }
         ],
+        "./scripts/generate_keys.py": [
+            {
+                "code": "reportAny",
+                "range": {
+                    "startColumn": 4,
+                    "endColumn": 14,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportAny",
+                "range": {
+                    "startColumn": 31,
+                    "endColumn": 34,
+                    "lineCount": 1
+                }
+            }
+        ],
         "./src/ansys/units/_constants.py": [
             {
                 "code": "reportUnusedClass",

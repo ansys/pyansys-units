@@ -1,3 +1,5 @@
+# pyright: reportUnannotatedClassAttribute=false
+
 # Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
@@ -33,7 +35,7 @@ from typing import Generic, Literal, final
 
 from typing_extensions import TypeVar
 
-from ansys.units import BaseDimensions
+from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_dimensions import QuantityDimensions
 
@@ -61,7 +63,7 @@ class VariableDescriptor(Generic[QuantityKindT]):
         return hash((self.name, str(self.dimension)))
 
     def __set_name__(self, _, name: str) -> None:
-        object.__setattr__(self, "name", name.lower())
+        object.__setattr__(self, "name", _validate_and_transform_variable(name))
 
 
 def _validate_and_transform_variable(variable: str) -> str:
@@ -98,7 +100,6 @@ _B = BaseDimensions
 _Q = QuantityKind
 
 
-@final
 class VariableCatalog:
     """A catalog of variable descriptors."""
 
@@ -156,8 +157,9 @@ class VariableCatalog:
         ValueError
             The variable name is not uppercase or already exists.
         """
-        # Validate and transform the variable name
-        transformed_name = _validate_and_transform_variable(variable)
+        _validate_and_transform_variable(
+            variable
+        )  # Validate variable name before adding to prevent invalid state
 
         # Determine the target category (main catalog or subcategory)
         target = cls

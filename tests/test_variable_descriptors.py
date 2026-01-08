@@ -70,7 +70,12 @@ def test_descriptor_strategies():
 def test_extend_descriptor_catalog():
     catalog = VariableCatalog()
     catalog.add("WALL_SHEAR_STRESS_2", QuantityDimensions.STRESS)
-    assert catalog.WALL_SHEAR_STRESS_2.name == "wall_shear_stress_2"
+    # ignore this is acceptable as most users shouldn't really be dynamically adding these,
+    # it's far better to subclass
+    assert (
+        catalog.WALL_SHEAR_STRESS_2.name  # pyright: ignore[reportAttributeAccessIssue]
+        == "wall_shear_stress_2"
+    )
 
 
 def test_get_custom_descriptor_from_catalog():
