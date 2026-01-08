@@ -143,7 +143,7 @@ def _generate_main_variables() -> str:
         dimension: Dimensions
         dim_str = _dimension_to_string(dimension)
         lines.append(
-            f"""    {attr_name} = VariableDescriptor[Literal[_R.{
+            f"""    {attr_name} = VariableDescriptor[Literal[_Q.{
                         'VECTOR' if attr_name in QuantityDimensions._vector_quantities else 'SCALAR'  # noqa: E501
                     }]](Dimensions({dim_str}))"""
         )
@@ -164,7 +164,7 @@ def _generate_subcategory_class(
 
     for var_name, dimension in variables_list:
         lines.append(
-            f"""        {var_name} = VariableDescriptor[Literal[_R.{
+            f"""        {var_name} = VariableDescriptor[Literal[_Q.{
                             'VECTOR' if var_name in QuantityDimensions._vector_quantities else 'SCALAR'  # noqa: E501
                         }]]({dimension})"""
         )
