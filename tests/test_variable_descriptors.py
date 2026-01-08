@@ -36,9 +36,9 @@ from ansys.units import (
 def test_create_descriptors():
     @final
     class _:
-        velocity = VariableDescriptor(Dimensions())
+        VELOCITY = VariableDescriptor(Dimensions())
 
-    assert _.velocity.name == "velocity"
+    assert _.VELOCITY.name == "velocity"
 
 
 def test_descriptor_strategies():
