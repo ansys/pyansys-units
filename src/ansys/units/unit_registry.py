@@ -182,9 +182,8 @@ class UnitRegistry:
         obj._si_scaling_factor *= f
         obj._name = name
 
-        # Optionally store metadata mirroring derived unit info for introspection
-        obj._composition = composition
-        obj._factor = f
+        # No additional attributes set to keep typing strict and avoid
+        # unknown attribute assignments on Unit.
 
         object.__setattr__(self, name, obj)
         return obj
