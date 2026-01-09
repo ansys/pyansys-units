@@ -36,7 +36,7 @@ from ansys.units.quantity import Quantity, get_si_value
 from ansys.units.quantity_dimensions import QuantityDimensions
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
-from ansys.units.unit_registry import UnitRegistry, register_unit
+from ansys.units.unit_registry import UnitRegistry
 from ansys.units.variable_descriptor import (
     ConversionStrategy,
     MappingConversionStrategy,
@@ -60,7 +60,6 @@ __all__ = [
     "UnitSystem",
     "Unit",
     "UnitRegistry",
-    "register_unit",
     "QuantityDimensions",
     "VariableDescriptor",
     "VariableCatalog",

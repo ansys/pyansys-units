@@ -22,30 +22,44 @@
 
 import pytest
 
-from ansys.units import UnitRegistry, register_unit
+from ansys.units import UnitRegistry
 from ansys.units.unit_registry import UnitAlreadyRegistered
 
 
 def test_register_unit():
-    # ensure a clean registry for this test and restore afterwards
-    import ansys.units.unit_registry as urmod
+    # Backward-compat removal: global registration no longer exists.
+    # Ensure that creating a new registry does not reflect any external state.
+    ur = UnitRegistry()
+    with pytest.raises(AttributeError):
+        _ = ur.Q
 
-    saved = urmod._REGISTERED_UNITS.copy()
-    urmod._REGISTERED_UNITS.clear()
-    try:
-        register_unit(unit="Q", composition="N m", factor=1)
-        ur = UnitRegistry()
-        assert ur.Q == ur.J
 
-        with pytest.raises(UnitAlreadyRegistered):
-            register_unit(unit="Q", composition="N m", factor=1)
+def test_instance_register_unit():
+    # Instance-scoped registration should affect only that registry
+    ur = UnitRegistry()
 
-        register_unit(unit="Z", composition="N m", factor=1)
-        with pytest.raises(AttributeError):
-            _ = ur.Z
+    # Cannot override built-ins
+    with pytest.raises(UnitAlreadyRegistered):
+        ur.register_unit(unit="J", composition="N m", factor=1)
 
-        ur2 = UnitRegistry()
-        assert ur2.Q == ur2.J == ur2.Z
-    finally:
-        urmod._REGISTERED_UNITS.clear()
-        urmod._REGISTERED_UNITS.update(saved)
+    # Register alias 'Q' equal to Joule
+    ur.register_unit(unit="Q", composition="N m", factor=1)
+    assert ur.Q == ur.J
+
+    # Same instance cannot re-register same name
+    with pytest.raises(UnitAlreadyRegistered):
+        ur.register_unit(unit="Q", composition="N m", factor=1)
+
+    # New registry does not see instance registration
+    ur2 = UnitRegistry()
+    with pytest.raises(AttributeError):
+        _ = ur2.Q
+
+    # Register independently on another instance
+    ur2.register_unit(unit="Q", composition="N m", factor=1)
+    assert ur2.Q == ur2.J
+
+    # Factor scales SI relative to composition
+    ur.register_unit(unit="Z", composition="N m", factor=1000)
+    assert ur.Z.dimensions == ur.J.dimensions
+    assert ur.Z.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor * 1000)
