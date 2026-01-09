@@ -9,7 +9,7 @@ Instance-Scoped
 
 - ``UnitRegistry.register_unit(unit, composition, factor)`` adds a new unit
   symbol to that single registry instance. It does not change global state,
-  avoids temporal coupling, and keeps namespaces clean.
+  avoids temporal coupling, and keeps the registry scope clean.
 - Duplicate registrations on the same instance (including collisions with
   built-in units) raise ``UnitAlreadyRegistered``.
 
@@ -37,7 +37,7 @@ Example
 
 .. note::
    Dynamic registration is instance-scoped. Register units on the specific
-   ``UnitRegistry`` you want to use; new registries will not automatically
+  ``UnitRegistry`` you want to use; new registries do not automatically
    inherit instance-registered units.
 
 Notes
