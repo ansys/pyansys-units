@@ -36,9 +36,9 @@ Example
        pass
 
 .. note::
-   Dynamic registration is instance-scoped. Register units on the specific
+  Dynamic registration is instance-scoped. Register units on the specific
   ``UnitRegistry`` you want to use; new registries do not automatically
-   inherit instance-registered units.
+  inherit instance-registered units.
 
 Notes
 -----
