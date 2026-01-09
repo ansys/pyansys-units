@@ -57,14 +57,21 @@ try:
 except ImportError:
     _core_schema = None
 
-try:
-    from matplotlib.units import AxisInfo, ConversionInterface, registry
+import importlib
+from typing import cast
 
-    _ci = ConversionInterface
-    _ai = AxisInfo
-    _registry = registry
-except ImportError:
-    _ci, _ai, _registry = object, None, dict()
+_ci: type = object
+_ai: type | None = None
+_registry: dict[object, object] = {}
+
+try:
+    _mpl_units = importlib.import_module("matplotlib.units")
+
+    _ci = cast(type, getattr(_mpl_units, "ConversionInterface", object))
+    _ai = cast(type, getattr(_mpl_units, "AxisInfo", object))
+    _registry = cast(dict[object, object], getattr(_mpl_units, "registry", {}))
+except Exception:
+    _ci, _ai, _registry = object, None, {}
 
 
 @runtime_checkable
@@ -719,24 +726,24 @@ class RequiresUniqueDimensions(ValueError):
 
 class QuantityConverter(_ci):
     @staticmethod
-    def convert(value, unit, axis):
+    def convert(value, unit, axis) -> object:
         if isinstance(value, Quantity):
             return value._value
         else:
             return [quantity._value for quantity in value]
 
     @staticmethod
-    def axisinfo(unit, axis):
+    def axisinfo(unit, axis) -> object:
         return _ai(label=unit)
 
     @staticmethod
-    def default_units(x, axis):
+    def default_units(x, axis) -> object:
         "Return the default unit for x or None"
         if isinstance(x, Quantity):
             attr = getattr(x, "unit", None)
         else:
             attr = getattr(x[0], "unit", None)
-        return attr.name if isinstance(attr, Unit) else attr
+        return cast(object, attr.name if isinstance(attr, Unit) else attr)
 
 
 _registry[Quantity] = QuantityConverter()
