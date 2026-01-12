@@ -107,6 +107,7 @@ class ArrayLike(Protocol):
 
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
+    import numpy.typing as npt
     from typing_extensions import Self, TypeVar
 
     ValT = TypeVar(
@@ -338,7 +339,7 @@ class Quantity(Generic[ValT]):
             to_units = Unit(units=to_units)
 
         # Retrieve all SI required SI data and perform conversion
-        new_value = (
+        new_value: float | ArrayLike = (
             get_si_value(self) / to_units.si_scaling_factor
         ) - to_units.si_offset
 
@@ -572,12 +573,17 @@ class Quantity(Generic[ValT]):
             )
         ):
             return self._compute_single_value_comparison(other, op=operator.eq)
-        # no type-checking here since array_equal happily processes anything
-        return (
-            _array
-            and _array.array_equal(get_si_value(self), get_si_value(other))
-            or False
-        )
+        # array-based equality: guard types and cast for numpy.typing
+        if _array and isinstance(other, Quantity):
+            if isinstance(self.value, _array.ndarray) and isinstance(
+                other.value, _array.ndarray
+            ):
+                self_arr = cast("Quantity[ArrayLike]", self)
+                other_arr = cast("Quantity[ArrayLike]", other)
+                a1 = cast("npt.ArrayLike", cast(object, get_si_value(self_arr)))
+                a2 = cast("npt.ArrayLike", cast(object, get_si_value(other_arr)))
+                return bool(_array.array_equal(a1, a2))
+        return False
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source_type, handler):
