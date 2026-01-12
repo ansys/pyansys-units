@@ -7,9 +7,8 @@ instance-scoped registration directly on a ``UnitRegistry`` instance.
 Instance-Scoped
 ---------------
 
-- ``UnitRegistry.register_unit(unit, composition, factor)`` adds a new unit
-  symbol to that single registry instance. It does not change global state,
-  avoids temporal coupling, and keeps the registry scope clean.
+- The ``UnitRegistry.register_unit(name, composition, factor)`` method adds a new unit
+  symbol to that registry instance.
 - Duplicate registrations on the same instance (including collisions with
   built-in units) raise ``UnitAlreadyRegistered``.
 
