@@ -168,17 +168,11 @@ class UnitRegistry:
         ):
             raise UnitAlreadyRegistered(name)
 
-        # Validate and build from composition so dimensions and SI data are correct
         composed = Unit(units=str(composition))
         obj = Unit(copy_from=composed)
 
-        # Apply scaling factor relative to composition, update name
         obj._si_scaling_factor *= f
         obj._name = name
-
-        # No additional attributes set to keep typing strict and avoid
-        # unknown attribute assignments on Unit.
-
         object.__setattr__(self, name, obj)
         return obj
 
