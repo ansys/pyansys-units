@@ -129,7 +129,6 @@ class UnitRegistry:
         self,
         *,
         name: str | None = None,
-        unit: str | None = None,
         composition: str,
         factor: float,
     ) -> Unit:
@@ -141,10 +140,8 @@ class UnitRegistry:
 
         Parameters
         ----------
-        name: str, optional
+        name: str
             The symbol/name of the new unit (e.g., "Q"). Preferred keyword.
-        unit: str, optional
-            The symbol/name of the new unit (e.g., "Q"). Deprecated keyword; use ``name``.
         composition: str
             A valid unit composition using existing configured units (e.g., "N m").
         factor: float
@@ -162,8 +159,8 @@ class UnitRegistry:
         ValueError
             If ``name`` is empty or ``factor`` is not finite.
         """
-        name_str: str = (name or unit or "").strip()
-        if not name_str:
+        name: str = name.strip()
+        if not name:
             raise ValueError("`name` must be a non-empty string.")
         f: float = float(factor)
         if not math.isfinite(f):
@@ -171,18 +168,18 @@ class UnitRegistry:
 
         # Prevent overriding built-ins or existing attributes on this instance
         if (
-            name_str in _CONST_BASE_UNITS
-            or name_str in _CONST_DERIVED_UNITS
-            or hasattr(self, name_str)
+            name in _CONST_BASE_UNITS
+            or name in _CONST_DERIVED_UNITS
+            or hasattr(self, name)
         ):
-            raise UnitAlreadyRegistered(name_str)
+            raise UnitAlreadyRegistered(name)
 
         composed = Unit(units=str(composition))
         obj = Unit(copy_from=composed)
 
         obj._si_scaling_factor *= f
-        obj._name = name_str
-        object.__setattr__(self, name_str, obj)
+        obj._name = name
+        object.__setattr__(self, name, obj)
         return obj
 
 
