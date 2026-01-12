@@ -13,7 +13,6 @@ Instance-Scoped
 - Duplicate registrations on the same instance (including collisions with
   built-in units) raise ``UnitAlreadyRegistered``.
 
-See also: :download:`tests/test_register_unit.py <../../../tests/test_register_unit.py>` (function ``test_instance_register_unit``)
 
 Example
 -------
