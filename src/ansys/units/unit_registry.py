@@ -152,10 +152,6 @@ class UnitRegistry:
             If a unit with the same name already exists on this instance or is built-in.
         ValueError
             If ``unit`` is empty or ``factor`` is not finite.
-
-        Notes
-        -----
-        Tested in ``tests/test_register_unit.py::test_instance_register_unit``.
         """
         name = (unit or "").strip()
         if not name:
