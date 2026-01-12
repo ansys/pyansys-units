@@ -84,12 +84,12 @@ class UnitRegistry:
 
             unitdict |= _base_units | _derived_units
 
-        for unit in unitdict:
-            cfg: Mapping[str, Any] = unitdict[unit]
-            if unit in _CONST_BASE_UNITS or unit in _CONST_DERIVED_UNITS:
-                if hasattr(self, unit):
-                    raise UnitAlreadyRegistered(unit)
-                object.__setattr__(self, unit, Unit(unit, cfg))
+        for unit_name in unitdict:
+            cfg: Mapping[str, Any] = unitdict[unit_name]
+            if unit_name in _CONST_BASE_UNITS or unit_name in _CONST_DERIVED_UNITS:
+                if hasattr(self, unit_name):
+                    raise UnitAlreadyRegistered(unit_name)
+                object.__setattr__(self, unit_name, Unit(unit_name, cfg))
             else:
                 # For dynamically registered units not present in constants, build
                 # from their composition so dimensions/si data are correct, then
@@ -97,14 +97,14 @@ class UnitRegistry:
                 if "composition" in cfg:
                     composed = Unit(units=str(cfg["composition"]))
                     obj = Unit(copy_from=composed)
-                    obj._name = unit
-                    if hasattr(self, unit):
-                        raise UnitAlreadyRegistered(unit)
-                    object.__setattr__(self, unit, obj)
+                    obj._name = unit_name
+                    if hasattr(self, unit_name):
+                        raise UnitAlreadyRegistered(unit_name)
+                    object.__setattr__(self, unit_name, obj)
                 else:
-                    if hasattr(self, unit):
-                        raise UnitAlreadyRegistered(unit)
-                    object.__setattr__(self, unit, Unit(unit, cfg))
+                    if hasattr(self, unit_name):
+                        raise UnitAlreadyRegistered(unit_name)
+                    object.__setattr__(self, unit_name, Unit(unit_name, cfg))
 
     def __str__(self):
         returned_string = ""
@@ -125,7 +125,14 @@ class UnitRegistry:
     def __iter__(self) -> Generator[str]:
         yield from self.__dict__
 
-    def register_unit(self, *, unit: str, composition: str, factor: float) -> Unit:
+    def register_unit(
+        self,
+        *,
+        name: str | None = None,
+        unit: str | None = None,
+        composition: str,
+        factor: float,
+    ) -> Unit:
         """
         Register a new derived unit on this ``UnitRegistry`` instance.
 
@@ -134,8 +141,10 @@ class UnitRegistry:
 
         Parameters
         ----------
-        unit: str
-            The symbol/name of the new unit (e.g., "Q").
+        name: str, optional
+            The symbol/name of the new unit (e.g., "Q"). Preferred keyword.
+        unit: str, optional
+            The symbol/name of the new unit (e.g., "Q"). Deprecated keyword; use ``name``.
         composition: str
             A valid unit composition using existing configured units (e.g., "N m").
         factor: float
@@ -151,29 +160,29 @@ class UnitRegistry:
         UnitAlreadyRegistered
             If a unit with the same name already exists on this instance or is built-in.
         ValueError
-            If ``unit`` is empty or ``factor`` is not finite.
+            If ``name`` is empty or ``factor`` is not finite.
         """
-        name = name.strip()
-        if not name:
-            raise ValueError("`unit` must be a non-empty string.")
-        f = float(factor)
+        name_str: str = (name or unit or "").strip()
+        if not name_str:
+            raise ValueError("`name` must be a non-empty string.")
+        f: float = float(factor)
         if not math.isfinite(f):
             raise ValueError("`factor` must be a finite number.")
 
         # Prevent overriding built-ins or existing attributes on this instance
         if (
-            name in _CONST_BASE_UNITS
-            or name in _CONST_DERIVED_UNITS
-            or hasattr(self, name)
+            name_str in _CONST_BASE_UNITS
+            or name_str in _CONST_DERIVED_UNITS
+            or hasattr(self, name_str)
         ):
-            raise UnitAlreadyRegistered(name)
+            raise UnitAlreadyRegistered(name_str)
 
         composed = Unit(units=str(composition))
         obj = Unit(copy_from=composed)
 
         obj._si_scaling_factor *= f
-        obj._name = name
-        object.__setattr__(self, name, obj)
+        obj._name = name_str
+        object.__setattr__(self, name_str, obj)
         return obj
 
 

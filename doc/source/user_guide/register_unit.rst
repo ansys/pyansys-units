@@ -7,7 +7,7 @@ instance-scoped registration directly on a ``UnitRegistry`` instance.
 Instance-Scoped
 ---------------
 
-- ``UnitRegistry.register_unit(unit, composition, factor)`` adds a new unit
+- ``UnitRegistry.register_unit(name, composition, factor)`` adds a new unit
   symbol to that single registry instance. It does not change global state,
   avoids temporal coupling, and keeps the registry scope clean.
 - Duplicate registrations on the same instance (including collisions with
@@ -23,7 +23,7 @@ Example
 
    ur = UnitRegistry()
    # Register a symbol 'Q' equivalent to Joule (N m)
-   ur.register_unit(unit="Q", composition="N m", factor=1)
+   ur.register_unit(name="Q", composition="N m", factor=1)
    assert ur.Q == ur.J
 
    # A new registry does not see instance registrations
