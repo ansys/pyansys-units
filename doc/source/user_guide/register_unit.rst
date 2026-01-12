@@ -19,20 +19,21 @@ Example
 
 .. code-block:: python
 
-   from ansys.units import UnitRegistry
+    from ansys.units import UnitRegistry
 
-   ur = UnitRegistry()
-   # Register a symbol 'Q' equivalent to Joule (N m)
-   ur.register_unit(unit="Q", composition="N m", factor=1)
-   assert ur.Q == ur.J
+    ur = UnitRegistry()
 
-   # A new registry does not see instance registrations
-   ur2 = UnitRegistry()
-   try:
-       _ = ur2.Q
-       raise AssertionError("Expected AttributeError for ur2.Q")
-   except AttributeError:
-       pass
+    # Register a symbol 'Q' equivalent to Joule (N m)
+    ur.register_unit(name="Q", composition="N m", factor=1)
+    assert ur.Q == ur.J
+
+    # A new registry does not see instance registrations
+    ur2 = UnitRegistry()
+    try:
+        _ = ur2.Q
+        raise AssertionError("Expected AttributeError for ur2.Q")
+    except AttributeError:
+        pass
 
 .. note::
   Dynamic registration is instance-scoped. Register units on the specific
