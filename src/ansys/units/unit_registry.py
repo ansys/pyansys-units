@@ -89,7 +89,7 @@ class UnitRegistry:
             if hasattr(self, unit_name):
                 raise UnitAlreadyRegistered(unit_name)
 
-            cfg: Mapping[str, Any] = unitdict[unit_name]
+            cfg = unitdict[unit_name]
             if unit_name in _CONST_BASE_UNITS or unit_name in _CONST_DERIVED_UNITS:
                 object.__setattr__(self, unit_name, Unit(unit_name, cfg))
             else:
