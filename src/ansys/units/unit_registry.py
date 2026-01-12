@@ -153,7 +153,7 @@ class UnitRegistry:
         ValueError
             If ``unit`` is empty or ``factor`` is not finite.
         """
-        name = (unit or "").strip()
+        name = name.strip()
         if not name:
             raise ValueError("`unit` must be a non-empty string.")
         f = float(factor)
