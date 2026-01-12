@@ -71,7 +71,7 @@ class UnitRegistry:
             str, Mapping[str, Any]
         ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
     ):
-        unitdict: dict[str, Mapping[str, Any]] = dict(other)
+        unitdict = dict(other)
 
         if config:
             file_dir = os.path.dirname(__file__)
