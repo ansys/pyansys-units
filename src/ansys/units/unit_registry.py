@@ -84,8 +84,6 @@ class UnitRegistry:
 
             unitdict |= _base_units | _derived_units
 
-        # Instance-scoped: no global dynamically registered units are loaded
-
         for unit in unitdict:
             cfg: Mapping[str, Any] = unitdict[unit]
             if unit in _CONST_BASE_UNITS or unit in _CONST_DERIVED_UNITS:
