@@ -85,10 +85,12 @@ class UnitRegistry:
             unitdict |= _base_units | _derived_units
 
         for unit_name in unitdict:
+            # Prevent overriding attributes already present on this instance
+            if hasattr(self, unit_name):
+                raise UnitAlreadyRegistered(unit_name)
+
             cfg: Mapping[str, Any] = unitdict[unit_name]
             if unit_name in _CONST_BASE_UNITS or unit_name in _CONST_DERIVED_UNITS:
-                if hasattr(self, unit_name):
-                    raise UnitAlreadyRegistered(unit_name)
                 object.__setattr__(self, unit_name, Unit(unit_name, cfg))
             else:
                 # For dynamically registered units not present in constants, build
@@ -98,12 +100,8 @@ class UnitRegistry:
                     composed = Unit(units=str(cfg["composition"]))
                     obj = Unit(copy_from=composed)
                     obj._name = unit_name
-                    if hasattr(self, unit_name):
-                        raise UnitAlreadyRegistered(unit_name)
                     object.__setattr__(self, unit_name, obj)
                 else:
-                    if hasattr(self, unit_name):
-                        raise UnitAlreadyRegistered(unit_name)
                     object.__setattr__(self, unit_name, Unit(unit_name, cfg))
 
     def __str__(self):
