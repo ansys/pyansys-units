@@ -40,15 +40,15 @@ def test_instance_register_unit():
 
     # Cannot override built-ins
     with pytest.raises(UnitAlreadyRegistered):
-        ur.register_unit(name="J", composition="N m", factor=1)
+        ur.register_unit(unit="J", composition="N m", factor=1)
 
     # Register alias 'Q' equal to Joule using one composition
-    ur.register_unit(name="Q", composition="N m", factor=1)
+    ur.register_unit(unit="Q", composition="N m", factor=1)
     assert ur.Q == ur.J
 
     # Same instance cannot re-register same name
     with pytest.raises(UnitAlreadyRegistered):
-        ur.register_unit(name="Q", composition="N m", factor=1)
+        ur.register_unit(unit="Q", composition="N m", factor=1)
 
     # New registry does not see instance registration
     ur2 = UnitRegistry()
@@ -56,7 +56,7 @@ def test_instance_register_unit():
         _ = ur2.Q
 
     # Register independently on another instance with a different equivalent composition
-    ur2.register_unit(name="Q", composition="W s", factor=1)
+    ur2.register_unit(unit="Q", composition="W s", factor=1)
     assert ur2.Q == ur2.J
     # Independence: earlier registration on ur remains unchanged
     assert ur.Q == ur.J
@@ -66,7 +66,7 @@ def test_instance_register_unit():
     assert ur.Q.si_scaling_factor == pytest.approx(ur2.Q.si_scaling_factor)
 
     # Factor scales SI relative to composition
-    ur.register_unit(name="Z", composition="N m", factor=1000)
+    ur.register_unit(unit="Z", composition="N m", factor=1000)
     assert ur.Z.dimensions == ur.J.dimensions
     assert ur.Z.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor * 1000)
 
@@ -76,8 +76,8 @@ def test_instance_register_unit_independence_with_factor():
     ur = UnitRegistry()
     ur2 = UnitRegistry()
 
-    ur.register_unit(name="Q2", composition="N m", factor=1)
-    ur2.register_unit(name="Q2", composition="N m", factor=2)
+    ur.register_unit(unit="Q2", composition="N m", factor=1)
+    ur2.register_unit(unit="Q2", composition="N m", factor=2)
 
     # ur.A equals Joule; ur2.A has double SI scaling compared to Joule
     assert ur.Q2 == ur.J
@@ -90,13 +90,13 @@ def test_duplicate_registration_same_registry():
     ur = UnitRegistry()
 
     # First registration succeeds
-    ur.register_unit(name="B", composition="N m", factor=1)
+    ur.register_unit(unit="B", composition="N m", factor=1)
     assert ur.B == ur.J
 
     # Re-register same name with same composition should fail
     with pytest.raises(UnitAlreadyRegistered):
-        ur.register_unit(name="B", composition="N m", factor=1)
+        ur.register_unit(unit="B", composition="N m", factor=1)
 
     # Re-register same name with different (but equivalent) composition should also fail
     with pytest.raises(UnitAlreadyRegistered):
-        ur.register_unit(name="B", composition="W s", factor=1)
+        ur.register_unit(unit="B", composition="W s", factor=1)
