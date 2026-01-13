@@ -41,10 +41,16 @@ Example
 
 from ._generated_variable_descriptor import VariableCatalog
 from .strategy import ConversionStrategy, MappingConversionStrategy
-from .variable_descriptor import VariableDescriptor
+from .variable_descriptor import (
+    ScalarVariableDescriptor,
+    VariableDescriptor,
+    VectorVariableDescriptor,
+)
 
 __all__ = [
     "VariableDescriptor",
+    "ScalarVariableDescriptor",
+    "VectorVariableDescriptor",
     "VariableCatalog",
     "ConversionStrategy",
     "MappingConversionStrategy",

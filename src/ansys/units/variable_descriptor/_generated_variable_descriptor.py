@@ -36,6 +36,8 @@ from ansys.units.variable_descriptor.variable_descriptor import (
 
 @final
 class VariableCatalog(VariableCatalogBase):
+    """A catalog of variable descriptors."""
+
     ABSOLUTE_PRESSURE = ScalarVariableDescriptor(
         Dimensions({_B.MASS: 1.0, _B.LENGTH: -1.0, _B.TIME: -2.0})
     )

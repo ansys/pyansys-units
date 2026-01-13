@@ -24,7 +24,7 @@ Main Classes
 QuantityKind
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.QuantityKind
+.. autoclass:: ansys.units.variable_descriptor.variable_descriptor.QuantityKind
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,7 +32,7 @@ QuantityKind
 VariableDescriptor
 ~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.VariableDescriptor
+.. autoclass:: ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor
    :members:
    :undoc-members:
    :show-inheritance:
@@ -40,14 +40,18 @@ VariableDescriptor
 Represents a single named physical quantity, including its dimensional signature.
 The kind of quantity (scalar or vector) is indicated by the ``QuantityKind`` enumeration.
 
-.. autodata:: ansys.units.variable_descriptor.ScalarVariableDescriptor
+.. data:: ansys.units.variable_descriptor.ScalarVariableDescriptor
 
-.. autodata:: ansys.units.variable_descriptor.VectorVariableDescriptor
+   A type alias for scalar variable descriptors.
+
+.. data:: ansys.units.variable_descriptor.VectorVariableDescriptor
+
+   A type alias for vector variable descriptors.
 
 VariableCatalog
 ~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.VariableCatalog
+.. autoclass:: ansys.units.variable_descriptor._generated_variable_descriptor.VariableCatalog
    :members:
    :undoc-members:
    :show-inheritance:
@@ -57,7 +61,7 @@ A registry of predefined ``VariableDescriptor`` instances for commonly used quan
 ConversionStrategy
 ~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.ConversionStrategy
+.. autoclass:: ansys.units.variable_descriptor.strategy.ConversionStrategy
    :members:
    :undoc-members:
    :show-inheritance:
@@ -67,7 +71,7 @@ An abstract base class for strategies that convert ``VariableDescriptor`` object
 MappingConversionStrategy
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.MappingConversionStrategy
+.. autoclass:: ansys.units.variable_descriptor.strategy.MappingConversionStrategy
    :members:
    :undoc-members:
    :show-inheritance:

@@ -190,7 +190,7 @@ for category, vars_list in variables.items():
 
 auto_generated_attributes = "\n".join(attributes)
 
-content = f"""\
+content = f'''\
 # Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 
 # SPDX-License-Identifier: MIT
@@ -229,8 +229,9 @@ from ansys.units.variable_descriptor.variable_descriptor import (
 
 @final
 class VariableCatalog(VariableCatalogBase):
+    """A catalog of variable descriptors."""
 {auto_generated_attributes}
-"""
+'''
 
 
 # Format with black and write
