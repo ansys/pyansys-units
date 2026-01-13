@@ -18,3 +18,4 @@ code to work with physical quantities.
    plot
    quantity_dimensions
    variable_descriptor
+   register_unit

@@ -27,11 +27,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import importlib
 from keyword import iskeyword
 from pathlib import Path
 import sys
 
-import black
+
+# Lazy formatter: use Black if available, otherwise pass through
+def _format_str(s: str) -> str:
+    try:
+        black = importlib.import_module("black")
+        return str(black.format_str(s, mode=black.Mode()))
+    except Exception:
+        return s
+
 
 src = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(src))
@@ -42,8 +51,10 @@ common = src / "ansys" / "units" / "common.py"
 all = (*_base_units, *_derived_units)
 
 common.touch(exist_ok=True)
+NL = "\n"
+
 common.write_text(
-    black.format_str(
+    _format_str(
         f"""\
 # Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 
@@ -72,11 +83,11 @@ common.write_text(
 from ansys.units import Unit
 
 __all__ = (
-{"\n".join(f'    "{key if not iskeyword(key) else key + "_"}",' for key in all)}
+{NL.join(f'    "{key if not iskeyword(key) else key + "_"}",' for key in all)}
 )
 
 {
-            "\n".join(
+            NL.join(
                 f'''{key if not iskeyword(key) else key + "_"} = Unit("{
                     key
                 }")  #: A predefined unit for a {key}'''
@@ -84,6 +95,5 @@ __all__ = (
             )
         }
 """,
-        mode=black.Mode(),
     )
 )
