@@ -31,7 +31,7 @@ naming conventions.
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Generic
+from typing import Generic, Literal
 
 from typing_extensions import TypeVar
 
@@ -41,7 +41,7 @@ from ansys.units.quantity_dimensions import QuantityDimensions
 
 
 class QuantityKind(Enum):
-    """Enumeration for variable dimensionality."""
+    """Enumeration for :class:`VariableDescriptor`."""
 
     SCALAR = "scalar"
     VECTOR = "vector"
@@ -63,8 +63,12 @@ class VariableDescriptor(Generic[QuantityKindT]):
         object.__setattr__(self, "name", _validate_and_transform_variable(name))
 
 
-ScalarVariableDescriptor = VariableDescriptor[QuantityKind.SCALAR]
-VectorVariableDescriptor = VariableDescriptor[QuantityKind.VECTOR]
+ScalarVariableDescriptor = VariableDescriptor[
+    Literal[QuantityKind.SCALAR]
+]  #: Type alias for scalar variables
+VectorVariableDescriptor = VariableDescriptor[
+    Literal[QuantityKind.VECTOR]
+]  #: Type alias for vector variables
 
 
 def _validate_and_transform_variable(variable: str) -> str:
