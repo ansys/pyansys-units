@@ -28,11 +28,21 @@
 # SOFTWARE.
 
 from collections import defaultdict
+import importlib
 from pathlib import Path
 import sys
 
-import black
 import yaml
+
+
+# Lazy formatter: use Black if available, otherwise pass through
+def _format_str(s: str) -> str:
+    try:
+        black = importlib.import_module("black")
+        return str(black.format_str(s, mode=black.Mode()))
+    except Exception:
+        return s
+
 
 src = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(src))
@@ -55,8 +65,10 @@ for key, value in _base_units.items():
 
 
 keys_path.touch(exist_ok=True)
+NL = "\n"
+
 keys_path.write_text(
-    black.format_str(
+    _format_str(
         f"""\
 # Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 
@@ -85,30 +97,29 @@ keys_path.write_text(
 from typing import Literal
 
 UnitKey = Literal[
-{"\n".join(f'    "{key}",' for key in all)}
+{NL.join(f'    "{key}",' for key in all)}
 ]
 
 {
-            "\n\n".join(
+            (NL + NL).join(
                 f'''{dim.title().replace("_", "")}Key = Literal[
-{"\n".join(f'    "{unit}",' for unit in values)}
+{NL.join(f'    "{unit}",' for unit in values)}
 ]'''
                 for dim, values in dims.items()
             )
         }
 
 QuantityKey = Literal[
-{"\n".join(f'    "{key}",' for key in table_data["quantity_units_table"])}
+{NL.join(f'    "{key}",' for key in table_data["quantity_units_table"])}
 ]
 
 BaseUnit = Literal[
-{"\n".join(f'    "{key}",' for key in _unit_systems["SI"])}
+{NL.join(f'    "{key}",' for key in _unit_systems["SI"])}
 ]
 
 Systems = Literal[
-{"\n".join(f'    "{key}",' for key in _unit_systems)}
+{NL.join(f'    "{key}",' for key in _unit_systems)}
 ]
 """,
-        mode=black.Mode(),
     )
 )

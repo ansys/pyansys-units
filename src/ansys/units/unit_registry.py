@@ -19,15 +19,23 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides the ``UnitRegistry`` class."""
+"""Provides the ``UnitRegistry`` class and instance-scoped unit registration."""
 
 from collections.abc import Generator, Mapping
+import math
 import os
 from typing import TYPE_CHECKING, Any
 
 import yaml
 
-from ansys.units._constants import _BaseUnitInfo, _DerivedUnitInfo
+from ansys.units._constants import (
+    _BaseUnitInfo,
+)
+from ansys.units._constants import (
+    _DerivedUnitInfo,
+)
+from ansys.units._constants import _base_units as _CONST_BASE_UNITS
+from ansys.units._constants import _derived_units as _CONST_DERIVED_UNITS
 from ansys.units.unit import Unit
 
 
@@ -76,8 +84,25 @@ class UnitRegistry:
 
             unitdict |= _base_units | _derived_units
 
-        for unit in unitdict:
-            setattr(self, unit, Unit(unit, unitdict[unit]))
+        for unit_name in unitdict:
+            # Prevent overriding attributes already present on this instance
+            if hasattr(self, unit_name):
+                raise UnitAlreadyRegistered(unit_name)
+
+            cfg = unitdict[unit_name]
+            if unit_name in _CONST_BASE_UNITS or unit_name in _CONST_DERIVED_UNITS:
+                object.__setattr__(self, unit_name, Unit(unit_name, cfg))
+            else:
+                # For dynamically registered units not present in constants, build
+                # from their composition so dimensions/si data are correct, then
+                # override the name to the desired symbol and attach config.
+                if "composition" in cfg:
+                    composed = Unit(units=str(cfg["composition"]))
+                    obj = Unit(copy_from=composed)
+                    obj._name = unit_name
+                    object.__setattr__(self, unit_name, obj)
+                else:
+                    object.__setattr__(self, unit_name, Unit(unit_name, cfg))
 
     def __str__(self):
         returned_string = ""
@@ -97,6 +122,63 @@ class UnitRegistry:
 
     def __iter__(self) -> Generator[str]:
         yield from self.__dict__
+
+    def register_unit(
+        self,
+        *,
+        unit: str,
+        composition: str,
+        factor: float,
+    ) -> Unit:
+        """
+        Register a new derived unit on this ``UnitRegistry`` instance.
+
+        This is instance-scoped: it affects only this registry and does not
+        mutate global state or other registries.
+
+        Parameters
+        ----------
+        unit: str
+            The symbol/name of the new unit (e.g., "Q"). Preferred keyword.
+        composition: str
+            A valid unit composition using existing configured units (e.g., "N m").
+        factor: float
+            Scale factor that relates the composition to this unit.
+
+        Returns
+        -------
+        Unit
+            The registered unit attached on this instance.
+
+        Raises
+        ------
+        UnitAlreadyRegistered
+            If a unit with the same name already exists on this instance or is built-in.
+        ValueError
+            If ``unit`` is empty or ``factor`` is not finite.
+        """
+        unit = unit.strip()
+        if not unit:
+            raise ValueError("`unit` must be a non-empty string.")
+        f = float(factor)
+        if not math.isfinite(f):
+            raise ValueError("`factor` must be a finite number.")
+
+        # Prevent overriding built-ins or existing attributes on this instance
+        if (
+            unit in _CONST_BASE_UNITS
+            or unit in _CONST_DERIVED_UNITS
+            or hasattr(self, unit)
+        ):
+            raise UnitAlreadyRegistered(unit)
+
+        composed = Unit(units=str(composition))
+        obj = Unit(copy_from=composed)
+
+        obj._si_scaling_factor *= f
+        obj._name = unit
+        object.__setattr__(self, unit, obj)
+        return obj
 
 
 class UnitAlreadyRegistered(ValueError):
