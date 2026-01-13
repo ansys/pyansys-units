@@ -140,9 +140,9 @@ def _generate_main_variables() -> str:
     lines = list[str]()
 
     # Get all Dimensions attributes from QuantityDimensions
-    for attr_name, dimension in inspect.getmembers(  # pyright: ignore[reportAny]
+    for attr_name, dimension in inspect.getmembers(
         QuantityDimensions,
-        predicate=lambda x: isinstance(x, Dimensions),  # pyright: ignore[reportAny]
+        predicate=lambda x: isinstance(x, Dimensions),
     ):
         dimension: Dimensions
         dim_str = _dimension_to_string(dimension)
