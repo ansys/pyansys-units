@@ -39,6 +39,7 @@ Example
     print(strategy.to_string(quantity))
 """
 
+from ..dimensions import Dimensions as _Dimensions
 from ._generated_variable_descriptor import VariableCatalog
 from .strategy import ConversionStrategy, MappingConversionStrategy
 from .variable_descriptor import (
@@ -46,6 +47,9 @@ from .variable_descriptor import (
     VariableDescriptor,
     VectorVariableDescriptor,
 )
+
+VariableCatalog.add("STORED_CELL_PARTITIION", _Dimensions(), "mesh")  # deprecated typo
+
 
 __all__ = [
     "VariableDescriptor",
