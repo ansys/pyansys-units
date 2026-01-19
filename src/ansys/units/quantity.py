@@ -57,14 +57,21 @@ try:
 except ImportError:
     _core_schema = None
 
-try:
-    from matplotlib.units import AxisInfo, ConversionInterface, registry
+import importlib
+from typing import cast
 
-    _ci = ConversionInterface
-    _ai = AxisInfo
-    _registry = registry
-except ImportError:
-    _ci, _ai, _registry = object, None, dict()
+_ci: type = object
+_ai: type | None = None
+_registry: dict[object, object] = {}
+
+try:
+    _mpl_units = importlib.import_module("matplotlib.units")
+
+    _ci = cast(type, getattr(_mpl_units, "ConversionInterface", object))
+    _ai = cast(type, getattr(_mpl_units, "AxisInfo", object))
+    _registry = cast(dict[object, object], getattr(_mpl_units, "registry", {}))
+except Exception:
+    _ci, _ai, _registry = object, None, {}
 
 
 @runtime_checkable
@@ -100,6 +107,7 @@ class ArrayLike(Protocol):
 
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
+    import numpy.typing as npt
     from typing_extensions import Self, TypeVar
 
     ValT = TypeVar(
@@ -331,7 +339,7 @@ class Quantity(Generic[ValT]):
             to_units = Unit(units=to_units)
 
         # Retrieve all SI required SI data and perform conversion
-        new_value = (
+        new_value: float | ArrayLike = (
             get_si_value(self) / to_units.si_scaling_factor
         ) - to_units.si_offset
 
@@ -565,12 +573,17 @@ class Quantity(Generic[ValT]):
             )
         ):
             return self._compute_single_value_comparison(other, op=operator.eq)
-        # no type-checking here since array_equal happily processes anything
-        return (
-            _array
-            and _array.array_equal(get_si_value(self), get_si_value(other))
-            or False
-        )
+        # array-based equality: guard types and cast for numpy.typing
+        if _array and isinstance(other, Quantity):
+            if isinstance(self.value, _array.ndarray) and isinstance(
+                other.value, _array.ndarray
+            ):
+                self_arr = cast("Quantity[ArrayLike]", self)
+                other_arr = cast("Quantity[ArrayLike]", other)
+                a1 = cast("npt.ArrayLike", cast(object, get_si_value(self_arr)))
+                a2 = cast("npt.ArrayLike", cast(object, get_si_value(other_arr)))
+                return bool(_array.array_equal(a1, a2))
+        return False
 
     @classmethod
     def __get_pydantic_core_schema__(cls, source_type, handler):
@@ -719,24 +732,24 @@ class RequiresUniqueDimensions(ValueError):
 
 class QuantityConverter(_ci):
     @staticmethod
-    def convert(value, unit, axis):
+    def convert(value, unit, axis) -> object:
         if isinstance(value, Quantity):
             return value._value
         else:
             return [quantity._value for quantity in value]
 
     @staticmethod
-    def axisinfo(unit, axis):
+    def axisinfo(unit, axis) -> object:
         return _ai(label=unit)
 
     @staticmethod
-    def default_units(x, axis):
+    def default_units(x, axis) -> object:
         "Return the default unit for x or None"
         if isinstance(x, Quantity):
             attr = getattr(x, "unit", None)
         else:
             attr = getattr(x[0], "unit", None)
-        return attr.name if isinstance(attr, Unit) else attr
+        return cast(object, attr.name if isinstance(attr, Unit) else attr)
 
 
 _registry[Quantity] = QuantityConverter()

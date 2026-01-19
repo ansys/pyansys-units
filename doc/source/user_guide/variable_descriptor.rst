@@ -21,6 +21,14 @@ The subpackage also defines **conversion strategies** that translate between ``V
 Main Classes
 ------------
 
+QuantityKind
+~~~~~~~~~~~~
+
+.. autoclass:: ansys.units.variable_descriptor.variable_descriptor.QuantityKind
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 VariableDescriptor
 ~~~~~~~~~~~~~~~~~~
 
@@ -30,11 +38,20 @@ VariableDescriptor
    :show-inheritance:
 
 Represents a single named physical quantity, including its dimensional signature.
+The kind of quantity (scalar or vector) is indicated by the ``QuantityKind`` enumeration.
+
+.. data:: ansys.units.variable_descriptor.ScalarVariableDescriptor
+
+   A type alias for scalar variable descriptors.
+
+.. data:: ansys.units.variable_descriptor.VectorVariableDescriptor
+
+   A type alias for vector variable descriptors.
 
 VariableCatalog
 ~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.variable_descriptor.VariableCatalog
+.. autoclass:: ansys.units.variable_descriptor._generated_variable_descriptor.VariableCatalog
    :members:
    :undoc-members:
    :show-inheritance:

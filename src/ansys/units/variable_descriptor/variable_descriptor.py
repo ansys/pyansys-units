@@ -1,3 +1,5 @@
+# pyright: reportUnannotatedClassAttribute=false
+
 # Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
@@ -27,22 +29,46 @@ physical quantities (e.g., pressure, velocity) independently of any product-spec
 naming conventions.
 """
 
-from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Generic, Literal
 
+from typing_extensions import TypeVar
+
+from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_dimensions import QuantityDimensions
 
 
-@dataclass(frozen=True)
-class VariableDescriptor:
+class QuantityKind(Enum):
+    """Enumeration for :class:`VariableDescriptor`."""
+
+    SCALAR = "scalar"
+    VECTOR = "vector"
+
+
+QuantityKindT = TypeVar(
+    "QuantityKindT", bound=QuantityKind, default=QuantityKind, covariant=True
+)
+
+
+@dataclass(frozen=True, unsafe_hash=True)
+class VariableDescriptor(Generic[QuantityKindT]):
     """Defines a physical quantity variable descriptor."""
 
-    name: str
     dimension: Dimensions
+    name: str = field(init=False)
 
-    def __hash__(self) -> int:
-        return hash((self.name, str(self.dimension)))
+    def __set_name__(self, _, name: str) -> None:
+        object.__setattr__(self, "name", _validate_and_transform_variable(name))
+
+
+ScalarVariableDescriptor = VariableDescriptor[
+    Literal[QuantityKind.SCALAR]
+]  #: Type alias for scalar variables
+VectorVariableDescriptor = VariableDescriptor[
+    Literal[QuantityKind.VECTOR]
+]  #: Type alias for vector variables
 
 
 def _validate_and_transform_variable(variable: str) -> str:
@@ -74,36 +100,13 @@ def _validate_and_transform_variable(variable: str) -> str:
     return variable.lower()
 
 
-def _build_variable_descriptors_from_dimensions() -> dict[str, VariableDescriptor]:
-    """
-    Generate a dictionary of variable descriptors from QuantityDimensions.
-
-    This function iterates over all uppercase attributes in QuantityDimensions and
-    creates VariableDescriptor instances for each valid dimension.
-    """
-    catalog = {}
-    for attr_name in dir(QuantityDimensions):
-        dimension = getattr(QuantityDimensions, attr_name)
-        if isinstance(dimension, Dimensions):
-            catalog[attr_name] = VariableDescriptor(
-                name=_validate_and_transform_variable(attr_name), dimension=dimension
-            )
-    return catalog
+_D = QuantityDimensions
+_B = BaseDimensions
+_Q = QuantityKind
 
 
-class VariableCatalog:
+class VariableCatalogBase:
     """A catalog of variable descriptors."""
-
-    # Load from generator
-    _generated = _build_variable_descriptors_from_dimensions()
-
-    # Inject generated descriptors as class attributes
-    for _key, _descriptor in _generated.items():
-        locals()[_key] = _descriptor
-
-    if TYPE_CHECKING:
-        # would be nice if there was keyof QuantityDimensions
-        def __getattr__(self, key: str) -> VariableDescriptor: ...
 
     @classmethod
     def all(cls) -> dict[str, list[VariableDescriptor]]:
@@ -159,8 +162,9 @@ class VariableCatalog:
         ValueError
             The variable name is not uppercase or already exists.
         """
-        # Validate and transform the variable name
-        transformed_name = _validate_and_transform_variable(variable)
+        _validate_and_transform_variable(
+            variable
+        )  # Validate variable name before adding to prevent invalid state
 
         # Determine the target category (main catalog or subcategory)
         target = cls
@@ -189,89 +193,12 @@ class VariableCatalog:
             )
 
         # Add the variable to the target category
-        setattr(target, variable, VariableDescriptor(transformed_name, dimension))
+        descriptor = VariableDescriptor(dimension)
+        descriptor.__set_name__(target, variable)
+        setattr(target, variable, descriptor)
 
 
 # Add custom descriptors
-_D = QuantityDimensions
-fluent_variables = [
-    # velocity
-    # The dominant meaning of helicity comes from
-    # particle physics where it is dimensionless.
-    # In CFD, where it has a different
-    # meaning, it usually has dimension L^2 T^-2.
-    # In Fluent it is L T^-2.
-    ("HELICITY", _D.ACCELERATION),
-    # Lambda 2 criterion is documented as dimensionless
-    # but is T^-2 in Fluent.
-    ("LAMBDA_2_CRITERION", _D.TIME**-2),
-    ("DENSITY_ALL", _D.DENSITY),
-    (
-        "Y_PLUS_BASED_HEAT_TRANSFER_COEFFICIENT",
-        _D.POWER * _D.LENGTH**-2 * _D.TEMPERATURE**-1,
-    ),
-    ("TOTAL_ENTHALPY_DEVIATION", _D.SPECIFIC_ENTHALPY),
-    # residuals
-    ("MASS_IMBALANCE", _D.MASS * _D.TIME**-1),
-    # derivatives
-    ("PRESSURE_HESSIAN_INDICATOR", Dimensions()),
-    ("VELOCITY_ANGLE", _D.ANGLE),
-    ("DVELOCITY_DX", _D.TIME**-1),
-    ("DVELOCITY_DX_MAGNITUDE", _D.TIME**-1),
-    ("DVELOCITY_DX_X", _D.TIME**-1),
-    ("DVELOCITY_DX_Y", _D.TIME**-1),
-    ("DVELOCITY_DX_Z", _D.TIME**-1),
-    ("DVELOCITY_DY", _D.TIME**-1),
-    ("DVELOCITY_DY_MAGNITUDE", _D.TIME**-1),
-    ("DVELOCITY_DY_X", _D.TIME**-1),
-    ("DVELOCITY_DY_Y", _D.TIME**-1),
-    ("DVELOCITY_DY_Z", _D.TIME**-1),
-    ("DVELOCITY_DZ", _D.TIME**-1),
-    ("DVELOCITY_DZ_MAGNITUDE", _D.TIME**-1),
-    ("DVELOCITY_DZ_X", _D.TIME**-1),
-    ("DVELOCITY_DZ_Y", _D.TIME**-1),
-    ("DVELOCITY_DZ_Z", _D.TIME**-1),
-    ("VOLUME_FRACTION_PRIMARY_PHASE", _D.VOLUME_FRACTION),
-    ("VOLUME_FRACTION_SECONDARY_PHASE", _D.VOLUME_FRACTION),
-]
-
-for name, dimension in fluent_variables:
-    VariableCatalog.add(name, dimension, "fluent")
-
-
-mesh_variables = [
-    # mesh
-    ("ANISOTROPIC_ADAPTION_CELLS", Dimensions()),
-    ("BOUNDARY_CELL_DISTANCE", Dimensions()),
-    ("BOUNDARY_LAYER_CELLS", Dimensions()),
-    ("BOUNDARY_NORMAL_DISTANCE", Dimensions()),
-    ("BOUNDARY_VOLUME_DISTANCE", Dimensions()),
-    ("CELL_EQUIANGLE_SKEW", Dimensions()),
-    ("CELL_EQUIVOLUME_SKEW", Dimensions()),
-    ("CELL_PARENT_INDEX", Dimensions()),
-    ("CELL_REFINE_LEVEL", Dimensions()),
-    ("CELL_VOLUME", _D.VOLUME),
-    ("CELL_VOLUME_CHANGE", Dimensions()),
-    ("ELEMENT_ASPECT_RATIO", Dimensions()),
-    ("ELEMENT_WALL_DISTANCE", _D.LENGTH),
-    ("FACE_AREA_MAGNITUDE", _D.AREA),
-    ("FACE_HANDEDNESS", Dimensions()),
-    ("INTERFACE_OVERLAP_FRACTION", Dimensions()),
-    ("MARK_POOR_ELEMENTS", Dimensions()),
-    ("SMOOTHED_CELL_REFINE_LEVEL", Dimensions()),
-    ("X_FACE_AREA", _D.AREA),
-    ("Y_FACE_AREA", _D.AREA),
-    ("Z_FACE_AREA", _D.AREA),
-    # cell info
-    ("ACTIVE_CELL_PARTITION", Dimensions()),
-    ("CELL_ELEMENT_TYPE", Dimensions()),
-    ("CELL_ID", Dimensions()),
-    ("CELL_WEIGHT", Dimensions()),
-    ("CELL_ZONE_INDEX", Dimensions()),
-    ("CELL_ZONE_TYPE", Dimensions()),
-    ("PARTITION_NEIGHBOURS", Dimensions()),
-    ("STORED_CELL_PARTITIION", Dimensions()),
-]
-
-for name, dimension in mesh_variables:
-    VariableCatalog.add(name, dimension, "mesh")
+VariableCatalogBase.add(
+    "STORED_CELL_PARTITIION", Dimensions(), "mesh"
+)  # deprecated typo

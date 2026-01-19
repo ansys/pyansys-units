@@ -25,6 +25,8 @@ from __future__ import annotations
 
 from collections.abc import Generator, Mapping
 
+from typing_extensions import override
+
 from ansys.units.base_dimensions import BaseDimensions
 
 
@@ -61,7 +63,9 @@ class Dimensions:
         }
 
         for x, y in dimensions.items():
-            if not isinstance(x, BaseDimensions):
+            if not isinstance(
+                x, BaseDimensions
+            ):  # pyright: ignore[reportUnnecessaryIsInstance]
                 raise IncorrectDimensions()
             if y == 0:
                 del self._dimensions[x]
@@ -77,9 +81,11 @@ class Dimensions:
         """
         return str({x.name: y for x, y in self})
 
+    @override
     def __str__(self) -> str:
         return self._to_string()
 
+    @override
     def __repr__(self) -> str:
         return self._to_string()
 
@@ -110,10 +116,15 @@ class Dimensions:
             results[item[0]] *= __value
         return Dimensions(results)
 
+    @override
     def __eq__(self, __value: object) -> bool:
         return (
             isinstance(__value, Dimensions) and self._dimensions == __value._dimensions
         )
+
+    @override
+    def __hash__(self) -> int:
+        return hash(repr(sorted(self._dimensions.items())))
 
     def __bool__(self):
         return bool(self._dimensions)
