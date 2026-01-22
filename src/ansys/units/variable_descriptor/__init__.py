@@ -48,9 +48,6 @@ from .variable_descriptor import (
     VectorVariableDescriptor,
 )
 
-VariableCatalog.add("STORED_CELL_PARTITIION", _Dimensions(), "mesh")  # deprecated typo
-
-
 __all__ = [
     "VariableDescriptor",
     "ScalarVariableDescriptor",
