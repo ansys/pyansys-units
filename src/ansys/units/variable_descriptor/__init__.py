@@ -39,7 +39,6 @@ Example
     print(strategy.to_string(quantity))
 """
 
-from ..dimensions import Dimensions as _Dimensions
 from ._generated_variable_descriptor import VariableCatalog
 from .strategy import ConversionStrategy, MappingConversionStrategy
 from .variable_descriptor import (
