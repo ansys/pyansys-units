@@ -740,3 +740,4 @@ class VariableCatalog(VariableCatalogBase):
         CELL_ZONE_TYPE = ScalarVariableDescriptor(Dimensions())
         PARTITION_NEIGHBOURS = ScalarVariableDescriptor(Dimensions())
         STORED_CELL_PARTITION = ScalarVariableDescriptor(Dimensions())
+        STORED_CELL_PARTITIION = ScalarVariableDescriptor(Dimensions())
