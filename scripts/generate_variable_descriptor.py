@@ -124,6 +124,7 @@ variables = {
         ("CELL_ZONE_TYPE", "Dimensions()"),
         ("PARTITION_NEIGHBOURS", "Dimensions()"),
         ("STORED_CELL_PARTITION", "Dimensions()"),
+        ("STORED_CELL_PARTITIION", "Dimensions()"),  # deprecated typo TODO remove
     ],
 }
 
