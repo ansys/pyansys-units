@@ -196,9 +196,3 @@ class VariableCatalogBase:
         descriptor = VariableDescriptor(dimension)
         descriptor.__set_name__(target, variable)
         setattr(target, variable, descriptor)
-
-
-# Add custom descriptors
-VariableCatalogBase.add(
-    "STORED_CELL_PARTITIION", Dimensions(), "mesh"
-)  # deprecated typo
