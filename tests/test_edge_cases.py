@@ -78,20 +78,20 @@ class TestNaNAndInfinity:
     def test_quantity_with_nan_value(self):
         """Test creating a quantity with NaN value."""
         q_nan = Quantity(float("nan"), "m")
-        assert math.isnan(q_nan.value)
+        assert math.isnan(q_nan.value)  # type: ignore[arg-type]
         assert q_nan.units == Unit("m")
 
     def test_quantity_with_positive_infinity(self):
         """Test creating a quantity with positive infinity."""
         q_inf = Quantity(float("inf"), "kg")
-        assert math.isinf(q_inf.value)
+        assert math.isinf(q_inf.value)  # type: ignore[arg-type]
         assert q_inf.value > 0
         assert q_inf.units == Unit("kg")
 
     def test_quantity_with_negative_infinity(self):
         """Test creating a quantity with negative infinity."""
         q_ninf = Quantity(float("-inf"), "s")
-        assert math.isinf(q_ninf.value)
+        assert math.isinf(q_ninf.value)  # type: ignore[arg-type]
         assert q_ninf.value < 0
         assert q_ninf.units == Unit("s")
 
@@ -102,19 +102,19 @@ class TestNaNAndInfinity:
 
         # Addition with NaN
         result_add = q_nan + q_normal
-        assert math.isnan(result_add.value)
+        assert math.isnan(result_add.value)  # type: ignore[arg-type]
 
         # Subtraction with NaN
         result_sub = q_normal - q_nan
-        assert math.isnan(result_sub.value)
+        assert math.isnan(result_sub.value)  # type: ignore[arg-type]
 
         # Multiplication with NaN
         result_mul = q_nan * q_normal
-        assert math.isnan(result_mul.value)
+        assert math.isnan(result_mul.value)  # type: ignore[arg-type]
 
         # Division with NaN
         result_div = q_nan / q_normal
-        assert math.isnan(result_div.value)
+        assert math.isnan(result_div.value)  # type: ignore[arg-type]
 
     def test_infinity_arithmetic_operations(self):
         """Test arithmetic operations with infinity values."""
@@ -123,16 +123,16 @@ class TestNaNAndInfinity:
 
         # Addition with infinity
         result_add = q_inf + q_normal
-        assert math.isinf(result_add.value)
+        assert math.isinf(result_add.value)  # type: ignore[arg-type]
         assert result_add.value > 0
 
         # Subtraction with infinity
         result_sub = q_inf - q_normal
-        assert math.isinf(result_sub.value)
+        assert math.isinf(result_sub.value)  # type: ignore[arg-type]
 
         # Multiplication with infinity
         result_mul = q_inf * 2
-        assert math.isinf(result_mul.value)
+        assert math.isinf(result_mul.value)  # type: ignore[arg-type]
 
     def test_nan_comparison_operations(self):
         """Test comparison operations with NaN values."""
@@ -172,14 +172,14 @@ class TestNaNAndInfinity:
         """Test unit conversion with NaN values."""
         q_nan = Quantity(float("nan"), "m")
         q_converted = q_nan.to("ft")
-        assert math.isnan(q_converted.value)
+        assert math.isnan(q_converted.value)  # type: ignore[arg-type]
         assert q_converted.units == Unit("ft")
 
     def test_infinity_unit_conversion(self):
         """Test unit conversion with infinity values."""
         q_inf = Quantity(float("inf"), "m")
         q_converted = q_inf.to("km")
-        assert math.isinf(q_converted.value)
+        assert math.isinf(q_converted.value)  # type: ignore[arg-type]
         assert q_converted.units == Unit("km")
 
     def test_zero_divided_by_zero(self):
@@ -188,7 +188,7 @@ class TestNaNAndInfinity:
         q_zero2 = Quantity(0.0, "s")
         # Division by zero raises ZeroDivisionError
         with pytest.raises(ZeroDivisionError):
-            result = q_zero1 / q_zero2
+            _ = q_zero1 / q_zero2
 
     def test_infinity_minus_infinity(self):
         """Test infinity minus infinity resulting in NaN."""
@@ -196,7 +196,7 @@ class TestNaNAndInfinity:
         q_inf2 = Quantity(float("inf"), "m")
         # Infinity minus infinity produces NaN (no warning in pure Python)
         result = q_inf1 - q_inf2
-        assert math.isnan(result.value)
+        assert math.isnan(result.value)  # type: ignore[arg-type]
 
     @pytest.mark.skipif(not _has_numpy(), reason="NumPy not available")
     def test_nan_in_arrays(self):
@@ -204,9 +204,9 @@ class TestNaNAndInfinity:
         import numpy as np
 
         arr_with_nan = np.array([1.0, 2.0, float("nan"), 4.0])
-        q_arr = Quantity(arr_with_nan, "m")
-        assert np.isnan(q_arr.value[2])
-        assert not np.isnan(q_arr.value[0])
+        q_arr = Quantity(arr_with_nan, "m")  # type: ignore[arg-type]
+        assert np.isnan(q_arr.value[2])  # type: ignore[call-overload,index]
+        assert not np.isnan(q_arr.value[0])  # type: ignore[call-overload,index]
 
     @pytest.mark.skipif(not _has_numpy(), reason="NumPy not available")
     def test_infinity_in_arrays(self):
@@ -214,11 +214,11 @@ class TestNaNAndInfinity:
         import numpy as np
 
         arr_with_inf = np.array([1.0, float("inf"), float("-inf"), 4.0])
-        q_arr = Quantity(arr_with_inf, "kg")
-        assert np.isinf(q_arr.value[1])
-        assert np.isinf(q_arr.value[2])
-        assert q_arr.value[1] > 0
-        assert q_arr.value[2] < 0
+        q_arr = Quantity(arr_with_inf, "kg")  # type: ignore[arg-type]
+        assert np.isinf(q_arr.value[1])  # type: ignore[call-overload,index]
+        assert np.isinf(q_arr.value[2])  # type: ignore[call-overload,index]
+        assert q_arr.value[1] > 0  # type: ignore[index,operator]
+        assert q_arr.value[2] < 0  # type: ignore[index,operator]
 
 
 # =============================================================================
@@ -260,7 +260,9 @@ class TestUnicodeSupport:
 
     def test_utf8_in_extra_fields(self):
         """Test UTF-8 strings in extra quantity fields."""
-        q = Quantity(10, "m", description="测试", note="Prüfung")
+        q = Quantity(10, "m")
+        q.extra_fields["description"] = "测试"
+        q.extra_fields["note"] = "Prüfung"
         assert q.extra_fields["description"] == "测试"
         assert q.extra_fields["note"] == "Prüfung"
 
@@ -318,7 +320,7 @@ class TestZeroAndBoundaryValues:
 
         # Division by zero raises ZeroDivisionError
         with pytest.raises(ZeroDivisionError):
-            result = q_normal / q_zero
+            _ = q_normal / q_zero
 
     def test_zero_multiplication(self):
         """Test multiplication by zero."""
@@ -421,7 +423,7 @@ class TestErrorConditions:
     def test_insufficient_arguments_error(self):
         """Test InsufficientArguments error."""
         with pytest.raises(InsufficientArguments):
-            Quantity()
+            Quantity()  # type: ignore[call-overload]
 
     def test_excessive_parameters_all_combinations(self):
         """Test all combinations of excessive parameters."""
@@ -465,19 +467,19 @@ class TestErrorConditions:
 
         # Comparison operations
         with pytest.raises(IncompatibleDimensions):
-            q_length < q_mass
+            _ = q_length < q_mass
 
         with pytest.raises(IncompatibleDimensions):
-            q_length > q_mass
+            _ = q_length > q_mass
 
         with pytest.raises(IncompatibleDimensions):
-            q_length <= q_mass
+            _ = q_length <= q_mass
 
         with pytest.raises(IncompatibleDimensions):
-            q_length >= q_mass
+            _ = q_length >= q_mass
 
         with pytest.raises(IncompatibleDimensions):
-            q_length == q_mass
+            _ = q_length == q_mass
 
     def test_temperature_operation_errors(self):
         """Test all prohibited temperature operations."""
@@ -539,12 +541,12 @@ class TestErrorConditions:
 
         # Comparing dimensional quantity with plain number
         with pytest.raises(IncompatibleQuantities):
-            q_dimensional == 5.0
+            _ = q_dimensional == 5.0
 
     def test_string_value_error(self):
         """Test that string values raise TypeError."""
         with pytest.raises(TypeError, match="value should be either float, int"):
-            Quantity("not_a_number", "m")
+            Quantity("not_a_number", "m")  # type: ignore[arg-type]
 
     def test_invalid_unit_string_formats(self):
         """Test various invalid unit string formats."""
@@ -555,7 +557,7 @@ class TestErrorConditions:
         # Some formats may be parsed differently than expected
         # so we just verify malformed units are handled somehow
         try:
-            q = Quantity(10, "m^")
+            _ = Quantity(10, "m^")
             # If it doesn't error, that's the library's choice
         except (UnconfiguredUnit, ValueError, Exception):
             # Any error is acceptable for malformed input
@@ -575,7 +577,7 @@ class TestRegressionIssues:
         if _has_numpy():
             # Temperature conversion with arrays has known issues
             # Test that basic array quantities work
-            temp_list = Quantity([1.0, 2.0, 3.0], "m")  # Use length instead
+            temp_list = Quantity([1.0, 2.0, 3.0], "m")  # type: ignore[arg-type]  # Use length instead  # noqa: E501
             assert temp_list.units == Unit("m")
             converted = temp_list.to("ft")
             assert converted.units == Unit("ft")
@@ -616,8 +618,8 @@ class TestRegressionIssues:
         assert q_dimensionless == 10.5
         assert 10.5 == q_dimensionless
         assert q_dimensionless != 5.0
-        assert q_dimensionless > 5.0
-        assert q_dimensionless < 15.0
+        assert q_dimensionless > 5.0  # type: ignore[operator]
+        assert q_dimensionless < 15.0  # type: ignore[operator]
 
     def test_temperature_subtraction_produces_delta(self):
         """Regression: Temperature subtraction should produce delta."""
@@ -659,26 +661,28 @@ class TestImmutability:
         """Test that quantity value cannot be changed."""
         q = Quantity(10, "m")
         with pytest.raises(AttributeError):
-            q.value = 20
+            q.value = 20  # type: ignore[misc]
 
     def test_quantity_units_immutable(self):
         """Test that quantity units cannot be changed."""
         q = Quantity(10, "m")
         with pytest.raises(AttributeError):
-            q.units = Unit("kg")
+            q.units = Unit("kg")  # type: ignore[misc]
 
     def test_quantity_dimensions_immutable(self):
         """Test that quantity dimensions cannot be changed."""
         q = Quantity(10, "m")
         with pytest.raises(AttributeError):
-            q.dimensions = Dimensions()
+            q.dimensions = Dimensions(
+                {BaseDimensions.MASS: 1}
+            )  # pyright: ignore[reportAttributeAccessIssue]
 
     def test_unit_name_immutable(self):
         """Test that unit name cannot be changed after creation."""
         u = Unit("m")
         # Attempt to modify internal attribute
         with pytest.raises(AttributeError):
-            u.name = "kg"
+            u.name = "kg"  # type: ignore[misc]
 
     @pytest.mark.skipif(not _has_numpy(), reason="NumPy not available")
     def test_array_immutability_warning(self):
@@ -686,14 +690,14 @@ class TestImmutability:
         import numpy as np
 
         original_array = np.array([1.0, 2.0, 3.0])
-        q = Quantity(original_array, "m")
+        q = Quantity(original_array, "m")  # type: ignore[arg-type]
 
         # Modifying the original array after quantity creation
         original_array[0] = 999.0
 
         # The quantity should reflect the change (arrays are mutable references)
         # This is expected behavior for numpy arrays
-        assert q.value[0] == 999.0
+        assert q.value[0] == 999.0  # type: ignore[index]
 
 
 # =============================================================================
@@ -794,7 +798,7 @@ class TestSpecialMathOperations:
     def test_bool_conversion(self):
         """Test boolean conversion of quantities."""
         q_nonzero = Quantity(10, "m")
-        q_zero = Quantity(0, "m")
+        _ = Quantity(0, "m")
 
         # Non-zero quantities should be truthy
         assert bool(q_nonzero) is True
@@ -820,16 +824,16 @@ class TestArrayEdgeCases:
         # This is a known limitation - empty arrays not supported
         empty_arr = np.array([])
         with pytest.raises(ValueError, match="empty"):
-            q = Quantity(empty_arr, "m")
+            _ = Quantity(empty_arr, "m")  # type: ignore[arg-type]
 
     def test_single_element_array(self):
         """Test quantity with single-element array."""
         import numpy as np
 
         single_arr = np.array([5.0])
-        q = Quantity(single_arr, "kg")
-        assert len(q.value) == 1
-        assert q.value[0] == 5.0
+        q = Quantity(single_arr, "kg")  # type: ignore[arg-type]
+        assert len(q.value) == 1  # type: ignore[arg-type]
+        assert q.value[0] == 5.0  # type: ignore[index]
 
     def test_multidimensional_array(self):
         """Test quantity with multidimensional array."""
@@ -838,16 +842,16 @@ class TestArrayEdgeCases:
         # Multidimensional arrays cause issues with min(value) for temperature check
         # Use flatten or 1D arrays only
         multi_arr = np.array([1, 2, 3, 4])
-        q = Quantity(multi_arr, "m")
-        assert len(q.value) == 4
-        assert q.value[0] == 1
+        q = Quantity(multi_arr, "m")  # type: ignore[arg-type]
+        assert len(q.value) == 4  # type: ignore[arg-type]
+        assert q.value[0] == 1  # type: ignore[index]
 
     def test_array_with_mixed_types(self):
         """Test quantity creation with mixed int/float list."""
         import numpy as np
 
         mixed_list = [1, 2.5, 3, 4.7]
-        q = Quantity(mixed_list, "s")
+        q = Quantity(mixed_list, "s")  # type: ignore[arg-type]
         assert isinstance(q.value, np.ndarray)
         assert q.value.dtype == np.float64
 
@@ -856,11 +860,11 @@ class TestArrayEdgeCases:
         import numpy as np
 
         arr = np.array([1, 2, 3, 4, 5])
-        q = Quantity(arr, "m")
+        q = Quantity(arr, "m")  # type: ignore[arg-type]
 
         # Slicing returns single element as Quantity
         # Full slice support not implemented, use indexing
-        q_single = q[1]
+        q_single = q[1]  # type: ignore[index]
         assert isinstance(q_single, Quantity)
         assert q_single.value == 2
 
@@ -869,10 +873,10 @@ class TestArrayEdgeCases:
         import numpy as np
 
         arr = np.array([1, 2, 3, 4, 5])
-        q = Quantity(arr, "kg")
+        q = Quantity(arr, "kg")  # type: ignore[arg-type]
 
         # Negative indexing
-        q_last = q[-1]
+        q_last = q[-1]  # type: ignore[index]
         assert q_last.value == 5
         assert q_last.units == Unit("kg")
 
@@ -882,12 +886,12 @@ class TestArrayEdgeCases:
 
         arr1 = np.array([1, 2, 3])
         arr2 = np.array([4, 5, 6])
-        q1 = Quantity(arr1, "m")
-        q2 = Quantity(arr2, "m")
+        q1 = Quantity(arr1, "m")  # type: ignore[arg-type]
+        q2 = Quantity(arr2, "m")  # type: ignore[arg-type]
 
         result = q1 + q2
         expected = np.array([5, 7, 9])
-        assert np.array_equal(result.value, expected)
+        assert np.array_equal(result.value, expected)  # type: ignore[arg-type]
 
     def test_array_with_complex_numbers(self):
         """Test that complex numbers raise appropriate error."""
@@ -897,9 +901,9 @@ class TestArrayEdgeCases:
         complex_arr = np.array([1 + 2j, 3 + 4j])
         # This may or may not be supported depending on implementation
         try:
-            q = Quantity(complex_arr, "m")
+            q = Quantity(complex_arr, "m")  # type: ignore[arg-type]
             # If supported, verify it works
-            assert q.value[0] == 1 + 2j
+            assert q.value[0] == 1 + 2j  # type: ignore[index]
         except (TypeError, ValueError):
             # If not supported, that's also acceptable
             pass
@@ -919,7 +923,7 @@ class TestPerformanceEdgeCases:
         for _ in range(1000):
             q = q * 1.001
         # Should complete without error
-        assert q.value > 1.0
+        assert q.value > 1.0  # type: ignore[operator]
 
     def test_deep_unit_nesting(self):
         """Test deeply nested unit operations."""
@@ -934,13 +938,13 @@ class TestPerformanceEdgeCases:
     def test_many_preferred_units(self):
         """Test setting many preferred units."""
         units_to_add = ["J", "W", "Pa", "Hz", "N"]
-        Quantity.preferred_units(units=units_to_add)
+        Quantity.preferred_units(units=units_to_add)  # type: ignore[arg-type]
 
         # Should handle multiple preferred units
         assert len(Quantity._chosen_units) >= len(units_to_add)
 
         # Clean up
-        Quantity.preferred_units(units=units_to_add, remove=True)
+        Quantity.preferred_units(units=units_to_add, remove=True)  # type: ignore[arg-type]
 
     @pytest.mark.skipif(not _has_numpy(), reason="NumPy not available")
     def test_very_large_array(self):
@@ -949,7 +953,7 @@ class TestPerformanceEdgeCases:
 
         # Create a large array (but not too large to avoid memory issues)
         large_arr = np.arange(10000)
-        q = Quantity(large_arr, "m")
-        assert len(q.value) == 10000
-        assert q.value[0] == 0
-        assert q.value[-1] == 9999
+        q = Quantity(large_arr, "m")  # type: ignore[arg-type]
+        assert len(q.value) == 10000  # type: ignore[arg-type]
+        assert q.value[0] == 0  # type: ignore[index]
+        assert q.value[-1] == 9999  # type: ignore[index]
