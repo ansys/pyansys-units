@@ -31,7 +31,7 @@ for unit-aware data analysis.
 import numpy as np
 
 try:
-    import pandas as pd  # type: ignore[reportMissingImports]
+    import pandas as pd  # type: ignore[import-not-found]
 
     HAS_PANDAS = True
 except ImportError:

@@ -33,7 +33,7 @@ from ansys.units import Quantity, Unit
 HAS_PANDAS = importlib.util.find_spec("pandas") is not None
 
 if HAS_PANDAS:
-    import pandas as pd  # type: ignore[reportMissingImports]
+    import pandas as pd  # type: ignore[import-not-found]
 
     from ansys.units.pandas_extension import QuantityArray, QuantityDtype
 

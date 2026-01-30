@@ -36,8 +36,8 @@ from typing import Any, Callable
 import numpy as np
 
 try:
-    import pandas as pd  # type: ignore[reportMissingImports]
-    from pandas.api.extensions import (  # type: ignore[reportMissingImports]
+    import pandas as pd  # type: ignore[import-not-found]
+    from pandas.api.extensions import (  # type: ignore[import-not-found]
         ExtensionArray,
         ExtensionDtype,
         ExtensionScalarOpsMixin,
@@ -46,14 +46,14 @@ try:
         register_series_accessor,
     )
     from pandas.api.indexers import (
-        check_array_indexer,  # type: ignore[reportMissingImports]
+        check_array_indexer,  # type: ignore[import-not-found]; type: ignore[reportMissingImports]
     )
-    from pandas.api.types import (  # type: ignore[reportMissingImports]
+    from pandas.api.types import (  # type: ignore[import-not-found]
         is_integer,
         is_object_dtype,
         is_string_dtype,
     )
-    from pandas.core import nanops  # type: ignore[attr-defined,reportMissingImports]
+    from pandas.core import nanops  # type: ignore[attr-defined,import-not-found]
 
     HAS_PANDAS = True
 except ImportError:
@@ -342,7 +342,9 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         -------
         QuantityArray
         """
-        from pandas.core.algorithms import take  # type: ignore[attr-defined]
+        from pandas.core.algorithms import (
+            take,  # type: ignore[attr-defined,import-not-found]
+        )
 
         if isinstance(fill_value, Quantity):
             fill_value = fill_value.to(str(self._dtype.units)).value  # type: ignore[assignment,arg-type]
