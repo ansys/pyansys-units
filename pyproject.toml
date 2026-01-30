@@ -53,6 +53,7 @@ additional = [
 # getting versions of matplotlib and numpy that are compatible is hard so we have this for CI
 ci_types = [
     "matplotlib==3.10.8",
+    "pandas>=3.0.0",
     "pydantic>=2.11.7",
     "pydantic_core>=2.33.2",
     "pytest==9.0.2",
