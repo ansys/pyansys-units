@@ -123,26 +123,19 @@ jobs:
           pytest-markers: '-m "not developer_only"'
           python-version: ${{ matrix.python-version }}
           use-python-cache: false
-          optional-dependencies-name: additional,tests
+          optional-dependencies-name: additional,tests,ci_types
 
   doc-build:
     name: "Build documentation"
     runs-on: ubuntu-latest
     needs: [doc-style]
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-
-      - name: Install dependencies for doc build
-        run: |
-          pip install -e ".[ci_types]"
-
       - uses: ansys/actions/doc-build@v10
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           check-links: false
           needs-quarto: true
+          dependencies: docs,ci_types
 
   build-library:
     name: "Build library basic example"

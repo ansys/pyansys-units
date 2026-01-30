@@ -84,6 +84,6 @@ try:
             "UnitsDataFrameAccessor",
         ]
     )
-except ImportError:
+except (ImportError, NameError):
     # pandas not available
     pass
