@@ -19,10 +19,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 """
 Pandas Integration Example for ansys-units
-===========================================
+==========================================
 
 This example demonstrates how to use ansys-units with pandas DataFrames
 for unit-aware data analysis.
