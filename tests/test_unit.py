@@ -197,7 +197,7 @@ def test_unit_divide_by_quantity():
     q = Quantity(7, "kg")
     C = Unit("C")
 
-    assert C.__truediv__(q)  # type: ignore
+    assert C.__truediv__(q) is NotImplemented  # type: ignore
 
 
 def test_unit_div():
