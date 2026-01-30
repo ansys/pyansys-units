@@ -45,7 +45,7 @@ jobs:
         run: uv pip install -e ".[ci_types]"
 
       - name: "Check Type hints"
-        run: basedpyright
+        run: basedpyright --baselinemode=auto
 
   doc-style:
     name: Documentation Style Check
@@ -123,7 +123,7 @@ jobs:
           pytest-markers: '-m "not developer_only"'
           python-version: ${{ matrix.python-version }}
           use-python-cache: false
-          optional-dependencies-name: additional,tests
+          optional-dependencies-name: additional,tests,ci_types
 
   doc-build:
     name: "Build documentation"
@@ -135,6 +135,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           check-links: false
           needs-quarto: true
+          optional-dependencies-name: doc,ci_types
 
   build-library:
     name: "Build library basic example"

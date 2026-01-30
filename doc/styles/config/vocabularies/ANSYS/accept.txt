@@ -2,6 +2,8 @@
 API
 [Pp]y[Aa]nsys
 Pythonic
+Subdtype
+accessor
 celsius
 delta_
 rankine

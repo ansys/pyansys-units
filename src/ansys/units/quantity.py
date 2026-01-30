@@ -246,11 +246,17 @@ class Quantity(Generic[ValT]):
             units = Unit(units)
 
         min_value = value if isinstance(value, (int, float)) else min(value)
+        # Convert min_value to float for comparison to avoid type checker issues
+        # Skip conversion for complex numbers to avoid warnings
+        try:
+            min_val_float = float(min_value) if not isinstance(min_value, complex) else 0.0  # type: ignore[arg-type,reportArgumentType] # noqa: E501
+        except (TypeError, ValueError):
+            min_val_float = 0.0
 
         if (
-            (units.name in ["K", "R"] and value < 0)
-            or (units.name == "C" and min_value < -273.15)
-            or (units.name == "F" and min_value < -459.67)
+            (units.name in ["K", "R"] and min_val_float < 0)
+            or (units.name == "C" and min_val_float < -273.15)
+            or (units.name == "F" and min_val_float < -459.67)
         ):
             units = Unit(f"delta_{units.name}")
 

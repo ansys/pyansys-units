@@ -66,3 +66,24 @@ __all__ = [
     "ConversionStrategy",
     "MappingConversionStrategy",
 ]
+
+# Conditionally import pandas extension if pandas is available
+try:
+    from ansys.units.pandas_extension import (
+        QuantityArray,
+        QuantityDtype,
+        UnitsDataFrameAccessor,
+        UnitsSeriesAccessor,
+    )
+
+    __all__.extend(
+        [
+            "QuantityArray",
+            "QuantityDtype",
+            "UnitsSeriesAccessor",
+            "UnitsDataFrameAccessor",
+        ]
+    )
+except (ImportError, NameError):
+    # pandas not available
+    pass

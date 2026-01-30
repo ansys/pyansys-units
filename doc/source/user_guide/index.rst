@@ -19,3 +19,4 @@ code to work with physical quantities.
    quantity_dimensions
    variable_descriptor
    register_unit
+   pandas_integration
