@@ -135,7 +135,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           check-links: false
           needs-quarto: true
-          dependencies: docs,ci_types
+          optional-dependencies-name: doc,ci_types
 
   build-library:
     name: "Build library basic example"
