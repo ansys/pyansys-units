@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+# pyright: reportUnknownVariableType=false, reportUnknownArgumentType=false
 """
 Pandas extension for ansys-units.
 
@@ -35,8 +36,8 @@ from typing import Any, Callable
 import numpy as np
 
 try:
-    import pandas as pd
-    from pandas.api.extensions import (
+    import pandas as pd  # type: ignore[reportMissingImports]
+    from pandas.api.extensions import (  # type: ignore[reportMissingImports]
         ExtensionArray,
         ExtensionDtype,
         ExtensionScalarOpsMixin,
@@ -44,9 +45,15 @@ try:
         register_extension_dtype,
         register_series_accessor,
     )
-    from pandas.api.indexers import check_array_indexer
-    from pandas.api.types import is_integer, is_object_dtype, is_string_dtype
-    from pandas.core import nanops  # type: ignore[attr-defined]
+    from pandas.api.indexers import (
+        check_array_indexer,  # type: ignore[reportMissingImports]
+    )
+    from pandas.api.types import (  # type: ignore[reportMissingImports]
+        is_integer,
+        is_object_dtype,
+        is_string_dtype,
+    )
+    from pandas.core import nanops  # type: ignore[attr-defined,reportMissingImports]
 
     HAS_PANDAS = True
 except ImportError:
@@ -62,7 +69,7 @@ from ansys.units import Quantity, Unit
 DEFAULT_SUBDTYPE = "Float64"
 
 
-@register_extension_dtype  # type: ignore[misc]
+@register_extension_dtype  # type: ignore[misc,reportUntypedClassDecorator]
 class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
     """
     An ExtensionDtype for holding unit-aware Quantity data.
@@ -579,7 +586,7 @@ QuantityArray._add_arithmetic_ops()
 QuantityArray._add_comparison_ops()
 
 
-@register_series_accessor("units")  # type: ignore[misc]
+@register_series_accessor("units")  # type: ignore[misc,reportUntypedClassDecorator]
 class UnitsSeriesAccessor:
     """
     Accessor for unit-aware operations on Series.
@@ -627,7 +634,7 @@ class UnitsSeriesAccessor:
         return self._obj.array.quantity
 
 
-@register_dataframe_accessor("units")  # type: ignore[misc]
+@register_dataframe_accessor("units")  # type: ignore[misc,reportUntypedClassDecorator]
 class UnitsDataFrameAccessor:
     """
     Accessor for unit-aware operations on DataFrames.
@@ -687,5 +694,5 @@ if not HAS_PANDAS:
     def __getattr__(name: str) -> None:
         """Raise helpful error when pandas not installed."""
         raise ImportError(
-            f"pandas is required to use {name}. " "Install it with: pip install pandas"
+            f"pandas is required to use {name}. Install it with: pip install pandas"
         )

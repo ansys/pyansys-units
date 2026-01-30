@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+# pyright: reportUnknownVariableType=false, reportUnknownArgumentType=false
 """Tests for pandas extension for ansys-units."""
 
 import importlib.util
@@ -32,7 +33,7 @@ from ansys.units import Quantity, Unit
 HAS_PANDAS = importlib.util.find_spec("pandas") is not None
 
 if HAS_PANDAS:
-    import pandas as pd
+    import pandas as pd  # type: ignore[reportMissingImports]
 
     from ansys.units.pandas_extension import QuantityArray, QuantityDtype
 
