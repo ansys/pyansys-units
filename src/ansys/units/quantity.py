@@ -627,7 +627,9 @@ class Quantity(Generic[ValT]):
     ) -> "Quantity[Vector]": ...
 
     def __rsub__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
-        return self._relative_unit_check(other, r_add_sub=True, op=operator.sub)
+        return self._relative_unit_check(
+            other, r_add_sub=True, op=lambda a, b: b - a
+        )  # op.rsub doesn't exist
 
     def __neg__(self) -> Self:
         return Quantity(-self.value, self._unit)

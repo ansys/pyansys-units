@@ -282,7 +282,7 @@ def test_subtraction():
     assert r4.value == 5.0
     assert r4.units == Unit("")
 
-    with pytest.raises(IncompatibleQuantities):
+    with pytest.raises(IncorrectUnits):
         m - 5  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
 
 
@@ -290,7 +290,7 @@ def test_reverse_subtraction():
     q1 = Quantity(5.0)
     q2 = 2 - q1  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # fmt: skip
 
-    assert q2.value == 3
+    assert q2.value == -3
 
     r = Quantity(5.0, "")
     r2 = 10 - r  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # fmt: skip
@@ -298,7 +298,7 @@ def test_reverse_subtraction():
     assert r2.units == Unit("")
 
     m = Quantity(1, "m")
-    with pytest.raises(IncompatibleQuantities):
+    with pytest.raises(IncorrectUnits):
         5 - m  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
 
 
@@ -541,7 +541,7 @@ def test_addition():
     assert q2.value == 10
 
     with pytest.raises(IncorrectUnits) as e_info:
-        assert q1 - q3
+        q1 - q3
 
     ft = Quantity(1, "ft")
     m = Quantity(1, "m")
@@ -559,13 +559,11 @@ def test_addition():
 
     q1 = Quantity(5.0, "m^0")
 
-    with pytest.raises(TypeError):
-        q1 + 5  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # this won't raise but I don't think this is recommended  # fmt: skip
+    assert (q1 + 5).value == 10  # pyright: ignore[reportOperatorIssue]  # fmt: skip
 
-    with pytest.raises(TypeError):
-        q1 + [1, 2, 3]  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # this won't raise but I don't think this is recommended  # fmt: skip
+    assert q1 + [1, 2, 3] == Quantity([6, 7, 8])  # pyright: ignore[reportOperatorIssue]  # fmt: skip
 
-    with pytest.raises(IncompatibleQuantities):
+    with pytest.raises(IncorrectUnits):
         m + 5  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
 
 
@@ -576,11 +574,9 @@ def test_reverse_addition():
     assert q2.units == Unit()
     assert q2.value == 10
 
-    with pytest.raises(TypeError):
-        5 + q1  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
+    assert (5 + q1).value == 10  # pyright: ignore[reportOperatorIssue]  # fmt: skip
 
-    with pytest.raises(TypeError):
-        [1, 2, 3] + q1  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
+    assert [1, 2, 3] + q1 == Quantity([6, 7, 8])  # pyright: ignore[reportOperatorIssue]  # fmt: skip
 
     r = Quantity(5.0, "")
     r2 = 5 + r  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # this won't raise but I don't think this is recommended  # fmt: skip
@@ -588,7 +584,7 @@ def test_reverse_addition():
     assert r2.value == 10
 
     m = Quantity(1, "m")
-    with pytest.raises(IncompatibleQuantities):
+    with pytest.raises(IncorrectUnits):
         5 + m  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
 
 
