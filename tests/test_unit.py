@@ -178,6 +178,8 @@ def test_reverse_multiply():
 
 def test_rmul():
     assert 7 * Unit("kg") == Quantity(7, "kg")
+    assert [1, 2, 3] * Unit("m") == Quantity([1, 2, 3], "m")
+    assert [1, 2, 3] * Unit("m") * (Quantity(4, "Hz")) == Quantity([4, 8, 12], "m s^-1")
 
 
 def test_sub():

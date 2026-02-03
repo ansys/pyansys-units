@@ -34,9 +34,8 @@ from ansys.units import (
     UnitRegistry,
     UnitSystem,
 )
-from ansys.units.common import Pa, kg
+from ansys.units.common import Pa, kg, m
 from ansys.units.quantity import (  # InvalidFloatUsage,
-    ArrayLike,
     ExcessiveParameters,
     IncompatibleDimensions,
     IncompatibleQuantities,
@@ -97,11 +96,11 @@ def test_properties():
 def test_quantity_is_immutable():
     v = Quantity(1, "m")
     with pytest.raises(AttributeError):
-        v.value = 20  # pyright: ignore[reportAttributeAccessIssue]
+        v.value = 20  # pyright: ignore[reportAttributeAccessIssue]  # fmt: skip
     with pytest.raises(AttributeError):
-        v.units = "kg"  # pyright: ignore[reportAttributeAccessIssue]
+        v.units = "kg"  # pyright: ignore[reportAttributeAccessIssue]  # fmt: skip
     with pytest.raises(AttributeError):
-        v.dimensions = Dimensions({})  # pyright: ignore[reportAttributeAccessIssue]
+        v.dimensions = Dimensions({})  # pyright: ignore[reportAttributeAccessIssue]  # fmt: skip
     assert v == Quantity(1, "m")
 
 
@@ -158,10 +157,8 @@ def test_array_compare():
         return
     import numpy as np
 
-    why_7s_scary: NDArray[np.integer] = np.array([7, 8, 9])
-    assert Quantity[float | ArrayLike](why_7s_scary, "kg") == Quantity(
-        why_7s_scary, "kg"
-    )
+    why_7s_scary: NDArray[np.floating] = np.array([7, 8, 9])
+    assert Quantity(why_7s_scary, "kg") == Quantity(why_7s_scary, "kg")
     assert Quantity(why_7s_scary, "kg") != Quantity(np.array([1, 2, 3]), "kg")
     with pytest.raises(IncompatibleDimensions):
         Quantity(why_7s_scary, "kg") != Quantity(why_7s_scary, "m")
@@ -257,7 +254,7 @@ def test_subtraction():
     q1 = Quantity(10.0, "m s^-1")
     q2 = Quantity(5.0, "m s^-1")
     q3 = Quantity(5.0)
-    q4 = q3 - 2
+    q4 = q3 - 2  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # this won't raise but I don't think this is recommended  # fmt: skip
 
     assert get_si_value(q1 - q2) == 5.0
     assert get_si_value(q2 - q1) == -5.0
@@ -275,12 +272,34 @@ def test_subtraction():
     assert m - mm == Quantity(0.999, "m")
     assert mm - m == Quantity(-999, "mm")
 
+    r = Quantity(10.0, "")
+    r2 = Quantity(5.0, "")
+    r3 = r - 2  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # this won't raise but I don't think this is recommended  # fmt: skip
+    assert r3.value == 8
+    assert r3.units == Unit("")
+
+    r4 = r - r2
+    assert r4.value == 5.0
+    assert r4.units == Unit("")
+
+    with pytest.raises(IncompatibleQuantities):
+        m - 5  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
+
 
 def test_reverse_subtraction():
     q1 = Quantity(5.0)
-    q2 = 2 - q1
+    q2 = 2 - q1  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # fmt: skip
 
     assert q2.value == 3
+
+    r = Quantity(5.0, "")
+    r2 = 10 - r  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # fmt: skip
+    assert r2.value == 5
+    assert r2.units == Unit("")
+
+    m = Quantity(1, "m")
+    with pytest.raises(IncompatibleQuantities):
+        5 - m  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
 
 
 def test_temp_subtraction():
@@ -342,6 +361,25 @@ def test_mul():
     assert q5.units == Unit("ft")
     assert get_si_value(q5) == pytest.approx(4.571999999999999, DELTA)
 
+    assert get_si_value(1.225 * kg / m**3 * [1, 2, 3] * m) == pytest.approx(
+        [1.225, 2.45, 3.675],
+        DELTA,
+    )
+
+    r1 = Quantity(10.0, "")
+    r2 = Quantity(5.0, "")
+
+    r3 = r1 * 3
+    assert r3.value == 30.0
+    assert r3.units == Unit("")
+
+    r4 = r1 * r2
+    assert r4.value == 50.0
+    assert r4.units == Unit("")
+
+    result = q1 * 2
+    assert result.units == Unit("m s^-1")
+
 
 def test_reverse_mul():
     q1 = Quantity(10.0, "m s^-1")
@@ -351,12 +389,25 @@ def test_reverse_mul():
     assert q3.units == Unit("m s^-1 kg")
     assert q3.value == pytest.approx(10, DELTA)
 
+    r = Quantity(10.0, "")
+    r2 = 3 * r
+    assert r2.value == 30.0
+    assert r2.units == Unit("")
+
+    result = 2 * q1
+    assert result.units == Unit("m s^-1")
+
 
 def test_neg():
     q0 = Quantity(10.0, "m s^-1")
     q1 = -q0
     assert q1.value == -10.0
     assert q1.units == Unit("m s^-1")
+
+    r = Quantity(10.0, "")
+    r_neg = -r
+    assert r_neg.value == -10.0
+    assert r_neg.units == Unit("")
 
 
 def test_ne():
@@ -394,12 +445,50 @@ def test_eq():
         assert x == 0.5
 
 
+def test_div():
+    q1 = Quantity(10.0, "m s^-1")
+    q2 = Quantity(5.0, "m s^-1")
+
+    result = q1 / q2
+    assert result.value == pytest.approx(2.0, DELTA)
+    assert result.units == Unit("")
+
+    q3 = Quantity(10.0, "m")
+    q4 = Quantity(5.0, "s")
+    result2 = q3 / q4
+    assert result2.units == Unit("m s^-1")
+
+    r1 = Quantity(20.0, "")
+    r2 = Quantity(5.0, "")
+    r3 = r1 / r2
+    assert r3.value == 4.0
+    assert r3.units == Unit("")
+
+    r4 = r1 / 2
+    assert r4.value == 10.0
+    assert r4.units == Unit("")
+
+    q5 = Quantity(10.0, "m")
+    result3 = q5 / 2
+    assert result3.value == 5.0
+    assert result3.units == Unit("m")
+
+
 def test_rdiv():
     q1 = Quantity(10.0, "m s^-1")
 
     q2 = 50 / q1
     assert q2.value == 5
     assert q2.units == Unit("m^-1 s")
+
+    r = Quantity(5.0, "")
+    r2 = 20 / r
+    assert r2.value == 4.0
+    assert r2.units == Unit("")
+
+    m = Quantity(2.0, "m")
+    result = 10 / m
+    assert result.units == Unit("m^-1")
 
 
 def test_dimensionless_div():
@@ -408,6 +497,12 @@ def test_dimensionless_div():
     result = length_1 / length_2
     assert result.value == 1.25
     assert result.units == Unit("mm inch^-1")
+
+    r1 = Quantity(100.0, "")
+    r2 = Quantity(25.0, "")
+    result2 = r1 / r2
+    assert result2.value == 4.0
+    assert result2.units == Unit("")
 
 
 def test_quantity_divided_by_unit():
@@ -441,7 +536,7 @@ def test_addition():
     q1 = Quantity(5.0, "m^0")
     q3 = Quantity(52, "N")
 
-    q2 = q1 + 5
+    q2 = q1 + 5  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # this won't raise but I don't think this is recommended  # fmt: skip
     assert q2.units == Unit()
     assert q2.value == 10
 
@@ -457,13 +552,44 @@ def test_addition():
     assert m + mm == Quantity(1.001, "m")
     assert mm + m == Quantity(1001, "mm")
 
+    r = Quantity(5.0, "")
+    r2 = r + 5  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # this won't raise but I don't think this is recommended  # fmt: skip
+    assert r2.units == Unit("")
+    assert r2.value == 10
+
+    q1 = Quantity(5.0, "m^0")
+
+    with pytest.raises(TypeError):
+        q1 + 5  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # this won't raise but I don't think this is recommended  # fmt: skip
+
+    with pytest.raises(TypeError):
+        q1 + [1, 2, 3]  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # this won't raise but I don't think this is recommended  # fmt: skip
+
+    with pytest.raises(IncompatibleQuantities):
+        m + 5  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
+
 
 def test_reverse_addition():
     q1 = Quantity(5.0, "m^0")
 
-    q2 = 5 + q1
+    q2 = 5 + q1  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # fmt: skip
     assert q2.units == Unit()
     assert q2.value == 10
+
+    with pytest.raises(TypeError):
+        5 + q1  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
+
+    with pytest.raises(TypeError):
+        [1, 2, 3] + q1  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
+
+    r = Quantity(5.0, "")
+    r2 = 5 + r  # pyright: ignore[reportOperatorIssue, reportUnknownVariableType]  # this won't raise but I don't think this is recommended  # fmt: skip
+    assert r2.units == Unit("")
+    assert r2.value == 10
+
+    m = Quantity(1, "m")
+    with pytest.raises(IncompatibleQuantities):
+        5 + m  # pyright: ignore[reportOperatorIssue, reportUnusedExpression]  # fmt: skip
 
 
 def test_ge():
@@ -471,10 +597,13 @@ def test_ge():
     y = Quantity(10.5, "m")
     z = Quantity(10.5, "g")
     r = Quantity(10.5, "")
+    r2 = Quantity(7.8, "")
 
     assert y >= x
     assert 15.7 >= r
     assert r >= 7.8
+    assert r >= r2
+    assert r2 <= r
 
     with pytest.raises(IncompatibleDimensions) as e_info:
         assert x >= z
@@ -482,16 +611,21 @@ def test_ge():
     with pytest.raises(IncompatibleQuantities) as e_info:
         assert x >= 5.0
 
+    with pytest.raises(IncompatibleQuantities):
+        5.0 >= x  # pyright: ignore[reportUnusedExpression, reportOperatorIssue]  # fmt: skip
+
 
 def test_gt():
     x = Quantity(10.5, "cm")
     y = Quantity(10.5, "m")
     z = Quantity(10.5, "g")
     r = Quantity(10.5, "")
+    r2 = Quantity(7.8, "")
 
     assert y > x
     assert 15.7 > r
     assert r > 7.8
+    assert r > r2
 
     with pytest.raises(IncompatibleDimensions) as e_info:
         assert x > z
@@ -499,16 +633,21 @@ def test_gt():
     with pytest.raises(IncompatibleQuantities) as e_info:
         assert x > 5.0
 
+    with pytest.raises(IncompatibleQuantities):
+        5.0 > x  # pyright: ignore[reportUnusedExpression, reportOperatorIssue]  # fmt: skip
+
 
 def test_lt():
     x = Quantity(10.5, "cm")
     y = Quantity(10.5, "m")
     z = Quantity(10.5, "g")
     r = Quantity(10.5, "")
+    r2 = Quantity(15.7, "")
 
     assert x < y
     assert r < 15.7
     assert 7.8 < r
+    assert r < r2
 
     with pytest.raises(IncompatibleDimensions) as e_info:
         assert z < x
@@ -516,22 +655,30 @@ def test_lt():
     with pytest.raises(IncompatibleQuantities) as e_info:
         assert x < 5.0
 
+    with pytest.raises(IncompatibleQuantities):
+        5.0 < x  # pyright: ignore[reportUnusedExpression, reportOperatorIssue]  # fmt: skip
+
 
 def test_le():
     x = Quantity(10.5, "cm")
     y = Quantity(10.5, "m")
     z = Quantity(10.5, "g")
     r = Quantity(10.5, "")
+    r2 = Quantity(15.7, "")
 
     assert x <= y
     assert r <= 15.7
     assert 7.8 <= r
+    assert r <= r2
 
     with pytest.raises(IncompatibleDimensions) as e_info:
         assert z <= x
 
     with pytest.raises(IncompatibleQuantities) as e_info:
         assert x <= 5.0
+
+    with pytest.raises(IncompatibleQuantities):
+        5.0 <= x  # pyright: ignore[reportUnusedExpression, reportOperatorIssue]  # fmt: skip
 
 
 def test_temp():
