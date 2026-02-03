@@ -196,80 +196,48 @@
             {
                 "code": "reportAttributeAccessIssue",
                 "range": {
-                    "startColumn": 4,
-                    "endColumn": 27,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnknownVariableType",
-                "range": {
-                    "startColumn": 4,
-                    "endColumn": 27,
+                    "startColumn": 8,
+                    "endColumn": 31,
                     "lineCount": 1
                 }
             },
             {
                 "code": "reportAttributeAccessIssue",
                 "range": {
-                    "startColumn": 24,
-                    "endColumn": 30,
+                    "startColumn": 28,
+                    "endColumn": 34,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportUnknownVariableType",
-                "range": {
-                    "startColumn": 24,
-                    "endColumn": 30,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportIncompatibleVariableOverride",
+                "code": "reportConstantRedefinition",
                 "range": {
                     "startColumn": 4,
-                    "endColumn": 8,
+                    "endColumn": 14,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportImplicitOverride",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 29,
+                    "startColumn": 1,
+                    "endColumn": 25,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportIncompatibleVariableOverride",
+                "code": "reportGeneralTypeIssues",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 12,
+                    "startColumn": 20,
+                    "endColumn": 34,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportIncompatibleVariableOverride",
+                "code": "reportUntypedBaseClass",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 16,
+                    "startColumn": 20,
+                    "endColumn": 34,
                     "lineCount": 1
                 }
             },
@@ -298,10 +266,26 @@
                 }
             },
             {
-                "code": "reportImplicitOverride",
+                "code": "reportGeneralTypeIssues",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 28,
+                    "startColumn": 20,
+                    "endColumn": 34,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUntypedBaseClass",
+                "range": {
+                    "startColumn": 20,
+                    "endColumn": 34,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportGeneralTypeIssues",
+                "range": {
+                    "startColumn": 36,
+                    "endColumn": 59,
                     "lineCount": 1
                 }
             },
@@ -314,10 +298,18 @@
                 }
             },
             {
-                "code": "reportUnknownVariableType",
+                "code": "reportMissingSuperCall",
                 "range": {
-                    "startColumn": 12,
-                    "endColumn": 18,
+                    "startColumn": 8,
+                    "endColumn": 16,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 34,
+                    "endColumn": 36,
                     "lineCount": 1
                 }
             },
@@ -330,98 +322,58 @@
                 }
             },
             {
-                "code": "reportUnknownVariableType",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 12,
-                    "endColumn": 18,
+                    "startColumn": 21,
+                    "endColumn": 23,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportUnknownArgumentType",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 30,
-                    "endColumn": 36,
+                    "startColumn": 11,
+                    "endColumn": 21,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportImplicitOverride",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 13,
+                    "startColumn": 15,
+                    "endColumn": 17,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportImplicitOverride",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 15,
+                    "startColumn": 15,
+                    "endColumn": 34,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportImplicitOverride",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 19,
+                    "startColumn": 11,
+                    "endColumn": 26,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportUnknownVariableType",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 12,
+                    "startColumn": 11,
+                    "endColumn": 26,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportImplicitOverride",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 19,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportIncompatibleMethodOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitOverride",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 14,
+                    "startColumn": 19,
+                    "endColumn": 21,
                     "lineCount": 1
                 }
             },
@@ -434,10 +386,10 @@
                 }
             },
             {
-                "code": "reportUnknownVariableType",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
                     "startColumn": 15,
-                    "endColumn": 59,
+                    "endColumn": 17,
                     "lineCount": 1
                 }
             },
@@ -450,10 +402,114 @@
                 }
             },
             {
-                "code": "reportImplicitOverride",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 8,
-                    "endColumn": 15,
+                    "startColumn": 28,
+                    "endColumn": 43,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 34,
+                    "endColumn": 36,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 45,
+                    "endColumn": 47,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 59,
+                    "endColumn": 61,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 34,
+                    "endColumn": 36,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 45,
+                    "endColumn": 47,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 59,
+                    "endColumn": 61,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 19,
+                    "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 20,
+                    "endColumn": 26,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 19,
+                    "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 19,
+                    "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 19,
+                    "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 19,
+                    "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportPossiblyUnboundVariable",
+                "range": {
+                    "startColumn": 1,
+                    "endColumn": 25,
                     "lineCount": 1
                 }
             },
@@ -466,17 +522,25 @@
                 }
             },
             {
-                "code": "reportUnannotatedClassAttribute",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 13,
+                    "startColumn": 15,
                     "endColumn": 17,
                     "lineCount": 1
                 }
             },
             {
-                "code": "reportUndefinedVariable",
+                "code": "reportPossiblyUnboundVariable",
                 "range": {
-                    "startColumn": 7,
+                    "startColumn": 1,
+                    "endColumn": 28,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnannotatedClassAttribute",
+                "range": {
+                    "startColumn": 13,
                     "endColumn": 17,
                     "lineCount": 1
                 }
