@@ -38,6 +38,8 @@ from typing import (
     runtime_checkable,
 )
 
+from typing_extensions import Self
+
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_tables.keys import QuantityKey, UnitKey
@@ -262,7 +264,9 @@ class Quantity(Generic[ValT]):
         # Convert min_value to float for comparison to avoid type checker issues
         # Skip conversion for complex numbers to avoid warnings
         try:
-            min_val_float = float(min_value) if not isinstance(min_value, complex) else 0.0  # type: ignore[arg-type,reportArgumentType] # noqa: E501
+            min_val_float = (
+                float(min_value) if not isinstance(min_value, complex) else 0.0
+            )  # type: ignore[arg-type,reportArgumentType] # noqa: E501
         except (TypeError, ValueError):
             min_val_float = 0.0
 
@@ -541,7 +545,9 @@ class Quantity(Generic[ValT]):
         self: Quantity[Vector], other: "Quantity[float] | Unit | float"
     ) -> "Quantity[Vector]": ...
 
-    def __truediv__(self, other: "Quantity | float | Unit") -> "Quantity":
+    def __truediv__(
+        self, other: "Quantity | Unit | float | Sequence[float] | Vector"
+    ) -> "Quantity":
         if isinstance(other, Quantity):
             new_value = self.value / other.value
             new_units = self._unit / other._unit
@@ -560,7 +566,24 @@ class Quantity(Generic[ValT]):
             return Quantity(value=self.value / other, units=self._unit)
         return NotImplemented
 
-    def __rtruediv__(self, other: "Quantity | float | Unit") -> "Quantity":
+    @overload
+    def __rtruediv__(
+        self: Quantity[float], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __rtruediv__(
+        self: Quantity[float], other: "Quantity[Vector] | Sequence[float] | Vector"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __rtruediv__(
+        self: Quantity[Vector], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[Vector]": ...
+
+    def __rtruediv__(
+        self, other: "Quantity | Unit | float | Sequence[float] | Vector"
+    ) -> "Quantity":
         return Quantity(other, "") / self
 
     @overload
@@ -573,19 +596,49 @@ class Quantity(Generic[ValT]):
         self: "Quantity[Vector]", other: "Quantity[Vector]"
     ) -> "Quantity[Vector]": ...
 
-    def __add__(self: "Quantity[float]", other: "Quantity[float]") -> "Quantity[float]":
+    def __add__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
         return self._relative_unit_check(other, r_add_sub=False)
+
+    @overload
+    def __radd__(
+        self: "Quantity[float]", other: "Quantity[float]"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __radd__(
+        self: "Quantity[Vector]", other: "Quantity[Vector]"
+    ) -> "Quantity[Vector]": ...
 
     def __radd__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
         return self._relative_unit_check(other, r_add_sub=True)
 
+    @overload
+    def __sub__(
+        self: "Quantity[float]", other: "Quantity[float]"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __sub__(
+        self: "Quantity[Vector]", other: "Quantity[Vector]"
+    ) -> "Quantity[Vector]": ...
+
     def __sub__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
         return self._relative_unit_check(other, r_add_sub=False, op=operator.sub)
+
+    @overload
+    def __rsub__(
+        self: "Quantity[float]", other: "Quantity[float]"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __rsub__(
+        self: "Quantity[Vector]", other: "Quantity[Vector]"
+    ) -> "Quantity[Vector]": ...
 
     def __rsub__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
         return self._relative_unit_check(other, r_add_sub=True, op=operator.sub)
 
-    def __neg__(self) -> "Quantity[ValT]":
+    def __neg__(self) -> Self:
         return Quantity(-self.value, self._unit)
 
     def validate_matching_dimensions(self, other):
@@ -644,10 +697,10 @@ class Quantity(Generic[ValT]):
             if isinstance(self.value, _array.ndarray) and isinstance(
                 other.value, _array.ndarray
             ):
-                self_arr = cast("Quantity[ArrayLike]", self)
-                other_arr = cast("Quantity[ArrayLike]", other)
-                a1 = cast("npt.ArrayLike", cast(object, get_si_value(self_arr)))
-                a2 = cast("npt.ArrayLike", cast(object, get_si_value(other_arr)))
+                self_arr = cast("Quantity[Vector]", self)
+                other_arr = cast("Quantity[Vector]", other)
+                a1 = get_si_value(self_arr)
+                a2 = get_si_value(other_arr)
                 return bool(_array.array_equal(a1, a2))
         return False
 

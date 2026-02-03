@@ -27,6 +27,7 @@ from typing_extensions import assert_type
 
 from ansys.units import Quantity, Unit, VariableCatalog
 from ansys.units.common import kg, m
+from ansys.units.unit import IncorrectUnits
 from ansys.units.variable_descriptor import (
     ScalarVariableDescriptor,
     VectorVariableDescriptor,
@@ -34,13 +35,40 @@ from ansys.units.variable_descriptor import (
 
 assert_type(kg, Unit)
 assert_type(Quantity([1, 2, 3], "m"), Quantity[npt.NDArray[np.floating]])
+assert_type(Quantity(1, "kg") * 1, Quantity[float])
+assert_type(Quantity(1, "kg") / 1, Quantity[float])
+assert_type(1 / Quantity(1, "kg"), Quantity[float])
+assert_type(1 * Quantity(1, "kg"), Quantity[float])
 
 assert_type(1 * m, Quantity[float])
 assert_type(1.0 * m, Quantity[float])
 
 assert_type(1 * m + 2 * m, Quantity[float])
 assert_type(1 * m - 2 * m, Quantity[float])
-1 * m + 2  # pyright: ignore[reportOperatorIssue]
+
+q_scalar_a = Quantity(1.0, "m")
+q_scalar_b = Quantity(2.0, "m")
+assert_type(q_scalar_a.__radd__(q_scalar_b), Quantity[float])
+assert_type(q_scalar_a - (q_scalar_b), Quantity[float])
+assert_type(q_scalar_a.__rsub__(q_scalar_b), Quantity[float])
+
+q_vec_a = Quantity([1.0, 2.0, 3.0], "m")
+q_vec_b = Quantity([4.0, 5.0, 6.0], "m")
+assert_type(q_vec_a.__radd__(q_vec_b), Quantity[npt.NDArray[np.floating]])
+assert_type(q_vec_a - (q_vec_b), Quantity[npt.NDArray[np.floating]])
+assert_type(q_vec_a.__rsub__(q_vec_b), Quantity[npt.NDArray[np.floating]])
+
+try:
+    1 * m + 2  # pyright: ignore[reportOperatorIssue]
+    2 + 1 * m  # pyright: ignore[reportOperatorIssue]
+    1 * m - 2  # pyright: ignore[reportOperatorIssue]
+    2 - 1 * m  # pyright: ignore[reportOperatorIssue]
+    [1] * m + [2]  # pyright: ignore[reportOperatorIssue]
+    [2] + [1] * m  # pyright: ignore[reportOperatorIssue]
+    [1] * m - [2]  # pyright: ignore[reportOperatorIssue]
+    [2] - [1] * m  # pyright: ignore[reportOperatorIssue]
+except IncorrectUnits:
+    pass
 
 assert_type([1, 2, 3] * m, Quantity[npt.NDArray[np.floating]])
 assert_type([1.0, 2.0, 3.0] * m, Quantity[npt.NDArray[np.floating]])
