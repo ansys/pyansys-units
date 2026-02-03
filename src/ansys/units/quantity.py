@@ -78,13 +78,6 @@ except Exception:
 
 
 DTypeT = TypeVar("DTypeT", bound="np.dtype", covariant=True)
-
-
-@runtime_checkable
-class CanArray(Protocol[DTypeT]):
-    def __array__(self, /) -> "np.ndarray[Any, DTypeT]": ...
-
-
 Vector: TypeAlias = "npt.NDArray[np.floating]"
 
 if TYPE_CHECKING:
