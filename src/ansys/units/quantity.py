@@ -31,11 +31,9 @@ from typing import (
     ClassVar,
     Generic,
     Literal,
-    Protocol,
     TypeAlias,
     TypeVar,
     overload,
-    runtime_checkable,
 )
 
 from typing_extensions import Self
