@@ -541,7 +541,7 @@ def test_addition():
     assert q2.value == 10
 
     with pytest.raises(IncorrectUnits) as e_info:
-        q1 - q3
+        q1 - q3  # pyright: ignore[reportUnusedExpression]
 
     ft = Quantity(1, "ft")
     m = Quantity(1, "m")
