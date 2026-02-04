@@ -31,11 +31,12 @@ from typing import (
     ClassVar,
     Generic,
     Literal,
-    Protocol,
+    TypeAlias,
     TypeVar,
     overload,
-    runtime_checkable,
 )
+
+from typing_extensions import Self
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
@@ -74,46 +75,17 @@ except Exception:
     _ci, _ai, _registry = object, None, {}
 
 
-@runtime_checkable
-class ArrayLike(Protocol):
-    """Protocol for numpy-like arrays."""
-
-    def __getitem__(self, idx: int, /) -> object: ...
-
-    def __len__(self) -> int: ...
-
-    def __iter__(self) -> Iterator["SupportsRichComparison"]: ...
-
-    def __add__(self, other: float | ArrayLike, /) -> "Self": ...
-
-    def __sub__(self, other: float | ArrayLike, /) -> "Self": ...
-
-    def __neg__(self) -> "Self": ...
-
-    def __mul__(self, other: float | ArrayLike, /) -> "Self": ...
-
-    def __rmul__(self, other: float | ArrayLike, /) -> "Self": ...
-
-    def __pow__(self, other: float) -> "Self": ...
-
-    def __truediv__(self, other: float | ArrayLike, /) -> "Self": ...
-
-    def __rtruediv__(self, other: float | ArrayLike, /) -> "Self": ...
-
-    def __lt__(self, other: float | ArrayLike, /) -> bool: ...
-
-    def tolist(self) -> Sequence[object]: ...
-
+DTypeT = TypeVar("DTypeT", bound="np.dtype", covariant=True)
+Vector: TypeAlias = "npt.NDArray[np.floating]"
 
 if TYPE_CHECKING:
-    from _typeshed import SupportsRichComparison
     import numpy.typing as npt
-    from typing_extensions import Self, TypeVar
+    from typing_extensions import TypeVar
 
     ValT = TypeVar(
         "ValT",
-        bound=float | ArrayLike,
-        default=float | ArrayLike,
+        bound=float | Vector,
+        default=float | Vector,
         covariant=True,
     )
 else:
@@ -156,47 +128,81 @@ class Quantity(Generic[ValT]):
 
     _chosen_units: ClassVar[list[Unit]] = []
 
-    @overload
-    def __init__(
-        self,
-        value: ValT,
-        units: Unit | UnitKey | str | None = None,
-    ) -> None: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def __init__(
-        self,
-        value: ValT,
-        *,
-        dimensions: Dimensions,
-    ) -> None: ...
+        @overload
+        def __new__(
+            cls,
+            value: Sequence[float] | Vector,
+            units: Unit | UnitKey | str | None = None,
+        ) -> Quantity[Vector]: ...
 
-    @overload
-    def __init__(
-        self,
-        value: ValT,
-        *,
-        quantity_table: Mapping[QuantityKey, float],
-    ) -> None: ...
+        @overload
+        def __new__(
+            cls,
+            value: float,
+            units: Unit | UnitKey | str | None = None,
+        ) -> Quantity[float]: ...
 
-    @overload
-    def __init__(
-        self,
-        *,
-        copy_from: "Quantity[ValT]",
-    ) -> None: ...
+        @overload
+        def __new__(
+            cls,
+            value: Sequence[float] | Vector,
+            *,
+            dimensions: Dimensions,
+        ) -> Quantity[Vector]: ...
 
-    @overload
-    def __init__(
-        self,
-        value: ValT,
-        *,
-        copy_from: "Quantity",
-    ) -> None: ...
+        @overload
+        def __new__(
+            cls,
+            value: float,
+            *,
+            dimensions: Dimensions,
+        ) -> Quantity[float]: ...
 
+        @overload
+        def __new__(
+            cls,
+            value: Sequence[float] | Vector,
+            *,
+            quantity_table: Mapping[QuantityKey, float],
+        ) -> Quantity[Vector]: ...
+
+        @overload
+        def __new__(
+            cls,
+            value: float,
+            *,
+            quantity_table: Mapping[QuantityKey, float],
+        ) -> Quantity[float]: ...
+
+        @overload
+        def __new__(
+            cls,
+            *,
+            copy_from: "Quantity[ValT]",
+        ) -> Quantity[ValT]: ...
+
+        @overload
+        def __new__(
+            cls,
+            value: Sequence[float] | Vector,
+            *,
+            copy_from: "Quantity",
+        ) -> Quantity[Vector]: ...
+
+        @overload
+        def __new__(
+            cls,
+            value: float,
+            *,
+            copy_from: "Quantity",
+        ) -> Quantity[Vector]: ...
+
+    # types here are intentionally broad because we need __new__ to handle the overloads
     def __init__(
         self,
-        value: ValT | None = None,
+        value: float | Sequence[float] | Vector | None = None,
         units: Unit | str | None = None,
         *,
         quantity_table: Mapping[QuantityKey, float] | None = None,
@@ -249,7 +255,9 @@ class Quantity(Generic[ValT]):
         # Convert min_value to float for comparison to avoid type checker issues
         # Skip conversion for complex numbers to avoid warnings
         try:
-            min_val_float = float(min_value) if not isinstance(min_value, complex) else 0.0  # type: ignore[arg-type,reportArgumentType] # noqa: E501
+            min_val_float = (
+                float(min_value) if not isinstance(min_value, complex) else 0.0
+            )  # type: ignore[arg-type,reportArgumentType] # noqa: E501
         except (TypeError, ValueError):
             min_val_float = 0.0
 
@@ -321,7 +329,7 @@ class Quantity(Generic[ValT]):
         """True if the quantity is dimensionless."""
         return not bool(self.dimensions)
 
-    def to(self, to_units: Unit | str) -> "Quantity":
+    def to(self, to_units: Unit | str) -> "Quantity[ValT]":
         """
         Perform quantity conversions.
 
@@ -345,14 +353,14 @@ class Quantity(Generic[ValT]):
             to_units = Unit(units=to_units)
 
         # Retrieve all SI required SI data and perform conversion
-        new_value: float | ArrayLike = (
+        new_value = (
             get_si_value(self) / to_units.si_scaling_factor
         ) - to_units.si_offset
 
         if self.dimensions != to_units.dimensions:
             raise IncompatibleDimensions(from_unit=self.units, to_unit=to_units)
 
-        return Quantity(value=new_value, units=to_units)
+        return cast(Quantity[ValT], Quantity(value=new_value, units=to_units))
 
     def compatible_units(self) -> set[str]:
         """
@@ -434,9 +442,10 @@ class Quantity(Generic[ValT]):
             )
 
         new_value = op(self.value, value)
-        if r_add_sub:
-            return Quantity(value=new_value, units=other_units)
-        return Quantity(value=new_value, units=new_units)
+        return cast(
+            Quantity[ValT],
+            Quantity(value=new_value, units=other_units if r_add_sub else new_units),
+        )
 
     def __float__(self: Quantity[float]) -> float:
         base_dims = BaseDimensions
@@ -453,29 +462,46 @@ class Quantity(Generic[ValT]):
 
     if TYPE_CHECKING:
 
-        def __iter__(self: Quantity[ArrayLike]) -> Iterator[Quantity[float]]: ...
+        def __iter__(self: Quantity[Vector]) -> Iterator[Quantity[float]]: ...
 
     def __bool__(self) -> Literal[True]:
         return True
 
-    def __len__(self: Quantity[ArrayLike]) -> int:
+    def __len__(self: Quantity[Vector]) -> int:
         return len(self.value)
 
-    def __getitem__(self: Quantity[ArrayLike], idx: int) -> Quantity[float]:
+    def __getitem__(self: Quantity[Vector], idx: int) -> Quantity[float]:
         return Quantity(value=float(self.value[idx]), units=self.units)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.value} {self.units.name}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Quantity({self.value}, "{self.units.name}")'
 
     def __pow__(self, other: float) -> Quantity["ValT"]:
         new_value = self.value**other
         new_units = self.units**other
-        return Quantity(value=new_value, units=new_units)
+        return cast("Quantity[ValT]", Quantity(value=new_value, units=new_units))
 
-    def __mul__(self, other: "Quantity" | Unit | float | int) -> "Quantity":
+    @overload
+    def __mul__(
+        self: Quantity[float], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __mul__(
+        self: Quantity[float], other: "Quantity[Vector] | Sequence[float] | Vector"
+    ) -> "Quantity[Vector]": ...
+
+    @overload
+    def __mul__(
+        self: Quantity[Vector], other: "Quantity[Vector] | Unit | float"
+    ) -> "Quantity[Vector]": ...
+
+    def __mul__(
+        self, other: "Quantity | Unit | float | Sequence[float] | Vector"
+    ) -> "Quantity":
         if isinstance(other, Quantity):
             new_value = self.value * other.value
             new_units = self._unit * other._unit
@@ -489,11 +515,30 @@ class Quantity(Generic[ValT]):
 
         if isinstance(other, (float, int)):
             return Quantity(value=self.value * other, units=self.units)
+        if _array and isinstance(other, (Sequence, _array.ndarray)):
+            return Quantity(value=self.value * _array.array(other), units=self.units)
         return NotImplemented
 
     __rmul__ = __mul__
 
-    def __truediv__(self, other: "Quantity | float | Unit") -> "Quantity":
+    @overload
+    def __truediv__(
+        self: Quantity[float], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __truediv__(
+        self: Quantity[float], other: "Quantity[Vector] | Sequence[float] | Vector"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __truediv__(
+        self: Quantity[Vector], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[Vector]": ...
+
+    def __truediv__(
+        self, other: "Quantity | Unit | float | Sequence[float] | Vector"
+    ) -> "Quantity":
         if isinstance(other, Quantity):
             new_value = self.value / other.value
             new_units = self._unit / other._unit
@@ -508,24 +553,85 @@ class Quantity(Generic[ValT]):
 
         if isinstance(other, (float, int)):
             return Quantity(value=self.value / other, units=self._unit)
+        if _array and isinstance(other, (Sequence, _array.ndarray)):
+            return Quantity(value=self.value / other, units=self._unit)
         return NotImplemented
 
-    def __rtruediv__(self, other: "Quantity | float | Unit") -> "Quantity":
+    @overload
+    def __rtruediv__(
+        self: Quantity[float], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __rtruediv__(
+        self: Quantity[float], other: "Quantity[Vector] | Sequence[float] | Vector"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __rtruediv__(
+        self: Quantity[Vector], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[Vector]": ...
+
+    def __rtruediv__(
+        self, other: "Quantity | Unit | float | Sequence[float] | Vector"
+    ) -> "Quantity":
         return Quantity(other, "") / self
 
-    def __add__(self, other):
+    @overload
+    def __add__(
+        self: "Quantity[float]", other: "Quantity[float]"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __add__(
+        self: "Quantity[Vector]", other: "Quantity[Vector]"
+    ) -> "Quantity[Vector]": ...
+
+    def __add__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
         return self._relative_unit_check(other, r_add_sub=False)
 
-    def __radd__(self, other):
+    @overload
+    def __radd__(
+        self: "Quantity[float]", other: "Quantity[float]"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __radd__(
+        self: "Quantity[Vector]", other: "Quantity[Vector]"
+    ) -> "Quantity[Vector]": ...
+
+    def __radd__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
         return self._relative_unit_check(other, r_add_sub=True)
 
-    def __sub__(self, other):
+    @overload
+    def __sub__(
+        self: "Quantity[float]", other: "Quantity[float]"
+    ) -> "Quantity[float]": ...
+
+    @overload
+    def __sub__(
+        self: "Quantity[Vector]", other: "Quantity[Vector]"
+    ) -> "Quantity[Vector]": ...
+
+    def __sub__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
         return self._relative_unit_check(other, r_add_sub=False, op=operator.sub)
 
-    def __rsub__(self, other):
-        return self._relative_unit_check(other, r_add_sub=True, op=operator.sub)
+    @overload
+    def __rsub__(
+        self: "Quantity[float]", other: "Quantity[float]"
+    ) -> "Quantity[float]": ...
 
-    def __neg__(self):
+    @overload
+    def __rsub__(
+        self: "Quantity[Vector]", other: "Quantity[Vector]"
+    ) -> "Quantity[Vector]": ...
+
+    def __rsub__(self, other: "Quantity[ValT]") -> "Quantity[ValT]":
+        return self._relative_unit_check(
+            other, r_add_sub=True, op=lambda a, b: b - a
+        )  # op.rsub doesn't exist
+
+    def __neg__(self) -> Self:
         return Quantity(-self.value, self._unit)
 
     def validate_matching_dimensions(self, other):
@@ -584,10 +690,10 @@ class Quantity(Generic[ValT]):
             if isinstance(self.value, _array.ndarray) and isinstance(
                 other.value, _array.ndarray
             ):
-                self_arr = cast("Quantity[ArrayLike]", self)
-                other_arr = cast("Quantity[ArrayLike]", other)
-                a1 = cast("npt.ArrayLike", cast(object, get_si_value(self_arr)))
-                a2 = cast("npt.ArrayLike", cast(object, get_si_value(other_arr)))
+                self_arr = cast("Quantity[Vector]", self)
+                other_arr = cast("Quantity[Vector]", other)
+                a1 = get_si_value(self_arr)
+                a2 = get_si_value(other_arr)
                 return bool(_array.array_equal(a1, a2))
         return False
 

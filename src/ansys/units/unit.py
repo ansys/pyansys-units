@@ -22,10 +22,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 import functools
 import os
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, overload
 
 from ansys.units._constants import (
     _base_units,
@@ -41,7 +41,10 @@ from ansys.units.quantity_tables.keys import QuantityKey
 from ansys.units.systems import UnitSystem
 
 if TYPE_CHECKING:
-    from ansys.units.quantity import Quantity, ValT
+    import numpy as np
+    import numpy.typing as npt
+
+    from ansys.units.quantity import Quantity, ValT, Vector
 
 
 @functools.cache
@@ -327,10 +330,18 @@ class Unit:
         else:
             return NotImplemented
 
-    def __rmul__(self, value: "ValT") -> "Quantity[ValT]":
+    @overload
+    def __rmul__(
+        self, value: Sequence[float] | Vector
+    ) -> "Quantity[npt.NDArray[np.floating]]": ...
+
+    @overload
+    def __rmul__(self, value: float) -> "Quantity[float]": ...
+
+    def __rmul__(self, value: Sequence[float] | Vector | float) -> "Quantity[ValT]":
         Quantity, _array = _get_quantity_and_array()
         if isinstance(value, (float, int)) or (
-            _array and isinstance(value, _array.ndarray)
+            _array and isinstance(value, (Sequence, _array.ndarray))
         ):
             return Quantity(value=value, units=self)
         return NotImplemented  # other cases should have already handled this so nothing to do
@@ -348,10 +359,18 @@ class Unit:
             new_units += f" {multiplier}{base}^{exponent * -1}"
         return Unit(_condense(new_units))
 
-    def __rtruediv__(self, value: "ValT") -> "Quantity[ValT]":
+    @overload
+    def __rtruediv__(
+        self, value: Sequence[float] | Vector
+    ) -> "Quantity[npt.NDArray[np.floating]]": ...
+
+    @overload
+    def __rtruediv__(self, value: float) -> "Quantity[float]": ...
+
+    def __rtruediv__(self, value: Sequence[float] | Vector | float) -> "Quantity[ValT]":
         Quantity, _array = _get_quantity_and_array()
         if isinstance(value, (float, int)) or (
-            _array and isinstance(value, _array.ndarray)
+            _array and isinstance(value, (Sequence, _array.ndarray))
         ):
             return Quantity(value=value, units=self**-1)
         return NotImplemented  # other cases should have already handled this so nothing to do
