@@ -31,7 +31,7 @@ for unit-aware data analysis.
 import numpy as np
 
 try:
-    import pandas as pd
+    import pandas as pd  # type: ignore[import-not-found]
 except ImportError:
     print("Pandas not installed. Install with: pip install pandas")
     exit(1)
@@ -326,29 +326,3 @@ print(f"Units: {temp_quantity.units}")
 # Can use Quantity methods
 temp_kelvin = temp_quantity.to("K")
 print(f"Converted to Kelvin: {temp_kelvin}")
-
-###############################################################################
-# Summary
-# -------
-
-print("\n" + "=" * 70)
-print("SUMMARY")
-print("=" * 70)
-
-print(
-    """
-The ansys-units pandas extension provides:
-
-✓ Unit-aware Series and DataFrames
-✓ Seamless unit conversion
-✓ Type preservation through operations
-✓ Integration with pandas ecosystem
-✓ Missing value handling
-✓ Statistical operations with units
-
-This enables safer, more maintainable engineering data analysis
-with automatic unit tracking and conversion.
-"""
-)
-
-print("\nExample completed successfully!")
