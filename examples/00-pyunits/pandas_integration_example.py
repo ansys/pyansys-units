@@ -19,7 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# pyright: reportUnknownVariableType=false, reportUnknownArgumentType=false
 """
 Pandas Integration Example for ansys-units
 ==========================================
@@ -31,16 +30,13 @@ for unit-aware data analysis.
 import numpy as np
 
 try:
-    import pandas as pd  # type: ignore[import-not-found]
-
-    HAS_PANDAS = True
+    import pandas as pd
 except ImportError:
-    HAS_PANDAS = False
     print("Pandas not installed. Install with: pip install pandas")
     exit(1)
 
 from ansys.units import Quantity
-from ansys.units.pandas_extension import QuantityArray, QuantityDtype
+from ansys.units.extensions.pandas_extension import QuantityArray, QuantityDtype
 
 ###############################################################################
 # Basic Usage
@@ -329,3 +325,29 @@ print(f"Units: {temp_quantity.units}")
 # Can use Quantity methods
 temp_kelvin = temp_quantity.to("K")
 print(f"Converted to Kelvin: {temp_kelvin}")
+
+###############################################################################
+# Summary
+# -------
+
+print("\n" + "=" * 70)
+print("SUMMARY")
+print("=" * 70)
+
+print(
+    """
+The ansys-units pandas extension provides:
+
+✓ Unit-aware Series and DataFrames
+✓ Seamless unit conversion
+✓ Type preservation through operations
+✓ Integration with pandas ecosystem
+✓ Missing value handling
+✓ Statistical operations with units
+
+This enables safer, more maintainable engineering data analysis
+with automatic unit tracking and conversion.
+"""
+)
+
+print("\nExample completed successfully!")

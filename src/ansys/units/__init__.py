@@ -69,7 +69,7 @@ __all__ = [
 
 # Conditionally import pandas extension if pandas is available
 try:
-    from ansys.units.pandas_extension import (
+    from ansys.units.extensions.pandas_extension import (
         QuantityArray,
         QuantityDtype,
         UnitsDataFrameAccessor,
