@@ -20,6 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# pyright: reportOperatorIssue=false
+# degrees and radians are quantities that can be treated as dimensionless so accept adding floats
+# to but the types don't allow this cause it's not something you should do generally
+
 import math
 
 import pytest

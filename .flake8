@@ -8,3 +8,4 @@ statistics = True
 
 per-file-ignores =
     "scripts/generate_*.py": E122
+    tests/test_quantity.py:E501
