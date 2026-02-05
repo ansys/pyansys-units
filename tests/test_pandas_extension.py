@@ -25,7 +25,7 @@
 from typing import Any, Literal
 
 import numpy as np
-from numpy._typing._array_like import NDArray
+from numpy.typing import NDArray
 import pandas as pd
 from pandas import DataFrame, Series
 from pandas._typing import Scalar

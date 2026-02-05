@@ -34,7 +34,7 @@ import re
 from typing import Any, Callable
 
 import numpy as np
-from numpy._typing._array_like import NDArray
+from numpy.typing import NDArray
 import pandas as pd
 from pandas.api.extensions import (
     ExtensionArray,
@@ -42,6 +42,7 @@ from pandas.api.extensions import (
     register_dataframe_accessor,
     register_extension_dtype,
     register_series_accessor,
+    take,
 )
 from pandas.api.indexers import (
     check_array_indexer,
@@ -344,10 +345,6 @@ class QuantityArray(ExtensionArray):
         -------
         QuantityArray
         """
-        from pandas.core.algorithms import (
-            take,
-        )
-
         if isinstance(fill_value, Quantity):
             fill_value = fill_value.to(str(self._dtype.units)).value
 
@@ -430,7 +427,7 @@ class QuantityArray(ExtensionArray):
                 raise ValueError(
                     "Cannot infer dtype. No dtype specified and no Quantity found"
                 )
-            dtype: QuantityDtype = QuantityDtype(units=master_quantity.units)
+            dtype = QuantityDtype(units=master_quantity.units)
 
         # Convert all Quantities to magnitudes in target units
         values: list[Any] = []
@@ -571,8 +568,25 @@ class QuantityArray(ExtensionArray):
 
         return method
 
-    def _reduce(self, name: str, *, skipna: bool = True, **kwargs: Any) -> Quantity:
-        """Perform reduction operation."""
+    def _reduce(self, name: str, *, skipna: bool = True, **kwargs: Any) -> "Quantity":
+        """
+        Perform reduction operation on the QuantityArray.
+
+        Parameters
+        ----------
+        name : str
+            Name of the reduction function: 'sum', 'mean', 'min', 'max', 'std', 'var'.
+        skipna : bool, default True
+            Whether to ignore NaNs in the reduction.
+        **kwargs : Any
+            Extra keyword arguments for NumPy functions.
+
+        Returns
+        -------
+        Quantity
+            The result as a Quantity with proper units.
+        """
+        # Map names to NumPy functions that handle NaNs
         functions: dict[str, Callable[..., Any]] = {
             "sum": np.nansum,
             "mean": np.nanmean,
@@ -583,14 +597,20 @@ class QuantityArray(ExtensionArray):
         }
 
         if name not in functions:
-            raise TypeError(f"cannot perform {name} with type {self.dtype}")
+            raise TypeError(f"Cannot perform {name} with dtype {self.dtype}")
 
         data: NDArray[Any] = np.asarray(self._data)
-        result = functions[name](data, skipna=skipna, **kwargs)
 
-        # Return Quantity with appropriate units
+        if skipna:
+            result = functions[name](data, **kwargs)
+        else:
+            # Use normal NumPy functions which propagate NaNs
+            result = getattr(np, name)(data, **kwargs)
+
+        # Adjust units for variance
         if name == "var":
             return Quantity(result, f"({self._dtype.units})**2")
+
         return Quantity(result, str(self._dtype.units))
 
     # Ensure pandas / numpy defer to us for ops

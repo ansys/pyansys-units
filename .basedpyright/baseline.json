@@ -326,14 +326,6 @@
                 }
             },
             {
-                "code": "reportRedeclaration",
-                "range": {
-                    "startColumn": 27,
-                    "endColumn": 32,
-                    "lineCount": 1
-                }
-            },
-            {
                 "code": "reportImplicitOverride",
                 "range": {
                     "startColumn": 8,
