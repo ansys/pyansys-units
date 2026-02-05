@@ -34,7 +34,6 @@ import re
 from typing import Any, Callable
 
 import numpy as np
-from numpy.typing import NDArray
 import pandas as pd
 from pandas.api.extensions import (
     ExtensionArray,
@@ -569,24 +568,6 @@ class QuantityArray(ExtensionArray):
         return method
 
     def _reduce(self, name: str, *, skipna: bool = True, **kwargs: Any) -> "Quantity":
-        """
-        Perform reduction operation on the QuantityArray.
-
-        Parameters
-        ----------
-        name : str
-            Name of the reduction function: 'sum', 'mean', 'min', 'max', 'std', 'var'.
-        skipna : bool, default True
-            Whether to ignore NaNs in the reduction.
-        **kwargs : Any
-            Extra keyword arguments for NumPy functions.
-
-        Returns
-        -------
-        Quantity
-            The result as a Quantity with proper units.
-        """
-        # Map names to NumPy functions that handle NaNs
         functions: dict[str, Callable[..., Any]] = {
             "sum": np.nansum,
             "mean": np.nanmean,
@@ -599,18 +580,19 @@ class QuantityArray(ExtensionArray):
         if name not in functions:
             raise TypeError(f"Cannot perform {name} with dtype {self.dtype}")
 
-        data: NDArray[Any] = np.asarray(self._data)
+        data = np.asarray(self._data)
+
+        # Remove pandas-specific kwargs that NumPy does not support
+        np_kwargs = {k: v for k, v in kwargs.items() if k not in {"min_count"}}
 
         if skipna:
-            result = functions[name](data, **kwargs)
+            result = functions[name](data, **np_kwargs)
         else:
-            # Use normal NumPy functions which propagate NaNs
-            result = getattr(np, name)(data, **kwargs)
+            result = getattr(np, name)(data, **np_kwargs)
 
         # Adjust units for variance
         if name == "var":
             return Quantity(result, f"({self._dtype.units})**2")
-
         return Quantity(result, str(self._dtype.units))
 
     # Ensure pandas / numpy defer to us for ops
