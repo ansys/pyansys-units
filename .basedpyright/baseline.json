@@ -146,16 +146,6 @@
                 }
             }
         ],
-        "./src/ansys/units/__init__.py": [
-            {
-                "code": "reportImportCycles",
-                "range": {
-                    "startColumn": 0,
-                    "endColumn": 0,
-                    "lineCount": 1
-                }
-            }
-        ],
         "./src/ansys/units/_constants.py": [
             {
                 "code": "reportUnusedClass",
@@ -210,16 +200,16 @@
             {
                 "code": "reportAttributeAccessIssue",
                 "range": {
-                    "startColumn": 4,
-                    "endColumn": 27,
+                    "startColumn": 28,
+                    "endColumn": 51,
                     "lineCount": 1
                 }
             },
             {
                 "code": "reportUnknownVariableType",
                 "range": {
-                    "startColumn": 4,
-                    "endColumn": 27,
+                    "startColumn": 28,
+                    "endColumn": 51,
                     "lineCount": 1
                 }
             },
@@ -280,14 +270,6 @@
                 }
             },
             {
-                "code": "reportAttributeAccessIssue",
-                "range": {
-                    "startColumn": 37,
-                    "endColumn": 41,
-                    "lineCount": 1
-                }
-            },
-            {
                 "code": "reportUnknownVariableType",
                 "range": {
                     "startColumn": 12,
@@ -298,8 +280,8 @@
             {
                 "code": "reportUnknownArgumentType",
                 "range": {
-                    "startColumn": 30,
-                    "endColumn": 36,
+                    "startColumn": 29,
+                    "endColumn": 35,
                     "lineCount": 1
                 }
             },
@@ -324,6 +306,14 @@
                 "range": {
                     "startColumn": 8,
                     "endColumn": 19,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportRedeclaration",
+                "range": {
+                    "startColumn": 26,
+                    "endColumn": 30,
                     "lineCount": 1
                 }
             },
@@ -372,6 +362,14 @@
                 "range": {
                     "startColumn": 8,
                     "endColumn": 12,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportRedeclaration",
+                "range": {
+                    "startColumn": 42,
+                    "endColumn": 47,
                     "lineCount": 1
                 }
             },

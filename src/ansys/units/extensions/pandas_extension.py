@@ -33,11 +33,11 @@ import re
 from typing import Any, Callable
 
 import numpy as np
+from numpy._typing._array_like import NDArray
 import pandas as pd
+from pandas._typing import np_1darray
 from pandas.api.extensions import (
-    ExtensionArray,
     ExtensionDtype,
-    ExtensionScalarOpsMixin,
     register_dataframe_accessor,
     register_extension_dtype,
     register_series_accessor,
@@ -50,17 +50,20 @@ from pandas.api.types import (
     is_object_dtype,
     is_string_dtype,
 )
-from pandas.core import nanops  # type: ignore[attr-defined,import-not-found]
+from pandas.core import nanops
+from pandas.core.arrays.base import ExtensionArray
+from pandas.core.ops import ExtensionScalarOpsMixin
 from typing_extensions import override
 
-from ansys.units import Quantity, Unit
+from ansys.units.quantity import Quantity, Vector
+from ansys.units.unit import Unit
 
 # Default subdtype for numeric data
 DEFAULT_SUBDTYPE = "Float64"
 
 
-@register_extension_dtype  # type: ignore[misc,reportUntypedClassDecorator]
-class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
+@register_extension_dtype
+class QuantityDtype(ExtensionDtype):
     """
     An ExtensionDtype for holding unit-aware Quantity data.
 
@@ -79,7 +82,7 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
     >>> series = pd.Series([1.0, 2.0, 3.0], dtype=dtype)
     """
 
-    type: "type[Quantity]" = Quantity  # type: ignore[assignment]
+    type: "type[Quantity]" = Quantity
     units: Unit | None = None
     subdtype: Any | None = None
     _metadata: tuple[str, ...] = ("units", "subdtype")
@@ -88,7 +91,9 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
     )
     _cache: dict[tuple[str, Any], "QuantityDtype"] = {}
 
-    def __new__(cls, units: str | Unit | None = None, subdtype: Any | None = None) -> "QuantityDtype":  # type: ignore[misc]
+    def __new__(
+        cls, units: str | Unit | None = None, subdtype: Any | None = None
+    ) -> "QuantityDtype":
         """
         Create a new QuantityDtype.
 
@@ -100,11 +105,11 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
             Underlying dtype for numeric values.
         """
         if isinstance(units, QuantityDtype):
-            return units  # type: ignore[return-value]
+            return units
 
         if units is None:
             # Empty constructor for pickle compatibility
-            return object.__new__(cls)  # type: ignore[return-value]
+            return object.__new__(cls)
 
         # Parse units if string
         if isinstance(units, str):
@@ -124,13 +129,13 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
 
         # Use cached dtype if available
         try:
-            return cls._cache[(str(units), subdtype)]  # type: ignore[return-value]
+            return cls._cache[(str(units), subdtype)]
         except KeyError:
             u = object.__new__(cls)
             u.units = units
             u.subdtype = subdtype
-            cls._cache[(str(units), subdtype)] = u  # type: ignore[assignment]
-            return u  # type: ignore[return-value]
+            cls._cache[(str(units), subdtype)] = u
+            return u
 
     @property
     def _is_numeric(self) -> bool:
@@ -173,7 +178,7 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
     @override
     def na_value(self) -> Quantity:
         """The NA value for this dtype."""
-        return Quantity(np.nan, str(self.units))  # type: ignore[arg-type]
+        return Quantity(np.nan, str(self.units))
 
     @override
     def __hash__(self) -> int:
@@ -185,7 +190,7 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
         """Check equality with another dtype."""
         if isinstance(other, str):
             try:
-                other = QuantityDtype(other)  # type: ignore[assignment]
+                other = QuantityDtype(other)
             except (ValueError, TypeError):
                 return False
 
@@ -206,7 +211,7 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
         return QuantityArray
 
 
-class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[misc]
+class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):
     """
     An ExtensionArray for holding Quantity data.
 
@@ -246,7 +251,7 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
                 raise ValueError("Must specify dtype when values are not Quantity")
 
         if not isinstance(dtype, QuantityDtype):
-            dtype = QuantityDtype(dtype)  # type: ignore[arg-type]
+            dtype = QuantityDtype(dtype)
 
         self._dtype = dtype
 
@@ -258,21 +263,21 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
             values = values._data
 
         # Convert to pandas array with subdtype
-        if not isinstance(values, pd.core.arrays.ExtensionArray):  # type: ignore[attr-defined,possibly-unbound]
-            values = pd.array(values, copy=copy, dtype=dtype.subdtype)  # type: ignore[attr-defined,possibly-unbound]
+        if not isinstance(values, ExtensionArray):
+            values = pd.array(values, copy=copy, dtype=dtype.subdtype)
 
         self._data = values
 
     @property
-    def dtype(self) -> QuantityDtype:  # type: ignore[override]
+    def dtype(self) -> QuantityDtype:
         """The dtype for this array."""
-        return self._dtype  # type: ignore[return-value]
+        return self._dtype
 
-    def __len__(self) -> int:  # type: ignore[override]
+    def __len__(self) -> int:
         """Length of the array."""
         return len(self._data)
 
-    def __getitem__(self, item: Any) -> "Quantity | QuantityArray":  # type: ignore[override]
+    def __getitem__(self, item: Any) -> "Quantity | QuantityArray":
         """
         Select subset of self.
 
@@ -285,17 +290,17 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         -------
         Quantity or QuantityArray
         """
-        if is_integer(item):  # type: ignore[no-untyped-call,possibly-unbound]
+        if is_integer(item):
             value = self._data[item]
             # Check if value is NaN/NA and return it directly
-            if pd.isna(value):  # type: ignore[possibly-unbound]
+            if pd.isna(value):
                 return value
-            return Quantity(value, str(self._dtype.units))  # type: ignore[arg-type,possibly-unbound]
+            return Quantity(value, str(self._dtype.units))
 
-        item = check_array_indexer(self, item)  # type: ignore[no-untyped-call,possibly-unbound]
-        return type(self)(self._data[item], self._dtype)  # type: ignore[arg-type]
+        item: Any = check_array_indexer(self, item)
+        return type(self)(self._data[item], self._dtype)
 
-    def __setitem__(self, key: Any, value: Any) -> None:  # type: ignore[override]
+    def __setitem__(self, key: Any, value: Any) -> None:
         """
         Set values in the array.
 
@@ -308,11 +313,11 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         """
         # Convert Quantity to magnitude in our units
         if isinstance(value, Quantity):
-            value = value.to(str(self._dtype.units)).value  # type: ignore[assignment,arg-type]
+            value = value.to(str(self._dtype.units)).value
 
         self._data[key] = value
 
-    def isna(self) -> np.ndarray[Any, Any]:  # type: ignore[override,type-arg]
+    def isna(self) -> np.ndarray[Any, Any]:
         """
         Boolean indicator of missing values.
 
@@ -320,9 +325,11 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         -------
         np.ndarray
         """
-        return np.asarray(self._data.isna())  # type: ignore[no-untyped-call]
+        return np.asarray(self._data.isna())
 
-    def take(self, indices: Any, allow_fill: bool = False, fill_value: Any = None) -> "QuantityArray":  # type: ignore[override]
+    def take(
+        self, indices: Any, allow_fill: bool = False, fill_value: Any = None
+    ) -> "QuantityArray":
         """
         Take elements from array.
 
@@ -340,16 +347,18 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         QuantityArray
         """
         from pandas.core.algorithms import (
-            take,  # type: ignore[attr-defined,import-not-found]
+            take,
         )
 
         if isinstance(fill_value, Quantity):
-            fill_value = fill_value.to(str(self._dtype.units)).value  # type: ignore[assignment,arg-type]
+            fill_value = fill_value.to(str(self._dtype.units)).value
 
-        result = take(self._data, indices, fill_value=fill_value, allow_fill=allow_fill)  # type: ignore[no-untyped-call,arg-type]
+        result: np_1darray[Any] | ExtensionArray = take(
+            self._data, indices, fill_value=fill_value, allow_fill=allow_fill
+        )
         return QuantityArray(result, dtype=self.dtype)
 
-    def copy(self, deep: bool = False) -> "QuantityArray":  # type: ignore[override]
+    def copy(self, deep: bool = False) -> "QuantityArray":
         """
         Copy the array.
 
@@ -364,12 +373,12 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         """
         data = self._data
         if deep:
-            data = data.copy()  # type: ignore[no-untyped-call]
+            data = data.copy()
 
         return type(self)(data, dtype=self.dtype)
 
     @classmethod
-    def _concat_same_type(cls, to_concat: list["QuantityArray"]) -> "QuantityArray":  # type: ignore[override]
+    def _concat_same_type(cls, to_concat: list["QuantityArray"]) -> "QuantityArray":
         """
         Concatenate multiple arrays of this type.
 
@@ -381,18 +390,20 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         -------
         QuantityArray
         """
-        output_units = to_concat[0]._dtype.units  # type: ignore[assignment]
+        output_units: Unit | None = to_concat[0]._dtype.units
 
         data: list[Any] = []
         for arr in to_concat:
             # Convert all arrays to output units
-            converted = arr.to(str(output_units))  # type: ignore[arg-type]
+            converted: QuantityArray = arr.to(str(output_units))
             data.append(np.atleast_1d(converted._data))
 
         return cls(np.concatenate(data), to_concat[0].dtype)
 
     @classmethod
-    def _from_sequence(cls, scalars: Any, dtype: QuantityDtype | None = None, copy: bool = False) -> "QuantityArray":  # type: ignore[override]
+    def _from_sequence(
+        cls, scalars: Any, dtype: QuantityDtype | None = None, copy: bool = False
+    ) -> "QuantityArray":
         """
         Construct array from sequence of scalars.
 
@@ -421,31 +432,33 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
                 raise ValueError(
                     "Cannot infer dtype. No dtype specified and no Quantity found"
                 )
-            dtype = QuantityDtype(units=master_quantity.units)
+            dtype: QuantityDtype = QuantityDtype(units=master_quantity.units)
 
         # Convert all Quantities to magnitudes in target units
         values: list[Any] = []
         for item in scalars:
             if isinstance(item, Quantity):
-                values.append(item.to(str(dtype.units)).value)  # type: ignore[union-attr]
+                values.append(item.to(str(dtype.units)).value)
             else:
                 values.append(item)
 
         return cls(values, dtype=dtype, copy=copy)
 
     @classmethod
-    def _from_factorized(cls, values: Any, original: "QuantityArray") -> "QuantityArray":  # type: ignore[override]
+    def _from_factorized(
+        cls, values: Any, original: "QuantityArray"
+    ) -> "QuantityArray":
         """Reconstruct from factorized values."""
         return cls(values, dtype=original.dtype)
 
-    def _values_for_factorize(self) -> tuple[np.ndarray[Any, Any], Quantity]:  # type: ignore[override,type-arg]
+    def _values_for_factorize(self) -> tuple[np.ndarray[Any, Any], Quantity]:
         """Return values for factorization."""
         return np.asarray(self._data), self.dtype.na_value
 
     @property
     def quantity(self) -> Quantity:
         """Convert to single Quantity with array value."""
-        return Quantity(np.asarray(self._data), str(self._dtype.units))  # type: ignore[arg-type]
+        return Quantity(np.asarray(self._data), str(self._dtype.units))
 
     def to(self, units: str | Unit) -> "QuantityArray":
         """
@@ -464,10 +477,10 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
             units = Unit(units)
 
         # Convert the quantity
-        converted = self.quantity.to(str(units))
+        converted: Quantity[float | Vector] = self.quantity.to(str(units))
         return QuantityArray(converted.value, dtype=QuantityDtype(units))
 
-    def astype(self, dtype: Any, copy: bool = True) -> Any:  # type: ignore[override]
+    def astype(self, dtype: Any, copy: bool = True) -> Any:
         """
         Cast to different dtype.
 
@@ -483,38 +496,41 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         array
         """
         if isinstance(dtype, str) and dtype.startswith("quantity["):
-            dtype = QuantityDtype(dtype)  # type: ignore[assignment]
+            dtype = QuantityDtype(dtype)
 
         if isinstance(dtype, QuantityDtype):
             if dtype == self._dtype and not copy:
                 return self
-            return self.to(str(dtype.units))  # type: ignore[arg-type]
+            return self.to(str(dtype.units))
 
-        if is_object_dtype(dtype):  # type: ignore[no-untyped-call,possibly-unbound]
+        if is_object_dtype(dtype):
             return np.array([self[i] for i in range(len(self))], dtype=object)
 
-        if is_string_dtype(dtype):  # type: ignore[no-untyped-call,possibly-unbound]
-            return pd.Series([str(self[i]) for i in range(len(self))], dtype=dtype)  # type: ignore[attr-defined,possibly-unbound,call-overload]
+        if is_string_dtype(dtype):
+            return pd.Series([str(self[i]) for i in range(len(self))], dtype=dtype)
 
-        return pd.array(self._data, dtype=dtype, copy=copy)  # type: ignore[attr-defined,possibly-unbound]
+        return pd.array(self._data, dtype=dtype, copy=copy)
 
-    def __array__(self, dtype: Any | None = None, copy: bool = False) -> np.ndarray[Any, Any]:  # type: ignore[override,type-arg]
+    def __array__(
+        self, dtype: Any | None = None, copy: bool = False
+    ) -> np.ndarray[Any, Any]:
         """Convert to numpy array."""
-        if dtype is None or is_object_dtype(dtype):  # type: ignore[no-untyped-call,possibly-unbound]
+        if dtype is None or is_object_dtype(dtype):
             # Return array of Quantity objects
             return np.array([self[i] for i in range(len(self))], dtype=object)
         return np.array(self._data, dtype=dtype, copy=copy)
 
     @classmethod
-    def _create_arithmetic_method(cls, op: Callable[..., Any]) -> Callable[..., Any]:  # type: ignore[override]
+    def _create_arithmetic_method(cls, op: Callable[..., Any]) -> Callable[..., Any]:
         """Create arithmetic method."""
 
         def method(self: "QuantityArray", other: Any) -> Any:
-            if isinstance(other, (pd.Series, pd.DataFrame, pd.Index)):  # type: ignore[attr-defined,possibly-unbound]
+            if isinstance(other, (pd.Series, pd.DataFrame, pd.Index)):
                 return NotImplemented
 
             # Convert to quantities
-            lhs = self.quantity
+            lhs: Quantity[float | Vector] = self.quantity
+            rhs: Any
 
             if isinstance(other, QuantityArray):
                 rhs = other.quantity
@@ -536,17 +552,17 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
         return method
 
     @classmethod
-    def _create_comparison_method(cls, op: Callable[..., Any]) -> Callable[..., Any]:  # type: ignore[override]
+    def _create_comparison_method(cls, op: Callable[..., Any]) -> Callable[..., Any]:
         """Create comparison method."""
 
         def method(self: "QuantityArray", other: Any) -> Any:
-            if isinstance(other, (pd.Series, pd.DataFrame, pd.Index)):  # type: ignore[attr-defined,possibly-unbound]
+            if isinstance(other, (pd.Series, pd.DataFrame, pd.Index)):
                 return NotImplemented
 
-            lhs = self.quantity
+            lhs: Quantity[float | Vector] = self.quantity
 
             if isinstance(other, QuantityArray):
-                rhs = other.quantity
+                rhs: Quantity[float | Vector] = other.quantity
             elif isinstance(other, Quantity):
                 rhs = other
             else:
@@ -557,27 +573,27 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):  # type: ignore[mi
 
         return method
 
-    def _reduce(self, name: str, *, skipna: bool = True, **kwargs: Any) -> Quantity:  # type: ignore[override]
+    def _reduce(self, name: str, *, skipna: bool = True, **kwargs: Any) -> Quantity:
         """Perform reduction operation."""
         functions: dict[str, Callable[..., Any]] = {
-            "sum": nanops.nansum,  # type: ignore[attr-defined]
-            "mean": nanops.nanmean,  # type: ignore[attr-defined]
-            "min": nanops.nanmin,  # type: ignore[attr-defined]
-            "max": nanops.nanmax,  # type: ignore[attr-defined]
-            "std": nanops.nanstd,  # type: ignore[attr-defined]
-            "var": nanops.nanvar,  # type: ignore[attr-defined]
+            "sum": nanops.nansum,
+            "mean": nanops.nanmean,
+            "min": nanops.nanmin,
+            "max": nanops.nanmax,
+            "std": nanops.nanstd,
+            "var": nanops.nanvar,
         }
 
         if name not in functions:
             raise TypeError(f"cannot perform {name} with type {self.dtype}")
 
-        data = np.asarray(self._data)
+        data: NDArray[Any] = np.asarray(self._data)
         result = functions[name](data, skipna=skipna, **kwargs)
 
         # Return Quantity with appropriate units
         if name == "var":
-            return Quantity(result, f"({self._dtype.units})**2")  # type: ignore[arg-type]
-        return Quantity(result, str(self._dtype.units))  # type: ignore[arg-type]
+            return Quantity(result, f"({self._dtype.units})**2")
+        return Quantity(result, str(self._dtype.units))
 
 
 # Add arithmetic and comparison operators
@@ -585,7 +601,7 @@ QuantityArray._add_arithmetic_ops()
 QuantityArray._add_comparison_ops()
 
 
-@register_series_accessor("units")  # type: ignore[misc,reportUntypedClassDecorator]
+@register_series_accessor("units")
 class UnitsSeriesAccessor:
     """
     Accessor for unit-aware operations on Series.
@@ -622,8 +638,8 @@ class UnitsSeriesAccessor:
         if not isinstance(self._obj.array, QuantityArray):
             raise TypeError("Series must contain QuantityArray")
 
-        converted = self._obj.array.to(units)
-        return pd.Series(converted, index=self._obj.index, name=self._obj.name)  # type: ignore[attr-defined,possibly-unbound]
+        converted: QuantityArray = self._obj.array.to(units)
+        return pd.Series(converted, index=self._obj.index, name=self._obj.name)
 
     @property
     def quantity(self) -> Quantity:
@@ -633,7 +649,7 @@ class UnitsSeriesAccessor:
         return self._obj.array.quantity
 
 
-@register_dataframe_accessor("units")  # type: ignore[misc,reportUntypedClassDecorator]
+@register_dataframe_accessor("units")
 class UnitsDataFrameAccessor:
     """
     Accessor for unit-aware operations on DataFrames.
