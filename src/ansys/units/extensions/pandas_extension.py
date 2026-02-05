@@ -33,8 +33,8 @@ import re
 from typing import Any, Callable
 
 import numpy as np
-import pandas as pd  # type: ignore[import-not-found]
-from pandas.api.extensions import (  # type: ignore[import-not-found]
+import pandas as pd
+from pandas.api.extensions import (
     ExtensionArray,
     ExtensionDtype,
     ExtensionScalarOpsMixin,
@@ -43,9 +43,9 @@ from pandas.api.extensions import (  # type: ignore[import-not-found]
     register_series_accessor,
 )
 from pandas.api.indexers import (
-    check_array_indexer,  # type: ignore[import-not-found]; type: ignore[reportMissingImports]
+    check_array_indexer,
 )
-from pandas.api.types import (  # type: ignore[import-not-found]
+from pandas.api.types import (
     is_integer,
     is_object_dtype,
     is_string_dtype,
