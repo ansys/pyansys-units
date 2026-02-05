@@ -198,38 +198,6 @@
         ],
         "./src/ansys/units/extensions/pandas_extension.py": [
             {
-                "code": "reportAttributeAccessIssue",
-                "range": {
-                    "startColumn": 24,
-                    "endColumn": 30,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnknownVariableType",
-                "range": {
-                    "startColumn": 24,
-                    "endColumn": 30,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportAttributeAccessIssue",
-                "range": {
-                    "startColumn": 28,
-                    "endColumn": 51,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnknownVariableType",
-                "range": {
-                    "startColumn": 28,
-                    "endColumn": 51,
-                    "lineCount": 1
-                }
-            },
-            {
                 "code": "reportIncompatibleVariableOverride",
                 "range": {
                     "startColumn": 4,
@@ -250,14 +218,6 @@
                 "range": {
                     "startColumn": 8,
                     "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUntypedBaseClass",
-                "range": {
-                    "startColumn": 36,
-                    "endColumn": 59,
                     "lineCount": 1
                 }
             },
@@ -3153,14 +3113,6 @@
             }
         ],
         "./tests/test_pandas_extension.py": [
-            {
-                "code": "reportUnknownArgumentType",
-                "range": {
-                    "startColumn": 19,
-                    "endColumn": 37,
-                    "lineCount": 1
-                }
-            },
             {
                 "code": "reportAttributeAccessIssue",
                 "range": {

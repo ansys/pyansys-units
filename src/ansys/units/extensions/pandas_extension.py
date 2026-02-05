@@ -29,6 +29,7 @@ aware DataFrames and Series.
 # flake8: noqa: E501
 
 import numbers
+import operator
 import re
 from typing import Any, Callable
 
@@ -36,6 +37,7 @@ import numpy as np
 from numpy._typing._array_like import NDArray
 import pandas as pd
 from pandas.api.extensions import (
+    ExtensionArray,
     ExtensionDtype,
     register_dataframe_accessor,
     register_extension_dtype,
@@ -49,9 +51,6 @@ from pandas.api.types import (
     is_object_dtype,
     is_string_dtype,
 )
-from pandas.core import nanops
-from pandas.core.arrays.base import ExtensionArray
-from pandas.core.ops import ExtensionScalarOpsMixin
 from typing_extensions import override
 
 from ansys.units.quantity import Quantity, Vector
@@ -210,7 +209,7 @@ class QuantityDtype(ExtensionDtype):
         return QuantityArray
 
 
-class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):
+class QuantityArray(ExtensionArray):
     """
     An ExtensionArray for holding Quantity data.
 
@@ -276,7 +275,7 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):
         """Length of the array."""
         return len(self._data)
 
-    def __getitem__(self, item: Any) -> "Quantity | QuantityArray":
+    def __getitem__(self, item: Any) -> Any:
         """
         Select subset of self.
 
@@ -519,8 +518,8 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):
             return np.array([self[i] for i in range(len(self))], dtype=object)
         return np.array(self._data, dtype=dtype, copy=copy)
 
-    @classmethod
-    def _create_arithmetic_method(cls, op: Callable[..., Any]) -> Callable[..., Any]:
+    @staticmethod
+    def _create_arithmetic_method(op: Callable[..., Any]) -> Callable[..., Any]:
         """Create arithmetic method."""
 
         def method(self: "QuantityArray", other: Any) -> Any:
@@ -550,8 +549,8 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):
 
         return method
 
-    @classmethod
-    def _create_comparison_method(cls, op: Callable[..., Any]) -> Callable[..., Any]:
+    @staticmethod
+    def _create_comparison_method(op: Callable[..., Any]) -> Callable[..., Any]:
         """Create comparison method."""
 
         def method(self: "QuantityArray", other: Any) -> Any:
@@ -575,12 +574,12 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):
     def _reduce(self, name: str, *, skipna: bool = True, **kwargs: Any) -> Quantity:
         """Perform reduction operation."""
         functions: dict[str, Callable[..., Any]] = {
-            "sum": nanops.nansum,
-            "mean": nanops.nanmean,
-            "min": nanops.nanmin,
-            "max": nanops.nanmax,
-            "std": nanops.nanstd,
-            "var": nanops.nanvar,
+            "sum": np.nansum,
+            "mean": np.nanmean,
+            "min": np.nanmin,
+            "max": np.nanmax,
+            "std": np.nanstd,
+            "var": np.nanvar,
         }
 
         if name not in functions:
@@ -594,10 +593,30 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):
             return Quantity(result, f"({self._dtype.units})**2")
         return Quantity(result, str(self._dtype.units))
 
+    # Ensure pandas / numpy defer to us for ops
+    __array_priority__: int = 1000
 
-# Add arithmetic and comparison operators
-QuantityArray._add_arithmetic_ops()
-QuantityArray._add_comparison_ops()
+    # Arithmetic operators
+    __add__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.add)
+    __sub__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.sub)
+    __mul__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.mul)
+    __truediv__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.truediv)
+
+    # Reverse ops
+    __radd__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.add)
+    __rsub__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.sub)
+    __rmul__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.mul)
+    __rtruediv__: Callable[[Any, Any], Any] = _create_arithmetic_method(
+        operator.truediv
+    )
+
+    # Comparisons
+    __eq__: Callable[[Any, Any], Any] = _create_comparison_method(operator.eq)
+    __ne__: Callable[[Any, Any], Any] = _create_comparison_method(operator.ne)
+    __lt__: Callable[[Any, Any], Any] = _create_comparison_method(operator.lt)
+    __le__: Callable[[Any, Any], Any] = _create_comparison_method(operator.le)
+    __gt__: Callable[[Any, Any], Any] = _create_comparison_method(operator.gt)
+    __ge__: Callable[[Any, Any], Any] = _create_comparison_method(operator.ge)
 
 
 @register_series_accessor("units")
