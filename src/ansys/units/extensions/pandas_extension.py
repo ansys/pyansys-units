@@ -55,10 +55,10 @@ import typing_extensions
 
 from ansys.units import Quantity, Unit
 
-# try:
-#     from typing import override
-# except Exception:
-#     from typing_extensions import override  # type: ignore[import]
+try:
+    from typing import override
+except Exception:
+    from typing_extensions import override
 
 
 # Default subdtype for numeric data
