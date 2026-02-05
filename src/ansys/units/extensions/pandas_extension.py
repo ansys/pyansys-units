@@ -51,15 +51,9 @@ from pandas.api.types import (  # type: ignore[import-not-found]
     is_string_dtype,
 )
 from pandas.core import nanops  # type: ignore[attr-defined,import-not-found]
-import typing_extensions
+from typing_extensions import override
 
 from ansys.units import Quantity, Unit
-
-try:
-    from typing import override
-except Exception:
-    from typing_extensions import override
-
 
 # Default subdtype for numeric data
 DEFAULT_SUBDTYPE = "Float64"
@@ -205,9 +199,9 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
         """String representation."""
         return self.name
 
-    @typing_extensions.override
+    @override
     @classmethod
-    def construct_array_type(cls) -> Any:  # type: ignore[override]
+    def construct_array_type(cls) -> Any:
         """Return the array type associated with this dtype."""
         return QuantityArray
 
