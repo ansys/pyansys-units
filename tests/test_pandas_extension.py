@@ -19,25 +19,17 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# pyright: reportUnknownVariableType=false, reportUnknownArgumentType=false
 """Tests for pandas extension for ansys-units."""
 
-import importlib.util
+from typing import Any
 
 import numpy as np
+import pandas as pd
+from pandas import DataFrame, Series
 import pytest
 
 from ansys.units import Quantity, Unit
-
-# Check if pandas is available
-HAS_PANDAS = importlib.util.find_spec("pandas") is not None
-
-if HAS_PANDAS:
-    import pandas as pd  # type: ignore[import-not-found]
-
-    from ansys.units.extensions.pandas_extension import QuantityArray, QuantityDtype
-
-pytestmark = pytest.mark.skipif(not HAS_PANDAS, reason="pandas not available")
+from ansys.units.extensions.pandas_extension import QuantityArray, QuantityDtype
 
 
 class TestQuantityDtype:
@@ -222,22 +214,22 @@ class TestPandasIntegration:
 
     def test_create_series_with_dtype_string(self):
         """Test creating Series with dtype string."""
-        series = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        series = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
         assert isinstance(series.dtype, QuantityDtype)
         assert len(series) == 3
 
     def test_create_series_with_dtype_object(self):
         """Test creating Series with QuantityDtype object."""
         dtype = QuantityDtype("kg")
-        series = pd.Series([1.0, 2.0, 3.0], dtype=dtype)
+        series = Series([1.0, 2.0, 3.0], dtype=dtype)
         assert series.dtype == dtype
 
     def test_create_dataframe(self):
         """Test creating DataFrame with quantity columns."""
-        df = pd.DataFrame(
+        df = DataFrame(
             {
-                "length": pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]"),
-                "mass": pd.Series([10.0, 20.0, 30.0], dtype="quantity[kg]"),
+                "length": Series([1.0, 2.0, 3.0], dtype="quantity[m]"),
+                "mass": Series([10.0, 20.0, 30.0], dtype="quantity[kg]"),
             }
         )
         assert isinstance(df["length"].dtype, QuantityDtype)
@@ -245,41 +237,41 @@ class TestPandasIntegration:
 
     def test_series_units_accessor(self):
         """Test .units accessor on Series."""
-        series = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        series = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
         # Access the units accessor
         assert hasattr(series, "units")
 
     def test_series_units_to_conversion(self):
         """Test unit conversion via accessor."""
-        series = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        series = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
         converted = series.units.to("cm")
         assert converted[0] == Quantity(100.0, "cm")
         assert converted.dtype.units == Unit("cm")
 
     def test_series_units_quantity_property(self):
         """Test quantity property via accessor."""
-        series = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        series = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
         q = series.units.quantity
         assert isinstance(q, Quantity)
         assert q.units == Unit("m")
 
     def test_dataframe_units_accessor(self):
         """Test .units accessor on DataFrame."""
-        df = pd.DataFrame(
+        df = DataFrame(
             {
-                "length": pd.Series([1.0, 2.0], dtype="quantity[m]"),
-                "mass": pd.Series([10.0, 20.0], dtype="quantity[kg]"),
+                "length": Series([1.0, 2.0], dtype="quantity[m]"),
+                "mass": Series([10.0, 20.0], dtype="quantity[kg]"),
             }
         )
         assert hasattr(df, "units")
 
     def test_dataframe_units_summary(self):
         """Test units summary."""
-        df = pd.DataFrame(
+        df = DataFrame(
             {
-                "length": pd.Series([1.0, 2.0], dtype="quantity[m]"),
-                "mass": pd.Series([10.0, 20.0], dtype="quantity[kg]"),
-                "count": pd.Series([1, 2]),  # No units
+                "length": Series([1.0, 2.0], dtype="quantity[m]"),
+                "mass": Series([10.0, 20.0], dtype="quantity[kg]"),
+                "count": Series([1, 2]),  # No units
             }
         )
         summary = df.units.summary()
@@ -291,10 +283,10 @@ class TestPandasIntegration:
 
     def test_dataframe_units_to_conversion(self):
         """Test unit conversion on DataFrame columns."""
-        df = pd.DataFrame(
+        df = DataFrame(
             {
-                "length": pd.Series([1.0, 2.0], dtype="quantity[m]"),
-                "mass": pd.Series([1.0, 2.0], dtype="quantity[kg]"),
+                "length": Series([1.0, 2.0], dtype="quantity[m]"),
+                "mass": Series([1.0, 2.0], dtype="quantity[kg]"),
             }
         )
         converted = df.units.to({"length": "cm", "mass": "g"})
@@ -303,8 +295,8 @@ class TestPandasIntegration:
 
     def test_series_operations(self):
         """Test arithmetic operations on Series."""
-        s1 = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
-        s2 = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        s1 = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        s2 = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
 
         # Addition (not yet implemented but structure exists)
         # result = s1 + s2
@@ -312,7 +304,7 @@ class TestPandasIntegration:
 
     def test_indexing_and_slicing(self):
         """Test indexing operations."""
-        series = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0], dtype="quantity[m]")
+        series = Series([1.0, 2.0, 3.0, 4.0, 5.0], dtype="quantity[m]")
 
         # Single item
         item = series.iloc[0]
@@ -325,8 +317,8 @@ class TestPandasIntegration:
 
     def test_concat_series(self):
         """Test concatenating series."""
-        s1 = pd.Series([1.0, 2.0], dtype="quantity[m]")
-        s2 = pd.Series([3.0, 4.0], dtype="quantity[m]")
+        s1 = Series([1.0, 2.0], dtype="quantity[m]")
+        s2 = Series([3.0, 4.0], dtype="quantity[m]")
 
         result = pd.concat([s1, s2], ignore_index=True)
         assert len(result) == 4
@@ -334,10 +326,10 @@ class TestPandasIntegration:
 
     def test_groupby_operations(self):
         """Test groupby with quantity columns."""
-        df = pd.DataFrame(
+        df = DataFrame(
             {
                 "group": ["A", "A", "B", "B"],
-                "value": pd.Series([1.0, 2.0, 3.0, 4.0], dtype="quantity[m]"),
+                "value": Series([1.0, 2.0, 3.0, 4.0], dtype="quantity[m]"),
             }
         )
 
@@ -348,13 +340,13 @@ class TestPandasIntegration:
 
     def test_nan_handling(self):
         """Test handling of NaN values."""
-        series = pd.Series([1.0, np.nan, 3.0], dtype="quantity[m]")  # type: ignore[list-item]
+        series = Series([1.0, np.nan, 3.0], dtype="quantity[m]")  # type: ignore[list-item]
         assert series.isna()[1]
         assert not series.isna()[0]
 
     def test_dtype_preservation(self):
         """Test that dtype is preserved through operations."""
-        df = pd.DataFrame({"a": pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")})
+        df: DataFrame = DataFrame({"a": Series([1.0, 2.0, 3.0], dtype="quantity[m]")})
 
         # Select column
         col = df["a"]
@@ -407,19 +399,19 @@ class TestDocExamples:
     def test_basic_usage_example(self):
         """Test basic usage example."""
         # Create a Series with units
-        distances = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        distances = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
         assert len(distances) == 3
 
         # Convert units
-        distances_ft = distances.units.to("ft")
+        distances_ft: Any = distances.units.to("ft")
         assert distances_ft.dtype.units == Unit("ft")
 
     def test_dataframe_example(self):
         """Test DataFrame example."""
-        df = pd.DataFrame(
+        df = DataFrame(
             {
-                "torque": pd.Series([1.0, 2.0, 3.0], dtype="quantity[N m]"),
-                "force": pd.Series([10.0, 20.0, 30.0], dtype="quantity[N]"),
+                "torque": Series([1.0, 2.0, 3.0], dtype="quantity[N m]"),
+                "force": Series([10.0, 20.0, 30.0], dtype="quantity[N]"),
             }
         )
 
@@ -427,7 +419,7 @@ class TestDocExamples:
         assert isinstance(df["force"].dtype, QuantityDtype)
 
         # Check units
-        summary = df.units.summary()
+        summary: Any = df.units.summary()
         assert "torque" in summary
         assert "force" in summary
 

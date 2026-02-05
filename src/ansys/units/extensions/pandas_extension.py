@@ -19,7 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# pyright: reportUnknownVariableType=false, reportUnknownArgumentType=false
 """
 Pandas extension for ansys-units.
 
@@ -34,36 +33,33 @@ import re
 from typing import Any, Callable
 
 import numpy as np
-
-try:
-    import pandas as pd  # type: ignore[import-not-found]
-    from pandas.api.extensions import (  # type: ignore[import-not-found]
-        ExtensionArray,
-        ExtensionDtype,
-        ExtensionScalarOpsMixin,
-        register_dataframe_accessor,
-        register_extension_dtype,
-        register_series_accessor,
-    )
-    from pandas.api.indexers import (
-        check_array_indexer,  # type: ignore[import-not-found]; type: ignore[reportMissingImports]
-    )
-    from pandas.api.types import (  # type: ignore[import-not-found]
-        is_integer,
-        is_object_dtype,
-        is_string_dtype,
-    )
-    from pandas.core import nanops  # type: ignore[attr-defined,import-not-found]
-
-    HAS_PANDAS = True
-except ImportError:
-    HAS_PANDAS = False  # type: ignore[assignment]
-    # Define dummy base classes if pandas not available
-    ExtensionArray = object  # type: ignore[misc,assignment]
-    ExtensionDtype = object  # type: ignore[misc,assignment]
-    ExtensionScalarOpsMixin = object  # type: ignore[misc,assignment]
+import pandas as pd  # type: ignore[import-not-found]
+from pandas.api.extensions import (  # type: ignore[import-not-found]
+    ExtensionArray,
+    ExtensionDtype,
+    ExtensionScalarOpsMixin,
+    register_dataframe_accessor,
+    register_extension_dtype,
+    register_series_accessor,
+)
+from pandas.api.indexers import (
+    check_array_indexer,  # type: ignore[import-not-found]; type: ignore[reportMissingImports]
+)
+from pandas.api.types import (  # type: ignore[import-not-found]
+    is_integer,
+    is_object_dtype,
+    is_string_dtype,
+)
+from pandas.core import nanops  # type: ignore[attr-defined,import-not-found]
+import typing_extensions
 
 from ansys.units import Quantity, Unit
+
+# try:
+#     from typing import override
+# except Exception:
+#     from typing_extensions import override  # type: ignore[import]
+
 
 # Default subdtype for numeric data
 DEFAULT_SUBDTYPE = "Float64"
@@ -147,8 +143,9 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
         """Whether this dtype is numeric."""
         return True
 
+    @override
     @classmethod
-    def construct_from_string(cls, string: str) -> "QuantityDtype":  # type: ignore[override]
+    def construct_from_string(cls, string: str) -> "QuantityDtype":
         """
         Construct dtype from string.
 
@@ -170,23 +167,27 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
         except Exception:
             raise TypeError(f"Cannot construct a 'QuantityDtype' from '{string}'")
 
-    @property  # type: ignore[override]
-    def name(self) -> str:  # type: ignore[override]
+    @property
+    @override
+    def name(self) -> str:
         """String representation of the dtype."""
         if self.subdtype and self.subdtype != DEFAULT_SUBDTYPE:
             return f"quantity[{self.units}][{self.subdtype}]"
         return f"quantity[{self.units}]"
 
     @property
-    def na_value(self) -> Quantity:  # type: ignore[override]
+    @override
+    def na_value(self) -> Quantity:
         """The NA value for this dtype."""
         return Quantity(np.nan, str(self.units))  # type: ignore[arg-type]
 
-    def __hash__(self) -> int:  # type: ignore[override]
+    @override
+    def __hash__(self) -> int:
         """Hash the dtype."""
         return hash((str(self.units), str(self.subdtype)))
 
-    def __eq__(self, other: Any) -> bool:  # type: ignore[override]
+    @override
+    def __eq__(self, other: Any) -> bool:
         """Check equality with another dtype."""
         if isinstance(other, str):
             try:
@@ -199,10 +200,12 @@ class QuantityDtype(ExtensionDtype):  # type: ignore[misc]
 
         return str(self.units) == str(other.units) and self.subdtype == other.subdtype
 
-    def __repr__(self) -> str:  # type: ignore[override]
+    @override
+    def __repr__(self) -> str:
         """String representation."""
         return self.name
 
+    @typing_extensions.override
     @classmethod
     def construct_array_type(cls) -> Any:  # type: ignore[override]
         """Return the array type associated with this dtype."""
@@ -689,12 +692,3 @@ class UnitsDataFrameAccessor:
             if col in df.columns and isinstance(df[col].dtype, QuantityDtype):
                 df[col] = df[col].units.to(units)
         return df
-
-
-if not HAS_PANDAS:
-    # Create placeholder if pandas not available
-    def __getattr__(name: str) -> None:
-        """Raise helpful error when pandas not installed."""
-        raise ImportError(
-            f"pandas is required to use {name}. Install it with: pip install pandas"
-        )
