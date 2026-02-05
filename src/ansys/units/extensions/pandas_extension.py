@@ -35,7 +35,6 @@ from typing import Any, Callable
 import numpy as np
 from numpy._typing._array_like import NDArray
 import pandas as pd
-from pandas._typing import np_1darray
 from pandas.api.extensions import (
     ExtensionDtype,
     register_dataframe_accessor,
@@ -353,7 +352,7 @@ class QuantityArray(ExtensionArray, ExtensionScalarOpsMixin):
         if isinstance(fill_value, Quantity):
             fill_value = fill_value.to(str(self._dtype.units)).value
 
-        result: np_1darray[Any] | ExtensionArray = take(
+        result: np.ndarray[Any, Any] | ExtensionArray = take(
             self._data, indices, fill_value=fill_value, allow_fill=allow_fill
         )
         return QuantityArray(result, dtype=self.dtype)

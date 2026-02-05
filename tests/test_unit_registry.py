@@ -86,7 +86,7 @@ derived_units:
 
 def test_additional_units():
     kg = _base_units["kg"]
-    ur = UnitRegistry(config=None, other={"kg": kg})
+    ur = UnitRegistry(config="", other={"kg": kg})
     default_ur = UnitRegistry()
     assert str(ur) == "kg, "
     assert ur.kg == default_ur.kg

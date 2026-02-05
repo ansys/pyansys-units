@@ -3906,14 +3906,6 @@
                     "endColumn": 24,
                     "lineCount": 1
                 }
-            },
-            {
-                "code": "reportArgumentType",
-                "range": {
-                    "startColumn": 29,
-                    "endColumn": 33,
-                    "lineCount": 1
-                }
             }
         ]
     }
