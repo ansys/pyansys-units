@@ -254,12 +254,12 @@ class Quantity(Generic[ValT]):
         min_value = value if isinstance(value, (int, float)) else min(value)
         # Convert min_value to float for comparison to avoid type checker issues
         # Skip conversion for complex numbers to avoid warnings
+        min_val_float: float = 0.0
         try:
-            min_val_float = (
-                float(min_value) if not isinstance(min_value, complex) else 0.0
-            )  # type: ignore[arg-type,reportArgumentType] # noqa: E501
+            if not isinstance(min_value, complex):
+                min_val_float = float(min_value)
         except (TypeError, ValueError):
-            min_val_float = 0.0
+            pass
 
         if (
             (units.name in ["K", "R"] and min_val_float < 0)

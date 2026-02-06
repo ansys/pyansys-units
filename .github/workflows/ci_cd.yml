@@ -36,7 +36,7 @@ jobs:
           skip-install: false
 
       - name: "Make venv"
-        run: uv venv
+        run: uv venv --clear
 
       - name: "Install basedpyright"
         run: uv tool install basedpyright
