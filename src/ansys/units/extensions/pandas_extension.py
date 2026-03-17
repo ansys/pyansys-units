@@ -515,8 +515,22 @@ class QuantityArray(ExtensionArray):
         return np.array(self._data, dtype=dtype, copy=copy)
 
     @staticmethod
-    def _create_arithmetic_method(op: Callable[..., Any]) -> Callable[..., Any]:
-        """Create arithmetic method."""
+    def _create_arithmetic_method(
+        op: Callable[..., Any], reflected: bool = False
+    ) -> Callable[..., Any]:
+        """
+        Create arithmetic method.
+
+        Parameters
+        ----------
+        op : Callable
+            The binary operator to apply.
+        reflected : bool, optional
+            If ``True``, reverse operand order so that ``op(rhs, lhs)`` is
+            computed instead of ``op(lhs, rhs)``.  Required for
+            ``__rsub__`` and ``__rtruediv__`` where the array is the *right*
+            operand of the original expression.
+        """
 
         def method(self: "QuantityArray", other: Any) -> Any:
             if isinstance(other, (pd.Series, pd.DataFrame, pd.Index)):
@@ -535,8 +549,9 @@ class QuantityArray(ExtensionArray):
             else:
                 return NotImplemented
 
-            # Perform operation
-            result = op(lhs, rhs)
+            # Perform operation — reflected ops swap operand order so that
+            # e.g. ``x - array`` computes ``op(x, array)`` not ``op(array, x)``.
+            result = op(rhs, lhs) if reflected else op(lhs, rhs)
 
             # Convert back to array
             if isinstance(result, Quantity):
@@ -606,10 +621,12 @@ class QuantityArray(ExtensionArray):
 
     # Reverse ops
     __radd__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.add)
-    __rsub__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.sub)
+    __rsub__: Callable[[Any, Any], Any] = _create_arithmetic_method(
+        operator.sub, reflected=True
+    )
     __rmul__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.mul)
     __rtruediv__: Callable[[Any, Any], Any] = _create_arithmetic_method(
-        operator.truediv
+        operator.truediv, reflected=True
     )
 
     # Comparisons
