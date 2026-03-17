@@ -92,3 +92,17 @@ You can then directly execute ``pre-commit`` with this command:
 .. code:: console
 
     pre-commit run --all-files --show-diff-on-failure
+
+Run Type Checking
+-----------------
+This repository is checked with [BasedPyright](https://github.com/DetatchHead/basedpyright). Currently we baseline the types because there are many errors we haven't had the time to fix them all, to perform type checking comparing to the current baseline run the following:
+
+.. code:: console
+
+    uv run basedpyright
+
+Once you are happy (and you haven't added any errors) run the following to write a new baseline:
+
+.. code:: console
+
+    uv run basedpyright --writebaseline
