@@ -1,0 +1,790 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>PyAnsys Units basics &#8212; PyAnsys Units</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=068850c2" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/00-pyunits/basic_usage';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://units.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1';
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Contribute" href="../../contributing.html" />
+    <link rel="prev" title="PyAnsys Units Examples" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://units.docs.pyansys.com/version/stable/examples/00-pyunits/basic_usage.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-units" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>   <div class="container-xl">
+  <div class="row">
+    <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+    <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul> 
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://docs.pyansys.com/">PyAnsys</a> » 
+</li>
+ 
+<li class="nav-item nav-item-0">
+  <a href="../../index.html">PyAnsys Units</a> » 
+</li>
+ 
+          <li class="nav-item nav-item-1"><a href="../index.html" >Examples</a> » </li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">PyAnsys Units Examples</a> » </li>
+        <li class="nav-item nav-item-this"><a href="">PyAnsys Units basics</a></li> 
+      </ul>
+    </div></div>
+  </div>
+</div>
+ 
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-units" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">PyAnsys Units Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">PyAnsys Units basics</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-00-pyunits-basic-usage-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="pyansys-units-basics">
+<span id="ref-basic-usage"></span><span id="sphx-glr-examples-00-pyunits-basic-usage-py"></span><h1>PyAnsys Units basics<a class="headerlink" href="#pyansys-units-basics" title="Link to this heading">#</a></h1>
+<p>PyAnsys Units provides a Pythonic interface for units, unit systems, and unit conversions.
+Its features enable seamless setup and usage of physical quantities.</p>
+<p>This example shows you how to perform these tasks:</p>
+<ul class="simple">
+<li><p>Create quantities (unit strings, dimensions, and quantity maps).</p></li>
+<li><p>Access different quantity properties.</p></li>
+<li><p>Perform arithmetic operations.</p></li>
+<li><p>Perform unit conversions.</p></li>
+<li><p>Create unit systems (custom and predefined).</p></li>
+<li><p>Apply unit systems to quantities.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># sphinx_gallery_thumbnail_path = &#39;_static/basic_usage.png&#39;</span>
+</pre></div>
+</div>
+<section id="perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#perform-required-imports" title="Link to this heading">#</a></h2>
+<p>Import the <code class="docutils literal notranslate"><span class="pre">ansys.units</span></code> package.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ansys.units</span> <span class="k">as</span> <span class="nn">ansunits</span>
+</pre></div>
+</div>
+</section>
+<section id="create-quantities">
+<h2>Create quantities<a class="headerlink" href="#create-quantities" title="Link to this heading">#</a></h2>
+<p>You can instantiate quantities using one of three methods:
+- Unit strings : str
+- Dimensions : list
+- Quantity maps : dict</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Unit strings</span>
+
+<span class="n">volume</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;m^3&quot;</span><span class="p">)</span>
+
+<span class="n">acceleration</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;m s^-2&quot;</span><span class="p">)</span>
+
+<span class="n">torque</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;N m&quot;</span><span class="p">)</span>
+
+<span class="c1"># Dimensions</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">vol_dims</span></a> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">volume</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">vol_dims</span></a><span class="p">)</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">acc_dims</span></a> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">acceleration</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">acc_dims</span></a><span class="p">)</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tor_dims</span></a> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">torque</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tor_dims</span></a><span class="p">)</span>
+
+<span class="c1"># Quantity map</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">vol_map</span></a> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Volume&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">volume</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">quantity_map</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">vol_map</span></a><span class="p">)</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">acc_map</span></a> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Acceleration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">acceleration</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">quantity_map</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">acc_map</span></a><span class="p">)</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tor_map</span></a> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Torque&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">torque</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">quantity_map</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tor_map</span></a><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="specify-quantity-properties">
+<h2>Specify quantity properties<a class="headerlink" href="#specify-quantity-properties" title="Link to this heading">#</a></h2>
+<p>For a quantity, you specify seven properties:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. value : float | int</span>
+<span class="c1"># 2. units : str</span>
+<span class="c1"># 3. si_value : float | int</span>
+<span class="c1"># 4. si_units : str</span>
+<span class="c1"># 5. dimensions : list</span>
+<span class="c1"># 6. is_dimensionless : bool</span>
+<span class="c1"># 7. type : str</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cap_map</span></a> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Capacitance&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">capacitance</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">quantity_map</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cap_map</span></a><span class="p">)</span>
+
+<span class="n">capacitance</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 50.0</span>
+<span class="n">capacitance</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;farad&quot;</span>
+<span class="n">capacitance</span><span class="o">.</span><span class="n">si_value</span>  <span class="c1"># &gt;&gt;&gt; 50.0</span>
+<span class="n">capacitance</span><span class="o">.</span><span class="n">si_units</span>  <span class="c1"># &gt;&gt;&gt; &quot;kg^-1 m^-2 s^4 A^2&quot;</span>
+<span class="n">capacitance</span><span class="o">.</span><span class="n">dimensions</span>  <span class="c1"># &gt;&gt;&gt; [-1.0, -2.0, 4.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0]</span>
+<span class="n">capacitance</span><span class="o">.</span><span class="n">is_dimensionless</span>  <span class="c1"># &gt;&gt;&gt; False</span>
+<span class="n">capacitance</span><span class="o">.</span><span class="n">type</span>  <span class="c1"># &gt;&gt;&gt; &quot;Derived&quot;</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;Derived&#39;
+</pre></div>
+</div>
+</section>
+<section id="perform-arithmetic-operations">
+<h2>Perform arithmetic operations<a class="headerlink" href="#perform-arithmetic-operations" title="Link to this heading">#</a></h2>
+<p>You can perform all mathematical operations on a quantity.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="n">q1</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;m s^-1&quot;</span><span class="p">)</span>
+<span class="n">q2</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s2">&quot;m s^-1&quot;</span><span class="p">)</span>
+
+<span class="c1"># Subtraction</span>
+
+<span class="n">q3</span> <span class="o">=</span> <span class="n">q2</span> <span class="o">-</span> <span class="n">q1</span>
+<span class="n">q3</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 5.0</span>
+<span class="n">q3</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;m s^-1&quot;</span>
+
+<span class="c1"># Addition</span>
+
+<span class="n">q4</span> <span class="o">=</span> <span class="n">q2</span> <span class="o">+</span> <span class="n">q1</span>
+<span class="n">q4</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 15.0</span>
+<span class="n">q4</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;m s^-1&quot;</span>
+
+<span class="c1"># Division</span>
+
+<span class="n">q5</span> <span class="o">=</span> <span class="n">q2</span> <span class="o">/</span> <span class="n">q1</span>
+<span class="n">q5</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 2.0</span>
+<span class="n">q5</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; None</span>
+
+<span class="c1"># Multiplication</span>
+
+<span class="n">q6</span> <span class="o">=</span> <span class="n">q2</span> <span class="o">*</span> <span class="n">q1</span>
+<span class="n">q6</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 50.0</span>
+<span class="n">q6</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;m^2 s^-2&quot;</span>
+
+<span class="c1"># Negation</span>
+
+<span class="n">q7</span> <span class="o">=</span> <span class="o">-</span><span class="n">q2</span>
+<span class="n">q7</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; -5.0</span>
+<span class="n">q7</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;m s^-1&quot;</span>
+
+<span class="c1"># Exponents</span>
+
+<span class="n">q8</span> <span class="o">=</span> <span class="n">q1</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">q8</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 100.0</span>
+<span class="n">q8</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;m^2 s^-2&quot;</span>
+
+<span class="c1"># Roots</span>
+
+<a href="https://docs.python.org/3/library/math.html#math.sqrt" title="math.sqrt" class="sphx-glr-backref-module-math sphx-glr-backref-type-py-function"><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span></a><span class="p">(</span><span class="n">q2</span><span class="p">)</span>  <span class="c1"># &gt;&gt;&gt; 2.2360679775</span>
+
+<span class="c1"># Trigonometry</span>
+
+<a href="https://docs.python.org/3/library/math.html#math.sin" title="math.sin" class="sphx-glr-backref-module-math sphx-glr-backref-type-py-function"><span class="n">math</span><span class="o">.</span><span class="n">sin</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="s2">&quot;degree&quot;</span><span class="p">))</span>  <span class="c1"># &gt;&gt;&gt; 1.0</span>
+<a href="https://docs.python.org/3/library/math.html#math.cos" title="math.cos" class="sphx-glr-backref-module-math sphx-glr-backref-type-py-function"><span class="n">math</span><span class="o">.</span><span class="n">cos</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">math</span><span class="o">.</span><span class="n">pi</span></a><span class="p">,</span> <span class="s2">&quot;radian&quot;</span><span class="p">))</span>  <span class="c1"># &gt;&gt;&gt; -1.0</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>-1.0
+</pre></div>
+</div>
+</section>
+<section id="perform-conversions">
+<h2>Perform conversions<a class="headerlink" href="#perform-conversions" title="Link to this heading">#</a></h2>
+<p>You can perform conversions on quantities with compatible units.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slug</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;slug&quot;</span><span class="p">)</span>
+<span class="n">kg</span> <span class="o">=</span> <span class="n">slug</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;kg&quot;</span><span class="p">)</span>
+
+<span class="n">kg</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 72.96951468603184</span>
+<span class="n">kg</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;kg&quot;</span>
+
+<span class="n">m</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;m&quot;</span><span class="p">)</span>
+<span class="n">cm</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cm&quot;</span><span class="p">)</span>
+
+<span class="n">cm</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 2500</span>
+<span class="n">cm</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;cm&quot;</span>
+
+<span class="n">dvis</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;lb ft^-1 s^-1&quot;</span><span class="p">)</span>
+<span class="n">pas</span> <span class="o">=</span> <span class="n">dvis</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;Pa s&quot;</span><span class="p">)</span>
+
+<span class="n">pas</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 1.4881639435695542</span>
+<span class="n">pas</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;Pa s&quot;</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;Pa s&#39;
+</pre></div>
+</div>
+</section>
+<section id="instantiate-unit-systems">
+<h2>Instantiate unit systems<a class="headerlink" href="#instantiate-unit-systems" title="Link to this heading">#</a></h2>
+<p>You can instantiate unit systems using one of two methods:</p>
+<ul class="simple">
+<li><p>Custom units</p></li>
+<li><p>Predefined unit systems</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Custom units</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sys_units</span></a> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kg&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="s2">&quot;radian&quot;</span><span class="p">,</span> <span class="s2">&quot;mol&quot;</span><span class="p">,</span> <span class="s2">&quot;cd&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;sr&quot;</span><span class="p">]</span>
+<span class="n">sys</span> <span class="o">=</span> <span class="n">ansunits</span><span class="o">.</span><span class="n">UnitSystem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sys&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sys_units</span></a><span class="p">)</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">name</span>  <span class="c1"># &gt;&gt;&gt; &quot;sys&quot;</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">base_units</span>  <span class="c1"># &gt;&gt;&gt; [&quot;kg&quot;, &quot;m&quot;, &quot;s&quot;, &quot;K&quot;, &quot;radian&quot;, &quot;mol&quot;, &quot;cd&quot;, &quot;A&quot;, &quot;sr&quot;]</span>
+
+<span class="c1"># Predefined unit systems</span>
+
+<span class="n">cgs</span> <span class="o">=</span> <span class="n">ansunits</span><span class="o">.</span><span class="n">UnitSystem</span><span class="p">(</span><span class="n">unit_sys</span><span class="o">=</span><span class="s2">&quot;CGS&quot;</span><span class="p">)</span>
+
+<span class="n">cgs</span><span class="o">.</span><span class="n">name</span>  <span class="c1"># &gt;&gt;&gt; &quot;cgs&quot;</span>
+<span class="n">cgs</span><span class="o">.</span><span class="n">base_units</span>  <span class="c1"># &gt;&gt;&gt; [&#39;g&#39;, &#39;cm&#39;, &#39;s&#39;, &#39;K&#39;, &#39;radian&#39;, &#39;mol&#39;, &#39;cd&#39;, &#39;A&#39;, &#39;sr&#39;]</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;g&#39;, &#39;cm&#39;, &#39;s&#39;, &#39;K&#39;, &#39;radian&#39;, &#39;mol&#39;, &#39;cd&#39;, &#39;A&#39;, &#39;sr&#39;]
+</pre></div>
+</div>
+</section>
+<section id="create-a-unit-system-independently">
+<h2>Create a unit system independently<a class="headerlink" href="#create-a-unit-system-independently" title="Link to this heading">#</a></h2>
+<p>You can create a unit system independently and apply it to quantities.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">si</span> <span class="o">=</span> <span class="n">ansunits</span><span class="o">.</span><span class="n">UnitSystem</span><span class="p">(</span><span class="n">unit_sys</span><span class="o">=</span><span class="s2">&quot;SI&quot;</span><span class="p">)</span>
+<span class="n">fps</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class"><span class="n">ansunits</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">11.2</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;ft s^-1&quot;</span><span class="p">)</span>
+
+<span class="n">mps</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">fps</span><span class="p">)</span>
+
+<span class="n">mps</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># &gt;&gt;&gt; 3.4137599999999995</span>
+<span class="n">mps</span><span class="o">.</span><span class="n">units</span>  <span class="c1"># &gt;&gt;&gt; &quot;m s^-1&quot;</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;m s^-1&#39;
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.008 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-00-pyunits-basic-usage-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/ea2220e0cae7f4a570abb19545a7cd40/basic_usage.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">basic_usage.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/06e9dbcfbf48eb9fbd87de278035c0f4/basic_usage.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">basic_usage.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-quantities">Create quantities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-quantity-properties">Specify quantity properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perform-arithmetic-operations">Perform arithmetic operations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perform-conversions">Perform conversions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instantiate-unit-systems">Instantiate unit systems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-unit-system-independently">Create a unit system independently</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button--></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/examples/00-pyunits/basic_usage.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.10.3. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
