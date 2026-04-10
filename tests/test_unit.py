@@ -49,6 +49,17 @@ def test_base_units():
     assert kg.si_offset == 0
 
 
+def test_is_base_si():
+    assert Unit("m").is_base_si
+    assert Unit("kg").is_base_si
+    assert Unit("m s^-1").is_base_si
+    assert not Unit("ft").is_base_si
+    assert not Unit("km").is_base_si
+    assert not Unit("N").is_base_si
+    assert Unit("K").is_base_si
+    assert not Unit("C").is_base_si
+
+
 def test_equal_dimensions_not_equal_units():
     l = Unit("l")
     kl = Unit("kl")

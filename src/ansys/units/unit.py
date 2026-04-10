@@ -289,6 +289,11 @@ class Unit:
         """The units base dimensions."""
         return self._dimensions
 
+    @property
+    def is_base_si(self) -> bool:
+        """True if the unit is expressed in SI units."""
+        return self._name == self._si_units
+
     def convert(self, system: UnitSystem) -> Unit:
         """
         Convert a unit into the unit system.
