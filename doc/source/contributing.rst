@@ -95,7 +95,7 @@ You can then directly execute ``pre-commit`` with this command:
 
 Run Type Checking
 -----------------
-This repository uses `BasedPyright <https://github.com/DetatchHead/basedpyright>`_ for static type checking. We currently maintain a type error baseline, as there are a number of pre-existing errors that have not yet been addressed.
+This repository uses `BasedPyright <https://github.com/detachhead/basedpyright>`_ for static type checking. We currently maintain a type error baseline, as there are a number of pre-existing errors that have not yet been addressed.
 
 To check for new type errors against the current baseline, run:
 
