@@ -106,7 +106,7 @@ def test_copy():
 
 def test_compatibility():
     ureg = UnitRegistry()
-    length_units = {"cm", "in", "m", "inch"}
+    length_units = {"cm", "in", "m", "inch", "micron"}
     force_units = {"dyne", "lbf", "pdl"}
     temperature_difference_units = {"delta_C", "delta_R", "delta_F"}
 
