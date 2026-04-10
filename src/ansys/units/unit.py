@@ -718,15 +718,11 @@ def _si_data(
             elif unit_term_exponent != 0.0:
                 si_units_str += f" {_si_map(unit_term)}^{unit_term_exponent}"
 
-            scale *= (
-                _base_units[unit_term]["si_scaling_factor"] ** unit_term_exponent
-            )
+            scale *= _base_units[unit_term]["si_scaling_factor"] ** unit_term_exponent
 
         # Retrieve derived unit composition unit string and SI scaling factor
         elif unit_term in _derived_units:
-            scale *= (
-                _derived_units[unit_term]["factor"] ** unit_term_exponent
-            )
+            scale *= _derived_units[unit_term]["factor"] ** unit_term_exponent
 
             # Recursively parse composition unit string
             si_units_str, scale, _ = _si_data(
