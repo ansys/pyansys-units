@@ -93,14 +93,14 @@ def test_properties():
     assert v.dimensions == Dimensions({dims.LENGTH: 1.0})
 
 
-def test_is_base_si():
-    assert Quantity(1.0, "m").is_base_si
-    assert Quantity(1.0, "kg").is_base_si
-    assert Quantity(1.0, "m s^-1").is_base_si
-    assert not Quantity(1.0, "ft").is_base_si
-    assert not Quantity(1.0, "km").is_base_si
-    assert Quantity(300.0, "K").is_base_si
-    assert not Quantity(27.0, "C").is_base_si
+def test_is_units_base_si():
+    assert Quantity(1.0, "m").is_units_base_si
+    assert Quantity(1.0, "kg").is_units_base_si
+    assert Quantity(1.0, "m s^-1").is_units_base_si
+    assert not Quantity(1.0, "ft").is_units_base_si
+    assert not Quantity(1.0, "km").is_units_base_si
+    assert Quantity(300.0, "K").is_units_base_si
+    assert not Quantity(27.0, "C").is_units_base_si
 
 
 def test_quantity_is_immutable():

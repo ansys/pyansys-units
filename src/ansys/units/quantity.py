@@ -124,7 +124,7 @@ class Quantity(Generic[ValT]):
     units
     dimensions
     is_dimensionless
-    is_base_si
+    is_units_base_si
     """
 
     _chosen_units: ClassVar[list[Unit]] = []
@@ -331,7 +331,7 @@ class Quantity(Generic[ValT]):
         return not bool(self.dimensions)
 
     @property
-    def is_base_si(self) -> bool:
+    def is_units_base_si(self) -> bool:
         """True if the quantity is expressed in SI units."""
         return self._unit.is_base_si
 
