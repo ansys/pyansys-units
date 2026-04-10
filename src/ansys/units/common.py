@@ -43,7 +43,6 @@ __all__ = (
     "sr",
     "radian",
     "degree",
-    "deg",
     "K",
     "C",
     "F",
@@ -78,6 +77,7 @@ __all__ = (
     "coulomb",
     "tonne",
     "micron",
+    "deg",
 )
 
 kg = Unit("kg")  #: A predefined unit for a kg
@@ -98,7 +98,6 @@ cd = Unit("cd")  #: A predefined unit for a cd
 sr = Unit("sr")  #: A predefined unit for a sr
 radian = Unit("radian")  #: A predefined unit for a radian
 degree = Unit("degree")  #: A predefined unit for a degree
-deg = Unit("deg")  #: A predefined unit for a deg
 K = Unit("K")  #: A predefined unit for a K
 C = Unit("C")  #: A predefined unit for a C
 F = Unit("F")  #: A predefined unit for a F
@@ -133,3 +132,4 @@ cal = Unit("cal")  #: A predefined unit for a cal
 coulomb = Unit("coulomb")  #: A predefined unit for a coulomb
 tonne = Unit("tonne")  #: A predefined unit for a tonne
 micron = Unit("micron")  #: A predefined unit for a micron
+deg = Unit("deg")  #: A predefined unit for a deg
