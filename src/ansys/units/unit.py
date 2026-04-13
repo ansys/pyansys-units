@@ -100,6 +100,12 @@ class Unit:
     Quantity(5.0, "ft s^-1")
     """
 
+    _name: str
+    _si_units: str
+    _si_scaling_factor: float
+    _si_offset: float
+    _dimensions: Dimensions
+
     def __init__(
         self,
         units: str | None = None,
@@ -288,6 +294,11 @@ class Unit:
     def dimensions(self) -> Dimensions:
         """The units base dimensions."""
         return self._dimensions
+
+    @property
+    def is_base_si(self) -> bool:
+        """True if the unit is expressed in SI units."""
+        return self._name == self._si_units
 
     def convert(self, system: UnitSystem) -> Unit:
         """
@@ -658,10 +669,10 @@ def _filter_unit_term(unit_term: str) -> tuple[str, str, float]:
 
 def _si_data(
     units: str,
-    exponent: float = None,
-    si_units: str = None,
-    si_scaling_factor: float = None,
-) -> tuple:
+    exponent: float | None = None,
+    si_units: str | None = None,
+    si_scaling_factor: float | None = None,
+) -> tuple[str, float, float]:
     """
     Compute the SI unit string, SI scaling factor, and SI offset.
 
@@ -683,18 +694,18 @@ def _si_data(
     """
     # Initialize default values
     units = units or " "
-    exponent = exponent or 1.0
-    si_units = si_units or ""
-    si_scaling_factor = si_scaling_factor or 1.0
+    exp: float = exponent or 1.0
+    si_units_str: str = si_units or ""
+    scale: float = si_scaling_factor or 1.0
     si_offset = _base_units[units]["si_offset"] if units in _base_units else 0.0
 
     # Split unit string into terms and parse data associated with individual terms
     for term in units.split(" "):
         unit_multiplier, unit_term, unit_term_exponent = _filter_unit_term(term)
 
-        unit_term_exponent *= exponent
+        unit_term_exponent *= exp
 
-        si_scaling_factor *= (
+        scale *= (
             _multipliers[unit_multiplier] ** unit_term_exponent
             if unit_multiplier
             else 1.0
@@ -703,29 +714,25 @@ def _si_data(
         # Retrieve data associated with base unit
         if unit_term in _base_units:
             if unit_term_exponent == 1.0:
-                si_units += f" {_si_map(unit_term)}"
+                si_units_str += f" {_si_map(unit_term)}"
             elif unit_term_exponent != 0.0:
-                si_units += f" {_si_map(unit_term)}^{unit_term_exponent}"
+                si_units_str += f" {_si_map(unit_term)}^{unit_term_exponent}"
 
-            si_scaling_factor *= (
-                _base_units[unit_term]["si_scaling_factor"] ** unit_term_exponent
-            )
+            scale *= _base_units[unit_term]["si_scaling_factor"] ** unit_term_exponent
 
         # Retrieve derived unit composition unit string and SI scaling factor
         elif unit_term in _derived_units:
-            si_scaling_factor *= (
-                _derived_units[unit_term]["factor"] ** unit_term_exponent
-            )
+            scale *= _derived_units[unit_term]["factor"] ** unit_term_exponent
 
             # Recursively parse composition unit string
-            si_units, si_scaling_factor, _ = _si_data(
+            si_units_str, scale, _ = _si_data(
                 units=_derived_units[unit_term]["composition"],
                 exponent=unit_term_exponent,
-                si_units=si_units,
-                si_scaling_factor=si_scaling_factor,
+                si_units=si_units_str,
+                si_scaling_factor=scale,
             )
 
-    return _condense(si_units), si_scaling_factor, si_offset
+    return _condense(si_units_str), scale, si_offset
 
 
 class InconsistentDimensions(ValueError):

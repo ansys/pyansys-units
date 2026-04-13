@@ -76,6 +76,7 @@ UnitKey = Literal[
     "cal",
     "coulomb",
     "tonne",
+    "micron",
 ]
 
 MassKey = Literal[
