@@ -77,7 +77,6 @@ __all__ = (
     "coulomb",
     "tonne",
     "micron",
-    "deg",
 )
 
 kg = Unit("kg")  #: A predefined unit for a kg
@@ -132,4 +131,3 @@ cal = Unit("cal")  #: A predefined unit for a cal
 coulomb = Unit("coulomb")  #: A predefined unit for a coulomb
 tonne = Unit("tonne")  #: A predefined unit for a tonne
 micron = Unit("micron")  #: A predefined unit for a micron
-deg = Unit("deg")  #: A predefined unit for a deg

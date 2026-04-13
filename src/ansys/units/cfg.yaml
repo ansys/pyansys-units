@@ -287,6 +287,3 @@ derived_units:
   micron:
     composition: m
     factor: 1.0e-6
-  deg:
-    composition: radian
-    factor: 0.017453292519943295
