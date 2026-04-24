@@ -224,3 +224,96 @@ degree = pyunits.Quantity(1.0, "degree")
 degree.is_dimensionless # False
 degree + 1 # Not allowed
 ```
+
+### Unit string format
+
+```{python}
+from ansys.units import Unit
+
+# <multiplier prefix>[unit]<^exponent>
+accel = Unit("m s^-2")        # base units with exponent
+density = Unit("kg m^-3")     # compound unit string
+kpa = Unit("kPa")             # multiplier prefix "k" + "Pa"
+```
+
+### Unit aliases
+
+```{python}
+from ansys.units import Unit, Quantity
+
+# Built-in aliases resolve to canonical names
+Unit("deg")       # "degree"
+Unit("rad")       # "radian"
+Unit("meter")     # "m"
+Unit("newton")    # "N"
+
+# Aliases work in quantities and compound strings
+Quantity(90, "deg")           # 90.0 degree
+Unit("deg sec^-1")            # "degree s^-1"
+Quantity(180, "deg").to("rad") # ~3.14159 radian
+```
+
+### Register a custom alias
+
+```{python}
+from ansys.units import Unit, UnitRegistry
+
+ureg = UnitRegistry()
+ureg.register_alias("angular_deg", "degree")
+Unit("angular_deg")  # resolves to "degree"
+```
+
+### Registering custom units
+
+```{python}
+from ansys.units import UnitRegistry
+
+ur = UnitRegistry()
+
+# Register 'Q' as equivalent to Joule (N m)
+ur.register_unit(unit="Q", composition="N m", factor=1)
+ur.Q == ur.J  # True
+```
+
+### Quantity dimensions
+
+```{python}
+from ansys.units.quantity_dimensions import QuantityDimensions
+
+force = QuantityDimensions.FORCE
+area = QuantityDimensions.AREA
+pressure = QuantityDimensions.PRESSURE
+
+pressure == force / area  # True
+```
+
+### Plotting with Matplotlib
+
+```{python}
+import matplotlib.pyplot as plt
+from ansys.units import Quantity
+
+x = Quantity([1, 2, 3], "m")
+y = Quantity([4, 5, 6], "kg")
+fig, ax = plt.subplots()
+ax.plot(x, y)
+plt.show()
+```
+
+### Pandas integration
+
+```{python}
+import pandas as pd
+
+# Create unit-aware Series
+distances = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+
+# Convert units
+distances_cm = distances.units.to("cm")
+
+# Unit-aware DataFrame
+df = pd.DataFrame({
+    "length": pd.Series([1.0, 2.0], dtype="quantity[m]"),
+    "mass": pd.Series([1.0, 2.0], dtype="quantity[kg]"),
+})
+```
