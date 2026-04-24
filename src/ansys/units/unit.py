@@ -545,10 +545,13 @@ def _multiplier_check(unit_term: str) -> bool:
         ``True`` if the unit term contains a multiplier, ``False`` otherwise.
     """
     # Check if the unit term is not an existing base or derived unit.
-    return unit_term and not (
-        (unit_term in _base_units)
-        or (unit_term in _derived_units)
-        or (unit_term in _aliases)
+    return bool(
+        unit_term
+        and not (
+            (unit_term in _base_units)
+            or (unit_term in _derived_units)
+            or (unit_term in _aliases)
+        )
     )
 
 
