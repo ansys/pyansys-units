@@ -66,6 +66,8 @@ class _DerivedUnitInfo(TypedDict):
 
 _derived_units: dict[str, _DerivedUnitInfo] = qc_data["derived_units"]
 
+_aliases: dict[str, str] = qc_data.get("aliases", {})
+
 table_path = os.path.join(file_dir, "quantity_tables/si_table.yaml")
 
 with open(table_path, "r") as table:
