@@ -617,9 +617,7 @@ class QuantityArray(ExtensionArray):
     __add__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.add)
     __sub__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.sub)
     __mul__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.mul)
-    __truediv__: Callable[[Any, Any], Any] = _create_arithmetic_method(
-        operator.truediv
-    )  # pyright: ignore[reportUnknownArgumentType]
+    __truediv__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.truediv)
 
     # Reverse ops
     __radd__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.add)
@@ -628,8 +626,7 @@ class QuantityArray(ExtensionArray):
     )
     __rmul__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.mul)
     __rtruediv__: Callable[[Any, Any], Any] = _create_arithmetic_method(
-        operator.truediv,  # pyright: ignore[reportUnknownArgumentType]
-        reflected=True,
+        operator.truediv, reflected=True
     )
 
     # Comparisons
