@@ -110,42 +110,6 @@
                 }
             }
         ],
-        "./scripts/generate_expanded_vector_quantities.py": [
-            {
-                "code": "reportMissingImports",
-                "range": {
-                    "startColumn": 7,
-                    "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnknownArgumentType",
-                "range": {
-                    "startColumn": 4,
-                    "endColumn": 5,
-                    "lineCount": 4
-                }
-            }
-        ],
-        "./scripts/generate_variable_descriptor.py": [
-            {
-                "code": "reportMissingImports",
-                "range": {
-                    "startColumn": 7,
-                    "endColumn": 12,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnknownArgumentType",
-                "range": {
-                    "startColumn": 4,
-                    "endColumn": 5,
-                    "lineCount": 4
-                }
-            }
-        ],
         "./src/ansys/units/_constants.py": [
             {
                 "code": "reportUnusedClass",
@@ -388,14 +352,6 @@
                 "range": {
                     "startColumn": 0,
                     "endColumn": 0,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportMissingTypeArgument",
-                "range": {
-                    "startColumn": 34,
-                    "endColumn": 42,
                     "lineCount": 1
                 }
             },
@@ -765,30 +721,6 @@
                     "startColumn": 35,
                     "endColumn": 38,
                     "lineCount": 1
-                }
-            },
-            {
-                "code": "reportCallIssue",
-                "range": {
-                    "startColumn": 23,
-                    "endColumn": 17,
-                    "lineCount": 8
-                }
-            },
-            {
-                "code": "reportArgumentType",
-                "range": {
-                    "startColumn": 26,
-                    "endColumn": 21,
-                    "lineCount": 5
-                }
-            },
-            {
-                "code": "reportArgumentType",
-                "range": {
-                    "startColumn": 26,
-                    "endColumn": 21,
-                    "lineCount": 5
                 }
             },
             {
@@ -1923,14 +1855,6 @@
                     "startColumn": 8,
                     "endColumn": 29,
                     "lineCount": 1
-                }
-            },
-            {
-                "code": "reportReturnType",
-                "range": {
-                    "startColumn": 11,
-                    "endColumn": 5,
-                    "lineCount": 3
                 }
             },
             {
