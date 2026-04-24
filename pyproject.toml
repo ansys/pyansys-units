@@ -126,4 +126,5 @@ reportUnknownMemberType = false
 reportExplicitAny = false
 reportPrivateUsage = false
 reportUnusedCallResult = false
+reportUnknownArgumentType = false
 ignore = ["doc"]
