@@ -45,7 +45,7 @@ jobs:
         run: uv pip install -e ".[ci_types]"
 
       - name: "Check Type hints"
-        run: basedpyright --baselinemode=auto
+        run: basedpyright
 
   doc-style:
     name: Documentation Style Check
