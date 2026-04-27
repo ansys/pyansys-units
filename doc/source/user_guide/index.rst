@@ -20,3 +20,4 @@ code to work with physical quantities.
    variable_descriptor
    register_unit
    pandas_integration
+   unit_aliases

@@ -284,3 +284,41 @@ derived_units:
   tonne:
     composition: kg
     factor: 1000
+
+# Aliases
+# -------
+# Alternative names that map to existing base or derived units.
+# Each alias resolves to its canonical unit name during parsing.
+#
+# <alias>: <canonical unit name>
+
+aliases:
+  deg: degree
+  rad: radian
+  sec: s
+  lb_mass: lbm
+  pound: lb
+  meter: m
+  metre: m
+  kilogram: kg
+  gram: g
+  second: s
+  ampere: A
+  kelvin: K
+  candela: cd
+  steradian: sr
+  newton: N
+  pascal: Pa
+  watt: W
+  joule: J
+  volt: V
+  henry: H
+  siemens: S
+  weber: Wb
+  tesla: T
+  hertz: Hz
+  liter: l
+  litre: l
+  gallon: gal
+  foot: ft
+  feet: ft

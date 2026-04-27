@@ -34,6 +34,7 @@ from ansys.units._constants import (
 from ansys.units._constants import (
     _DerivedUnitInfo,
 )
+from ansys.units._constants import _aliases as _CONST_ALIASES
 from ansys.units._constants import _base_units as _CONST_BASE_UNITS
 from ansys.units._constants import _derived_units as _CONST_DERIVED_UNITS
 from ansys.units.unit import Unit
@@ -179,6 +180,69 @@ class UnitRegistry:
         obj._name = unit
         object.__setattr__(self, unit, obj)
         return obj
+
+    def register_alias(
+        self,
+        alias: str,
+        canonical: str,
+    ) -> None:
+        """
+        Register a new alias for an existing unit.
+
+        The alias is added to the global alias table so that it can be used
+        anywhere a unit string is accepted (``Unit()``, ``Quantity()``, etc.).
+
+        Parameters
+        ----------
+        alias : str
+            The alias name (e.g., ``"deg"``).
+        canonical : str
+            The canonical unit name the alias resolves to
+            (e.g., ``"degree"``). Must be a configured base or derived unit,
+            or an existing alias.
+
+        Raises
+        ------
+        AliasAlreadyRegistered
+            If ``alias`` is already registered as a unit or alias.
+        ValueError
+            If ``canonical`` is not a known unit or alias.
+        """
+        alias = alias.strip()
+        canonical = canonical.strip()
+        if not alias:
+            raise ValueError("`alias` must be a non-empty string.")
+        if not canonical:
+            raise ValueError("`canonical` must be a non-empty string.")
+
+        # Prevent shadowing existing units
+        if (
+            alias in _CONST_BASE_UNITS
+            or alias in _CONST_DERIVED_UNITS
+            or alias in _CONST_ALIASES
+        ):
+            raise AliasAlreadyRegistered(alias)
+
+        # Validate the canonical target exists
+        if not (
+            canonical in _CONST_BASE_UNITS
+            or canonical in _CONST_DERIVED_UNITS
+            or canonical in _CONST_ALIASES
+        ):
+            raise ValueError(
+                f"`{canonical}` is not a configured unit or existing alias."
+            )
+
+        _CONST_ALIASES[alias] = canonical
+
+
+class AliasAlreadyRegistered(ValueError):
+    """Raised when an alias conflicts with an existing unit or alias."""
+
+    def __init__(self, name: str):
+        super().__init__(
+            f"Unable to register alias `{name}`: it already exists as a unit or alias."
+        )
 
 
 class UnitAlreadyRegistered(ValueError):

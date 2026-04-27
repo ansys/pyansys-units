@@ -28,6 +28,7 @@ import os
 from typing import TYPE_CHECKING, Any, overload
 
 from ansys.units._constants import (
+    _aliases,
     _base_units,
     _BaseUnitInfo,
     _derived_units,
@@ -544,8 +545,13 @@ def _multiplier_check(unit_term: str) -> bool:
         ``True`` if the unit term contains a multiplier, ``False`` otherwise.
     """
     # Check if the unit term is not an existing base or derived unit.
-    return unit_term and not (
-        (unit_term in _base_units) or (unit_term in _derived_units)
+    return bool(
+        unit_term
+        and not (
+            (unit_term in _base_units)
+            or (unit_term in _derived_units)
+            or (unit_term in _aliases)
+        )
     )
 
 
@@ -636,6 +642,11 @@ def _filter_unit_term(unit_term: str) -> tuple[str, str, float]:
         exponent = float(unit_term[unit_term.index("^") + 1 :])
         unit_term = unit_term[: unit_term.index("^")]
 
+    base = unit_term
+
+    # Resolve alias to canonical unit name before multiplier detection
+    while unit_term in _aliases:
+        unit_term = _aliases[unit_term]
     base = unit_term
 
     # strip multiplier and base from unit term

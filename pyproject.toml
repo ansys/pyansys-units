@@ -58,6 +58,7 @@ additional = [
 ]
 # getting versions of matplotlib and numpy that are compatible is hard so we have this for CI
 ci_types = [
+    "basedpyright",
     "matplotlib==3.10.8",
     "pandas>=3.0.0; python_version >= '3.11'",
     "pandas>=2.2,<3.0; python_version < '3.11'",
@@ -125,4 +126,5 @@ reportUnknownMemberType = false
 reportExplicitAny = false
 reportPrivateUsage = false
 reportUnusedCallResult = false
+reportUnknownArgumentType = false
 ignore = ["doc"]

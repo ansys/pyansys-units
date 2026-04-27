@@ -516,7 +516,7 @@ class QuantityArray(ExtensionArray):
 
     @staticmethod
     def _create_arithmetic_method(
-        op: Callable[..., Any], reflected: bool = False
+        op: Callable[[Any, Any], Any], reflected: bool = False
     ) -> Callable[..., Any]:
         """
         Create arithmetic method.
