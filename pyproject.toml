@@ -9,21 +9,21 @@ version = "0.12.dev0"
 description = "Pythonic interface for units, unit systems, and unit conversions."
 readme = "README.rst"
 requires-python = ">=3.10,<3.15"
-license = {file = "LICENSE"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
 maintainers = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Information Analysis",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3"
 ]
 
 dependencies = [
     "pyyaml>=6.0",
-    "typing-extensions>=4.5.0",
+    "typing-extensions>=4.5.0"
 ]
 
 [project.optional-dependencies]
@@ -36,7 +36,7 @@ doc = [
     "Sphinx==7.4.7",
     "sphinx-copybutton==0.5.2",
     "sphinx-gallery==0.20.0",
-    "sphinx-toggleprompt==0.6.0",
+    "sphinx-toggleprompt==0.6.0"
 ]
 tests = [
     "numpy>=1.24,<3",
@@ -46,7 +46,7 @@ tests = [
     "pytest==9.0.2",
     "pytest-cov==7.1.0",
     "pytest-mock==3.15.1",
-    "pint==0.24.4",
+    "pint==0.24.4"
 ]
 additional = [
     "numpy>=1.24,<3",
@@ -54,7 +54,7 @@ additional = [
     "pandas>=2.2,<3.0; python_version < '3.11'",
     "pandas-stubs>=2",
     "pydantic>=2.11.7",
-    "pydantic_core>=2.33.2",
+    "pydantic_core>=2.33.2"
 ]
 # getting versions of matplotlib and numpy that are compatible is hard so we have this for CI
 ci_types = [
@@ -69,7 +69,7 @@ ci_types = [
     "pytest-cov==7.1.0",
     "pytest-mock==3.15.1",
     "pint==0.24.4",
-    "black==26.3.1",
+    "black==26.3.1"
 ]
 
 [project.urls]
@@ -85,7 +85,7 @@ name = "ansys.units"
 testpaths = ["tests"]
 addopts = "-v --cov=ansys.units --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term --durations 0 --show-capture=all"
 markers = [
-    "developer_only: tests that must not run on github",
+    "developer_only: tests that must not run on github"
 ]
 
 [tool.black]
