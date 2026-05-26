@@ -154,12 +154,14 @@ class UnitRegistry:
         Look up a unit by name from this registry.
 
         Checks instance-registered units first, then falls back to built-in
-        units. This allows string-based lookup of custom registered units.
+        units and compound unit strings. This allows string-based lookup of
+        custom registered units as well as standard unit expressions.
 
         Parameters
         ----------
         name : str
-            The unit name to look up.
+            The unit name or compound unit string to look up (e.g., "micron",
+            "m", "kg mol^-1").
 
         Returns
         -------
@@ -169,14 +171,16 @@ class UnitRegistry:
         Raises
         ------
         AttributeError
-            If the unit is not found in this registry or built-ins.
+            If the unit is not found in this registry or cannot be parsed.
         """
+        # First check instance-registered units
         if name in self.__dict__:
             return self.__dict__[name]
-        # Fall back to creating from global config
-        if name in _CONST_BASE_UNITS or name in _CONST_DERIVED_UNITS:
+        # Fall back to creating a Unit (handles built-ins and compound strings)
+        try:
             return Unit(name)
-        raise AttributeError(f"Unit `{name}` not found in this registry.")
+        except Exception as e:
+            raise AttributeError(f"Unit `{name}` not found in this registry.") from e
 
     def Quantity(
         self,

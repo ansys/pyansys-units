@@ -150,6 +150,25 @@ def test_get_unit_builtin():
     assert unit.name == "J"
 
 
+def test_get_unit_compound_string():
+    """Test get_unit handles compound unit strings like 'kg mol^-1'."""
+    ur = UnitRegistry()
+
+    # Compound unit strings should work
+    unit = ur.get_unit("kg mol^-1")
+    assert unit.name == "kg mol^-1"
+
+    unit = ur.get_unit("m s^-2")
+    assert unit.name == "m s^-2"
+
+    # Should work consistently with Quantity
+    from ansys.units import Quantity
+
+    q1 = Quantity(1, ur.get_unit("kg mol^-1"))
+    q2 = Quantity(1, "kg mol^-1")
+    assert q1.units.name == q2.units.name
+
+
 def test_get_unit_not_found():
     """Test get_unit raises AttributeError for unknown units."""
     ur = UnitRegistry()
@@ -286,23 +305,26 @@ def test_register_unit_does_not_detect_equivalent_offset():
     assert ur.alsometer.si_scaling_factor == pytest.approx(ur.m.si_scaling_factor)
 
 
-def test_get_unit_does_not_resolve_global_aliases():
+def test_get_unit_resolves_global_aliases():
     """
-    Test that get_unit doesn't resolve global aliases for non-registered units.
+    Test that get_unit resolves global aliases via Unit().
 
-    get_unit checks instance-registered units, then falls back to built-in base/derived
-    units, but does NOT resolve aliases.
+    get_unit checks instance-registered units first, then falls back to Unit(name) which
+    handles aliases, compound strings, and built-ins.
     """
     ur = UnitRegistry()
 
-    # "deg" is a global alias for "degree", but get_unit won't find it
-    # because it only checks instance-registered and built-in (base/derived)
-    with pytest.raises(AttributeError, match="not found"):
-        ur.get_unit("deg")
+    # "deg" is a global alias for "degree" - get_unit resolves it
+    unit = ur.get_unit("deg")
+    assert unit.name == "degree"  # Resolved via alias
 
-    # "degree" (the canonical name) is a built-in derived unit
+    # "degree" (the canonical name) also works
     unit = ur.get_unit("degree")
     assert unit.name == "degree"
+
+    # Instance-registered units take precedence over aliases
+    ur.register_unit(unit="myunit", composition="m", factor=1)
+    assert ur.get_unit("myunit").name == "myunit"
 
 
 def test_register_unit_name_check_is_case_sensitive():
