@@ -180,7 +180,7 @@ class UnitRegistry:
 
     def Quantity(
         self,
-        value: "int | float | Sequence",
+        value: "int | float | Sequence[float]",
         units: "str | Unit",
     ) -> "Quantity":
         """
