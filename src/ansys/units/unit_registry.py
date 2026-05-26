@@ -57,7 +57,11 @@ class UnitRegistry:
         defaults to the provided file, ``cfg.yaml``. Custom configuration files
         must match the format of the default configuration file.
     other: dict, optional
-        Dictionary for additional units.
+        Dictionary for additional units (uses config file format).
+    custom_units : list of dict, optional
+        List of custom units to register during construction. Each dict must
+        have keys ``"unit"``, ``"composition"``, and ``"factor"`` matching
+        the :meth:`register_unit` signature.
 
     Examples
     --------
@@ -66,6 +70,14 @@ class UnitRegistry:
     >>> assert ureg.kg == Unit(units="kg")
     >>> fps = Unit("ft s^-1")
     >>> ureg.foot_per_sec = fps
+
+    Register custom units at construction:
+
+    >>> ur = UnitRegistry(custom_units=[
+    ...     {"unit": "micron", "composition": "m", "factor": 1e-6},
+    ...     {"unit": "inch", "composition": "m", "factor": 0.0254},
+    ... ])
+    >>> q = ur.Quantity(10, "micron")
     """
 
     def __init__(
@@ -74,6 +86,7 @@ class UnitRegistry:
         other: Mapping[
             str, Mapping[str, Any]
         ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
+        custom_units: Sequence[Mapping[str, Any]] | None = None,
     ):
         unitdict = dict(other)
 
@@ -107,6 +120,15 @@ class UnitRegistry:
                     object.__setattr__(self, unit_name, obj)
                 else:
                     object.__setattr__(self, unit_name, Unit(unit_name, cfg))
+
+        # Register custom units using the same logic as register_unit
+        if custom_units:
+            for cu in custom_units:
+                self.register_unit(
+                    unit=cu["unit"],
+                    composition=cu["composition"],
+                    factor=cu["factor"],
+                )
 
     def __str__(self):
         returned_string = ""

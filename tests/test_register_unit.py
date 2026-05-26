@@ -346,3 +346,78 @@ def test_equivalent_compositions_same_dimensions():
     assert ur.energy_nm.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor)
     assert ur.energy_ws.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor)
     assert ur.energy_kgm2s2.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor)
+
+
+# =============================================================================
+# Tests for custom_units parameter in UnitRegistry constructor
+# =============================================================================
+
+
+def test_custom_units_at_construction():
+    """Test registering custom units via constructor parameter."""
+    ur = UnitRegistry(
+        custom_units=[
+            {"unit": "micron", "composition": "m", "factor": 1e-6},
+            {"unit": "thou", "composition": "m", "factor": 2.54e-5},
+        ]
+    )
+
+    # Custom units should be accessible
+    assert ur.micron.name == "micron"
+    assert ur.micron.si_scaling_factor == pytest.approx(1e-6)
+
+    assert ur.thou.name == "thou"
+    assert ur.thou.si_scaling_factor == pytest.approx(2.54e-5)
+
+    # Should work with ur.Quantity
+    q = ur.Quantity(1, "micron")
+    from ansys.units import get_si_value
+
+    assert get_si_value(q) == pytest.approx(1e-6)
+
+
+def test_custom_units_empty_list():
+    """Test that empty custom_units list doesn't cause issues."""
+    ur = UnitRegistry(custom_units=[])
+    assert ur.m.name == "m"  # Built-ins still work
+
+
+def test_custom_units_none():
+    """Test that custom_units=None (default) works."""
+    ur = UnitRegistry(custom_units=None)
+    assert ur.m.name == "m"
+
+
+def test_custom_units_collision_with_builtin():
+    """Test that custom_units cannot override built-in units."""
+    with pytest.raises(UnitNameAlreadyRegistered):
+        UnitRegistry(
+            custom_units=[
+                {"unit": "m", "composition": "ft", "factor": 1},
+            ]
+        )
+
+
+def test_custom_units_collision_within_list():
+    """Test that duplicate names within custom_units are rejected."""
+    with pytest.raises(UnitNameAlreadyRegistered):
+        UnitRegistry(
+            custom_units=[
+                {"unit": "X", "composition": "m", "factor": 1},
+                {"unit": "X", "composition": "m", "factor": 2},
+            ]
+        )
+
+
+def test_custom_units_instance_isolation():
+    """Test that custom_units are instance-scoped."""
+    ur1 = UnitRegistry(custom_units=[{"unit": "X", "composition": "m", "factor": 10}])
+    ur2 = UnitRegistry(custom_units=[{"unit": "X", "composition": "m", "factor": 100}])
+
+    assert ur1.X.si_scaling_factor == pytest.approx(10)
+    assert ur2.X.si_scaling_factor == pytest.approx(100)
+
+    # A third registry without X
+    ur3 = UnitRegistry()
+    with pytest.raises(AttributeError):
+        _ = ur3.X

@@ -263,16 +263,32 @@ ureg.register_alias("angular_deg", "degree")
 Unit("angular_deg")  # resolves to "degree"
 ```
 
-### Registering custom units
+### Registering custom units at construction
+
+```{python}
+from ansys.units import UnitRegistry, get_si_value
+
+ur = UnitRegistry(custom_units=[
+    {"unit": "micron", "composition": "m", "factor": 1e-6},
+    {"unit": "thou", "composition": "m", "factor": 2.54e-5},
+])
+
+q = ur.Quantity(1, "micron")  # String-based lookup
+get_si_value(q)  # 1e-06
+```
+
+### Registering custom units after construction
 
 ```{python}
 from ansys.units import UnitRegistry
 
 ur = UnitRegistry()
-
-# Register 'Q' as equivalent to Joule (N m)
 ur.register_unit(unit="Q", composition="N m", factor=1)
 ur.Q == ur.J  # True
+
+# String-based lookup methods
+unit = ur.get_unit("Q")
+q = ur.Quantity(5, "Q")
 ```
 
 ### Quantity dimensions

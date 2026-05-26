@@ -12,3 +12,6 @@ Unit registry
 
 .. autoexception:: ansys.units.unit_registry.UnitNameAlreadyRegistered
    :show-inheritance:
+
+.. autoexception:: ansys.units.unit_registry.AliasAlreadyRegistered
+   :show-inheritance:
