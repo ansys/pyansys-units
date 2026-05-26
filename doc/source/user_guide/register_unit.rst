@@ -10,7 +10,7 @@ Instance-Scoped
 - The ``UnitRegistry.register_unit(name, composition, factor)`` method adds a new unit
   symbol to that registry instance.
 - Duplicate registrations on the same instance (including collisions with
-  built-in units) raise ``UnitAlreadyRegistered``.
+  built-in units) raise ``UnitNameAlreadyRegistered``.
 
 
 Example

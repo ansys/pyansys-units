@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides the ``UnitRegistry`` class and instance-scoped unit registration."""
 
-from collections.abc import Generator, Mapping
+from collections.abc import Generator, Mapping, Sequence
 import math
 import os
 from typing import TYPE_CHECKING, Any
@@ -38,6 +38,9 @@ from ansys.units._constants import _aliases as _CONST_ALIASES
 from ansys.units._constants import _base_units as _CONST_BASE_UNITS
 from ansys.units._constants import _derived_units as _CONST_DERIVED_UNITS
 from ansys.units.unit import Unit
+
+if TYPE_CHECKING:
+    from ansys.units.quantity import Quantity  # noqa: F401
 
 
 class UnitRegistry:
@@ -88,7 +91,7 @@ class UnitRegistry:
         for unit_name in unitdict:
             # Prevent overriding attributes already present on this instance
             if hasattr(self, unit_name):
-                raise UnitAlreadyRegistered(unit_name)
+                raise UnitNameAlreadyRegistered(unit_name)
 
             cfg = unitdict[unit_name]
             if unit_name in _CONST_BASE_UNITS or unit_name in _CONST_DERIVED_UNITS:
@@ -118,11 +121,77 @@ class UnitRegistry:
 
     def __setattr__(self, name: str, unit: Any) -> None:
         if hasattr(self, name):
-            raise UnitAlreadyRegistered(name)
+            raise UnitNameAlreadyRegistered(name)
         self.__dict__[name] = unit
 
     def __iter__(self) -> Generator[str]:
         yield from self.__dict__
+
+    def get_unit(self, name: str) -> Unit:
+        """
+        Look up a unit by name from this registry.
+
+        Checks instance-registered units first, then falls back to built-in
+        units. This allows string-based lookup of custom registered units.
+
+        Parameters
+        ----------
+        name : str
+            The unit name to look up.
+
+        Returns
+        -------
+        Unit
+            The unit object.
+
+        Raises
+        ------
+        AttributeError
+            If the unit is not found in this registry or built-ins.
+        """
+        if name in self.__dict__:
+            return self.__dict__[name]
+        # Fall back to creating from global config
+        if name in _CONST_BASE_UNITS or name in _CONST_DERIVED_UNITS:
+            return Unit(name)
+        raise AttributeError(f"Unit `{name}` not found in this registry.")
+
+    def Quantity(
+        self,
+        value: "int | float | Sequence",
+        units: "str | Unit",
+    ) -> "Quantity":
+        """
+        Create a Quantity using this registry's units.
+
+        This method allows creating quantities with instance-registered units
+        using string names.
+
+        Parameters
+        ----------
+        value : int, float, or sequence
+            The numeric value.
+        units : str or Unit
+            The unit name (looked up in this registry) or a Unit object.
+
+        Returns
+        -------
+        Quantity
+            The created quantity.
+
+        Examples
+        --------
+        >>> ur = UnitRegistry()
+        >>> ur.register_unit(unit="micron", composition="m", factor=1e-6)
+        >>> q = ur.Quantity(1, "micron")
+        >>> print(q)
+        1.0 micron
+        """
+        from ansys.units.quantity import Quantity as _Quantity
+
+        if isinstance(units, str):
+            units = self.get_unit(units)
+        return _Quantity(value, units)
 
     def register_unit(
         self,
@@ -135,14 +204,16 @@ class UnitRegistry:
         Register a new derived unit on this ``UnitRegistry`` instance.
 
         This is instance-scoped: it affects only this registry and does not
-        mutate global state or other registries.
+        mutate global state or other registries. The registered unit can be
+        accessed as an attribute (e.g., ``ur.micron``) or via
+        :meth:`get_unit` for string-based lookup.
 
         Parameters
         ----------
         unit: str
-            The symbol/name of the new unit (e.g., "Q"). Preferred keyword.
+            The symbol/name of the new unit (e.g., "micron").
         composition: str
-            A valid unit composition using existing configured units (e.g., "N m").
+            A valid unit composition using existing configured units (e.g., "m").
         factor: float
             Scale factor that relates the composition to this unit.
 
@@ -153,10 +224,24 @@ class UnitRegistry:
 
         Raises
         ------
-        UnitAlreadyRegistered
-            If a unit with the same name already exists on this instance or is built-in.
+        UnitNameAlreadyRegistered
+            If a unit with the same name already exists on this instance or
+            as a built-in. This is a name-only check and does not detect
+            equivalent definitions with different names.
         ValueError
             If ``unit`` is empty or ``factor`` is not finite.
+
+        Notes
+        -----
+        The name collision check is superficial (name-only). Two units with
+        different names but equivalent definitions (same composition and factor)
+        can both be registered without error.
+
+        Examples
+        --------
+        >>> ur = UnitRegistry()
+        >>> ur.register_unit(unit="micron", composition="m", factor=1e-6)
+        >>> q = ur.Quantity(1, "micron")  # Use registry's Quantity method
         """
         unit = unit.strip()
         if not unit:
@@ -165,13 +250,13 @@ class UnitRegistry:
         if not math.isfinite(f):
             raise ValueError("`factor` must be a finite number.")
 
-        # Prevent overriding built-ins or existing attributes on this instance
+        # Name-only collision check against built-ins and this instance
         if (
             unit in _CONST_BASE_UNITS
             or unit in _CONST_DERIVED_UNITS
             or hasattr(self, unit)
         ):
-            raise UnitAlreadyRegistered(unit)
+            raise UnitNameAlreadyRegistered(unit)
 
         composed = Unit(units=str(composition))
         obj = Unit(copy_from=composed)
@@ -245,8 +330,15 @@ class AliasAlreadyRegistered(ValueError):
         )
 
 
-class UnitAlreadyRegistered(ValueError):
-    """Raised when a unit has previously been registered."""
+class UnitNameAlreadyRegistered(ValueError):
+    """
+    Raised when a unit name conflicts with an existing name.
+
+    This is a name-only check. Units with different names but equivalent definitions
+    (same composition and factor) are not detected.
+    """
 
     def __init__(self, name: str):
-        super().__init__(f"Unable to override `{name}` it has already been registered.")
+        super().__init__(
+            f"Unable to register `{name}`: a unit with this name already exists."
+        )
