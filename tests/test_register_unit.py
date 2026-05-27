@@ -23,7 +23,7 @@
 import pytest
 
 from ansys.units import UnitRegistry
-from ansys.units.unit_registry import UnitAlreadyRegistered
+from ansys.units.unit_registry import UnitNameAlreadyRegistered
 
 
 def test_register_unit():
@@ -39,7 +39,7 @@ def test_instance_register_unit():
     ur = UnitRegistry()
 
     # Cannot override built-ins
-    with pytest.raises(UnitAlreadyRegistered):
+    with pytest.raises(UnitNameAlreadyRegistered):
         ur.register_unit(unit="J", composition="N m", factor=1)
 
     # Register alias 'Q' equal to Joule using one composition
@@ -47,7 +47,7 @@ def test_instance_register_unit():
     assert ur.Q == ur.J
 
     # Same instance cannot re-register same name
-    with pytest.raises(UnitAlreadyRegistered):
+    with pytest.raises(UnitNameAlreadyRegistered):
         ur.register_unit(unit="Q", composition="N m", factor=1)
 
     # New registry does not see instance registration
@@ -94,9 +94,352 @@ def test_duplicate_registration_same_registry():
     assert ur.B == ur.J
 
     # Re-register same name with same composition should fail
-    with pytest.raises(UnitAlreadyRegistered):
+    with pytest.raises(UnitNameAlreadyRegistered):
         ur.register_unit(unit="B", composition="N m", factor=1)
 
     # Re-register same name with different (but equivalent) composition should also fail
-    with pytest.raises(UnitAlreadyRegistered):
+    with pytest.raises(UnitNameAlreadyRegistered):
         ur.register_unit(unit="B", composition="W s", factor=1)
+
+
+def test_name_only_collision_check():
+    """
+    Test that collision detection is name-only.
+
+    Two units with different names but equivalent definitions (same composition and
+    factor) should both be allowed, demonstrating that the check is superficial (name-
+    based) rather than semantic (equivalence-based).
+    """
+    ur = UnitRegistry()
+
+    # Register two different names for equivalent definitions
+    ur.register_unit(unit="energy1", composition="N m", factor=1)
+    ur.register_unit(
+        unit="energy2", composition="N m", factor=1
+    )  # Same definition, different name
+
+    # Both should exist
+    assert ur.energy1.si_scaling_factor == pytest.approx(ur.energy2.si_scaling_factor)
+    assert ur.energy1.dimensions == ur.energy2.dimensions
+
+    # Same definition via different but equivalent composition
+    ur.register_unit(unit="energy3", composition="W s", factor=1)
+    assert ur.energy3.si_scaling_factor == pytest.approx(ur.energy1.si_scaling_factor)
+
+
+def test_get_unit_instance_registered():
+    """Test get_unit retrieves instance-registered units by name."""
+    ur = UnitRegistry()
+    ur.register_unit(unit="micron", composition="m", factor=1e-6)
+
+    # String-based lookup should work
+    unit = ur.get_unit("micron")
+    assert unit.name == "micron"
+    assert unit.si_scaling_factor == pytest.approx(1e-6)
+
+
+def test_get_unit_builtin():
+    """Test get_unit falls back to built-in units."""
+    ur = UnitRegistry()
+
+    # Built-in unit should be accessible
+    unit = ur.get_unit("m")
+    assert unit.name == "m"
+
+    unit = ur.get_unit("J")
+    assert unit.name == "J"
+
+
+def test_get_unit_compound_string():
+    """Test get_unit handles compound unit strings like 'kg mol^-1'."""
+    ur = UnitRegistry()
+
+    # Compound unit strings should work
+    unit = ur.get_unit("kg mol^-1")
+    assert unit.name == "kg mol^-1"
+
+    unit = ur.get_unit("m s^-2")
+    assert unit.name == "m s^-2"
+
+    # Should work consistently with Quantity
+    from ansys.units import Quantity
+
+    q1 = Quantity(1, ur.get_unit("kg mol^-1"))
+    q2 = Quantity(1, "kg mol^-1")
+    assert q1.units.name == q2.units.name
+
+
+def test_get_unit_not_found():
+    """Test get_unit raises AttributeError for unknown units."""
+    ur = UnitRegistry()
+
+    with pytest.raises(AttributeError, match="not found"):
+        ur.get_unit("nonexistent_unit")
+
+
+def test_registry_quantity_with_registered_unit():
+    """Test ur.Quantity() allows string-based creation with registered units."""
+    ur = UnitRegistry()
+    ur.register_unit(unit="micron", composition="m", factor=1e-6)
+
+    # Create quantity using string name
+    q = ur.Quantity(1, "micron")
+    assert q.value == 1.0
+    assert q.units.name == "micron"
+
+    # SI value should be 1e-6
+    from ansys.units import get_si_value
+
+    assert get_si_value(q) == pytest.approx(1e-6)
+
+
+def test_registry_quantity_with_builtin():
+    """Test ur.Quantity() works with built-in units."""
+    ur = UnitRegistry()
+
+    q = ur.Quantity(5, "m")
+    assert q.value == 5.0
+    assert q.units.name == "m"
+
+
+def test_registry_quantity_with_unit_object():
+    """Test ur.Quantity() accepts Unit objects directly."""
+    ur = UnitRegistry()
+    ur.register_unit(unit="micron", composition="m", factor=1e-6)
+
+    q = ur.Quantity(2, ur.micron)
+    assert q.value == 2.0
+    assert q.units.name == "micron"
+
+
+def test_registry_quantity_instance_isolation():
+    """Test that ur.Quantity uses that registry's units, not global."""
+    ur1 = UnitRegistry()
+    ur2 = UnitRegistry()
+
+    ur1.register_unit(unit="X", composition="m", factor=10)
+    ur2.register_unit(unit="X", composition="m", factor=100)
+
+    q1 = ur1.Quantity(1, "X")
+    q2 = ur2.Quantity(1, "X")
+
+    from ansys.units import get_si_value
+
+    assert get_si_value(q1) == pytest.approx(10)
+    assert get_si_value(q2) == pytest.approx(100)
+
+
+# =============================================================================
+# Edge cases: Aliasing and indirect equivalence
+# =============================================================================
+
+
+def test_register_unit_does_not_check_aliases():
+    """
+    Test that register_unit collision check does NOT include global aliases.
+
+    This documents the current behavior: you can register a unit with a name
+    that shadows a global alias. The registered unit takes precedence in
+    ur.get_unit() and ur.Quantity(), but Unit("alias_name") still resolves
+    to the canonical unit via global alias resolution.
+    """
+    ur = UnitRegistry()
+
+    # "deg" is a built-in alias for "degree"
+    # Registering a unit named "deg" is allowed (no collision check against aliases)
+    ur.register_unit(unit="deg", composition="m", factor=1.0)
+
+    # The instance-registered unit is accessible
+    assert ur.deg.name == "deg"
+    assert ur.deg.dimensions == ur.m.dimensions  # It's a length unit now
+
+    # ur.get_unit returns the instance-registered unit
+    assert ur.get_unit("deg").name == "deg"
+    assert ur.get_unit("deg").dimensions == ur.m.dimensions
+
+    # ur.Quantity uses instance-registered unit
+    q = ur.Quantity(1, "deg")
+    assert q.units.dimensions == ur.m.dimensions
+
+    # But Unit("deg") still resolves via global alias to "degree" (angle)
+    from ansys.units import Unit
+
+    global_deg = Unit("deg")
+    assert global_deg.name == "degree"  # Resolved via alias
+
+
+def test_register_unit_does_not_detect_equivalent_factor():
+    """
+    Test that collision check is name-only, not factor-based.
+
+    Two units with the same composition and factor but different names can both be
+    registered. No semantic equivalence check is performed.
+    """
+    ur = UnitRegistry()
+
+    # Register two units that are semantically identical (same as Joule)
+    ur.register_unit(unit="myjoule", composition="N m", factor=1)
+    ur.register_unit(unit="yourjoule", composition="N m", factor=1)
+
+    # Both exist and have the same SI scaling factor
+    assert ur.myjoule.si_scaling_factor == pytest.approx(ur.yourjoule.si_scaling_factor)
+    assert ur.myjoule.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor)
+
+
+def test_register_unit_does_not_detect_equivalent_offset():
+    """
+    Test that collision check doesn't consider SI offset equivalence.
+
+    Note: register_unit only supports factor, not offset. This test confirms
+    that even if two units have the same effective SI conversion, they can
+    both be registered as long as their names differ.
+    """
+    ur = UnitRegistry()
+
+    # Register units with different factors - both allowed despite potential overlap
+    ur.register_unit(unit="mymeter", composition="m", factor=1)
+    ur.register_unit(unit="alsometer", composition="m", factor=1)
+
+    # Both units are functionally identical to "m"
+    assert ur.mymeter.si_scaling_factor == pytest.approx(ur.m.si_scaling_factor)
+    assert ur.alsometer.si_scaling_factor == pytest.approx(ur.m.si_scaling_factor)
+
+
+def test_get_unit_resolves_global_aliases():
+    """
+    Test that get_unit resolves global aliases via Unit().
+
+    get_unit checks instance-registered units first, then falls back to Unit(name) which
+    handles aliases, compound strings, and built-ins.
+    """
+    ur = UnitRegistry()
+
+    # "deg" is a global alias for "degree" - get_unit resolves it
+    unit = ur.get_unit("deg")
+    assert unit.name == "degree"  # Resolved via alias
+
+    # "degree" (the canonical name) also works
+    unit = ur.get_unit("degree")
+    assert unit.name == "degree"
+
+    # Instance-registered units take precedence over aliases
+    ur.register_unit(unit="myunit", composition="m", factor=1)
+    assert ur.get_unit("myunit").name == "myunit"
+
+
+def test_register_unit_name_check_is_case_sensitive():
+    """
+    Test that the name collision check is case-sensitive.
+
+    'M' (mega) and 'm' (meter) are different names.
+    """
+    ur = UnitRegistry()
+
+    # 'm' is a built-in base unit (meter)
+    with pytest.raises(UnitNameAlreadyRegistered):
+        ur.register_unit(unit="m", composition="ft", factor=1)
+
+    # 'M' is not a built-in unit name (it's a multiplier prefix), so this succeeds
+    # Note: This may or may not be desirable behavior depending on use case
+    ur.register_unit(unit="M", composition="m", factor=1e6)
+    assert ur.M.si_scaling_factor == pytest.approx(1e6)
+
+
+def test_equivalent_compositions_same_dimensions():
+    """
+    Test that equivalent compositions produce units with same dimensions.
+
+    This confirms that while name collision isn't checked semantically, the resulting
+    units do have correct dimensions.
+    """
+    ur = UnitRegistry()
+
+    # N m and W s are equivalent energy units
+    ur.register_unit(unit="energy_nm", composition="N m", factor=1)
+    ur.register_unit(unit="energy_ws", composition="W s", factor=1)
+    ur.register_unit(unit="energy_kgm2s2", composition="kg m^2 s^-2", factor=1)
+
+    # All should have same dimensions as Joule
+    assert ur.energy_nm.dimensions == ur.J.dimensions
+    assert ur.energy_ws.dimensions == ur.J.dimensions
+    assert ur.energy_kgm2s2.dimensions == ur.J.dimensions
+
+    # All should have same SI scaling factor
+    assert ur.energy_nm.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor)
+    assert ur.energy_ws.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor)
+    assert ur.energy_kgm2s2.si_scaling_factor == pytest.approx(ur.J.si_scaling_factor)
+
+
+# =============================================================================
+# Tests for custom_units parameter in UnitRegistry constructor
+# =============================================================================
+
+
+def test_custom_units_at_construction():
+    """Test registering custom units via constructor parameter."""
+    ur = UnitRegistry(
+        custom_units=[
+            {"unit": "micron", "composition": "m", "factor": 1e-6},
+            {"unit": "thou", "composition": "m", "factor": 2.54e-5},
+        ]
+    )
+
+    # Custom units should be accessible
+    assert ur.micron.name == "micron"
+    assert ur.micron.si_scaling_factor == pytest.approx(1e-6)
+
+    assert ur.thou.name == "thou"
+    assert ur.thou.si_scaling_factor == pytest.approx(2.54e-5)
+
+    # Should work with ur.Quantity
+    q = ur.Quantity(1, "micron")
+    from ansys.units import get_si_value
+
+    assert get_si_value(q) == pytest.approx(1e-6)
+
+
+def test_custom_units_empty_list():
+    """Test that empty custom_units list doesn't cause issues."""
+    ur = UnitRegistry(custom_units=[])
+    assert ur.m.name == "m"  # Built-ins still work
+
+
+def test_custom_units_none():
+    """Test that custom_units=None (default) works."""
+    ur = UnitRegistry(custom_units=None)
+    assert ur.m.name == "m"
+
+
+def test_custom_units_collision_with_builtin():
+    """Test that custom_units cannot override built-in units."""
+    with pytest.raises(UnitNameAlreadyRegistered):
+        UnitRegistry(
+            custom_units=[
+                {"unit": "m", "composition": "ft", "factor": 1},
+            ]
+        )
+
+
+def test_custom_units_collision_within_list():
+    """Test that duplicate names within custom_units are rejected."""
+    with pytest.raises(UnitNameAlreadyRegistered):
+        UnitRegistry(
+            custom_units=[
+                {"unit": "X", "composition": "m", "factor": 1},
+                {"unit": "X", "composition": "m", "factor": 2},
+            ]
+        )
+
+
+def test_custom_units_instance_isolation():
+    """Test that custom_units are instance-scoped."""
+    ur1 = UnitRegistry(custom_units=[{"unit": "X", "composition": "m", "factor": 10}])
+    ur2 = UnitRegistry(custom_units=[{"unit": "X", "composition": "m", "factor": 100}])
+
+    assert ur1.X.si_scaling_factor == pytest.approx(10)
+    assert ur2.X.si_scaling_factor == pytest.approx(100)
+
+    # A third registry without X
+    ur3 = UnitRegistry()
+    with pytest.raises(AttributeError):
+        _ = ur3.X

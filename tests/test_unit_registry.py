@@ -27,7 +27,7 @@ import pytest
 
 from ansys.units import Unit, UnitRegistry
 from ansys.units._constants import _base_units
-from ansys.units.unit_registry import UnitAlreadyRegistered
+from ansys.units.unit_registry import UnitNameAlreadyRegistered
 
 
 def test_default_units():
@@ -94,11 +94,12 @@ def test_additional_units():
 
 def test_immutability():
     ur = UnitRegistry()
-    with pytest.raises(UnitAlreadyRegistered):
+    with pytest.raises(UnitNameAlreadyRegistered):
         ur.m = Unit("ft")
 
 
 def test_error_message():
-    e1 = UnitAlreadyRegistered("kg")
-    expected_str = "Unable to override `kg` it has already been registered."
+    # Test the new exception name
+    e1 = UnitNameAlreadyRegistered("kg")
+    expected_str = "Unable to register `kg`: a unit with this name already exists."
     assert str(e1) == expected_str
