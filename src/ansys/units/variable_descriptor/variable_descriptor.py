@@ -63,12 +63,18 @@ class VariableDescriptor(Generic[QuantityKindT]):
         object.__setattr__(self, "name", _validate_and_transform_variable(name))
 
 
-ScalarVariableDescriptor = VariableDescriptor[
-    Literal[QuantityKind.SCALAR]
-]  #: Type alias for scalar variables
-VectorVariableDescriptor = VariableDescriptor[
-    Literal[QuantityKind.VECTOR]
-]  #: Type alias for vector variables
+@dataclass(frozen=True, unsafe_hash=True)
+class ScalarVariableDescriptor(VariableDescriptor[Literal[QuantityKind.SCALAR]]):
+    """Concrete class for scalar variables supporting runtime isinstance checks."""
+
+    pass
+
+
+@dataclass(frozen=True, unsafe_hash=True)
+class VectorVariableDescriptor(VariableDescriptor[Literal[QuantityKind.VECTOR]]):
+    """Concrete class for vector variables supporting runtime isinstance checks."""
+
+    pass
 
 
 def _validate_and_transform_variable(variable: str) -> str:
