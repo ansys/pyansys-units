@@ -66,11 +66,14 @@ class VariableDescriptor(Generic[QuantityKindT]):
 @dataclass(frozen=True, unsafe_hash=True)
 class ScalarVariableDescriptor(VariableDescriptor[Literal[QuantityKind.SCALAR]]):
     """Concrete class for scalar variables supporting runtime isinstance checks."""
+
     pass
+
 
 @dataclass(frozen=True, unsafe_hash=True)
 class VectorVariableDescriptor(VariableDescriptor[Literal[QuantityKind.VECTOR]]):
     """Concrete class for vector variables supporting runtime isinstance checks."""
+
     pass
 
 
