@@ -203,8 +203,7 @@ class QuantityDtype(ExtensionDtype):
         return self.name
 
     @override
-    @classmethod
-    def construct_array_type(cls) -> Any:
+    def construct_array_type(self) -> Any:
         """Return the array type associated with this dtype."""
         return QuantityArray
 
