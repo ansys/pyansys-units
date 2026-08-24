@@ -6,8 +6,8 @@ time, and so on). In addition to the predefined systems (``"SI"``, ``"CGS"``,
 ``"BT"``), you can define your own unit system, for example an ``"MMGS"``
 (millimeter, gram, second) system commonly used for material databases.
 
-Ad Hoc Custom Unit Systems
---------------------------
+Custom Unit Systems From Mappings
+---------------------------------
 
 Pass a ``base_units`` mapping to override only the dimensions you care about.
 Unspecified dimensions default to the base system (``"SI"`` by default):
@@ -37,7 +37,7 @@ consistent unit system.
 
 For example, the classic mm-tonne-second system used by structural material
 databases produces stress/pressure values that are numerically consistent
-with MPa:
+with ``MPa``:
 
 .. code-block:: python
 

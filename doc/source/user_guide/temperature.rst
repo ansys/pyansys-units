@@ -8,7 +8,7 @@ PyAnsys Units supports temperature units in kelvin (K), celsius (C), rankine (R)
 and fahrenheit (F).
 
 For each temperature unit, there is a corresponding temperature difference unit
-which is prefixed with ``delta_``. In order to add two temperature-based quantities,
+which is prefixed with ``delta_``. To add two temperature-based quantities,
 at least one must be a temperature difference. If one temperature is subtracted
 from another, the result is a temperature difference.
 
