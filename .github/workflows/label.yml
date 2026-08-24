@@ -13,8 +13,8 @@ concurrency:
 permissions:
   contents: read
   packages: read # Needed to pull images from GitHub Container Registry
-  pull-requests: read
-  issues: read
+  pull-requests: read # Needed to read PR metadata before applying labels
+  issues: read # Needed to read issue labels for PR label synchronization
 
 jobs:
   label-syncer:
@@ -34,7 +34,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write # Needed to add labels to pull requests
-      pages: write
+      pages: write # Needed by shared GitHub Pages permission requirements
     runs-on: ubuntu-latest
     steps:
       # Label based on modified files
