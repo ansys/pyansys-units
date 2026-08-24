@@ -28,7 +28,6 @@ import os
 from typing import TYPE_CHECKING, Any, overload
 
 from ansys.units._constants import (
-    _aliases,
     _base_units,
     _BaseUnitInfo,
     _derived_units,
@@ -36,10 +35,17 @@ from ansys.units._constants import (
     _multipliers,
     _quantity_units_table,
 )
+from ansys.units._unit_parsing import (
+    _filter_unit_term,
+    _units_to_dim,
+)
+from ansys.units._unit_parsing import UnconfiguredUnit as _UnconfiguredUnit
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_tables.keys import QuantityKey
 from ansys.units.systems import UnitSystem
+
+UnconfiguredUnit = _UnconfiguredUnit
 
 if TYPE_CHECKING:
     import numpy as np
@@ -453,53 +459,6 @@ def _dim_to_units(
     return units.strip()
 
 
-def _units_to_dim(
-    units: str,
-    exponent: float = 1.0,
-    dimensions: Mapping[
-        BaseDimensions, float
-    ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
-) -> dict[BaseDimensions, float]:
-    """
-    Convert a unit string into a Dimensions instance.
-
-    Parameters
-    ----------
-    units : str
-        Unit string.
-    Returns
-    -------
-    dict
-        Dimensions dictionary
-    """
-    dimensions = dict(dimensions)
-    # Split unit string into terms and parse data associated with individual terms
-    for term in units.split(" "):
-        _, unit_term, unit_term_exponent = _filter_unit_term(term)
-        unit_term_exponent *= exponent
-        # retrieve data associated with base unit
-        if unit_term in _base_units:
-            idx = _base_units[unit_term]["type"]
-
-            if BaseDimensions[idx] in dimensions:
-                dimensions[BaseDimensions[idx]] += unit_term_exponent
-            else:
-                dimensions[BaseDimensions[idx]] = unit_term_exponent
-        # Retrieve derived unit composition unit string and SI factor.
-        elif unit_term in _derived_units:
-            # Recursively parse composition unit string
-
-            dimensions = _units_to_dim(
-                units=_derived_units[unit_term]["composition"],
-                exponent=unit_term_exponent,
-                dimensions=dimensions,
-            )
-        elif _:
-            raise UnconfiguredUnit(_)
-
-    return dimensions
-
-
 def _table_to_units(table: Mapping[QuantityKey, int]) -> str:
     """
     Convert a quantity table item into a unit string.
@@ -528,31 +487,6 @@ def _table_to_units(table: Mapping[QuantityKey, int]) -> str:
             base_unit += f"{multiplier}{base}^{exponent * value} "
 
     return _condense(base_unit)
-
-
-def _multiplier_check(unit_term: str) -> bool:
-    """
-    Check if a unit term contains a multiplier.
-
-    Parameters
-    ----------
-    unit_term : str
-        Unit term of the unit string.
-
-    Returns
-    -------
-    bool
-        ``True`` if the unit term contains a multiplier, ``False`` otherwise.
-    """
-    # Check if the unit term is not an existing base or derived unit.
-    return bool(
-        unit_term
-        and not (
-            (unit_term in _base_units)
-            or (unit_term in _derived_units)
-            or (unit_term in _aliases)
-        )
-    )
 
 
 def _si_map(unit_term: str) -> str:
@@ -618,53 +552,6 @@ def _condense(units: str) -> str:
             units += f"{term}^{exponent} "
 
     return units.rstrip()
-
-
-def _filter_unit_term(unit_term: str) -> tuple[str, str, float]:
-    """
-    Separate multiplier, base, and exponent from a unit term.
-
-    Parameters
-    ----------
-    unit_term : str
-        Unit term of the unit string.
-
-    Returns
-    -------
-    tuple
-        Tuple containing the multiplier, base, and exponent of the unit term.
-    """
-    multiplier = ""
-    exponent = 1.0
-
-    # strip exponent from unit term
-    if "^" in unit_term:
-        exponent = float(unit_term[unit_term.index("^") + 1 :])
-        unit_term = unit_term[: unit_term.index("^")]
-
-    base = unit_term
-
-    # Resolve alias to canonical unit name before multiplier detection
-    while unit_term in _aliases:
-        unit_term = _aliases[unit_term]
-    base = unit_term
-
-    # strip multiplier and base from unit term
-    has_multiplier = _multiplier_check(unit_term)
-    if has_multiplier:
-        for mult in _multipliers:
-            if unit_term.startswith(mult):
-                if not _multiplier_check(unit_term[len(mult) :]):
-                    multiplier = mult
-                    base = unit_term[len(mult) :]
-                    break
-
-    # if we thought it had a multiplier, that's just because the string wasn't
-    # a known unit on its own. So if we can't actually find its multiplier then
-    # this string is an invalid unit string
-    if has_multiplier and not multiplier:
-        raise UnconfiguredUnit(unit_term)
-    return multiplier, base, exponent
 
 
 def _si_data(
@@ -744,13 +631,6 @@ class InconsistentDimensions(ValueError):
 
     def __init__(self):
         super().__init__("Unit dimensions do not match given dimensions.")
-
-
-class UnconfiguredUnit(ValueError):
-    """Raised when the specified unit is unconfigured."""
-
-    def __init__(self, unit):
-        super().__init__(f"`{unit}` is an unconfigured unit.")
 
 
 class IncorrectUnits(ValueError):
