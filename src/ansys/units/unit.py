@@ -317,7 +317,6 @@ class Unit:
         >>> bt = UnitSystem(system="BT")
         >>> speed_bt = speed_si.convert(bt)
         """
-
         return Unit(dimensions=self.dimensions, system=system)
 
     def __str__(self) -> str:
@@ -446,6 +445,10 @@ def _dim_to_units(
     """
     if not system:
         system = UnitSystem()
+
+    preferred_unit = system.preferred_unit_for(dimensions)
+    if preferred_unit:
+        return preferred_unit
 
     units = ""
 

@@ -23,12 +23,27 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
+
+from typing_extensions import Protocol, override
 
 from ansys.units._constants import _base_units, _unit_systems
 from ansys.units._unit_parsing import _units_to_dim
 from ansys.units.base_dimensions import BaseDimensions
+from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_tables.keys import *  # noqa: F403
+
+_unit_system_preferred_units: dict[str, list[str]] = {}
+
+
+class UnitLike(Protocol):
+    """Protocol for unit-like objects accepted by unit system helpers."""
+
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def dimensions(self) -> Dimensions: ...
 
 
 def _validate_base_unit(unit_type: BaseDimensions, unit: UnitKey | str) -> str:
@@ -106,6 +121,37 @@ def _validate_base_unit(unit_type: BaseDimensions, unit: UnitKey | str) -> str:
     raise NotBaseUnit(name)
 
 
+def _validate_preferred_unit(
+    unit: UnitKey | str | UnitLike,
+) -> tuple[str, dict[BaseDimensions, float]]:
+    """
+    Validate a preferred unit and return its name and dimensions.
+
+    Preferred units are display/conversion targets for derived quantities. They do not
+    need to be dimensionally atomic, but they do need to resolve to a valid unit with
+    dimensions.
+    """
+    name = str(getattr(unit, "name", None) or unit)
+    try:
+        dims_dict = _units_to_dim(units=str(name))
+    except Exception:
+        raise UnconfiguredPreferredUnit(name) from None
+
+    if not dims_dict:
+        raise UnconfiguredPreferredUnit(name)
+
+    return name, dims_dict
+
+
+def _iter_preferred_units(
+    units: Sequence[UnitKey | str | UnitLike] | UnitKey | str | UnitLike,
+) -> Sequence[UnitKey | str | UnitLike]:
+    """Return preferred units as a sequence while treating strings as one unit."""
+    if isinstance(units, str) or not isinstance(units, Sequence):
+        return [units]
+    return units
+
+
 class UnitSystem:
     """
     A class representing base units for a unit system.
@@ -117,6 +163,9 @@ class UnitSystem:
     ----------
     base_units: dict, optional
         Units mapped to base dimensions types.
+    preferred_units: str, list, optional
+        Preferred units used when converted dimensions match. These units are
+        display/conversion targets for derived quantities, not base-unit slots.
     system: str, Unit, optional
         Predefined unit system.
     copy_from: UnitSystem, optional
@@ -139,16 +188,23 @@ class UnitSystem:
     def __init__(
         self,
         base_units: Mapping[BaseDimensions, UnitKey | str] | None = None,
+        preferred_units: (
+            Sequence[UnitKey | str | UnitLike] | UnitKey | str | UnitLike | None
+        ) = None,
         system: Systems | str = "SI",
         copy_from: UnitSystem | None = None,
     ):
         if copy_from:
-            self._units = copy_from._units
+            self._units = copy_from._units.copy()
+            self._preferred_units = copy_from._preferred_units.copy()
         else:
             if system not in _unit_systems:
                 raise InvalidUnitSystem(system)
             else:
                 self._units = _unit_systems[system].copy()
+            self._preferred_units: dict[DimensionsKey, str] = {}
+            if system in _unit_system_preferred_units:
+                self.add_preferred_units(_unit_system_preferred_units[system])
 
         if base_units:
             for unit_type, unit in base_units.items():
@@ -157,6 +213,9 @@ class UnitSystem:
         for unit_type in BaseDimensions:
             unit = self._units[unit_type.name]
             self._set_type(unit_type=unit_type, unit=unit)
+
+        if preferred_units:
+            self.add_preferred_units(preferred_units)
 
     def update(self, base_units: Mapping[BaseDimensions, UnitKey | str]):
         """
@@ -170,11 +229,44 @@ class UnitSystem:
         for unit_type, unit in base_units.items():
             self._set_type(unit_type=unit_type, unit=unit)
 
+    def add_preferred_units(
+        self,
+        units: Sequence[UnitKey | str | UnitLike] | UnitKey | str | UnitLike,
+    ) -> None:
+        """
+        Add preferred display units for derived dimensions.
+
+        When a unit is converted using this unit system, a matching preferred
+        unit is returned instead of the expanded base-unit expression. For
+        example, a millimeter-tonne-second system can prefer ``"MPa"`` for
+        pressure/stress dimensions instead of ``"tonne mm^-1 s^-2"``.
+
+        Parameters
+        ----------
+        units: list
+            Preferred units to use for matching dimensions.
+        """
+        for unit in _iter_preferred_units(units):
+            name, dims_dict = _validate_preferred_unit(unit)
+            dimensions_key = DimensionsKey(dims_dict)
+            if dimensions_key in self._preferred_units:
+                existing_unit = self._preferred_units[dimensions_key]
+                if existing_unit != name:
+                    raise PreferredUnitAlreadyRegistered(existing_unit, name)
+            self._preferred_units[dimensions_key] = name
+
+    def preferred_unit_for(self, dimensions: Dimensions) -> str | None:
+        """Return the preferred unit name for dimensions, if one is configured."""
+        return self._preferred_units.get(DimensionsKey(dict(dimensions)))
+
     @classmethod
     def register_system(
         cls,
         name: str,
         base_units: Mapping[BaseDimensions, UnitKey | str],
+        preferred_units: (
+            Sequence[UnitKey | str | UnitLike] | UnitKey | str | UnitLike | None
+        ) = None,
     ) -> None:
         """
         Register a new named unit system for later reuse.
@@ -203,6 +295,10 @@ class UnitSystem:
             Units mapped to base dimensions types. Every member of
             :class:`~ansys.units.base_dimensions.BaseDimensions` must be
             provided so the resulting system is fully defined.
+        preferred_units: str, list, optional
+            Preferred units used when converted dimensions match. These units
+            are display/conversion targets for derived quantities, not
+            base-unit slots.
 
         Raises
         ------
@@ -216,6 +312,10 @@ class UnitSystem:
             unit that spans more than one base dimension, such as ``"Pa"``).
         IncorrectUnitType
             If a unit does not match its intended base dimension.
+        UnconfiguredPreferredUnit
+            If a preferred unit cannot be resolved globally by name.
+        PreferredUnitAlreadyRegistered
+            If two preferred units have the same dimensions.
 
         Examples
         --------
@@ -258,7 +358,16 @@ class UnitSystem:
                 unit_type=unit_type, unit=unit
             )
 
+        resolved_preferred_units: list[str] = []
+        if preferred_units:
+            preferred_unit_system = UnitSystem(system="SI")
+            preferred_unit_system.add_preferred_units(preferred_units)
+            for unit in _iter_preferred_units(preferred_units):
+                resolved_preferred_units.append(_validate_preferred_unit(unit)[0])
+
         _unit_systems[name] = resolved
+        if resolved_preferred_units:
+            _unit_system_preferred_units[name] = resolved_preferred_units
 
     def _set_type(self, unit_type: BaseDimensions, unit: UnitKey | str):
         """
@@ -423,3 +532,40 @@ class IncompleteUnitSystem(ValueError):
             "Unable to register unit system: missing units for base "
             f"dimension(s): {missing_names}."
         )
+
+
+class UnconfiguredPreferredUnit(ValueError):
+    """Raised when a preferred unit cannot be resolved."""
+
+    def __init__(self, unit: UnitKey | str):
+        super().__init__(f"`{unit}` is not a configured unit.")
+
+
+class PreferredUnitAlreadyRegistered(ValueError):
+    """Raised when two preferred units have the same dimensions."""
+
+    def __init__(self, existing_unit: str, conflicting_unit: str):
+        message = (
+            f"`{existing_unit}` is already configured as the preferred unit for "
+            f"the same dimensions as `{conflicting_unit}`."
+        )
+        super().__init__(message)
+
+
+class DimensionsKey:
+    """Hashable key for matching dimension dictionaries."""
+
+    def __init__(self, dimensions: Mapping[BaseDimensions, float]):
+        self._dimensions: tuple[tuple[BaseDimensions, float], ...] = tuple(
+            sorted(dimensions.items(), key=lambda item: item[0].name)
+        )
+
+    @override
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, DimensionsKey) and self._dimensions == other._dimensions
+        )
+
+    @override
+    def __hash__(self) -> int:
+        return hash(self._dimensions)

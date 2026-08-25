@@ -28,6 +28,8 @@ from ansys.units.systems import (
     IncorrectUnitType,
     InvalidUnitSystem,
     NotBaseUnit,
+    PreferredUnitAlreadyRegistered,
+    UnconfiguredPreferredUnit,
     UnitSystemAlreadyRegistered,
 )
 
@@ -270,6 +272,119 @@ def test_mm_tonne_second_system_is_mpa_consistent():
     assert one_in_system.to("MPa").value == pytest.approx(1.0)
 
 
+def test_custom_unit_system_prefers_mpa_for_pressure():
+    dims = BaseDimensions
+    us = UnitSystem(
+        base_units={
+            dims.MASS: "tonne",
+            dims.LENGTH: "mm",
+            dims.TIME: "s",
+        },
+        preferred_units=["MPa"],
+    )
+
+    youngs_modulus = Quantity(210e9, "Pa").convert(us)
+
+    assert youngs_modulus.units.name == "MPa"
+    assert youngs_modulus.value == pytest.approx(210000.0)
+
+    pressure_unit = Unit(dimensions=Quantity(1, "Pa").units.dimensions, system=us)
+    assert pressure_unit.name == "MPa"
+
+
+def test_custom_unit_system_accepts_single_preferred_unit_string():
+    dims = BaseDimensions
+    us = UnitSystem(
+        base_units={
+            dims.MASS: "tonne",
+            dims.LENGTH: "mm",
+            dims.TIME: "s",
+        },
+        preferred_units="MPa",
+    )
+
+    youngs_modulus = Quantity(210e9, "Pa").convert(us)
+
+    assert youngs_modulus.units.name == "MPa"
+    assert youngs_modulus.value == pytest.approx(210000.0)
+
+
+def test_custom_unit_system_accepts_single_preferred_unit_object():
+    dims = BaseDimensions
+    us = UnitSystem(
+        base_units={
+            dims.MASS: "tonne",
+            dims.LENGTH: "mm",
+            dims.TIME: "s",
+        },
+        preferred_units=Unit("MPa"),
+    )
+
+    youngs_modulus = Quantity(210e9, "Pa").convert(us)
+
+    assert youngs_modulus.units.name == "MPa"
+    assert youngs_modulus.value == pytest.approx(210000.0)
+
+
+def test_custom_unit_system_without_preferred_units_keeps_expanded_pressure_unit():
+    dims = BaseDimensions
+    us = UnitSystem(
+        base_units={
+            dims.MASS: "tonne",
+            dims.LENGTH: "mm",
+            dims.TIME: "s",
+        }
+    )
+
+    youngs_modulus = Quantity(210e9, "Pa").convert(us)
+
+    assert youngs_modulus.units.name == "tonne mm^-1 s^-2"
+    assert youngs_modulus.to("MPa").value == pytest.approx(210000.0)
+
+
+def test_custom_unit_system_prefers_mpa_only_for_matching_dimensions():
+    dims = BaseDimensions
+    us = UnitSystem(
+        base_units={
+            dims.MASS: "tonne",
+            dims.LENGTH: "mm",
+            dims.TIME: "s",
+        },
+        preferred_units=["MPa"],
+    )
+
+    length = Quantity(0.05, "m").convert(us)
+
+    assert length.units.name == "mm"
+    assert length.value == pytest.approx(50.0)
+
+
+def test_custom_unit_system_rejects_conflicting_preferred_units():
+    dims = BaseDimensions
+    with pytest.raises(PreferredUnitAlreadyRegistered):
+        UnitSystem(
+            base_units={
+                dims.MASS: "tonne",
+                dims.LENGTH: "mm",
+                dims.TIME: "s",
+            },
+            preferred_units=["Pa", "MPa"],
+        )
+
+
+def test_custom_unit_system_rejects_unconfigured_preferred_unit():
+    dims = BaseDimensions
+    with pytest.raises(UnconfiguredPreferredUnit):
+        UnitSystem(
+            base_units={
+                dims.MASS: "tonne",
+                dims.LENGTH: "mm",
+                dims.TIME: "s",
+            },
+            preferred_units=["not-a-unit"],
+        )
+
+
 def test_register_system_enables_named_lookup():
     dims = BaseDimensions
     base_units = {
@@ -333,6 +448,34 @@ def test_register_system_rejects_wrong_type():
     base_units[dims.TIME] = "mm"
     with pytest.raises(IncorrectUnitType):
         UnitSystem.register_system(name="WRONG_TYPE_TEST", base_units=base_units)
+
+
+def test_register_system_preserves_preferred_units():
+    dims = BaseDimensions
+    base_units = {
+        dims.MASS: "tonne",
+        dims.LENGTH: "mm",
+        dims.TIME: "s",
+        dims.TEMPERATURE: "K",
+        dims.TEMPERATURE_DIFFERENCE: "delta_K",
+        dims.ANGLE: "radian",
+        dims.CHEMICAL_AMOUNT: "mol",
+        dims.LIGHT: "cd",
+        dims.CURRENT: "A",
+        dims.SOLID_ANGLE: "sr",
+    }
+
+    UnitSystem.register_system(
+        name="MATERIAL_DATABASE_TEST",
+        base_units=base_units,
+        preferred_units=["MPa"],
+    )
+
+    us = UnitSystem(system="MATERIAL_DATABASE_TEST")
+    youngs_modulus = Quantity(210e9, "Pa").convert(us)
+
+    assert youngs_modulus.units.name == "MPa"
+    assert youngs_modulus.value == pytest.approx(210000.0)
 
 
 # ---------------------------------------------------------------------------

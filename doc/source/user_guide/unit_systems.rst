@@ -37,21 +37,25 @@ consistent unit system.
 
 For example, the classic mm-tonne-second system used by structural material
 databases produces stress/pressure values that are numerically consistent
-with ``MPa``:
+with ``MPa``. You can also provide ``preferred_units`` to simplify matching
+derived quantities to a domain-preferred unit such as ``MPa``:
 
 .. code-block:: python
 
-    from ansys.units import BaseDimensions, Quantity, Unit, UnitSystem
+    from ansys.units import BaseDimensions, Quantity, UnitSystem
 
     dims = BaseDimensions
     us = UnitSystem(
         base_units={
             dims.MASS: "tonne",
             dims.LENGTH: "mm",
-        }
+            dims.TIME: "s",
+        },
+        preferred_units=["MPa"],
     )
-    pressure_unit = Unit(dimensions=Quantity(1, "Pa").units.dimensions, system=us)
-    Quantity(1, pressure_unit).to("MPa").value  # 1.0
+    youngs_modulus = Quantity(210e9, "Pa").convert(us)
+    youngs_modulus.value  # 210000.0
+    youngs_modulus.units.name  # "MPa"
 
 Registering a Named Unit System
 --------------------------------
