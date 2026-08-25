@@ -45,17 +45,53 @@ derived quantities to a domain-preferred unit such as ``MPa``:
     from ansys.units import BaseDimensions, Quantity, UnitSystem
 
     dims = BaseDimensions
-    us = UnitSystem(
-        base_units={
-            dims.MASS: "tonne",
-            dims.LENGTH: "mm",
-            dims.TIME: "s",
-        },
-        preferred_units=["MPa"],
+    base = {
+        dims.MASS: "tonne",
+        dims.LENGTH: "mm",
+        dims.TIME: "s",
+    }
+
+    expanded = Quantity(210e9, "Pa").convert(UnitSystem(base_units=base))
+    print(expanded.value, expanded.units.name)
+    # 210000.0 tonne mm^-1 s^-2
+
+    simplified = Quantity(210e9, "Pa").convert(
+        UnitSystem(base_units=base, preferred_units=["MPa"])
     )
-    youngs_modulus = Quantity(210e9, "Pa").convert(us)
-    youngs_modulus.value  # 210000.0
-    youngs_modulus.units.name  # "MPa"
+    print(simplified.value, simplified.units.name)
+    # 210000.0 MPa
+
+The same approach can simplify other matching derived quantities. For example,
+in the same mm-tonne-second system, force dimensions expand to
+``tonne mm s^-2``, which is equivalent to ``N``:
+
+.. code-block:: python
+
+    force_expanded = Quantity(5000, "N").convert(UnitSystem(base_units=base))
+    print(force_expanded.value, force_expanded.units.name)
+    # 5000.0 tonne mm s^-2
+
+    force_simplified = Quantity(5000, "N").convert(
+        UnitSystem(base_units=base, preferred_units=["N"])
+    )
+    print(force_simplified.value, force_simplified.units.name)
+    # 5000.0 N
+
+You can combine multiple preferred derived units in the same system. The unit
+chosen during conversion depends on the dimensions of the quantity being
+converted:
+
+.. code-block:: python
+
+    material_system = UnitSystem(base_units=base, preferred_units=["MPa", "N"])
+
+    stress = Quantity(210e9, "Pa").convert(material_system)
+    print(stress.value, stress.units.name)
+    # 210000.0 MPa
+
+    load = Quantity(5000, "N").convert(material_system)
+    print(load.value, load.units.name)
+    # 5000.0 N
 
 Registering a Named Unit System
 --------------------------------
