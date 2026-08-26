@@ -16,8 +16,8 @@ concurrency:
 permissions:
   contents: read
   packages: read # Needed to pull images from GitHub Container Registry
-  pull-requests: read
-  issues: read
+  pull-requests: read # Needed for PR metadata during labeling and documentation checks
+  issues: read # Needed for issue metadata used by shared Ansys actions
 
 env:
   MAIN_PYTHON_VERSION: "3.12"

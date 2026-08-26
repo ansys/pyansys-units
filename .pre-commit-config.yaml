@@ -1,102 +1,102 @@
 ci:
-    autofix_commit_msg: 'chore: auto fixes from pre-commit hooks'
-    autoupdate_commit_msg: 'chore: pre-commit automatic update'
-    autoupdate_schedule: weekly
+  autofix_commit_msg: "chore: auto fixes from pre-commit hooks"
+  autoupdate_commit_msg: "chore: pre-commit automatic update"
+  autoupdate_schedule: weekly
 
 repos:
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
 
-- repo: https://github.com/psf/black
-  rev: 24.10.0
-  hooks:
-  - id: black
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.19.1
+    hooks:
+      - id: blacken-docs
+        additional_dependencies: [black==24.10.0]
 
-- repo: https://github.com/adamchainz/blacken-docs
-  rev: 1.19.1
-  hooks:
-  - id: blacken-docs
-    additional_dependencies: [black==24.10.0]
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.0
+    hooks:
+      - id: isort
 
-- repo: https://github.com/pycqa/isort
-  rev: 6.0.0
-  hooks:
-  - id: isort
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
 
-- repo: https://github.com/PyCQA/flake8
-  rev: 7.1.1
-  hooks:
-  - id: flake8
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        args: [--ignore-words-list=Synopsys]
 
-- repo: https://github.com/codespell-project/codespell
-  rev: v2.3.0
-  hooks:
-  - id: codespell
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.7
+    hooks:
+      - id: docformatter
+        additional_dependencies: [tomli]
 
-- repo: https://github.com/PyCQA/docformatter
-  rev: v1.7.7
-  hooks:
-    - id: docformatter
-      additional_dependencies: [tomli]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: check-yaml
+      - id: trailing-whitespace
 
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0
-  hooks:
-    - id: check-merge-conflict
-    - id: debug-statements
-    - id: check-yaml
-    - id: trailing-whitespace
+  # this validates our github workflow files
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.29.4
+    hooks:
+      - id: check-github-workflows
 
-# this validates our github workflow files
-- repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.29.4
-  hooks:
-    - id: check-github-workflows
+  - repo: https://github.com/ansys/pre-commit-hooks
+    rev: v0.5.1
+    hooks:
+      - id: add-license-headers
+        args:
+          - --start_year=2023
 
-- repo: https://github.com/ansys/pre-commit-hooks
-  rev: v0.5.1
-  hooks:
-    - id: add-license-headers
-      args:
-      - --start_year=2023
+  - repo: local
+    hooks:
+      - id: generate-common
+        name: Generate common units
+        entry: uv run scripts/generate_common.py
+        language: system
+        files: ^(src/ansys/units/(cfg\.yaml|_constants\.py)|scripts/generate_common\.py)$
+        pass_filenames: false
+        always_run: false
 
-- repo: local
-  hooks:
-    - id: generate-common
-      name: Generate common units
-      entry: uv run scripts/generate_common.py
-      language: system
-      files: ^(src/ansys/units/(cfg\.yaml|_constants\.py)|scripts/generate_common\.py)$
-      pass_filenames: false
-      always_run: false
+      - id: generate-quantity-keys
+        name: Generate quantity keys
+        entry: uv run scripts/generate_keys.py
+        language: system
+        files: ^(src/ansys/units/quantity_tables/.*\.yaml|scripts/generate_keys\.py)$
+        pass_filenames: false
+        always_run: false
 
-    - id: generate-quantity-keys
-      name: Generate quantity keys
-      entry: uv run scripts/generate_keys.py
-      language: system
-      files: ^(src/ansys/units/quantity_tables/.*\.yaml|scripts/generate_keys\.py)$
-      pass_filenames: false
-      always_run: false
+      - id: generate-expanded-vector-quantities
+        name: Generate expanded vector quantities
+        entry: uv run scripts/generate_expanded_vector_quantities.py
+        language: system
+        files: ^(src/ansys/units/quantity_dimensions\.py|scripts/generate_expanded_vector_quantities\.py)$
+        pass_filenames: false
+        always_run: false
 
-    - id: generate-expanded-vector-quantities
-      name: Generate expanded vector quantities
-      entry: uv run scripts/generate_expanded_vector_quantities.py
-      language: system
-      files: ^(src/ansys/units/quantity_dimensions\.py|scripts/generate_expanded_vector_quantities\.py)$
-      pass_filenames: false
-      always_run: false
+      - id: generate-variable-descriptors
+        name: Generate variable descriptors
+        entry: uv run scripts/generate_variable_descriptor.py
+        language: system
+        files: ^(src/ansys/units/(quantity_dimensions|base_dimensions)\.py|scripts/generate_variable_descriptor\.py)$
+        pass_filenames: false
+        always_run: false
 
-    - id: generate-variable-descriptors
-      name: Generate variable descriptors
-      entry: uv run scripts/generate_variable_descriptor.py
-      language: system
-      files: ^(src/ansys/units/(quantity_dimensions|base_dimensions)\.py|scripts/generate_variable_descriptor\.py)$
-      pass_filenames: false
-      always_run: false
-
-    - id: check-generated-files
-      name: Check generated files are up-to-date
-      entry: |
-        git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py src/ansys/units/quantity_dimensions.py src/ansys/units/variable_descriptor/variable_descriptor.py
-      language: system
-      files: ^src/ansys/units/(common\.py|quantity_tables/keys\.py|quantity_dimensions\.py|variable_descriptor/variable_descriptor\.py)$
-      pass_filenames: false
-      always_run: false
+      - id: check-generated-files
+        name: Check generated files are up-to-date
+        entry: |
+          git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py src/ansys/units/quantity_dimensions.py src/ansys/units/variable_descriptor/variable_descriptor.py
+        language: system
+        files: ^src/ansys/units/(common\.py|quantity_tables/keys\.py|quantity_dimensions\.py|variable_descriptor/variable_descriptor\.py)$
+        pass_filenames: false
+        always_run: false
