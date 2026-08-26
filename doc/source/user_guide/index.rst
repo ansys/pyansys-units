@@ -19,5 +19,6 @@ code to work with physical quantities.
    quantity_dimensions
    variable_descriptor
    register_unit
+   unit_systems
    pandas_integration
    unit_aliases
