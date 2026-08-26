@@ -47,7 +47,12 @@ with open(qc_path, "r") as qc_yaml:
     qc_data = yaml.safe_load(qc_yaml)
 
 _multipliers: dict[str, float] = qc_data["multipliers"]
-_unit_systems: dict["Systems", dict["BaseUnit", "UnitKey"]] = qc_data["unit_systems"]
+# Named unit systems, keyed by system name (e.g. "SI", "CGS", "BT", or any
+# custom name registered at runtime via ``UnitSystem.register_system``).
+# Plain ``str`` is used here (rather than the closed ``Systems``/``BaseUnit``/
+# ``UnitKey`` literal types) since custom-registered system names and their
+# units are not statically known ahead of time.
+_unit_systems: dict[str, dict[str, str]] = qc_data["unit_systems"]
 
 
 class _BaseUnitInfo(TypedDict):
