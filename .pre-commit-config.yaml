@@ -29,7 +29,7 @@ repos:
     rev: v2.3.0
     hooks:
       - id: codespell
-        args: [--ignore-words-list=Synopsys]
+        args: ["--ignore-words-list=Synopsys,synopsys"]
 
   - repo: https://github.com/PyCQA/docformatter
     rev: v1.7.7
