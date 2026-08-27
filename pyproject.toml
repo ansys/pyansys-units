@@ -1,0 +1,48 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools>=45.0",
+    "wheel>=0.37.0",
+]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = """
+-v
+--cov=ansys
+--cov-report=xml:cov_xml.xml
+--cov-report=html
+--durations=0
+--show-capture=all
+"""
+
+
+[tool.black]
+line-length = 88
+
+
+[tool.isort]
+profile = "black"
+force_sort_within_sections = true
+line_length = 88
+default_section = "THIRDPARTY"
+filter_files = "true"
+known_first_party = ["ansys"]
+
+
+[tool.docformatter]
+in-place = true
+exclude = [
+    "tests/"
+]
+wrap-descriptions = 88
+wrap-summaries = 88
+
+
+[tool.coverage.run]
+source = ["ansys.units"]
+
+
+[tool.coverage.report]
+show_missing = true
