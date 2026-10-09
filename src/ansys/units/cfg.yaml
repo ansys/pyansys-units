@@ -226,7 +226,7 @@ derived_units:
     composition: N m^-2
     factor: 1
   bar:
-    composition: kg m^-1 s^-2
+    composition: Pa
     factor: 1.0e+05
   W:
     composition: N m s^-1
