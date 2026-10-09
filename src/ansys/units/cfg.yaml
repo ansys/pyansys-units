@@ -162,6 +162,10 @@ base_units:
     type: ANGLE
     si_scaling_factor: 0.017453292519943295
     si_offset: 0
+  rev:
+    type: ANGLE
+    si_scaling_factor: 6.283185307179586
+    si_offset: 0
   K:
     type: TEMPERATURE
     si_scaling_factor: 1
@@ -209,12 +213,21 @@ base_units:
 #   factor: <value>
 
 derived_units:
+  min:
+    composition: s
+    factor: 60
+  h:
+    composition: s
+    factor: 3600
   N:
     composition: kg m s^-2
     factor: 1
   Pa:
     composition: N m^-2
     factor: 1
+  bar:
+    composition: kg m^-1 s^-2
+    factor: 1.0e+05
   W:
     composition: N m s^-1
     factor: 1
@@ -245,9 +258,6 @@ derived_units:
   erg:
     composition: dyne cm
     factor: 1
-  h:
-    composition: s
-    factor: 3600
   pdl:
     composition: lbm ft s^-2
     factor: 1
@@ -293,9 +303,11 @@ derived_units:
 # <alias>: <canonical unit name>
 
 aliases:
+  hour: h
   deg: degree
   rad: radian
   sec: s
+  minute: min
   lb_mass: lbm
   pound: lb
   meter: m

@@ -43,6 +43,7 @@ UnitKey = Literal[
     "sr",
     "radian",
     "degree",
+    "rev",
     "K",
     "C",
     "F",
@@ -51,8 +52,11 @@ UnitKey = Literal[
     "delta_C",
     "delta_F",
     "delta_R",
+    "min",
+    "h",
     "N",
     "Pa",
+    "bar",
     "W",
     "J",
     "V",
@@ -63,7 +67,6 @@ UnitKey = Literal[
     "T",
     "dyne",
     "erg",
-    "h",
     "pdl",
     "psi",
     "lbf",
@@ -110,6 +113,7 @@ SolidAngleKey = Literal["sr",]
 AngleKey = Literal[
     "radian",
     "degree",
+    "rev",
 ]
 
 TemperatureKey = Literal[

@@ -122,6 +122,12 @@ def test_pyunits_angle_works_with_trigonometry():
     # see that PyUnits goes to radians for the float conversion, which is nice
     assert math.cos(get_si_value(sixty_degrees)) == pytest.approx(0.5)
 
+    one_rev = Quantity(1.0, "rev")
+    assert one_rev == Quantity(360.0, "degree")
+    assert one_rev == Quantity(2.0 * math.pi, "radian")
+    assert math.sin(get_si_value(one_rev)) == pytest.approx(0.0)
+    assert math.cos(get_si_value(one_rev)) == pytest.approx(1.0)
+
 
 @pytest.mark.developer_only
 def test_pint_conversion_between_Hz_and_rps_and_radians_per_second():
