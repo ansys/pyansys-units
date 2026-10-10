@@ -48,6 +48,18 @@ def test_base_units():
     assert kg.si_scaling_factor == 1
     assert kg.si_offset == 0
 
+    inch = Unit("in")
+    assert inch.name == "in"
+    assert inch.dimensions == Dimensions({dims.LENGTH: 1})
+    assert inch.si_scaling_factor == 0.0254
+    assert inch.si_offset == 0
+
+    minute = Unit("min")
+    assert minute.name == "min"
+    assert minute.dimensions == Dimensions({dims.TIME: 1})
+    assert minute.si_scaling_factor == 60
+    assert minute.si_offset == 0
+
 
 def test_equal_dimensions_not_equal_units():
     l = Unit("l")
@@ -63,6 +75,15 @@ def test_derived_units():
     assert N.name == "N"
     assert N.si_units == "kg m s^-2"
     assert N.si_scaling_factor == 1
+
+    bar = Unit("bar")
+    assert bar.name == "bar"
+    assert bar.si_units == "kg m^-1 s^-2"
+    assert bar.dimensions == Dimensions(
+        {BaseDimensions.MASS: 1, BaseDimensions.LENGTH: -1, BaseDimensions.TIME: -2}
+    )
+    assert bar.si_scaling_factor == 100000
+    assert bar.si_offset == 0
 
 
 def test_multiple_multipliers():

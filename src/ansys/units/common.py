@@ -43,6 +43,7 @@ __all__ = (
     "sr",
     "radian",
     "degree",
+    "rev",
     "K",
     "C",
     "F",
@@ -51,8 +52,11 @@ __all__ = (
     "delta_C",
     "delta_F",
     "delta_R",
+    "min",
+    "h",
     "N",
     "Pa",
+    "bar",
     "W",
     "J",
     "V",
@@ -63,7 +67,6 @@ __all__ = (
     "T",
     "dyne",
     "erg",
-    "h",
     "pdl",
     "psi",
     "lbf",
@@ -96,6 +99,7 @@ cd = Unit("cd")  #: A predefined unit for a cd
 sr = Unit("sr")  #: A predefined unit for a sr
 radian = Unit("radian")  #: A predefined unit for a radian
 degree = Unit("degree")  #: A predefined unit for a degree
+rev = Unit("rev")  #: A predefined unit for a rev
 K = Unit("K")  #: A predefined unit for a K
 C = Unit("C")  #: A predefined unit for a C
 F = Unit("F")  #: A predefined unit for a F
@@ -104,8 +108,11 @@ delta_K = Unit("delta_K")  #: A predefined unit for a delta_K
 delta_C = Unit("delta_C")  #: A predefined unit for a delta_C
 delta_F = Unit("delta_F")  #: A predefined unit for a delta_F
 delta_R = Unit("delta_R")  #: A predefined unit for a delta_R
+min = Unit("min")  #: A predefined unit for a min
+h = Unit("h")  #: A predefined unit for a h
 N = Unit("N")  #: A predefined unit for a N
 Pa = Unit("Pa")  #: A predefined unit for a Pa
+bar = Unit("bar")  #: A predefined unit for a bar
 W = Unit("W")  #: A predefined unit for a W
 J = Unit("J")  #: A predefined unit for a J
 V = Unit("V")  #: A predefined unit for a V
@@ -116,7 +123,6 @@ Wb = Unit("Wb")  #: A predefined unit for a Wb
 T = Unit("T")  #: A predefined unit for a T
 dyne = Unit("dyne")  #: A predefined unit for a dyne
 erg = Unit("erg")  #: A predefined unit for a erg
-h = Unit("h")  #: A predefined unit for a h
 pdl = Unit("pdl")  #: A predefined unit for a pdl
 psi = Unit("psi")  #: A predefined unit for a psi
 lbf = Unit("lbf")  #: A predefined unit for a lbf
