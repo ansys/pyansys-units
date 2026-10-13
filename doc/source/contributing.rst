@@ -33,7 +33,7 @@ Windows
 1. Install poppler
     i. Download `Release-24.08.0-0.zip <https://github.com/oschwartz10612/poppler-windows/releases/download/v24.08.0-0/Release-24.08.0-0.zip>`_.
     ii. Unzip `Release-24.08.0-0.zip`.
-    iii. Add `<path to..>/Release-24.08.0-0/poppler-24.08.0/Library/bin` to PATH.
+    iii. Add `<path to..>/poppler-24.08.0/Library/bin` to PATH.
 
 2. Execute the following commands:
 
@@ -41,6 +41,7 @@ Windows
 
     pip install -e .[doc]
     quarto install tinytex --no-prompt --update-path
+    set QUARTO_PYTHON=%VIRTUAL_ENV%\Scripts\python.exe
     cd doc
     make html
 
