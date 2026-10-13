@@ -113,6 +113,10 @@ deg = Quantity(90, "degree")
 math.sin(deg)  # 1.0
 ```
 
+```{=latex}
+\columnbreak
+```
+
 ### Pre-defined unit systems
 
 ```{python}
@@ -263,7 +267,7 @@ ureg.register_alias("angular_deg", "degree")
 Unit("angular_deg")  # resolves to "degree"
 ```
 
-### Registering custom units at construction
+### Registering custom units
 
 ```{python}
 from ansys.units import UnitRegistry, get_si_value
@@ -275,20 +279,15 @@ ur = UnitRegistry(custom_units=[
 
 q = ur.Quantity(1, "micron")  # String-based lookup
 get_si_value(q)  # 1e-06
-```
-
-### Registering custom units after construction
-
-```{python}
-from ansys.units import UnitRegistry
-
 ur = UnitRegistry()
 ur.register_unit(unit="Q", composition="N m", factor=1)
 ur.Q == ur.J  # True
-
-# String-based lookup methods
 unit = ur.get_unit("Q")
 q = ur.Quantity(5, "Q")
+```
+
+```{=latex}
+\columnbreak
 ```
 
 ### Quantity dimensions
@@ -321,13 +320,9 @@ plt.show()
 ```{python}
 import pandas as pd
 
-# Create unit-aware Series
 distances = pd.Series([1.0, 2.0, 3.0], dtype="quantity[m]")
-
-# Convert units
 distances_cm = distances.units.to("cm")
 
-# Unit-aware DataFrame
 df = pd.DataFrame({
     "length": pd.Series([1.0, 2.0], dtype="quantity[m]"),
     "mass": pd.Series([1.0, 2.0], dtype="quantity[kg]"),
