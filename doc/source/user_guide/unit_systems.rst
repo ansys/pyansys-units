@@ -38,13 +38,13 @@ consistent unit system.
 A ``UnitSystem`` is only the set of base units: it has no opinion on how
 derived quantities should be displayed. Choosing a display unit such as
 ``"MPa"`` instead of an expanded expression is a separate concern, handled by
-:class:`~ansys.units.preferred_units.PreferredUnits` (see below).
+``PreferredUnits`` (see below).
 
 Preferred Units
 ---------------
 
 For example, the classic mm-tonne-second system used by structural material
-databases produces stress/pressure values that are numerically consistent
+databases produces stress and pressure values that are numerically consistent
 with ``MPa``, but without any extra configuration, converting through that
 system produces an expanded base-unit expression:
 
@@ -64,10 +64,9 @@ system produces an expanded base-unit expression:
     print(expanded.value, expanded.units.name)
     # 210000.0 tonne mm^-1 s^-2
 
-Pass a :class:`~ansys.units.preferred_units.PreferredUnits` object (or a
-plain string/list, which is wrapped automatically) to
-:meth:`Quantity.convert() <ansys.units.quantity.Quantity.convert>` to pick a
-named unit for matching dimensions instead:
+Pass a ``PreferredUnits`` object (or a plain string or list, which is wrapped
+automatically) to ``Quantity.convert()`` to pick a named unit for matching
+dimensions instead:
 
 .. code-block:: python
 
@@ -107,9 +106,8 @@ Quantity-Type-Aware Preferred Units
 Matching purely by dimensions cannot distinguish quantities that share
 dimensions but mean different things, such as torque and energy (both
 ``M L^2 T^-2``), or stress and energy density (both ``M L^-1 T^-2``). To
-disambiguate, pair a unit with a
-:class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor`
-(for example from ``VariableCatalog``) instead of a bare unit, and pass the
+disambiguate, pair a unit with a ``VariableDescriptor`` (for example from
+``VariableCatalog``) instead of a bare unit, and pass the
 same descriptor as ``quantity_type`` to ``convert()``:
 
 .. code-block:: python
