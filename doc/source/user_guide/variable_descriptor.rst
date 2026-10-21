@@ -41,10 +41,12 @@ Represents a single named physical quantity, including its dimensional signature
 The kind of quantity (scalar or vector) is indicated by the ``QuantityKind`` enumeration.
 
 .. data:: ansys.units.variable_descriptor.ScalarVariableDescriptor
+   :no-index:
 
    A type alias for scalar variable descriptors.
 
 .. data:: ansys.units.variable_descriptor.VectorVariableDescriptor
+   :no-index:
 
    A type alias for vector variable descriptors.
 

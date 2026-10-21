@@ -42,8 +42,14 @@ from ansys.units._unit_parsing import (
 from ansys.units._unit_parsing import UnconfiguredUnit as _UnconfiguredUnit
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
-from ansys.units.quantity_tables.keys import QuantityKey
+from ansys.units.preferred_units import (
+    PreferredUnits,
+    UnitLike,
+    _coerce_preferred_units,
+)
+from ansys.units.quantity_tables.keys import QuantityKey, UnitKey
 from ansys.units.systems import UnitSystem
+from ansys.units.variable_descriptor import VariableDescriptor
 
 UnconfiguredUnit = _UnconfiguredUnit
 
@@ -115,6 +121,21 @@ class Unit:
         system: UnitSystem | str = None,
         table: Mapping[QuantityKey, float] | None = None,
         copy_from: Unit | None = None,
+        preferred_units: (
+            PreferredUnits
+            | Sequence[
+                UnitKey
+                | str
+                | UnitLike
+                | tuple[VariableDescriptor, UnitKey | str | UnitLike]
+            ]
+            | UnitKey
+            | str
+            | UnitLike
+            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
+            | None
+        ) = None,
+        quantity_type: VariableDescriptor | None = None,
     ):
         if copy_from:
             if (units) and units != copy_from.name:
@@ -134,7 +155,12 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
-            self._name = _dim_to_units(dimensions=dimensions, system=system)
+            self._name = _dim_to_units(
+                dimensions=dimensions,
+                system=system,
+                preferred_units=preferred_units,
+                quantity_type=quantity_type,
+            )
             self._dimensions = self._remove_angle_as_dim(self._dimensions)
         else:
             self._name = ""
@@ -296,7 +322,25 @@ class Unit:
         """The units base dimensions."""
         return self._dimensions
 
-    def convert(self, system: UnitSystem) -> Unit:
+    def convert(
+        self,
+        system: UnitSystem,
+        preferred_units: (
+            PreferredUnits
+            | Sequence[
+                UnitKey
+                | str
+                | UnitLike
+                | tuple[VariableDescriptor, UnitKey | str | UnitLike]
+            ]
+            | UnitKey
+            | str
+            | UnitLike
+            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
+            | None
+        ) = None,
+        quantity_type: VariableDescriptor | None = None,
+    ) -> Unit:
         """
         Convert a unit into the unit system.
 
@@ -304,6 +348,14 @@ class Unit:
         ----------
         system : UnitSystem
             Unit system to convert to.
+        preferred_units : PreferredUnits, optional
+            Preferred display/conversion units for derived dimensions. A plain
+            unit, a ``(VariableDescriptor, unit)`` pair, or a sequence of
+            either is wrapped in a :class:`~ansys.units.preferred_units.PreferredUnits`
+            automatically.
+        quantity_type : VariableDescriptor, optional
+            The specific quantity type being converted, if known. Used to
+            resolve quantity-type-specific entries in ``preferred_units``.
 
         Returns
         -------
@@ -317,7 +369,12 @@ class Unit:
         >>> bt = UnitSystem(system="BT")
         >>> speed_bt = speed_si.convert(bt)
         """
-        return Unit(dimensions=self.dimensions, system=system)
+        return Unit(
+            dimensions=self.dimensions,
+            system=system,
+            preferred_units=preferred_units,
+            quantity_type=quantity_type,
+        )
 
     def __str__(self) -> str:
         return self.name
@@ -425,6 +482,21 @@ def _get_config(name: str) -> _BaseUnitInfo | _DerivedUnitInfo | None:
 def _dim_to_units(
     system: UnitSystem,
     dimensions: Dimensions,
+    preferred_units: (
+        PreferredUnits
+        | Sequence[
+            UnitKey
+            | str
+            | UnitLike
+            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
+        ]
+        | UnitKey
+        | str
+        | UnitLike
+        | tuple[VariableDescriptor, UnitKey | str | UnitLike]
+        | None
+    ) = None,
+    quantity_type: VariableDescriptor | None = None,
 ) -> str:
     """
     Convert a dimensions list into a unit string.
@@ -437,6 +509,12 @@ def _dim_to_units(
         system : UnitSystem object, optional
             Unit system for dimensions list.
             Default is SI units.
+        preferred_units : PreferredUnits, optional
+            Conversion policy deciding which named derived unit to emit for
+            matching dimensions (or quantity type), instead of the expanded
+            base-unit expression.
+        quantity_type : VariableDescriptor, optional
+            The specific quantity type being converted, if known.
 
         Returns
         -------
@@ -446,9 +524,13 @@ def _dim_to_units(
     if not system:
         system = UnitSystem()
 
-    preferred_unit = system.preferred_unit_for(dimensions)
-    if preferred_unit:
-        return preferred_unit
+    resolved_preferred_units = _coerce_preferred_units(preferred_units)
+    if resolved_preferred_units:
+        preferred_unit = resolved_preferred_units.unit_for(
+            dimensions, quantity_type=quantity_type
+        )
+        if preferred_unit:
+            return preferred_unit
 
     units = ""
 

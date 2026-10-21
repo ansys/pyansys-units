@@ -120,6 +120,28 @@ def test_conversion():
     assert q4.units == Unit("kg m s")
 
 
+def test_conversion_with_preferred_units():
+    # Same UnitSystem, different PreferredUnits -> different presentation.
+    # This is the core substitutability fix: UnitSystem no longer carries a
+    # fixed display policy, so the policy is supplied per call instead.
+    dims = BaseDimensions
+    mm_tonne_second = UnitSystem(
+        base_units={
+            dims.MASS: "tonne",
+            dims.LENGTH: "mm",
+            dims.TIME: "s",
+        }
+    )
+    q = Quantity(210e9, "Pa")
+
+    expanded = q.convert(mm_tonne_second)
+    simplified = q.convert(mm_tonne_second, preferred_units=["MPa"])
+
+    assert expanded.units.name == "tonne mm^-1 s^-2"
+    assert simplified.units.name == "MPa"
+    assert simplified.value == pytest.approx(210000.0)
+
+
 def test_copy():
     meter = Quantity(1.0, "m")
     copy_meter = Quantity(copy_from=meter)
