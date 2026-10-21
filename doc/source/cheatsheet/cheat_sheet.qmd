@@ -176,6 +176,24 @@ bt = UnitSystem(system="BT")
 si.convert(bt)
 ```
 
+### Preferred units conversion policy
+
+```{python}
+from ansys.units import BaseDimensions, PreferredUnits, Quantity, UnitSystem
+
+dims = BaseDimensions
+mm_tonne_second = UnitSystem(
+    base_units={dims.MASS: "tonne", dims.LENGTH: "mm", dims.TIME: "s"}
+)
+
+Quantity(210e9, "Pa").convert(mm_tonne_second).units.name  # 'tonne mm^-1 s^-2'
+
+material_prefs = PreferredUnits(["MPa"])
+Quantity(210e9, "Pa").convert(
+    mm_tonne_second, preferred_units=material_prefs
+).units.name  # 'MPa'
+```
+
 ### Temperature and temperature difference
 
 ```{python}
@@ -267,6 +285,10 @@ ureg.register_alias("angular_deg", "degree")
 Unit("angular_deg")  # resolves to "degree"
 ```
 
+```{=latex}
+\columnbreak
+```
+
 ### Registering custom units
 
 ```{python}
@@ -274,32 +296,21 @@ from ansys.units import UnitRegistry, get_si_value
 
 ur = UnitRegistry(custom_units=[
     {"unit": "micron", "composition": "m", "factor": 1e-6},
-    {"unit": "thou", "composition": "m", "factor": 2.54e-5},
 ])
-
 q = ur.Quantity(1, "micron")  # String-based lookup
 get_si_value(q)  # 1e-06
-ur = UnitRegistry()
+
 ur.register_unit(unit="Q", composition="N m", factor=1)
 ur.Q == ur.J  # True
-unit = ur.get_unit("Q")
-q = ur.Quantity(5, "Q")
-```
-
-```{=latex}
-\columnbreak
 ```
 
 ### Quantity dimensions
 
 ```{python}
-from ansys.units.quantity_dimensions import QuantityDimensions
+from ansys.units import QuantityDimensions
 
-force = QuantityDimensions.FORCE
-area = QuantityDimensions.AREA
-pressure = QuantityDimensions.PRESSURE
-
-pressure == force / area  # True
+qd = QuantityDimensions
+qd.PRESSURE == qd.FORCE / qd.AREA  # True
 ```
 
 ### Plotting with Matplotlib
