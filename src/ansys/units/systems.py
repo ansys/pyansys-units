@@ -25,6 +25,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
+from typing_extensions import override
+
 from ansys.units._constants import _base_units, _unit_systems
 from ansys.units._unit_parsing import _units_to_dim
 from ansys.units.base_dimensions import BaseDimensions
@@ -386,6 +388,7 @@ class UnitSystem:
             for dim in BaseDimensions
         )
 
+    @override
     def __hash__(self) -> int:
         return hash(
             tuple(

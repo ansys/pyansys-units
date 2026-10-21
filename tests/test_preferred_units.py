@@ -224,14 +224,17 @@ def test_dimension_only_preferred_unit_labels_stress_and_energy_density_the_same
 
 
 def test_quantity_type_disambiguates_torque_from_energy():
-    VariableCatalog.add(
-        "TORQUE_TEST",
-        VariableCatalog.ENERGY.dimension,
-        subcategory="preferred_units_test",
-    )
+    subcategory = "preferred_units_test"
+    if not hasattr(VariableCatalog, subcategory):
+        VariableCatalog.add(
+            "TORQUE_TEST",
+            VariableCatalog.ENERGY.dimension,
+            subcategory=subcategory,
+        )
+    torque_descriptor = getattr(getattr(VariableCatalog, subcategory), "TORQUE_TEST")
     prefs = PreferredUnits(
         [
-            (VariableCatalog.preferred_units_test.TORQUE_TEST, "N m"),
+            (torque_descriptor, "N m"),
             (VariableCatalog.ENERGY, "J"),
         ]
     )
@@ -241,7 +244,7 @@ def test_quantity_type_disambiguates_torque_from_energy():
     as_torque = work.convert(
         UnitSystem(),
         preferred_units=prefs,
-        quantity_type=VariableCatalog.preferred_units_test.TORQUE_TEST,
+        quantity_type=torque_descriptor,
     )
     as_energy = work.convert(
         UnitSystem(), preferred_units=prefs, quantity_type=VariableCatalog.ENERGY

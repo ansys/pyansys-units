@@ -24,8 +24,9 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from typing import cast
 
-from typing_extensions import Protocol, override
+from typing_extensions import Protocol, TypeGuard, override
 
 from ansys.units._unit_parsing import _units_to_dim
 from ansys.units.base_dimensions import BaseDimensions
@@ -44,14 +45,13 @@ class UnitLike(Protocol):
     def dimensions(self) -> Dimensions: ...
 
 
-# A single preferred unit entry: either a bare unit (matched by its own dimensions)
-# or a ``(VariableDescriptor, unit)`` pair (matched by that specific quantity type).
-# Written out inline in signatures below (rather than as a module-level alias) since
-# ``UnitKey`` is a runtime ``Literal`` alias and this module relies on
-# ``from __future__ import annotations`` to keep annotations lazy.
+PreferredUnit = UnitKey | str | UnitLike
+DescriptorPreferredUnit = tuple[VariableDescriptor, PreferredUnit]
+PreferredUnitEntry = PreferredUnit | DescriptorPreferredUnit
+PreferredUnitInput = Sequence[PreferredUnitEntry] | PreferredUnitEntry | None
 
 
-def _is_descriptor_entry(entry: object) -> bool:
+def _is_descriptor_entry(entry: object) -> TypeGuard[DescriptorPreferredUnit]:
     """Return whether ``entry`` is a ``(VariableDescriptor, unit)`` pair."""
     return (
         isinstance(entry, tuple)
@@ -60,30 +60,21 @@ def _is_descriptor_entry(entry: object) -> bool:
     )
 
 
-def _iter_preferred_units(
-    units: (
-        Sequence[
-            UnitKey
-            | str
-            | UnitLike
-            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-        ]
-        | UnitKey
-        | str
-        | UnitLike
-        | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-        | None
-    ),
-) -> Sequence[
-    UnitKey | str | UnitLike | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-]:
+def _is_preferred_unit(entry: PreferredUnitEntry) -> TypeGuard[PreferredUnit]:
+    """Return whether ``entry`` is a bare preferred unit value."""
+    return not _is_descriptor_entry(entry)
+
+
+def _iter_preferred_units(units: PreferredUnitInput) -> Sequence[PreferredUnitEntry]:
     """Return preferred units as a sequence of individual entries."""
     if units is None:
         return []
-    if isinstance(units, str) or _is_descriptor_entry(units):
+    if isinstance(units, str):
+        return [units]
+    if _is_descriptor_entry(units):
         return [units]
     if isinstance(units, Sequence):
-        return list(units)
+        return list(cast(Sequence[PreferredUnitEntry], units))
     return [units]
 
 
@@ -179,23 +170,11 @@ class PreferredUnits:
 
     def __init__(
         self,
-        units: (
-            Sequence[
-                UnitKey
-                | str
-                | UnitLike
-                | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            ]
-            | UnitKey
-            | str
-            | UnitLike
-            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            | None
-        ) = None,
+        units: PreferredUnitInput = None,
     ):
         by_dimensions: dict[DimensionsKey, str] = {}
         by_descriptor: dict[VariableDescriptor, str] = {}
-        entries = _iter_preferred_units(units)
+        entries: Sequence[PreferredUnitEntry] = _iter_preferred_units(units)
 
         for entry in entries:
             if _is_descriptor_entry(entry):
@@ -208,6 +187,12 @@ class PreferredUnits:
                     )
                 by_descriptor[descriptor] = name
             else:
+                if not _is_preferred_unit(entry):
+                    msg = (
+                        "Preferred unit entries must be unit values or "
+                        "(VariableDescriptor, unit) pairs."
+                    )
+                    raise TypeError(msg)
                 name, dims_dict = _validate_preferred_unit(entry)
                 key = DimensionsKey(dims_dict)
                 existing = by_dimensions.get(key)
@@ -215,9 +200,9 @@ class PreferredUnits:
                     raise PreferredUnitAlreadyRegistered(existing, name)
                 by_dimensions[key] = name
 
-        self._by_dimensions = by_dimensions
-        self._by_descriptor = by_descriptor
-        self._entries = tuple(entries)
+        self._by_dimensions: dict[DimensionsKey, str] = by_dimensions
+        self._by_descriptor: dict[VariableDescriptor, str] = by_descriptor
+        self._entries: tuple[PreferredUnitEntry, ...] = tuple(entries)
 
     def unit_for(
         self,
@@ -248,18 +233,7 @@ class PreferredUnits:
 
     def with_units(
         self,
-        units: (
-            Sequence[
-                UnitKey
-                | str
-                | UnitLike
-                | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            ]
-            | UnitKey
-            | str
-            | UnitLike
-            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-        ),
+        units: PreferredUnitInput,
     ) -> PreferredUnits:
         """
         Return a new ``PreferredUnits`` combining these entries with additional ones.
@@ -294,25 +268,13 @@ class PreferredUnits:
             )
         )
 
+    @override
     def __repr__(self) -> str:
         return f"PreferredUnits({list(self._entries)!r})"
 
 
-def _coerce_preferred_units(
-    preferred_units: (
-        PreferredUnits
-        | Sequence[
-            UnitKey
-            | str
-            | UnitLike
-            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-        ]
-        | UnitKey
-        | str
-        | UnitLike
-        | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-        | None
-    ),
+def _coerce_preferred_units(  # pyright: ignore[reportUnusedFunction]
+    preferred_units: PreferredUnits | PreferredUnitInput,
 ) -> PreferredUnits | None:
     """Wrap a plain unit, sequence, or ``None`` into a ``PreferredUnits`` instance."""
     if preferred_units is None or isinstance(preferred_units, PreferredUnits):

@@ -43,11 +43,11 @@ from ansys.units._unit_parsing import UnconfiguredUnit as _UnconfiguredUnit
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.preferred_units import (
+    PreferredUnitInput,
     PreferredUnits,
-    UnitLike,
     _coerce_preferred_units,
 )
-from ansys.units.quantity_tables.keys import QuantityKey, UnitKey
+from ansys.units.quantity_tables.keys import QuantityKey
 from ansys.units.systems import UnitSystem
 from ansys.units.variable_descriptor import VariableDescriptor
 
@@ -118,23 +118,10 @@ class Unit:
         units: str | None = None,
         config: Mapping[str, Any] | None = None,
         dimensions: Dimensions | None = None,
-        system: UnitSystem | str = None,
+        system: UnitSystem | str | None = None,
         table: Mapping[QuantityKey, float] | None = None,
         copy_from: Unit | None = None,
-        preferred_units: (
-            PreferredUnits
-            | Sequence[
-                UnitKey
-                | str
-                | UnitLike
-                | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            ]
-            | UnitKey
-            | str
-            | UnitLike
-            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            | None
-        ) = None,
+        preferred_units: PreferredUnits | PreferredUnitInput = None,
         quantity_type: VariableDescriptor | None = None,
     ):
         if copy_from:
@@ -155,6 +142,8 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
+            if not isinstance(system, UnitSystem):
+                system = UnitSystem(system=system or "SI")
             self._name = _dim_to_units(
                 dimensions=dimensions,
                 system=system,
@@ -325,20 +314,7 @@ class Unit:
     def convert(
         self,
         system: UnitSystem,
-        preferred_units: (
-            PreferredUnits
-            | Sequence[
-                UnitKey
-                | str
-                | UnitLike
-                | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            ]
-            | UnitKey
-            | str
-            | UnitLike
-            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            | None
-        ) = None,
+        preferred_units: PreferredUnits | PreferredUnitInput = None,
         quantity_type: VariableDescriptor | None = None,
     ) -> Unit:
         """
@@ -482,20 +458,7 @@ def _get_config(name: str) -> _BaseUnitInfo | _DerivedUnitInfo | None:
 def _dim_to_units(
     system: UnitSystem,
     dimensions: Dimensions,
-    preferred_units: (
-        PreferredUnits
-        | Sequence[
-            UnitKey
-            | str
-            | UnitLike
-            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-        ]
-        | UnitKey
-        | str
-        | UnitLike
-        | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-        | None
-    ) = None,
+    preferred_units: PreferredUnits | PreferredUnitInput = None,
     quantity_type: VariableDescriptor | None = None,
 ) -> str:
     """

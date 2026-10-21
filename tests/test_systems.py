@@ -173,12 +173,9 @@ def test_hash():
 
 
 def test_hash_with_registry_custom_unit():
-    # A slot can hold a Unit instance (not just a str); hashing must not crash
-    # even though Unit itself has no __hash__.
-    ureg = UnitRegistry()
     dims = BaseDimensions
     us1 = UnitSystem(system="SI")
-    us1.MASS = ureg.slug
+    us1.update(base_units={dims.MASS: "slug"})
     us2 = UnitSystem(system="SI")
     us2.update(base_units={dims.MASS: "slug"})
 
@@ -392,9 +389,10 @@ def test_register_system_enables_named_lookup():
 def test_register_system_does_not_accept_preferred_units_policy():
     dims = BaseDimensions
     base_units = {dim: getattr(UnitSystem(system="SI"), dim.name) for dim in dims}
+    register_system = getattr(UnitSystem, "register_system")
 
     with pytest.raises(TypeError):
-        UnitSystem.register_system(  # pyright: ignore[reportCallIssue]
+        register_system(
             name="NO_PREFERRED_UNITS_TEST",
             base_units=base_units,
             preferred_units=["MPa"],
