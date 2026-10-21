@@ -146,6 +146,16 @@ def test_eq_is_independent_of_construction_history():
     assert via_base_units == via_copy
 
 
+def test_unit_system_does_not_expose_preferred_units_policy():
+    us = UnitSystem()
+
+    assert not hasattr(us, "add_preferred_units")
+    assert not hasattr(us, "preferred_unit_for")
+
+    with pytest.raises(TypeError):
+        UnitSystem(preferred_units=["MPa"])  # pyright: ignore[reportCallIssue]
+
+
 def test_hash():
     dims = BaseDimensions
     base_units = {
@@ -377,6 +387,18 @@ def test_register_system_enables_named_lookup():
     # The registered system behaves like any other predefined system.
     us_copy = UnitSystem(copy_from=us)
     assert us_copy == us
+
+
+def test_register_system_does_not_accept_preferred_units_policy():
+    dims = BaseDimensions
+    base_units = {dim: getattr(UnitSystem(system="SI"), dim.name) for dim in dims}
+
+    with pytest.raises(TypeError):
+        UnitSystem.register_system(  # pyright: ignore[reportCallIssue]
+            name="NO_PREFERRED_UNITS_TEST",
+            base_units=base_units,
+            preferred_units=["MPa"],
+        )
 
 
 def test_register_system_duplicate_name_raises():
