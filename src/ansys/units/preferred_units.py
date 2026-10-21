@@ -233,6 +233,10 @@ class PreferredUnitAlreadyRegistered(ValueError):
         conflicting_unit: str,
     ):
         super().__init__(
-            f"`{existing_unit}` is already configured as the preferred unit for "
-            f"the same dimensions as `{conflicting_unit}`."
+            " ".join(
+                [
+                    f"`{existing_unit}` is already configured as the preferred unit for",
+                    f"the same dimensions as `{conflicting_unit}`.",
+                ]
+            )
         )
