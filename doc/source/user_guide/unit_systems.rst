@@ -100,41 +100,42 @@ A preferred unit only applies to quantities whose dimensions match; it has no
 effect on anything else, and quantities with no matching entry keep their
 expanded base-unit expression.
 
-Quantity-Type-Aware Preferred Units
-------------------------------------
+Dimension-Only Preferred Unit Matching
+---------------------------------------
 
-Matching purely by dimensions cannot distinguish quantities that share
-dimensions but mean different things, such as torque and energy (both
-``M L^2 T^-2``), or stress and energy density (both ``M L^-1 T^-2``). To
-disambiguate, pair a unit with a ``VariableDescriptor`` (for example from
-``VariableCatalog``) instead of a bare unit, and pass the
-same descriptor as ``quantity_type`` to ``convert()``:
+Preferred unit matching is intentionally based on dimensions only. This means
+that quantities with the same dimensions use the same preferred-unit entry,
+even when they represent different physical concepts. For example, torque and
+energy both have dimensions ``M L^2 T^-2``, while stress and energy density
+both have dimensions ``M L^-1 T^-2``:
 
 .. code-block:: python
 
-    from ansys.units.variable_descriptor import VariableCatalog
+    mechanical_prefs = PreferredUnits(["J", "MPa"])
 
-    prefs = PreferredUnits(
-        [
-            (VariableCatalog.ENERGY_DENSITY, "J m^-3"),
-            "MPa",  # generic fallback for other M L^-1 T^-2 quantities, e.g. stress
-        ]
+    torque = Quantity(50, "N m").convert(mm_tonne_second, preferred_units=mechanical_prefs)
+    print(torque.units.name)
+    # J
+
+    energy = Quantity(50, "J").convert(mm_tonne_second, preferred_units=mechanical_prefs)
+    print(energy.units.name)
+    # J
+
+    stress = Quantity(210e9, "Pa").convert(
+        mm_tonne_second, preferred_units=mechanical_prefs
     )
-
-    stress = Quantity(210e9, "Pa").convert(mm_tonne_second, preferred_units=prefs)
     print(stress.units.name)
     # MPa
 
-    energy_density = Quantity(210e9, "Pa").convert(
-        mm_tonne_second, preferred_units=prefs, quantity_type=VariableCatalog.ENERGY_DENSITY
+    energy_density = Quantity(210e9, "J m^-3").convert(
+        mm_tonne_second, preferred_units=mechanical_prefs
     )
     print(energy_density.units.name)
-    # J m^-3
+    # MPa
 
-A descriptor-keyed entry overrides the generic, dimension-only default only
-when that specific ``quantity_type`` is passed to ``convert()`` - it does not
-conflict with a dimension-only entry sharing the same dimensions. Without a
-``quantity_type`` argument, only dimension-only entries are considered.
+Quantity-type-aware preferences are not part of ``PreferredUnits``. If two
+concepts have identical dimensions but require different display units, keep
+that choice explicit in the calling code.
 
 Registering a Named Unit System
 --------------------------------

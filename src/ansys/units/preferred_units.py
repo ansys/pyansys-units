@@ -24,15 +24,13 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import cast
 
-from typing_extensions import Protocol, TypeGuard, override
+from typing_extensions import Protocol, override
 
 from ansys.units._unit_parsing import _units_to_dim
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_tables.keys import *  # noqa: F403
-from ansys.units.variable_descriptor import VariableDescriptor
 
 
 class UnitLike(Protocol):
@@ -46,35 +44,17 @@ class UnitLike(Protocol):
 
 
 PreferredUnit = UnitKey | str | UnitLike
-DescriptorPreferredUnit = tuple[VariableDescriptor, PreferredUnit]
-PreferredUnitEntry = PreferredUnit | DescriptorPreferredUnit
-PreferredUnitInput = Sequence[PreferredUnitEntry] | PreferredUnitEntry | None
+PreferredUnitInput = Sequence[PreferredUnit] | PreferredUnit | None
 
 
-def _is_descriptor_entry(entry: object) -> TypeGuard[DescriptorPreferredUnit]:
-    """Return whether ``entry`` is a ``(VariableDescriptor, unit)`` pair."""
-    return (
-        isinstance(entry, tuple)
-        and len(entry) == 2
-        and isinstance(entry[0], VariableDescriptor)
-    )
-
-
-def _is_preferred_unit(entry: PreferredUnitEntry) -> TypeGuard[PreferredUnit]:
-    """Return whether ``entry`` is a bare preferred unit value."""
-    return not _is_descriptor_entry(entry)
-
-
-def _iter_preferred_units(units: PreferredUnitInput) -> Sequence[PreferredUnitEntry]:
+def _iter_preferred_units(units: PreferredUnitInput) -> Sequence[PreferredUnit]:
     """Return preferred units as a sequence of individual entries."""
     if units is None:
         return []
     if isinstance(units, str):
         return [units]
-    if _is_descriptor_entry(units):
-        return [units]
     if isinstance(units, Sequence):
-        return list(cast(Sequence[PreferredUnitEntry], units))
+        return list(units)
     return [units]
 
 
@@ -121,7 +101,7 @@ class DimensionsKey:
 
 class PreferredUnits:
     """
-    An immutable mapping from dimensions (or quantity types) to a preferred unit name.
+    An immutable mapping from dimensions to a preferred unit name.
 
     ``PreferredUnits`` is a conversion policy: it decides which named derived unit,
     such as ``"MPa"``, is emitted instead of an expanded base-unit expression, such as
@@ -130,42 +110,27 @@ class PreferredUnits:
     ``UnitSystem`` and is passed directly to
     :meth:`~ansys.units.quantity.Quantity.convert`.
 
-    Entries can be:
-
-    - A bare unit (a unit name, a :class:`~ansys.units.unit.Unit` instance, or any
-      object with a ``name``), matched against any quantity with the same dimensions.
-    - A ``(VariableDescriptor, unit)`` pair, matched only against quantities
-      converted with that exact
-      :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor`
-      passed as ``quantity_type``. This disambiguates quantities that share
-      dimensions but are conceptually different, such as torque and energy (both
-      ``M L^2 T^-2``), or stress and energy density (both ``M L^-1 T^-2``).
-
-    Descriptor-matched entries take precedence over dimension-matched entries and do
-    not conflict with a dimension-matched entry of the same dimensions - that is the
-    intended way to override the generic default for one specific quantity type.
+        Entries are matched only by dimensions. Quantities with the same dimensions,
+        such as torque and energy (both ``M L^2 T^-2``), or stress and energy density
+        (both ``M L^-1 T^-2``), share the same preferred-unit entry.
 
     Parameters
     ----------
     units: optional
-        Preferred unit entries. A single bare unit, a single
-        ``(VariableDescriptor, unit)`` pair, or a sequence mixing both styles.
+        Preferred unit entries: a single unit name, a :class:`~ansys.units.unit.Unit`
+        instance, any object with a ``name``, or a sequence of these values.
 
     Raises
     ------
     UnconfiguredPreferredUnit
         If a unit cannot be resolved to a known, dimensioned unit.
     PreferredUnitAlreadyRegistered
-        If two entries would register different units for the same dimensions, or
-        for the same :class:`VariableDescriptor`.
+        If two entries would register different units for the same dimensions.
 
     Examples
     --------
     >>> from ansys.units import PreferredUnits
-    >>> from ansys.units.variable_descriptor import VariableCatalog
-    >>> prefs = PreferredUnits(
-    ...     ["MPa", (VariableCatalog.ENERGY_DENSITY, "J/m^3")]
-    ... )
+    >>> prefs = PreferredUnits(["MPa", "N"])
     """
 
     def __init__(
@@ -173,41 +138,22 @@ class PreferredUnits:
         units: PreferredUnitInput = None,
     ):
         by_dimensions: dict[DimensionsKey, str] = {}
-        by_descriptor: dict[VariableDescriptor, str] = {}
-        entries: Sequence[PreferredUnitEntry] = _iter_preferred_units(units)
+        entries: Sequence[PreferredUnit] = _iter_preferred_units(units)
 
         for entry in entries:
-            if _is_descriptor_entry(entry):
-                descriptor, unit = entry
-                name, _ = _validate_preferred_unit(unit)
-                existing = by_descriptor.get(descriptor)
-                if existing is not None and existing != name:
-                    raise PreferredUnitAlreadyRegistered(
-                        existing, name, quantity_type=descriptor
-                    )
-                by_descriptor[descriptor] = name
-            else:
-                if not _is_preferred_unit(entry):
-                    msg = (
-                        "Preferred unit entries must be unit values or "
-                        "(VariableDescriptor, unit) pairs."
-                    )
-                    raise TypeError(msg)
-                name, dims_dict = _validate_preferred_unit(entry)
-                key = DimensionsKey(dims_dict)
-                existing = by_dimensions.get(key)
-                if existing is not None and existing != name:
-                    raise PreferredUnitAlreadyRegistered(existing, name)
-                by_dimensions[key] = name
+            name, dims_dict = _validate_preferred_unit(entry)
+            key = DimensionsKey(dims_dict)
+            existing = by_dimensions.get(key)
+            if existing is not None and existing != name:
+                raise PreferredUnitAlreadyRegistered(existing, name)
+            by_dimensions[key] = name
 
         self._by_dimensions: dict[DimensionsKey, str] = by_dimensions
-        self._by_descriptor: dict[VariableDescriptor, str] = by_descriptor
-        self._entries: tuple[PreferredUnitEntry, ...] = tuple(entries)
+        self._entries: tuple[PreferredUnit, ...] = tuple(entries)
 
     def unit_for(
         self,
         dimensions: Dimensions,
-        quantity_type: VariableDescriptor | None = None,
     ) -> str | None:
         """
         Return the preferred unit name for dimensions, if one is configured.
@@ -216,19 +162,12 @@ class PreferredUnits:
         ----------
         dimensions: Dimensions
             Dimensions of the quantity being converted.
-        quantity_type: VariableDescriptor, optional
-            The specific quantity type being converted, if known. Checked before
-            falling back to a dimension-only match.
 
         Returns
         -------
         str, optional
             The preferred unit name, or ``None`` if no entry matches.
         """
-        if quantity_type is not None:
-            preferred = self._by_descriptor.get(quantity_type)
-            if preferred is not None:
-                return preferred
         return self._by_dimensions.get(DimensionsKey(dict(dimensions)))
 
     def with_units(
@@ -256,16 +195,12 @@ class PreferredUnits:
         return (
             isinstance(other, PreferredUnits)
             and self._by_dimensions == other._by_dimensions
-            and self._by_descriptor == other._by_descriptor
         )
 
     @override
     def __hash__(self) -> int:
         return hash(
-            (
-                tuple(sorted(self._by_dimensions.items(), key=lambda kv: hash(kv[0]))),
-                tuple(sorted(self._by_descriptor.items(), key=lambda kv: hash(kv[0]))),
-            )
+            tuple(sorted(self._by_dimensions.items(), key=lambda kv: hash(kv[0])))
         )
 
     @override
@@ -290,22 +225,14 @@ class UnconfiguredPreferredUnit(ValueError):
 
 
 class PreferredUnitAlreadyRegistered(ValueError):
-    """Raised when two preferred units conflict for the same dimensions or type."""
+    """Raised when two preferred units conflict for the same dimensions."""
 
     def __init__(
         self,
         existing_unit: str,
         conflicting_unit: str,
-        quantity_type: VariableDescriptor | None = None,
     ):
-        if quantity_type is not None:
-            message = (
-                f"`{existing_unit}` is already configured as the preferred unit for "
-                f"`{quantity_type.name}`, conflicting with `{conflicting_unit}`."
-            )
-        else:
-            message = (
-                f"`{existing_unit}` is already configured as the preferred unit for "
-                f"the same dimensions as `{conflicting_unit}`."
-            )
-        super().__init__(message)
+        super().__init__(
+            f"`{existing_unit}` is already configured as the preferred unit for "
+            f"the same dimensions as `{conflicting_unit}`."
+        )

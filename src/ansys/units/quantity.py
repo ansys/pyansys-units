@@ -40,11 +40,10 @@ from typing_extensions import Self
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
-from ansys.units.preferred_units import PreferredUnits, UnitLike
+from ansys.units.preferred_units import PreferredUnitInput, PreferredUnits
 from ansys.units.quantity_tables.keys import QuantityKey, UnitKey
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
-from ansys.units.variable_descriptor import VariableDescriptor
 
 try:
     import numpy as np
@@ -379,21 +378,7 @@ class Quantity(Generic[ValT]):
     def convert(
         self,
         system: UnitSystem,
-        preferred_units: (
-            PreferredUnits
-            | Sequence[
-                UnitKey
-                | str
-                | UnitLike
-                | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            ]
-            | UnitKey
-            | str
-            | UnitLike
-            | tuple[VariableDescriptor, UnitKey | str | UnitLike]
-            | None
-        ) = None,
-        quantity_type: VariableDescriptor | None = None,
+        preferred_units: PreferredUnits | PreferredUnitInput = None,
     ) -> Quantity:
         """
         Convert a quantity into the unit system.
@@ -404,17 +389,10 @@ class Quantity(Generic[ValT]):
             Unit system to convert to.
         preferred_units : PreferredUnits, optional
             Conversion policy deciding which named derived unit to emit for
-            matching dimensions (or quantity type), instead of the expanded
-            base-unit expression. A plain unit, a
-            ``(VariableDescriptor, unit)`` pair, or a sequence of either is
-            wrapped in a :class:`~ansys.units.preferred_units.PreferredUnits`
+            matching dimensions, instead of the expanded base-unit expression.
+            A plain unit or sequence of units is wrapped in a
+            :class:`~ansys.units.preferred_units.PreferredUnits`
             automatically.
-        quantity_type : VariableDescriptor, optional
-            The specific quantity type this quantity represents, if known.
-            Used to resolve quantity-type-specific entries in
-            ``preferred_units``, disambiguating quantities that share
-            dimensions but are conceptually different (for example torque and
-            energy).
 
         Returns
         -------
@@ -428,9 +406,7 @@ class Quantity(Generic[ValT]):
         >>> bt = UnitSystem(system="BT")
         >>> speed_bt = speed_si.convert(bt)
         """
-        new_unit = self.units.convert(
-            system, preferred_units=preferred_units, quantity_type=quantity_type
-        )
+        new_unit = self.units.convert(system, preferred_units=preferred_units)
 
         return self.to(to_units=new_unit)
 

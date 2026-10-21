@@ -28,7 +28,6 @@ from ansys.units.preferred_units import (
     PreferredUnits,
     UnconfiguredPreferredUnit,
 )
-from ansys.units.variable_descriptor import VariableCatalog
 
 # ---------------------------------------------------------------------------
 # PreferredUnits is a conversion policy, independent of UnitSystem. These
@@ -187,9 +186,7 @@ def test_equality_and_hash():
 # of a bare (non-descriptor) PreferredUnits entry: torque and energy both
 # have dimensions M L^2 T^-2, and stress and energy density both have
 # dimensions M L^-1 T^-2, so a dimension-only preferred unit is applied to
-# both alike. See the "Quantity-type-aware matching" tests below for how a
-# `(VariableDescriptor, unit)` entry resolves this when `quantity_type` is
-# supplied to convert().
+# both alike.
 # ---------------------------------------------------------------------------
 
 
@@ -213,107 +210,3 @@ def test_dimension_only_preferred_unit_labels_stress_and_energy_density_the_same
 
     assert stress.units.name == "MPa"
     assert energy_density.units.name == "MPa"
-
-
-# ---------------------------------------------------------------------------
-# Quantity-type-aware matching: dimensions alone cannot distinguish torque
-# from energy (both M L^2 T^-2), or stress from energy density (both
-# M L^-1 T^-2). `(VariableDescriptor, unit)` entries resolve this, but only
-# when the caller tells convert() which quantity type it is converting.
-# ---------------------------------------------------------------------------
-
-
-def test_quantity_type_disambiguates_torque_from_energy():
-    subcategory = "preferred_units_test"
-    if not hasattr(VariableCatalog, subcategory):
-        VariableCatalog.add(
-            "TORQUE_TEST",
-            VariableCatalog.ENERGY.dimension,
-            subcategory=subcategory,
-        )
-    torque_descriptor = getattr(getattr(VariableCatalog, subcategory), "TORQUE_TEST")
-    prefs = PreferredUnits(
-        [
-            (torque_descriptor, "N m"),
-            (VariableCatalog.ENERGY, "J"),
-        ]
-    )
-
-    work = Quantity(1000, "J")
-
-    as_torque = work.convert(
-        UnitSystem(),
-        preferred_units=prefs,
-        quantity_type=torque_descriptor,
-    )
-    as_energy = work.convert(
-        UnitSystem(), preferred_units=prefs, quantity_type=VariableCatalog.ENERGY
-    )
-
-    assert as_torque.units.name == "N m"
-    assert as_energy.units.name == "J"
-
-
-def test_quantity_type_disambiguates_stress_from_energy_density():
-    # Both have dimensions M L^-1 T^-2.
-    prefs = PreferredUnits(
-        [
-            (VariableCatalog.ENERGY_DENSITY, "J m^-3"),
-            "MPa",
-        ]
-    )
-
-    stress = Quantity(210e9, "Pa")
-
-    as_energy_density = stress.convert(
-        UnitSystem(),
-        preferred_units=prefs,
-        quantity_type=VariableCatalog.ENERGY_DENSITY,
-    )
-    as_generic_pressure = stress.convert(UnitSystem(), preferred_units=prefs)
-
-    assert as_energy_density.units.name == "J m^-3"
-    assert as_generic_pressure.units.name == "MPa"
-
-
-def test_quantity_type_entry_does_not_conflict_with_dimension_entry():
-    # A descriptor-keyed entry for one specific quantity type does not
-    # conflict with a bare, dimension-keyed entry sharing the same
-    # dimensions - that is the intended way to override the generic default
-    # for a single quantity type.
-    prefs = PreferredUnits(
-        [
-            "MPa",
-            (VariableCatalog.ENERGY_DENSITY, "J m^-3"),
-        ]
-    )
-
-    assert prefs.unit_for(Quantity(1, "Pa").units.dimensions) == "MPa"
-    assert (
-        prefs.unit_for(
-            Quantity(1, "Pa").units.dimensions,
-            quantity_type=VariableCatalog.ENERGY_DENSITY,
-        )
-        == "J m^-3"
-    )
-
-
-def test_quantity_type_without_quantity_type_falls_back_to_dimension_match():
-    prefs = PreferredUnits([(VariableCatalog.ENERGY, "kJ")])
-
-    work = Quantity(1000, "J")
-    result = work.convert(UnitSystem(), preferred_units=prefs)
-
-    # No quantity_type was given, so the descriptor-only entry does not apply
-    # and the quantity falls back to the expanded base-unit expression.
-    assert result.units.name == "kg m^2 s^-2"
-
-
-def test_conflicting_quantity_type_entries_raise():
-    with pytest.raises(PreferredUnitAlreadyRegistered):
-        PreferredUnits(
-            [
-                (VariableCatalog.ENERGY, "J"),
-                (VariableCatalog.ENERGY, "kJ"),
-            ]
-        )

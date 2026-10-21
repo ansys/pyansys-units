@@ -345,3 +345,10 @@ simplified = Quantity(210e9, "Pa").convert(
     mm_tonne_second, preferred_units=material_prefs
 )
 simplified.units.name  # >>> "MPa"
+
+# Preferred units match by dimensions only. Quantities with the same
+# dimensions, such as stress and energy density, use the same preferred unit.
+energy_density = Quantity(210e9, "J m^-3").convert(
+    mm_tonne_second, preferred_units=material_prefs
+)
+energy_density.units.name  # >>> "MPa"

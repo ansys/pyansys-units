@@ -188,7 +188,7 @@ mm_tonne_second = UnitSystem(
 
 Quantity(210e9, "Pa").convert(mm_tonne_second).units.name  # 'tonne mm^-1 s^-2'
 
-material_prefs = PreferredUnits(["MPa"])
+material_prefs = PreferredUnits(["MPa"])  # dimension-only matching
 Quantity(210e9, "Pa").convert(
     mm_tonne_second, preferred_units=material_prefs
 ).units.name  # 'MPa'

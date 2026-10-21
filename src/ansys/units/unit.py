@@ -49,7 +49,6 @@ from ansys.units.preferred_units import (
 )
 from ansys.units.quantity_tables.keys import QuantityKey
 from ansys.units.systems import UnitSystem
-from ansys.units.variable_descriptor import VariableDescriptor
 
 UnconfiguredUnit = _UnconfiguredUnit
 
@@ -122,7 +121,6 @@ class Unit:
         table: Mapping[QuantityKey, float] | None = None,
         copy_from: Unit | None = None,
         preferred_units: PreferredUnits | PreferredUnitInput = None,
-        quantity_type: VariableDescriptor | None = None,
     ):
         if copy_from:
             if (units) and units != copy_from.name:
@@ -148,7 +146,6 @@ class Unit:
                 dimensions=dimensions,
                 system=system,
                 preferred_units=preferred_units,
-                quantity_type=quantity_type,
             )
             self._dimensions = self._remove_angle_as_dim(self._dimensions)
         else:
@@ -315,7 +312,6 @@ class Unit:
         self,
         system: UnitSystem,
         preferred_units: PreferredUnits | PreferredUnitInput = None,
-        quantity_type: VariableDescriptor | None = None,
     ) -> Unit:
         """
         Convert a unit into the unit system.
@@ -326,12 +322,9 @@ class Unit:
             Unit system to convert to.
         preferred_units : PreferredUnits, optional
             Preferred display/conversion units for derived dimensions. A plain
-            unit, a ``(VariableDescriptor, unit)`` pair, or a sequence of
-            either is wrapped in a :class:`~ansys.units.preferred_units.PreferredUnits`
+            unit or sequence of units is wrapped in a
+            :class:`~ansys.units.preferred_units.PreferredUnits`
             automatically.
-        quantity_type : VariableDescriptor, optional
-            The specific quantity type being converted, if known. Used to
-            resolve quantity-type-specific entries in ``preferred_units``.
 
         Returns
         -------
@@ -349,7 +342,6 @@ class Unit:
             dimensions=self.dimensions,
             system=system,
             preferred_units=preferred_units,
-            quantity_type=quantity_type,
         )
 
     def __str__(self) -> str:
@@ -459,7 +451,6 @@ def _dim_to_units(
     system: UnitSystem,
     dimensions: Dimensions,
     preferred_units: PreferredUnits | PreferredUnitInput = None,
-    quantity_type: VariableDescriptor | None = None,
 ) -> str:
     """
     Convert a dimensions list into a unit string.
@@ -474,10 +465,7 @@ def _dim_to_units(
             Default is SI units.
         preferred_units : PreferredUnits, optional
             Conversion policy deciding which named derived unit to emit for
-            matching dimensions (or quantity type), instead of the expanded
-            base-unit expression.
-        quantity_type : VariableDescriptor, optional
-            The specific quantity type being converted, if known.
+            matching dimensions, instead of the expanded base-unit expression.
 
         Returns
         -------
@@ -489,9 +477,7 @@ def _dim_to_units(
 
     resolved_preferred_units = _coerce_preferred_units(preferred_units)
     if resolved_preferred_units:
-        preferred_unit = resolved_preferred_units.unit_for(
-            dimensions, quantity_type=quantity_type
-        )
+        preferred_unit = resolved_preferred_units.unit_for(dimensions)
         if preferred_unit:
             return preferred_unit
 
