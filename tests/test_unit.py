@@ -142,6 +142,28 @@ def test_units_from_dimensions():
     assert slug_squared.si_offset == 0
 
 
+def test_units_from_dimensions_with_preferred_units():
+    dims = BaseDimensions
+    mm_tonne_second = UnitSystem(
+        base_units={
+            dims.MASS: "tonne",
+            dims.LENGTH: "mm",
+            dims.TIME: "s",
+        }
+    )
+    pressure_dims = Dimensions({dims.MASS: 1, dims.LENGTH: -1, dims.TIME: -2})
+
+    expanded = Unit(dimensions=pressure_dims, system=mm_tonne_second)
+    assert expanded.name == "tonne mm^-1 s^-2"
+
+    simplified = Unit(
+        dimensions=pressure_dims,
+        system=mm_tonne_second,
+        preferred_units=["MPa"],
+    )
+    assert simplified.name == "MPa"
+
+
 def test_string_rep():
     C = Unit("C")
     C_string = """_name: C

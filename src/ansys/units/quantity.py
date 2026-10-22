@@ -40,6 +40,7 @@ from typing_extensions import Self
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
+from ansys.units.preferred_units import PreferredUnitInput, PreferredUnits
 from ansys.units.quantity_tables.keys import QuantityKey, UnitKey
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
@@ -374,7 +375,11 @@ class Quantity(Generic[ValT]):
 
         return self.units.compatible_units()
 
-    def convert(self, system: UnitSystem) -> Quantity:
+    def convert(
+        self,
+        system: UnitSystem,
+        preferred_units: PreferredUnits | PreferredUnitInput = None,
+    ) -> Quantity:
         """
         Convert a quantity into the unit system.
 
@@ -382,6 +387,12 @@ class Quantity(Generic[ValT]):
         ----------
         system : UnitSystem
             Unit system to convert to.
+        preferred_units : PreferredUnits, optional
+            Conversion policy deciding which named derived unit to emit for
+            matching dimensions, instead of the expanded base-unit expression.
+            A plain unit or sequence of units is wrapped in a
+            :class:`~ansys.units.preferred_units.PreferredUnits`
+            automatically.
 
         Returns
         -------
@@ -395,7 +406,7 @@ class Quantity(Generic[ValT]):
         >>> bt = UnitSystem(system="BT")
         >>> speed_bt = speed_si.convert(bt)
         """
-        new_unit = self.units.convert(system)
+        new_unit = self.units.convert(system, preferred_units=preferred_units)
 
         return self.to(to_units=new_unit)
 

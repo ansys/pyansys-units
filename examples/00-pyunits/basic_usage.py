@@ -44,7 +44,13 @@ This example shows you how to perform these tasks:
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 # Import the ``ansys.units`` package.
 
-from ansys.units import BaseDimensions, Dimensions, Quantity, UnitSystem
+from ansys.units import (
+    BaseDimensions,
+    Dimensions,
+    PreferredUnits,
+    Quantity,
+    UnitSystem,
+)
 from ansys.units.common import *  # noqa: F403
 from ansys.units.quantity import get_si_value
 
@@ -318,3 +324,31 @@ ten_m = 10 * m
 
 joules = ten_N * ten_m
 joules  # >>> Quantity (100.0, "J")
+
+###############################################################################
+# Preferred units as a conversion policy
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ``PreferredUnits`` is a separate conversion policy object, independent of
+# ``UnitSystem``, that you pass explicitly to ``convert()``. A ``UnitSystem``
+# only defines base units, so converting through it produces an expanded
+# base-unit expression unless a ``PreferredUnits`` policy is supplied.
+
+mm_tonne_second = UnitSystem(
+    base_units={dims.MASS: "tonne", dims.LENGTH: "mm", dims.TIME: "s"}
+)
+
+expanded = Quantity(210e9, "Pa").convert(mm_tonne_second)
+expanded.units.name  # >>> "tonne mm^-1 s^-2"
+
+material_prefs = PreferredUnits(["MPa"])
+simplified = Quantity(210e9, "Pa").convert(
+    mm_tonne_second, preferred_units=material_prefs
+)
+simplified.units.name  # >>> "MPa"
+
+# Preferred units match by dimensions only. Quantities with the same
+# dimensions, such as stress and energy density, use the same preferred unit.
+energy_density = Quantity(210e9, "J m^-3").convert(
+    mm_tonne_second, preferred_units=material_prefs
+)
+energy_density.units.name  # >>> "MPa"

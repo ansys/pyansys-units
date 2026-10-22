@@ -42,6 +42,11 @@ from ansys.units._unit_parsing import (
 from ansys.units._unit_parsing import UnconfiguredUnit as _UnconfiguredUnit
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
+from ansys.units.preferred_units import (
+    PreferredUnitInput,
+    PreferredUnits,
+    _coerce_preferred_units,
+)
 from ansys.units.quantity_tables.keys import QuantityKey
 from ansys.units.systems import UnitSystem
 
@@ -112,9 +117,10 @@ class Unit:
         units: str | None = None,
         config: Mapping[str, Any] | None = None,
         dimensions: Dimensions | None = None,
-        system: UnitSystem | str = None,
+        system: UnitSystem | str | None = None,
         table: Mapping[QuantityKey, float] | None = None,
         copy_from: Unit | None = None,
+        preferred_units: PreferredUnits | PreferredUnitInput = None,
     ):
         if copy_from:
             if (units) and units != copy_from.name:
@@ -134,7 +140,13 @@ class Unit:
 
         elif dimensions:
             self._dimensions = dimensions
-            self._name = _dim_to_units(dimensions=dimensions, system=system)
+            if not isinstance(system, UnitSystem):
+                system = UnitSystem(system=system or "SI")
+            self._name = _dim_to_units(
+                dimensions=dimensions,
+                system=system,
+                preferred_units=preferred_units,
+            )
             self._dimensions = self._remove_angle_as_dim(self._dimensions)
         else:
             self._name = ""
@@ -296,7 +308,11 @@ class Unit:
         """The units base dimensions."""
         return self._dimensions
 
-    def convert(self, system: UnitSystem) -> Unit:
+    def convert(
+        self,
+        system: UnitSystem,
+        preferred_units: PreferredUnits | PreferredUnitInput = None,
+    ) -> Unit:
         """
         Convert a unit into the unit system.
 
@@ -304,6 +320,11 @@ class Unit:
         ----------
         system : UnitSystem
             Unit system to convert to.
+        preferred_units : PreferredUnits, optional
+            Preferred display/conversion units for derived dimensions. A plain
+            unit or sequence of units is wrapped in a
+            :class:`~ansys.units.preferred_units.PreferredUnits`
+            automatically.
 
         Returns
         -------
@@ -317,7 +338,11 @@ class Unit:
         >>> bt = UnitSystem(system="BT")
         >>> speed_bt = speed_si.convert(bt)
         """
-        return Unit(dimensions=self.dimensions, system=system)
+        return Unit(
+            dimensions=self.dimensions,
+            system=system,
+            preferred_units=preferred_units,
+        )
 
     def __str__(self) -> str:
         return self.name
@@ -425,6 +450,7 @@ def _get_config(name: str) -> _BaseUnitInfo | _DerivedUnitInfo | None:
 def _dim_to_units(
     system: UnitSystem,
     dimensions: Dimensions,
+    preferred_units: PreferredUnits | PreferredUnitInput = None,
 ) -> str:
     """
     Convert a dimensions list into a unit string.
@@ -437,6 +463,9 @@ def _dim_to_units(
         system : UnitSystem object, optional
             Unit system for dimensions list.
             Default is SI units.
+        preferred_units : PreferredUnits, optional
+            Conversion policy deciding which named derived unit to emit for
+            matching dimensions, instead of the expanded base-unit expression.
 
         Returns
         -------
@@ -446,9 +475,11 @@ def _dim_to_units(
     if not system:
         system = UnitSystem()
 
-    preferred_unit = system.preferred_unit_for(dimensions)
-    if preferred_unit:
-        return preferred_unit
+    resolved_preferred_units = _coerce_preferred_units(preferred_units)
+    if resolved_preferred_units:
+        preferred_unit = resolved_preferred_units.unit_for(dimensions)
+        if preferred_unit:
+            return preferred_unit
 
     units = ""
 

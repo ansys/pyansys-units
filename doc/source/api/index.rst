@@ -9,6 +9,7 @@ This section describes the public classes, functions, and attributes in the PyAn
 
     quantity
     systems
+    preferred_units
     dimensions
     common
     config

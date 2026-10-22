@@ -244,6 +244,34 @@ Use a custom unit system to perform conversions:
    v2.value  # 2.2480894309971045
    v2.units.name  # 'slug ft s^2'
 
+Use preferred units as a conversion policy:
+
+.. code:: python
+
+   import ansys.units as ansunits
+
+   dims = ansunits.BaseDimensions
+
+   mm_tonne_second = ansunits.UnitSystem(
+       base_units={
+           dims.MASS: "tonne",
+           dims.LENGTH: "mm",
+           dims.TIME: "s",
+       }
+   )
+
+   stress = ansunits.Quantity(210e9, "Pa")
+
+   expanded = stress.convert(mm_tonne_second)
+   expanded.units.name  # 'tonne mm^-1 s^-2'
+
+   material_prefs = ansunits.PreferredUnits(["MPa"])
+   simplified = stress.convert(mm_tonne_second, preferred_units=material_prefs)
+   simplified.units.name  # 'MPa'
+
+``UnitSystem`` defines base units only. Preferred units such as ``"MPa"`` are
+passed to ``convert()`` per call, and they match quantities by dimensions.
+
 License
 -------
 PyAnsys Units is licensed under the MIT license. For more information, see the

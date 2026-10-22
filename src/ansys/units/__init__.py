@@ -32,6 +32,11 @@ import os
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
+from ansys.units.preferred_units import (
+    PreferredUnitAlreadyRegistered,
+    PreferredUnits,
+    UnconfiguredPreferredUnit,
+)
 from ansys.units.quantity import Quantity, get_si_value
 from ansys.units.quantity_dimensions import QuantityDimensions
 from ansys.units.systems import UnitSystem
@@ -61,6 +66,9 @@ __all__ = [
     "Unit",
     "UnitRegistry",
     "QuantityDimensions",
+    "PreferredUnits",
+    "PreferredUnitAlreadyRegistered",
+    "UnconfiguredPreferredUnit",
     "VariableDescriptor",
     "VariableCatalog",
     "ConversionStrategy",
