@@ -92,16 +92,6 @@
                 }
             }
         ],
-        "./run_edge_tests.py": [
-            {
-                "code": "reportCallIssue",
-                "range": {
-                    "startColumn": 16,
-                    "endColumn": 67,
-                    "lineCount": 1
-                }
-            }
-        ],
         "./src/ansys/units/_constants.py": [
             {
                 "code": "reportUnusedClass",

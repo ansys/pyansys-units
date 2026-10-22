@@ -293,6 +293,7 @@ Unit("angular_deg")  # resolves to "degree"
 
 ```{python}
 from ansys.units import UnitRegistry, get_si_value
+from ansys.units.common import m
 
 ur = UnitRegistry(custom_units=[
     {"unit": "micron", "composition": "m", "factor": 1e-6},
@@ -302,6 +303,27 @@ get_si_value(q)  # 1e-06
 
 ur.register_unit(unit="Q", composition="N m", factor=1)
 ur.Q == ur.J  # True
+
+# Object-based form, with an alias
+ur.register_unit("furlong", 201.168 * m, aliases=["furlongs"])
+ur.furlong is ur.furlongs  # True
+
+# Re-registering the same name with an equivalent definition is a no-op
+ur.register_unit(unit="Q", composition="W s", factor=1)  # Returns existing ur.Q
+```
+
+### Persisting custom units
+
+```{python}
+from ansys.units import UnitRegistry, load_custom_units
+from ansys.units.common import m
+
+ur = UnitRegistry()
+ur.register_unit("furlong", 201.168 * m, aliases=["furlongs"])
+ur.export_custom_units("my_units.yaml")  # Not written to cfg.yaml
+
+ur2 = UnitRegistry(custom_units_file="my_units.yaml")
+ur2.furlong is ur2.furlongs  # True
 ```
 
 ### Quantity dimensions

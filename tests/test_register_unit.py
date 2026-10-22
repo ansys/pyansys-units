@@ -20,7 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+from pathlib import Path
+import tempfile
+
 import pytest
+import yaml
 
 from ansys.units import UnitRegistry
 from ansys.units.unit_registry import UnitNameAlreadyRegistered
@@ -46,9 +51,13 @@ def test_instance_register_unit():
     ur.register_unit(unit="Q", composition="N m", factor=1)
     assert ur.Q == ur.J
 
-    # Same instance cannot re-register same name
+    # Re-registering the same name with an equivalent definition is idempotent
+    same = ur.register_unit(unit="Q", composition="N m", factor=1)
+    assert same is ur.Q
+
+    # Re-registering the same name with a different (incompatible) definition raises
     with pytest.raises(UnitNameAlreadyRegistered):
-        ur.register_unit(unit="Q", composition="N m", factor=1)
+        ur.register_unit(unit="Q", composition="m", factor=1)
 
     # New registry does not see instance registration
     ur2 = UnitRegistry()
@@ -87,19 +96,51 @@ def test_instance_register_unit_independence_with_factor():
 
 
 def test_duplicate_registration_same_registry():
+    """Re-registering the same name with an equivalent definition is idempotent."""
     ur = UnitRegistry()
 
     # First registration succeeds
     ur.register_unit(unit="B", composition="N m", factor=1)
     assert ur.B == ur.J
 
-    # Re-register same name with same composition should fail
-    with pytest.raises(UnitNameAlreadyRegistered):
-        ur.register_unit(unit="B", composition="N m", factor=1)
+    # Re-register same name with an identical definition is a no-op
+    same = ur.register_unit(unit="B", composition="N m", factor=1)
+    assert same is ur.B
 
-    # Re-register same name with different (but equivalent) composition should also fail
+    # Re-register same name with a different but equivalent composition is also a
+    # no-op, since the effective definition (dimensions + SI scaling) matches
+    equivalent = ur.register_unit(unit="B", composition="W s", factor=1)
+    assert equivalent is ur.B
+
+
+def test_duplicate_registration_equivalent_definition_returns_existing():
+    """Identical/equivalent duplicate registrations return the existing unit."""
+    ur = UnitRegistry()
+
+    original = ur.register_unit(unit="myenergy", composition="N m", factor=1)
+
+    # Identical definition
+    assert ur.register_unit(unit="myenergy", composition="N m", factor=1) is original
+
+    # Equivalent definition via a different (but dimensionally/numerically
+    # equivalent) composition
+    assert ur.register_unit(unit="myenergy", composition="W s", factor=1) is original
+
+
+def test_duplicate_registration_different_factor_raises():
+    ur = UnitRegistry()
+    ur.register_unit(unit="B", composition="N m", factor=1)
+
     with pytest.raises(UnitNameAlreadyRegistered):
-        ur.register_unit(unit="B", composition="W s", factor=1)
+        ur.register_unit(unit="B", composition="N m", factor=2)
+
+
+def test_duplicate_registration_different_composition_raises():
+    ur = UnitRegistry()
+    ur.register_unit(unit="B", composition="N m", factor=1)
+
+    with pytest.raises(UnitNameAlreadyRegistered):
+        ur.register_unit(unit="B", composition="m", factor=1)
 
 
 def test_name_only_collision_check():
@@ -443,3 +484,237 @@ def test_custom_units_instance_isolation():
     ur3 = UnitRegistry()
     with pytest.raises(AttributeError):
         _ = ur3.X
+
+
+# =============================================================================
+# Object-based register_unit() syntax and aliases
+# =============================================================================
+
+
+def test_register_unit_object_based_syntax():
+    """Test registering a unit from a Quantity definition (e.g., ``201.168 * m``)."""
+    from ansys.units.common import m
+
+    ur = UnitRegistry()
+    furlong = ur.register_unit("furlong", 201.168 * m)
+
+    assert furlong is ur.furlong
+    assert ur.furlong.name == "furlong"
+    assert ur.furlong.dimensions == ur.m.dimensions
+    assert ur.furlong.si_scaling_factor == pytest.approx(201.168)
+
+
+def test_register_unit_object_based_syntax_with_bare_unit():
+    """Test that a bare `Unit` definition is treated as a factor of 1."""
+    from ansys.units.common import m
+
+    ur = UnitRegistry()
+    mymeter = ur.register_unit("mymeter", m)
+
+    assert mymeter.si_scaling_factor == pytest.approx(ur.m.si_scaling_factor)
+
+
+def test_register_unit_object_and_keyword_forms_are_equivalent():
+    """Test that the object-based and composition/factor forms produce equal units."""
+    from ansys.units.common import m
+
+    ur1 = UnitRegistry()
+    ur2 = UnitRegistry()
+
+    ur1.register_unit("furlong", 201.168 * m)
+    ur2.register_unit(unit="furlong", composition="m", factor=201.168)
+
+    assert ur1.furlong.dimensions == ur2.furlong.dimensions
+    assert ur1.furlong.si_scaling_factor == pytest.approx(ur2.furlong.si_scaling_factor)
+
+
+def test_register_unit_rejects_both_definition_and_composition():
+    """Test that mixing `definition` and `composition`/`factor` raises."""
+    from ansys.units.common import m
+
+    ur = UnitRegistry()
+    with pytest.raises(ValueError):
+        ur.register_unit(  # pyright: ignore[reportCallIssue]
+            "furlong", 201.168 * m, composition="m", factor=201.168
+        )
+
+
+def test_register_unit_rejects_neither_definition_nor_composition():
+    """Test that omitting both `definition` and `composition`/`factor` raises."""
+    ur = UnitRegistry()
+    with pytest.raises(ValueError):
+        ur.register_unit("furlong")  # pyright: ignore[reportCallIssue]
+
+
+def test_register_unit_rejects_invalid_definition_type():
+    """Test that a non-`Unit`/`Quantity` `definition` raises `TypeError`."""
+    ur = UnitRegistry()
+    with pytest.raises(TypeError):
+        ur.register_unit("furlong", "m")  # pyright: ignore[reportArgumentType]
+
+
+def test_register_unit_aliases_keyword_form():
+    """Test the `aliases` argument on the composition/factor form."""
+    ur = UnitRegistry()
+    ur.register_unit(
+        unit="furlong", composition="m", factor=201.168, aliases=["furlongs"]
+    )
+
+    assert ur.furlong is ur.furlongs
+    assert ur.get_unit("furlongs") is ur.furlong
+    q = ur.Quantity(1, "furlongs")
+    assert q.units is ur.furlong
+
+
+def test_register_unit_aliases_object_based_form():
+    """Test the `aliases` argument on the object-based form."""
+    from ansys.units.common import m
+
+    ur = UnitRegistry()
+    ur.register_unit("furlong", 201.168 * m, aliases=["furlongs"])
+
+    assert ur.furlong == ur.furlongs
+    assert ur.furlong is ur.furlongs
+
+
+def test_register_unit_alias_collides_with_builtin_raises():
+    """Test that an alias matching a built-in unit name always raises."""
+    ur = UnitRegistry()
+    with pytest.raises(UnitNameAlreadyRegistered):
+        ur.register_unit(unit="furlong", composition="m", factor=201.168, aliases=["m"])
+
+
+def test_register_unit_alias_conflicting_definition_raises():
+    """Test that an alias already registered with a different definition raises."""
+    ur = UnitRegistry()
+    ur.register_unit(unit="other", composition="N m", factor=1)
+
+    with pytest.raises(UnitNameAlreadyRegistered):
+        ur.register_unit(
+            unit="furlong", composition="m", factor=201.168, aliases=["other"]
+        )
+
+
+def test_register_unit_alias_reregistration_is_idempotent():
+    """Test re-registering the same unit with the same alias is a no-op."""
+    ur = UnitRegistry()
+    ur.register_unit(
+        unit="furlong", composition="m", factor=201.168, aliases=["furlongs"]
+    )
+
+    # Re-registering with the same name and alias does not raise
+    same = ur.register_unit(
+        unit="furlong", composition="m", factor=201.168, aliases=["furlongs"]
+    )
+    assert same is ur.furlong
+    assert ur.furlongs is ur.furlong
+
+
+def test_custom_units_with_aliases():
+    """Test that the `custom_units` constructor parameter supports `aliases`."""
+    ur = UnitRegistry(
+        custom_units=[
+            {
+                "unit": "furlong",
+                "composition": "m",
+                "factor": 201.168,
+                "aliases": ["furlongs"],
+            },
+        ]
+    )
+
+    assert ur.furlong is ur.furlongs
+    assert ur.furlong.si_scaling_factor == pytest.approx(201.168)
+
+
+# =============================================================================
+# Persistence: export_custom_units / load_custom_units / custom_units_file
+# =============================================================================
+
+
+def test_export_custom_units_round_trip(tmp_path: Path):
+    """Test exporting and reloading custom units (and aliases) via a file."""
+    from ansys.units import load_custom_units
+    from ansys.units.common import m
+
+    path = tmp_path / "units.yaml"
+
+    ur1 = UnitRegistry()
+    ur1.register_unit("furlong", 201.168 * m, aliases=["furlongs"])
+    ur1.export_custom_units(str(path))
+
+    custom_units = load_custom_units(str(path))
+    ur2 = UnitRegistry(custom_units=custom_units)
+
+    assert ur2.furlong is ur2.furlongs
+    assert ur2.furlong.si_scaling_factor == pytest.approx(ur1.furlong.si_scaling_factor)
+    assert ur2.furlong.dimensions == ur1.furlong.dimensions
+
+
+def test_custom_units_file_constructor_param(tmp_path: Path):
+    """Test loading exported custom units directly via `custom_units_file`."""
+    path = tmp_path / "units.yaml"
+
+    ur1 = UnitRegistry()
+    ur1.register_unit(unit="micron", composition="m", factor=1e-6)
+    ur1.export_custom_units(str(path))
+
+    ur2 = UnitRegistry(custom_units_file=str(path))
+    assert ur2.micron.si_scaling_factor == pytest.approx(1e-6)
+
+
+def test_custom_units_file_combined_with_custom_units(tmp_path: Path):
+    """Test that `custom_units_file` entries combine with `custom_units`."""
+    path = tmp_path / "units.yaml"
+
+    ur1 = UnitRegistry()
+    ur1.register_unit(unit="micron", composition="m", factor=1e-6)
+    ur1.export_custom_units(str(path))
+
+    ur2 = UnitRegistry(
+        custom_units=[{"unit": "thou", "composition": "m", "factor": 2.54e-5}],
+        custom_units_file=str(path),
+    )
+    assert ur2.thou.si_scaling_factor == pytest.approx(2.54e-5)
+    assert ur2.micron.si_scaling_factor == pytest.approx(1e-6)
+
+
+def test_export_custom_units_excludes_builtins():
+    """Test that export_custom_units only exports units added via register_unit."""
+    from ansys.units._constants import _base_units as _CONST_BASE_UNITS
+
+    ur = UnitRegistry(
+        custom_units=[{"unit": "micron", "composition": "m", "factor": 1e-6}]
+    )
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        path = os.path.join(tmp_dir, "units.yaml")
+        ur.export_custom_units(path)
+        with open(path, "r") as f:
+            data = yaml.safe_load(f)
+
+    names = {entry["unit"] for entry in data["custom_units"]}
+    assert names == {"micron"}
+    assert not (names & set(_CONST_BASE_UNITS))
+
+
+def test_export_custom_units_no_custom_units_raises(tmp_path: Path):
+    """Test that exporting with no custom units raises ValueError."""
+    ur = UnitRegistry()
+    with pytest.raises(ValueError):
+        ur.export_custom_units(str(tmp_path / "units.yaml"))
+
+
+def test_export_custom_units_respects_overwrite(tmp_path: Path):
+    """Test that export_custom_units refuses to overwrite unless requested."""
+    path = tmp_path / "units.yaml"
+    path.write_text("existing content")
+
+    ur = UnitRegistry()
+    ur.register_unit(unit="micron", composition="m", factor=1e-6)
+
+    with pytest.raises(FileExistsError):
+        ur.export_custom_units(str(path))
+
+    # Does not raise with overwrite=True
+    ur.export_custom_units(str(path), overwrite=True)
