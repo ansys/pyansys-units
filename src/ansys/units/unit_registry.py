@@ -24,7 +24,8 @@
 from collections.abc import Generator, Mapping, Sequence
 import math
 import os
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, overload
+import weakref
 
 import yaml
 
@@ -41,6 +42,16 @@ from ansys.units.unit import Unit
 
 if TYPE_CHECKING:
     from ansys.units.quantity import Quantity  # noqa: F401
+
+# Bookkeeping for `export_custom_units`. Kept out of instance `__dict__` (which
+# is treated as "the set of registered unit names" by `__iter__`/`__str__`) via
+# a WeakKeyDictionary keyed on the owning `UnitRegistry` instance.
+_CUSTOM_UNIT_DEFINITIONS: (
+    "weakref.WeakKeyDictionary[UnitRegistry, dict[str, dict[str, Any]]]"
+) = weakref.WeakKeyDictionary()
+_CUSTOM_UNIT_ALIASES: "weakref.WeakKeyDictionary[UnitRegistry, dict[str, str]]" = (
+    weakref.WeakKeyDictionary()
+)
 
 
 class UnitRegistry:
@@ -61,7 +72,12 @@ class UnitRegistry:
     custom_units : list of dict, optional
         List of custom units to register during construction. Each dict must
         have keys ``"unit"``, ``"composition"``, and ``"factor"`` matching
-        the :meth:`register_unit` signature.
+        the :meth:`register_unit` signature. An optional ``"aliases"`` key
+        (a list of strings) is also supported.
+    custom_units_file : str, optional
+        Path to a ``YAML`` file previously produced by
+        :meth:`export_custom_units`. Entries are loaded and registered the
+        same way as ``custom_units``, and the two can be combined.
 
     Examples
     --------
@@ -76,6 +92,8 @@ class UnitRegistry:
     >>> ur = UnitRegistry(custom_units=[
     ...     {"unit": "micron", "composition": "m", "factor": 1e-6},
     ...     {"unit": "inch", "composition": "m", "factor": 0.0254},
+    ...     {"unit": "furlong", "composition": "m", "factor": 201.168,
+    ...      "aliases": ["furlongs"]},
     ... ])
     >>> q = ur.Quantity(10, "micron")
     """
@@ -87,6 +105,7 @@ class UnitRegistry:
             str, Mapping[str, Any]
         ] = {},  # pyright: ignore[reportCallInDefaultInitializer]
         custom_units: Sequence[Mapping[str, Any]] | None = None,
+        custom_units_file: str | None = None,
     ):
         unitdict = dict(other)
 
@@ -122,13 +141,16 @@ class UnitRegistry:
                     object.__setattr__(self, unit_name, Unit(unit_name, cfg))
 
         # Register custom units using the same logic as register_unit
-        if custom_units:
-            for cu in custom_units:
-                self.register_unit(
-                    unit=cu["unit"],
-                    composition=cu["composition"],
-                    factor=cu["factor"],
-                )
+        custom_units = list(custom_units) if custom_units else []
+        if custom_units_file:
+            custom_units += load_custom_units(custom_units_file)
+        for cu in custom_units:
+            self.register_unit(
+                unit=cu["unit"],
+                composition=cu["composition"],
+                factor=cu["factor"],
+                aliases=cu.get("aliases"),
+            )
 
     def __str__(self):
         returned_string = ""
@@ -219,12 +241,33 @@ class UnitRegistry:
             units = self.get_unit(units)
         return _Quantity(value, units)
 
+    @overload
+    def register_unit(
+        self,
+        unit: str,
+        definition: "Unit | Quantity[Any]",
+        *,
+        aliases: Sequence[str] | None = None,
+    ) -> Unit: ...
+
+    @overload
     def register_unit(
         self,
         *,
         unit: str,
         composition: str,
         factor: float,
+        aliases: Sequence[str] | None = None,
+    ) -> Unit: ...
+
+    def register_unit(
+        self,
+        unit: str,
+        definition: "Unit | Quantity[Any] | None" = None,
+        *,
+        composition: str | None = None,
+        factor: float | None = None,
+        aliases: Sequence[str] | None = None,
     ) -> Unit:
         """
         Register a new derived unit on this ``UnitRegistry`` instance.
@@ -234,14 +277,30 @@ class UnitRegistry:
         accessed as an attribute (e.g., ``ur.micron``) or via
         :meth:`get_unit` for string-based lookup.
 
+        This method supports two equivalent calling conventions: an
+        object-based form that accepts a ``Unit`` or ``Quantity`` definition,
+        and a ``composition``/``factor`` form.
+
         Parameters
         ----------
         unit: str
             The symbol/name of the new unit (e.g., "micron").
-        composition: str
+        definition: Unit or Quantity, optional
+            An object-based definition of the new unit, for example
+            ``201.168 * m`` (a ``Quantity``) or a bare ``Unit`` instance
+            (treated as a factor of ``1``). Mutually exclusive with
+            ``composition``/``factor``.
+        composition: str, optional
             A valid unit composition using existing configured units (e.g., "m").
-        factor: float
-            Scale factor that relates the composition to this unit.
+            Must be provided together with ``factor``. Mutually exclusive with
+            ``definition``.
+        factor: float, optional
+            Scale factor that relates the composition to this unit. Must be
+            provided together with ``composition``. Mutually exclusive with
+            ``definition``.
+        aliases: sequence of str, optional
+            Additional names that resolve to the same registered unit on this
+            instance (e.g., ``["furlongs"]``).
 
         Returns
         -------
@@ -251,46 +310,120 @@ class UnitRegistry:
         Raises
         ------
         UnitNameAlreadyRegistered
-            If a unit with the same name already exists on this instance or
-            as a built-in. This is a name-only check and does not detect
-            equivalent definitions with different names.
+            If ``unit`` (or one of ``aliases``) is a built-in unit name, or
+            already exists on this instance with a different effective
+            definition (dimensions, SI scaling factor, or SI offset).
+            Re-registering the same name with an equivalent definition is a
+            no-op that returns the existing unit.
         ValueError
-            If ``unit`` is empty or ``factor`` is not finite.
+            If ``unit`` or an alias is empty, ``factor`` is not finite, or
+            both/neither of ``definition`` and ``composition``/``factor`` are
+            given.
 
         Notes
         -----
-        The name collision check is superficial (name-only). Two units with
-        different names but equivalent definitions (same composition and factor)
-        can both be registered without error.
+        The duplicate-name check compares effective definitions (dimensions,
+        SI scaling factor, and SI offset). Re-registering the same name with
+        an equivalent definition is idempotent. Built-in unit names can never
+        be overridden, even with an equivalent definition. The check does not
+        detect equivalent definitions registered under a *different* name.
 
         Examples
         --------
         >>> ur = UnitRegistry()
         >>> ur.register_unit(unit="micron", composition="m", factor=1e-6)
         >>> q = ur.Quantity(1, "micron")  # Use registry's Quantity method
+
+        Object-based form, with an alias:
+
+        >>> from ansys.units.common import m
+        >>> ur.register_unit("furlong", 201.168 * m, aliases=["furlongs"])
+        >>> ur.furlong == ur.furlongs
+        True
         """
         unit = unit.strip()
         if not unit:
             raise ValueError("`unit` must be a non-empty string.")
-        f = float(factor)
+
+        if definition is not None:
+            if composition is not None or factor is not None:
+                raise ValueError(
+                    "Provide either `definition` or `composition`/`factor`, "
+                    "not both."
+                )
+            from ansys.units.quantity import Quantity as _Quantity
+
+            if isinstance(definition, _Quantity):
+                composed = definition.units
+                f = float(definition.value)
+            elif isinstance(definition, Unit):
+                composed = definition
+                f = 1.0
+            else:
+                raise TypeError("`definition` must be a `Unit` or `Quantity` instance.")
+        else:
+            if composition is None or factor is None:
+                raise ValueError(
+                    "Provide either `definition` or both `composition` and " "`factor`."
+                )
+            composed = Unit(units=str(composition))
+            f = float(factor)
+
         if not math.isfinite(f):
             raise ValueError("`factor` must be a finite number.")
 
-        # Name-only collision check against built-ins and this instance
-        if (
-            unit in _CONST_BASE_UNITS
-            or unit in _CONST_DERIVED_UNITS
-            or hasattr(self, unit)
-        ):
-            raise UnitNameAlreadyRegistered(unit)
+        candidate = Unit(copy_from=composed)
+        candidate._si_scaling_factor = composed.si_scaling_factor * f
+        candidate._name = unit
 
-        composed = Unit(units=str(composition))
-        obj = Unit(copy_from=composed)
+        unit_is_new = not hasattr(self, unit)
+        obj = self._register_name(unit, candidate)
+        if unit_is_new:
+            _CUSTOM_UNIT_DEFINITIONS.setdefault(self, {})[unit] = {
+                "composition": composed.name,
+                "factor": f,
+            }
 
-        obj._si_scaling_factor *= f
-        obj._name = unit
-        object.__setattr__(self, unit, obj)
+        if aliases:
+            for alias in aliases:
+                alias = alias.strip()
+                if not alias:
+                    raise ValueError("`aliases` entries must be non-empty strings.")
+                alias_is_new = not hasattr(self, alias)
+                self._register_name(alias, obj)
+                if alias_is_new:
+                    _CUSTOM_UNIT_ALIASES.setdefault(self, {})[alias] = unit
+
         return obj
+
+    def _register_name(self, name: str, candidate: Unit) -> Unit:
+        """
+        Attach ``candidate`` on this instance under ``name``.
+
+        Built-in collisions always raise. If ``name`` is already registered
+        on this instance with an equivalent effective definition (dimensions,
+        SI scaling factor, and SI offset), this is a no-op that returns the
+        existing unit. Otherwise, a differing definition raises.
+        """
+        if name in _CONST_BASE_UNITS or name in _CONST_DERIVED_UNITS:
+            raise UnitNameAlreadyRegistered(name)
+
+        if hasattr(self, name):
+            existing = getattr(self, name)
+            if (
+                existing.dimensions == candidate.dimensions
+                and math.isclose(
+                    existing.si_scaling_factor,
+                    candidate.si_scaling_factor,
+                    rel_tol=1e-12,
+                )
+                and math.isclose(existing.si_offset, candidate.si_offset, abs_tol=1e-12)
+            ):
+                return existing
+            raise UnitNameAlreadyRegistered(name)
+
+        object.__setattr__(self, name, candidate)
+        return candidate
 
     def register_alias(
         self,
@@ -346,6 +479,97 @@ class UnitRegistry:
 
         _CONST_ALIASES[alias] = canonical
 
+    def export_custom_units(self, path: str, *, overwrite: bool = False) -> None:
+        """
+        Export this registry's runtime-registered custom units to a YAML file.
+
+        Only units registered via :meth:`register_unit` (directly, or through
+        the ``custom_units``/``custom_units_file`` constructor parameters) are
+        exported. Built-in units are never included. The resulting file can be
+        reloaded with :func:`load_custom_units` or passed directly as
+        ``custom_units_file`` to a new ``UnitRegistry``.
+
+        Parameters
+        ----------
+        path : str
+            Destination file path.
+        overwrite : bool, optional
+            Whether to overwrite ``path`` if it already exists. Default is
+            ``False``.
+
+        Raises
+        ------
+        ValueError
+            If this registry has no custom registered units to export.
+        FileExistsError
+            If ``path`` already exists and ``overwrite`` is ``False``.
+
+        Examples
+        --------
+        >>> from ansys.units.common import m
+        >>> ur = UnitRegistry()
+        >>> ur.register_unit("furlong", 201.168 * m, aliases=["furlongs"])
+        >>> ur.export_custom_units("units.yaml")
+        >>> ur2 = UnitRegistry(custom_units_file="units.yaml")
+        >>> ur2.furlong is ur2.furlongs
+        True
+        """
+        definitions = _CUSTOM_UNIT_DEFINITIONS.get(self, {})
+        if not definitions:
+            raise ValueError("This registry has no custom registered units to export.")
+
+        if os.path.exists(path) and not overwrite:
+            raise FileExistsError(
+                f"`{path}` already exists. Pass `overwrite=True` to replace it."
+            )
+
+        aliases_by_unit: dict[str, list[str]] = {}
+        for alias, canonical in _CUSTOM_UNIT_ALIASES.get(self, {}).items():
+            aliases_by_unit.setdefault(canonical, []).append(alias)
+
+        entries = []
+        for name, info in definitions.items():
+            entry: dict[str, Any] = {
+                "unit": name,
+                "composition": info["composition"],
+                "factor": info["factor"],
+            }
+            if name in aliases_by_unit:
+                entry["aliases"] = aliases_by_unit[name]
+            entries.append(entry)
+
+        with open(path, "w") as custom_units_yaml:
+            yaml.safe_dump(
+                {"custom_units": entries}, custom_units_yaml, sort_keys=False
+            )
+
+
+def load_custom_units(path: str) -> list[dict[str, Any]]:
+    """
+    Load custom unit definitions from a file written by ``export_custom_units``.
+
+    Parameters
+    ----------
+    path : str
+        Path to a ``YAML`` file previously produced by
+        :meth:`UnitRegistry.export_custom_units`.
+
+    Returns
+    -------
+    list of dict
+        A list of custom unit definitions, suitable for passing directly as
+        the ``custom_units`` constructor parameter of ``UnitRegistry``.
+
+    Examples
+    --------
+    >>> ur.export_custom_units("units.yaml")
+    >>> custom_units = load_custom_units("units.yaml")
+    >>> ur2 = UnitRegistry(custom_units=custom_units)
+    """
+    with open(path, "r") as custom_units_yaml:
+        data = yaml.safe_load(custom_units_yaml) or {}
+    return data.get("custom_units", [])
+
 
 class AliasAlreadyRegistered(ValueError):
     """Raised when an alias conflicts with an existing unit or alias."""
@@ -360,8 +584,12 @@ class UnitNameAlreadyRegistered(ValueError):
     """
     Raised when a unit name conflicts with an existing name.
 
-    This is a name-only check. Units with different names but equivalent definitions
-    (same composition and factor) are not detected.
+    This is raised when ``unit`` (or an alias) is a built-in unit name, or
+    when it is already registered on the instance with a *different*
+    effective definition (dimensions, SI scaling factor, or SI offset).
+    Re-registering the same name with an equivalent definition is a no-op and
+    does not raise. Units with different names but equivalent definitions
+    (same composition and factor) are also not detected as conflicts.
     """
 
     def __init__(self, name: str):

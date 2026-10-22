@@ -124,3 +124,23 @@ transitively until a canonical unit is reached:
    global alias table. They take effect immediately for all subsequent
    ``Unit()`` and ``Quantity()`` calls in the same process. They are not
    persisted across sessions.
+
+Aliases for custom registered units
+------------------------------------
+
+The ``aliases`` argument on :meth:`~ansys.units.unit_registry.UnitRegistry.register_unit`
+is a different, more narrowly-scoped mechanism: it adds alternative names for
+a single custom unit on *that registry instance only*. Unlike
+``register_alias()``, it does not touch the global alias table and has no
+effect on ``Unit()`` or on other registries.
+
+.. code-block:: python
+
+    from ansys.units import UnitRegistry
+    from ansys.units.common import m
+
+    ur = UnitRegistry()
+    ur.register_unit("furlong", 201.168 * m, aliases=["furlongs"])
+
+    ur.furlong is ur.furlongs  # True
+    ur.get_unit("furlongs") is ur.furlong  # True
