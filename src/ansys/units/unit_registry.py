@@ -263,7 +263,7 @@ class UnitRegistry:
     def register_unit(
         self,
         unit: str,
-        definition: "Unit | Quantity[Any] | None" = None,
+        definition: Any = None,
         *,
         composition: str | None = None,
         factor: float | None = None,
@@ -348,8 +348,7 @@ class UnitRegistry:
         if definition is not None:
             if composition is not None or factor is not None:
                 raise ValueError(
-                    "Provide either `definition` or `composition`/`factor`, "
-                    "not both."
+                    "Provide either `definition` or `composition`/`factor`, not both."
                 )
             from ansys.units.quantity import Quantity as _Quantity
 
@@ -364,7 +363,7 @@ class UnitRegistry:
         else:
             if composition is None or factor is None:
                 raise ValueError(
-                    "Provide either `definition` or both `composition` and " "`factor`."
+                    "Provide either `definition` or both `composition` and `factor`."
                 )
             composed = Unit(units=str(composition))
             f = float(factor)
@@ -567,7 +566,7 @@ def load_custom_units(path: str) -> list[dict[str, Any]]:
     >>> ur2 = UnitRegistry(custom_units=custom_units)
     """
     with open(path, "r") as custom_units_yaml:
-        data = yaml.safe_load(custom_units_yaml) or {}
+        data: dict[str, Any] = yaml.safe_load(custom_units_yaml) or {}
     return data.get("custom_units", [])
 
 

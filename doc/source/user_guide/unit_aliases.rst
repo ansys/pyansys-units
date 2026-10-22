@@ -128,11 +128,11 @@ transitively until a canonical unit is reached:
 Aliases for custom registered units
 ------------------------------------
 
-The ``aliases`` argument on :meth:`~ansys.units.unit_registry.UnitRegistry.register_unit`
-is a different, more narrowly-scoped mechanism: it adds alternative names for
-a single custom unit on *that registry instance only*. Unlike
-``register_alias()``, it does not touch the global alias table and has no
-effect on ``Unit()`` or on other registries.
+The ``aliases`` argument on ``UnitRegistry.register_unit()`` is a different,
+more narrowly scoped mechanism: it adds alternative names for a single custom
+unit on *that registry instance only*. Unlike ``register_alias()``, it does
+not modify the global alias table and has no effect on ``Unit()`` or on other
+registries.
 
 .. code-block:: python
 

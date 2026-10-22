@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import os
+from pathlib import Path
 import tempfile
 
 import pytest
@@ -533,21 +534,23 @@ def test_register_unit_rejects_both_definition_and_composition():
 
     ur = UnitRegistry()
     with pytest.raises(ValueError):
-        ur.register_unit("furlong", 201.168 * m, composition="m", factor=201.168)
+        ur.register_unit(  # pyright: ignore[reportCallIssue]
+            "furlong", 201.168 * m, composition="m", factor=201.168
+        )
 
 
 def test_register_unit_rejects_neither_definition_nor_composition():
     """Test that omitting both `definition` and `composition`/`factor` raises."""
     ur = UnitRegistry()
     with pytest.raises(ValueError):
-        ur.register_unit("furlong")
+        ur.register_unit("furlong")  # pyright: ignore[reportCallIssue]
 
 
 def test_register_unit_rejects_invalid_definition_type():
     """Test that a non-`Unit`/`Quantity` `definition` raises `TypeError`."""
     ur = UnitRegistry()
     with pytest.raises(TypeError):
-        ur.register_unit("furlong", "m")
+        ur.register_unit("furlong", "m")  # pyright: ignore[reportArgumentType]
 
 
 def test_register_unit_aliases_keyword_form():
@@ -629,7 +632,7 @@ def test_custom_units_with_aliases():
 # =============================================================================
 
 
-def test_export_custom_units_round_trip(tmp_path):
+def test_export_custom_units_round_trip(tmp_path: Path):
     """Test exporting and reloading custom units (and aliases) via a file."""
     from ansys.units import load_custom_units
     from ansys.units.common import m
@@ -648,7 +651,7 @@ def test_export_custom_units_round_trip(tmp_path):
     assert ur2.furlong.dimensions == ur1.furlong.dimensions
 
 
-def test_custom_units_file_constructor_param(tmp_path):
+def test_custom_units_file_constructor_param(tmp_path: Path):
     """Test loading exported custom units directly via `custom_units_file`."""
     path = tmp_path / "units.yaml"
 
@@ -660,7 +663,7 @@ def test_custom_units_file_constructor_param(tmp_path):
     assert ur2.micron.si_scaling_factor == pytest.approx(1e-6)
 
 
-def test_custom_units_file_combined_with_custom_units(tmp_path):
+def test_custom_units_file_combined_with_custom_units(tmp_path: Path):
     """Test that `custom_units_file` entries combine with `custom_units`."""
     path = tmp_path / "units.yaml"
 
@@ -695,14 +698,14 @@ def test_export_custom_units_excludes_builtins():
     assert not (names & set(_CONST_BASE_UNITS))
 
 
-def test_export_custom_units_no_custom_units_raises(tmp_path):
+def test_export_custom_units_no_custom_units_raises(tmp_path: Path):
     """Test that exporting with no custom units raises ValueError."""
     ur = UnitRegistry()
     with pytest.raises(ValueError):
         ur.export_custom_units(str(tmp_path / "units.yaml"))
 
 
-def test_export_custom_units_respects_overwrite(tmp_path):
+def test_export_custom_units_respects_overwrite(tmp_path: Path):
     """Test that export_custom_units refuses to overwrite unless requested."""
     path = tmp_path / "units.yaml"
     path.write_text("existing content")
