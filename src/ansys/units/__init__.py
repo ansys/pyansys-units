@@ -39,6 +39,10 @@ from ansys.units.preferred_units import (
 )
 from ansys.units.quantity import Quantity, get_si_value
 from ansys.units.quantity_dimensions import QuantityDimensions
+from ansys.units.serialization import (
+    get_application_registry,
+    set_application_registry,
+)
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
 from ansys.units.unit_registry import UnitRegistry
@@ -73,6 +77,8 @@ __all__ = [
     "VariableCatalog",
     "ConversionStrategy",
     "MappingConversionStrategy",
+    "get_application_registry",
+    "set_application_registry",
 ]
 
 # Conditionally import pandas extension if pandas is available

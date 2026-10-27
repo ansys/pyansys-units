@@ -43,7 +43,7 @@ from ansys.units.dimensions import Dimensions
 from ansys.units.preferred_units import PreferredUnitInput, PreferredUnits
 from ansys.units.quantity_tables.keys import QuantityKey, UnitKey
 from ansys.units.systems import UnitSystem
-from ansys.units.unit import Unit
+from ansys.units.unit import ProhibitedOffsetUnitOperation, Unit
 
 try:
     import numpy as np
@@ -82,6 +82,8 @@ Vector: TypeAlias = "npt.NDArray[np.floating]"
 if TYPE_CHECKING:
     import numpy.typing as npt
     from typing_extensions import TypeVar
+
+    from ansys.units.unit_registry import UnitRegistry
 
     ValT = TypeVar(
         "ValT",
@@ -252,7 +254,16 @@ class Quantity(Generic[ValT]):
         if not isinstance(units, Unit):
             units = Unit(units)
 
-        min_value = value if isinstance(value, (int, float)) else min(value)
+        if isinstance(value, (int, float)):
+            min_value = value
+        elif self._value.size == 0:
+            # An empty array has no values below absolute zero.
+            min_value = 0.0
+        elif self._value.ndim != 1:
+            # Multidimensional arrays (and 0-d values) cannot use the builtin min().
+            min_value = self._value.min()
+        else:
+            min_value = min(value)
         # Convert min_value to float for comparison to avoid type checker issues
         # Skip conversion for complex numbers to avoid warnings
         min_val_float: float = 0.0
@@ -262,12 +273,10 @@ class Quantity(Generic[ValT]):
         except (TypeError, ValueError):
             pass
 
-        if (
-            (units.name in ["K", "R"] and min_val_float < 0)
-            or (units.name == "C" and min_val_float < -273.15)
-            or (units.name == "F" and min_val_float < -459.67)
-        ):
-            units = Unit(f"delta_{units.name}")
+        # Values below absolute zero are only meaningful as temperature differences.
+        min_allowed = units.min_absolute_value
+        if min_allowed is not None and min_val_float < min_allowed:
+            units = units.to_temperature_difference()
 
         self._unit = units
 
@@ -277,6 +286,75 @@ class Quantity(Generic[ValT]):
                 self._unit = unit
 
         self.extra_fields = kwargs
+
+    def to_dict(self) -> dict[str, Any]:
+        """
+        Serialize the quantity to a dictionary of built-in Python types.
+
+        The dictionary contains ``"value"`` (a float, or nested lists for arrays),
+        ``"units"`` (the unit name), and any extra fields given to the
+        constructor. Custom units that are only defined in a
+        :class:`~ansys.units.UnitRegistry` also include a ``"unit_definition"``.
+
+        This is the format used by the pydantic integration. For JSON, use a
+        pydantic model (or ``pydantic.TypeAdapter(Quantity)``), or
+        ``json.dumps(quantity.to_dict())`` without pydantic. Pydantic writes NaN
+        and infinity as ``null`` by default; set
+        ``model_config = ConfigDict(ser_json_inf_nan="constants")`` to keep them.
+
+        Examples
+        --------
+        >>> Quantity(5, "m s^-1").to_dict()
+        {'value': 5.0, 'units': 'm s^-1'}
+        """
+        from ansys.units import serialization
+
+        return serialization.quantity_to_dict(self)
+
+    @classmethod
+    def from_dict(
+        cls, data: Mapping[str, Any], registry: UnitRegistry | None = None
+    ) -> Quantity:
+        """
+        Create a quantity from a dictionary written by :meth:`to_dict`.
+
+        Parameters
+        ----------
+        data : dict
+            Serialized quantity. Keys other than ``"value"``, ``"units"`` and
+            ``"unit_definition"`` become extra fields.
+        registry : UnitRegistry, optional
+            Registry used to resolve the unit name. Defaults to the application
+            registry (see :func:`~ansys.units.set_application_registry`).
+        """
+        from ansys.units import serialization
+
+        return serialization.quantity_from_dict(data, registry)
+
+    @classmethod
+    def from_string(cls, text: str, registry: UnitRegistry | None = None) -> Quantity:
+        """
+        Parse a quantity from its string representation.
+
+        Accepts the output of ``str(quantity)``, such as ``"5.0 m s^-1"`` or
+        ``"[1. 2. 3.] kg"``. Summarized NumPy output (containing ``...``) cannot
+        be parsed.
+
+        Parameters
+        ----------
+        text : str
+            String representation.
+        registry : UnitRegistry, optional
+            Registry used to resolve the unit name.
+
+        Examples
+        --------
+        >>> Quantity.from_string("5.0 m s^-1")
+        Quantity(5.0, "m s^-1")
+        """
+        from ansys.units import serialization
+
+        return serialization.quantity_from_string(text, registry)
 
     @classmethod
     def preferred_units(
@@ -329,6 +407,21 @@ class Quantity(Generic[ValT]):
     def is_dimensionless(self) -> bool:
         """True if the quantity is dimensionless."""
         return not bool(self.dimensions)
+
+    @property
+    def shape(self) -> tuple[int, ...]:
+        """Shape of the quantity's value (``()`` for a scalar)."""
+        return tuple(getattr(self._value, "shape", ()))
+
+    @property
+    def ndim(self) -> int:
+        """Number of dimensions of the quantity's value."""
+        return len(self.shape)
+
+    @property
+    def size(self) -> int:
+        """Number of elements in the quantity's value."""
+        return int(getattr(self._value, "size", 1))
 
     def to(self, to_units: Unit | str) -> "Quantity[ValT]":
         """
@@ -481,8 +574,35 @@ class Quantity(Generic[ValT]):
     def __len__(self: Quantity[Vector]) -> int:
         return len(self.value)
 
-    def __getitem__(self: Quantity[Vector], idx: int) -> Quantity[float]:
-        return Quantity(value=float(self.value[idx]), units=self.units)
+    def __getitem__(self: Quantity[Vector], idx: Any) -> Quantity[Any]:
+        item = self.value[idx]
+        if getattr(item, "ndim", 0) == 0:
+            item = float(item)
+        return Quantity(value=item, units=self.units)
+
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        """
+        Support NumPy ufuncs with automatic unit handling.
+
+        Unit-preserving functions (for example ``np.maximum``) convert all operands
+        to the units of the first one. Trigonometric functions require an angle or
+        dimensionless argument, ``np.exp``/``np.log`` require a dimensionless
+        argument, and ``np.sqrt``/``np.square``/``np.multiply``/``np.divide`` combine
+        units. Unsupported ufuncs raise a ``TypeError``.
+        """
+        from ansys.units import _numpy_protocols
+
+        return _numpy_protocols.array_ufunc(ufunc, method, inputs, kwargs)
+
+    def __array_function__(self, func, types, args, kwargs):
+        """
+        Support NumPy functions such as ``np.mean`` and ``np.concatenate``.
+
+        Unsupported functions raise a ``TypeError``.
+        """
+        from ansys.units import _numpy_protocols
+
+        return _numpy_protocols.array_function(func, types, args, kwargs)
 
     def __str__(self) -> str:
         return f"{self.value} {self.units.name}"
@@ -525,12 +645,38 @@ class Quantity(Generic[ValT]):
             return self * base_quantity
 
         if isinstance(other, (float, int)):
+            if self.units.has_offset:
+                raise ProhibitedOffsetUnitOperation(self.units, "*")
             return Quantity(value=self.value * other, units=self.units)
         if _array and isinstance(other, (Sequence, _array.ndarray)):
+            if self.units.has_offset:
+                raise ProhibitedOffsetUnitOperation(self.units, "*")
             return Quantity(value=self.value * _array.array(other), units=self.units)
         return NotImplemented
 
     __rmul__ = __mul__
+
+    def __matmul__(
+        self: Quantity[Vector], other: "Quantity[Vector] | Sequence[float] | Vector"
+    ) -> "Quantity":
+        if not self._is_matmul_operand(other):
+            return NotImplemented
+        # Delegate to np.matmul so units and offset checks match __array_ufunc__.
+        return _array.matmul(self, other)
+
+    def __rmatmul__(
+        self: Quantity[Vector], other: "Sequence[float] | Vector"
+    ) -> "Quantity":
+        if not self._is_matmul_operand(other):
+            return NotImplemented
+        return _array.matmul(other, self)
+
+    @staticmethod
+    def _is_matmul_operand(other: object) -> bool:
+        return bool(_array) and (
+            isinstance(other, (Quantity, _array.ndarray))
+            or (isinstance(other, Sequence) and not isinstance(other, str))
+        )
 
     @overload
     def __truediv__(
@@ -563,8 +709,12 @@ class Quantity(Generic[ValT]):
             return self / base_quantity
 
         if isinstance(other, (float, int)):
+            if self.units.has_offset:
+                raise ProhibitedOffsetUnitOperation(self.units, "/")
             return Quantity(value=self.value / other, units=self._unit)
         if _array and isinstance(other, (Sequence, _array.ndarray)):
+            if self.units.has_offset:
+                raise ProhibitedOffsetUnitOperation(self.units, "/")
             return Quantity(value=self.value / other, units=self._unit)
         return NotImplemented
 
@@ -645,6 +795,9 @@ class Quantity(Generic[ValT]):
     def __neg__(self) -> Self:
         return Quantity(-self.value, self._unit)
 
+    def __abs__(self) -> Self:
+        return Quantity(abs(self.value), self._unit)
+
     def validate_matching_dimensions(self, other):
         """Validates dimensions of quantities."""
         if isinstance(other, Quantity) and (self.dimensions != other.dimensions):
@@ -715,27 +868,16 @@ class Quantity(Generic[ValT]):
         def validate_quantity_type(obj):
             if isinstance(obj, cls):
                 return obj
-            if isinstance(obj, Quantity):
-                return cls(
-                    value=(
-                        obj._value.tolist()
-                        if hasattr(obj._chosen_unitsvalue, "tolist")
-                        else obj.value
-                    ),
-                    units=obj.units.name,
-                )
-            if isinstance(obj, dict):
-                value = obj.get("value")
-                units = obj.get("units")
-                extras = {k: v for k, v in obj.items() if k not in {"value", "units"}}
-                return cls(value=value, units=units, **extras)
-            raise TypeError(
-                "Expected dict, Quantity, or QuantityPydanticAdapter instance."
-            )
+            # Pydantic reports ValueError (not TypeError) as a ValidationError.
+            if not isinstance(obj, dict):
+                raise ValueError("Expected a dict or Quantity instance.")
+            try:
+                return cls.from_dict(obj)
+            except TypeError as error:
+                raise ValueError(str(error)) from error
 
         def serialize(instance):
-            base = {"value": instance.value, "units": instance.units.name}
-            return {**base, **instance.extra_fields}
+            return instance.to_dict()
 
         if _core_schema is None:
             raise PydanticRequired()
@@ -770,7 +912,7 @@ def get_si_value(quantity: Quantity[ValT]) -> ValT:
     if _array and isinstance(quantity.value, _array.ndarray):
         offset = quantity.units.si_offset
         factor = quantity.units.si_scaling_factor
-        return _array.array([_convert(x, offset, factor) for x in quantity.value])
+        return _array.asarray((quantity.value + offset) * factor, dtype=float)
     raise ValueError(
         (
             "quantity cannot be converted to a meaningful SI representation. "
@@ -824,6 +966,16 @@ class NumPyRequired(ModuleNotFoundError):
 
     def __init__(self):
         super().__init__("To use NumPy arrays and lists install NumPy.")
+
+
+class DimensionlessArgumentRequired(ValueError):
+    """Raised when a NumPy function requires a dimensionless (or angle) argument."""
+
+    def __init__(self, function_name, units, angle=False):
+        expected = "dimensionless or angle" if angle else "dimensionless"
+        super().__init__(
+            f"'{function_name}' requires a {expected} argument, but got '{units.name}'."
+        )
 
 
 class PydanticRequired(ModuleNotFoundError):

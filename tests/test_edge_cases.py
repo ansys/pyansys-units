@@ -55,6 +55,7 @@ from ansys.units.quantity import (
 from ansys.units.unit import (
     InconsistentDimensions,
     IncorrectUnits,
+    ProhibitedOffsetUnitOperation,
     ProhibitedTemperatureOperation,
     UnconfiguredUnit,
 )
@@ -490,11 +491,34 @@ class TestErrorConditions:
         with pytest.raises(ProhibitedTemperatureOperation):
             t1 + t2
 
-        # Note: Multiplying and dividing temperatures may not be prohibited
-        # in current implementation, so we just test they work
+        # Offset-based (non-multiplicative) units like "C" cannot be used in
+        # multiplication, division, or exponentiation, even with a dimensionless
+        # scalar or another quantity, since the result would be physically
+        # meaningless (see ansys.units.unit.ProhibitedOffsetUnitOperation).
         q_mass = Quantity(5, "kg")
-        result_mul = t1 * q_mass  # This may be allowed
-        assert result_mul.value == 500  # Just verify it works
+        with pytest.raises(ProhibitedOffsetUnitOperation):
+            t1 * q_mass
+        with pytest.raises(ProhibitedOffsetUnitOperation):
+            t1 * 2
+        with pytest.raises(ProhibitedOffsetUnitOperation):
+            t1 * t2
+        with pytest.raises(ProhibitedOffsetUnitOperation):
+            t1 / t2
+        with pytest.raises(ProhibitedOffsetUnitOperation):
+            t1 / 2
+        with pytest.raises(ProhibitedOffsetUnitOperation):
+            t1**2
+
+        # Ratio-scale temperatures (0 offset) and temperature differences are
+        # unaffected and continue to support these operations.
+        k = Quantity(100, "K")
+        assert (k * 2).value == 200
+        assert (k / 2).value == 50
+        assert (k**2).value == 10000
+
+        dc = Quantity(10, "delta_C")
+        assert (dc * 2).value == 20
+        assert (dc / 2).value == 5
 
     def test_unconfigured_unit_errors(self):
         """Test errors for unconfigured units."""
@@ -575,14 +599,11 @@ class TestRegressionIssues:
     def test_temperature_list_conversion(self):
         """Regression: Temperature lists should work properly."""
         if _has_numpy():
-            # Temperature conversion with arrays has known issues
-            # Test that basic array quantities work
-            temp_list = Quantity(
-                [1.0, 2.0, 3.0], "m"
-            )  # Use length instead  # noqa: E501
-            assert temp_list.units == Unit("m")
-            converted = temp_list.to("ft")
-            assert converted.units == Unit("ft")
+            temp_list = Quantity([0.0, 100.0], "C")
+            assert temp_list.units == Unit("C")
+            converted = temp_list.to("K")
+            assert converted.units == Unit("K")
+            assert converted.value.tolist() == pytest.approx([273.15, 373.15])
 
     def test_preferred_units_removal(self):
         """Regression: Removing preferred units should work correctly."""
@@ -762,21 +783,22 @@ class TestSpecialMathOperations:
 
     def test_abs_with_negative_quantity(self):
         """Test absolute value of negative quantity."""
-        q_neg = Quantity(-10.5, "m")
-        # abs() not implemented, use value directly
-        q_abs_value = abs(q_neg.value)
-        assert q_abs_value == 10.5
-        # Create new quantity with absolute value
-        q_abs = Quantity(abs(q_neg.value), q_neg.units)
+        q_abs = abs(Quantity(-10.5, "m"))
         assert q_abs.value == 10.5
         assert q_abs.units == Unit("m")
 
     def test_abs_with_positive_quantity(self):
         """Test absolute value of positive quantity."""
-        q_pos = Quantity(10.5, "kg")
-        # abs() not implemented, use value directly
-        q_abs_value = abs(q_pos.value)
-        assert q_abs_value == 10.5
+        q_abs = abs(Quantity(10.5, "kg"))
+        assert q_abs.value == 10.5
+        assert q_abs.units == Unit("kg")
+
+    def test_abs_with_array_quantity(self):
+        """Test absolute value of an array quantity."""
+        if _has_numpy():
+            q_abs = abs(Quantity([-1.0, 2.0], "delta_C"))
+            assert q_abs.value.tolist() == [1.0, 2.0]
+            assert q_abs.units == Unit("delta_C")
 
     def test_float_conversion(self):
         """Test converting dimensionless quantity to float."""
@@ -822,11 +844,15 @@ class TestArrayEdgeCases:
         """Test quantity with empty numpy array."""
         import numpy as np
 
-        # Empty arrays cause issues with min() in temperature check
-        # This is a known limitation - empty arrays not supported
-        empty_arr = np.array([])
-        with pytest.raises(ValueError, match="empty"):
-            _ = Quantity(empty_arr, "m")
+        for units in ("m", "C"):
+            q = Quantity(np.array([]), units)
+            assert q.units == Unit(units)
+            assert q.shape == (0,)
+            assert len(q) == 0
+        assert Quantity([], "m").size == 0
+        assert Quantity(np.empty((0, 3)), "m").shape == (0, 3)
+        assert Quantity(np.array([]), "C").to("K").value.size == 0
+        assert Quantity(np.array([1.0, 2.0]), "m")[5:].size == 0
 
     def test_single_element_array(self):
         """Test quantity with single-element array."""
@@ -841,12 +867,11 @@ class TestArrayEdgeCases:
         """Test quantity with multidimensional array."""
         import numpy as np
 
-        # Multidimensional arrays cause issues with min(value) for temperature check
-        # Use flatten or 1D arrays only
-        multi_arr = np.array([1, 2, 3, 4])
+        multi_arr = np.array([[1, 2], [3, 4]])
         q = Quantity(multi_arr, "m")
-        assert len(q.value) == 4
-        assert q.value[0] == 1
+        assert q.shape == (2, 2)
+        assert q[0, 1].value == 2
+        assert q.to("cm").value.tolist() == [[100.0, 200.0], [300.0, 400.0]]
 
     def test_array_with_mixed_types(self):
         """Test quantity creation with mixed int/float list."""
@@ -864,11 +889,13 @@ class TestArrayEdgeCases:
         arr = np.array([1, 2, 3, 4, 5])
         q = Quantity(arr, "m")
 
-        # Slicing returns single element as Quantity
-        # Full slice support not implemented, use indexing
         q_single = q[1]
         assert isinstance(q_single, Quantity)
         assert q_single.value == 2
+
+        q_slice = q[1:4]
+        assert q_slice.units == Unit("m")
+        assert q_slice.value.tolist() == [2, 3, 4]
 
     def test_array_negative_indexing(self):
         """Test negative indexing on array quantities."""

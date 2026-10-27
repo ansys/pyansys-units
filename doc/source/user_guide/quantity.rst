@@ -40,6 +40,22 @@ a list of floats or a ``NumPy`` array:
     speed = length_array_quantity / time
     speed  # Quantity ([0.5 3. 3.5], "m s^-1")
 
+Array quantities can have any number of dimensions, including zero elements.
+Indexing and slicing keep the units:
+
+.. code:: python
+
+    from ansys.units import Quantity
+
+    grid = Quantity([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], "kg")
+    grid.shape, grid.ndim, grid.size  # ((2, 3), 2, 6)
+    grid[1]  # Quantity ([4. 5. 6.], "kg")
+    grid[:, 0]  # Quantity ([1. 4.], "kg")
+    grid[0, 2]  # Quantity (3.0, "kg")
+
+For NumPy functions such as ``np.sin``, ``np.mean``, or the ``@`` operator, see
+:ref:`numpy_integration`.
+
 All ``Quantity`` objects work intuitively with arithmetic operators:
 
 .. code:: python
@@ -52,6 +68,7 @@ All ``Quantity`` objects work intuitively with arithmetic operators:
     m_ml = meter * 2  # (2.0, "m")
     m_dv = meter / 2  # (0.5, "m")
     m_sq = meter**2  # (1.0, "m^2")
+    m_ab = abs(-meter)  # (1.0, "m")
 
 Additions and subtractions involving ``Quantity`` objects retain the units
 of the first operand:
