@@ -47,6 +47,52 @@ jobs:
       - name: "Check Type hints"
         run: basedpyright --baselinemode=auto
 
+  coverage-gate:
+    name: "Coverage gate (tests and type hints)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: "Set up Python"
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: "Install the library with test and type-checking dependencies"
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[additional,tests,ci_types]"
+
+      - name: "Require 100% test coverage"
+        run: python -m pytest -m "not developer_only" --cov-fail-under=100
+
+      - name: "Require 100% type hint coverage"
+        run: |
+          basedpyright --verifytypes "$LIBRARY_NAMESPACE" --ignoreexternal --outputjson > verifytypes.json || true
+          python - <<'EOF'
+          import json
+          import sys
+
+          with open("verifytypes.json", encoding="utf-8") as file:
+              report = json.load(file)["typeCompleteness"]
+          score = report["completenessScore"] * 100
+          counts = report["exportedSymbolCounts"]
+          print(
+              f"Type hint coverage: {score:.2f}% "
+              f"({counts['withKnownType']} known, {counts['withAmbiguousType']} ambiguous, "
+              f"{counts['withUnknownType']} unknown exported symbols)"
+          )
+          if score < 100:
+              for symbol in report["symbols"]:
+                  if not symbol["isTypeKnown"] or symbol["isTypeAmbiguous"]:
+                      messages = [d["message"].splitlines()[0] for d in symbol["diagnostics"]]
+                      print(f"::error::{symbol['name']}: {'; '.join(messages) or 'type is not known'}")
+              sys.exit("Type hint coverage must be 100%.")
+          EOF
+
   doc-style:
     name: Documentation Style Check
     runs-on: ubuntu-latest

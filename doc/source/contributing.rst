@@ -109,3 +109,19 @@ Once you are satisfied that no new errors have been introduced, update the basel
 .. code:: console
 
     uv run basedpyright --writebaseline
+
+Coverage requirements
+---------------------
+Pull requests must keep both test coverage and type hint coverage at 100%. The
+``Coverage gate`` CI job fails if either is lower. Run the same checks locally
+with these commands:
+
+.. code:: console
+
+    pip install -e .[additional,tests,ci_types]
+    python -m pytest -m "not developer_only" --cov-fail-under=100
+    basedpyright --verifytypes ansys.units --ignoreexternal
+
+Type hint coverage is the type completeness score of the public API, as reported by
+``basedpyright --verifytypes``. Every exported function, method, class attribute,
+and module-level constant needs a known type.
