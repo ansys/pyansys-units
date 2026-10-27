@@ -22,6 +22,7 @@
 
 import os
 import tempfile
+from typing import Any
 
 import pytest
 
@@ -142,6 +143,6 @@ def test_set_and_iterate_units():
         ({"unit": "x", "composition": "m", "factor": float("nan")}, "finite"),
     ],
 )
-def test_register_unit_validates_input(kwargs, message):
+def test_register_unit_validates_input(kwargs: dict[str, Any], message: str):
     with pytest.raises(ValueError, match=message):
         UnitRegistry().register_unit(**kwargs)

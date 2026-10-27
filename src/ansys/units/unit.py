@@ -27,6 +27,8 @@ import functools
 import os
 from typing import TYPE_CHECKING, Any, overload
 
+from typing_extensions import override
+
 from ansys.units._constants import (
     _base_units,
     _BaseUnitInfo,
@@ -208,7 +210,9 @@ class Unit:
         compatible_units.discard(self.name)
         return compatible_units
 
-    def _temp_precheck(self, other_unit, op: str = "+") -> tuple["Unit", "Unit"] | None:
+    def _temp_precheck(
+        self, other_unit: "Unit", op: str = "+"
+    ) -> tuple["Unit", "Unit"] | None:
         """
         Validate units for temperature differences.
 
@@ -380,7 +384,7 @@ class Unit:
     def __repr__(self) -> str:
         return f"Unit({self.name!r})"
 
-    def __add__(self, value) -> tuple["Unit", "Unit"]:
+    def __add__(self, value: "Unit") -> tuple["Unit", "Unit"]:
         return self._temp_precheck(value)
 
     def __mul__(self, value: "Unit") -> "Unit":
@@ -501,6 +505,7 @@ class Unit:
 
         return serialization.unit_from_dict(data, registry)
 
+    @override
     def __getstate__(self) -> dict[str, Any]:
         # Pickle by name so that units are resolved again when unpickled.
         return self.to_dict()
@@ -543,7 +548,7 @@ def _get_config(name: str) -> _BaseUnitInfo | _DerivedUnitInfo | None:
 
 
 def _dim_to_units(
-    system: UnitSystem,
+    system: UnitSystem | None,
     dimensions: Dimensions,
     preferred_units: PreferredUnits | PreferredUnitInput = None,
 ) -> str:
@@ -807,7 +812,7 @@ class InconsistentDimensions(ValueError):
 class IncorrectUnits(ValueError):
     """Raised when the specified units are incorrect."""
 
-    def __init__(self, unit1, unit2):
+    def __init__(self, unit1: "Unit", unit2: "Unit"):
         super().__init__(
             f"'{unit1.si_units}' and '{unit2.si_units}' must match for this operation."
         )
@@ -831,8 +836,8 @@ class ProhibitedOffsetUnitOperation(TypeError):
     def __init__(self, unit: "Unit", op: str):
         super().__init__(
             f"'{unit.name}' is a non-multiplicative (offset-based) unit and cannot be used "
-            f"with the '{op}' operation. Use a ratio-scale unit (for example 'K' or 'R') or "
-            "a temperature difference unit (for example 'delta_C') instead."
+            + f"with the '{op}' operation. Use a ratio-scale unit (for example 'K' or 'R') or "
+            + "a temperature difference unit (for example 'delta_C') instead."
         )
 
 
@@ -842,13 +847,13 @@ class PrefixedOffsetUnit(ValueError):
     def __init__(self, term: str, base: str):
         super().__init__(
             f"'{term}' applies a multiplier prefix to the offset-based unit '{base}', "
-            f"which is not supported. Use 'delta_{base}' for a scaled temperature "
-            "difference or a ratio-scale unit (for example 'K') instead."
+            + f"which is not supported. Use 'delta_{base}' for a scaled temperature "
+            + "difference or a ratio-scale unit (for example 'K') instead."
         )
 
 
 class UnknownTableItem(ValueError):
     """Raised when a quantity table item is undefined."""
 
-    def __init__(self, item):
+    def __init__(self, item: str):
         super().__init__(f"`{item}` is not a valid quantity table item.")

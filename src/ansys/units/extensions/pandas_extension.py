@@ -31,7 +31,7 @@ aware DataFrames and Series.
 import numbers
 import operator
 import re
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar
 
 import numpy as np
 import pandas as pd
@@ -73,6 +73,9 @@ _SPREAD_REDUCTIONS = frozenset({"std", "sem", "var"})
 # Dimensionless shape statistics
 _UNITLESS_REDUCTIONS = frozenset({"skew", "kurt"})
 
+# Binary operator of a ``QuantityArray``, such as ``__add__`` or ``__eq__``
+_BinaryOperator = Callable[["QuantityArray", Any], Any]
+
 
 def _spread_units(name: str, units: Unit) -> Unit:
     """Units of a standard deviation or variance of values in ``units``."""
@@ -87,27 +90,28 @@ def _check_product(name: str, dtype: "QuantityDtype") -> None:
     if dtype.units != Unit(""):
         raise TypeError(
             f"Cannot perform {name} with dtype {dtype}: each result would have "
-            "different units. Convert to a dimensionless series first."
+            + "different units. Convert to a dimensionless series first."
         )
 
 
-def _check_accumulation(name: str, dtype: "QuantityDtype") -> None:
+def _check_accumulation(name: str, units: Unit, dtype: "QuantityDtype") -> None:
     if name == "cumprod":
         _check_product(name, dtype)
     elif name not in ("cumsum", "cummin", "cummax"):
         raise TypeError(f"Cannot perform {name} with dtype {dtype}")
-    elif name == "cumsum" and dtype.units.is_absolute_temperature:
+    elif name == "cumsum" and units.is_absolute_temperature:
         raise ProhibitedTemperatureOperation()
 
 
-def _reduction_units(name: str, dtype: "QuantityDtype", count: int) -> Unit | None:
+def _reduction_units(
+    name: str, units: Unit, dtype: "QuantityDtype", count: int
+) -> Unit | None:
     """
-    Units of the result of a reduction over ``count`` values.
+    Units of the result of a reduction over ``count`` values in ``units``.
 
     Returns ``None`` for dimensionless shape statistics and raises an error for
     reductions that make no sense for the units.
     """
-    units = dtype.units
     if name in _SAME_UNIT_REDUCTIONS:
         if name == "sum" and units.is_absolute_temperature:
             raise ProhibitedTemperatureOperation()
@@ -152,7 +156,9 @@ class QuantityDtype(ExtensionDtype):
     _cache: dict[tuple[str, Any], "QuantityDtype"] = {}
 
     def __new__(
-        cls, units: str | Unit | None = None, subdtype: Any | None = None
+        cls,
+        units: "str | Unit | QuantityDtype | None" = None,
+        subdtype: Any | None = None,
     ) -> "QuantityDtype":
         """
         Create a new QuantityDtype.
@@ -177,7 +183,7 @@ class QuantityDtype(ExtensionDtype):
             if units.startswith("quantity["):
                 m = cls._match.search(units)
                 if m:
-                    units = m.group("units")
+                    units = str(m.group("units"))
                     subdtype = subdtype or m.group("subdtype") or DEFAULT_SUBDTYPE
 
         # Convert string to Unit
@@ -276,9 +282,11 @@ class QuantityDtype(ExtensionDtype):
         Arrays with compatible units are combined in the units of the first array.
         Otherwise the result is an ``object`` array.
         """
-        if all(
+        units = self.units
+        if units is not None and all(
             isinstance(dtype, QuantityDtype)
-            and dtype.units.dimensions == self.units.dimensions
+            and dtype.units is not None
+            and dtype.units.dimensions == units.dimensions
             for dtype in dtypes
         ):
             return self
@@ -309,6 +317,7 @@ class QuantityArray(ExtensionArray):
 
     _data: Any
     _dtype: QuantityDtype
+    _units: Unit
     _can_hold_na: bool = True
 
     def __init__(
@@ -326,8 +335,11 @@ class QuantityArray(ExtensionArray):
 
         if not isinstance(dtype, QuantityDtype):
             dtype = QuantityDtype(dtype)
+        if dtype.units is None:
+            raise ValueError("The dtype of a QuantityArray must have units.")
 
         self._dtype = dtype
+        self._units = dtype.units
 
         # Extract values from Quantity if needed
         if isinstance(values, Quantity):
@@ -450,7 +462,7 @@ class QuantityArray(ExtensionArray):
         """Return the unique values, in order of appearance."""
         return type(self)(self._data.unique(), dtype=self.dtype)
 
-    def round(self, decimals: int = 0, *args: Any, **kwargs: Any) -> "QuantityArray":
+    def round(self, decimals: int = 0, *_args: Any, **_kwargs: Any) -> "QuantityArray":
         """Round the values to the given number of decimals, keeping the units."""
         return type(self)(self._data.round(decimals), dtype=self.dtype)
 
@@ -542,7 +554,7 @@ class QuantityArray(ExtensionArray):
         return self._data.to_numpy(dtype="float64", na_value=np.nan), np.nan
 
     @property
-    def quantity(self) -> Quantity:
+    def quantity(self) -> Quantity[Vector]:
         """Convert to single Quantity with array value."""
         return Quantity(np.asarray(self._data), str(self._dtype.units))
 
@@ -566,6 +578,7 @@ class QuantityArray(ExtensionArray):
         converted: Quantity[float | Vector] = self.quantity.to(str(units))
         return QuantityArray(converted.value, dtype=QuantityDtype(units))
 
+    @override
     def astype(self, dtype: Any, copy: bool = True) -> Any:
         """
         Cast to different dtype.
@@ -606,6 +619,7 @@ class QuantityArray(ExtensionArray):
             return np.array([self[i] for i in range(len(self))], dtype=object)
         return np.array(self._data, dtype=dtype, copy=copy)
 
+    @override
     def to_numpy(
         self, dtype: Any = None, copy: bool = False, na_value: Any = no_default
     ) -> np.ndarray[Any, Any]:
@@ -626,7 +640,7 @@ class QuantityArray(ExtensionArray):
     @staticmethod
     def _create_arithmetic_method(
         op: Callable[[Any, Any], Any], reflected: bool = False
-    ) -> Callable[..., Any]:
+    ) -> "_BinaryOperator":
         """
         Create arithmetic method.
 
@@ -668,7 +682,7 @@ class QuantityArray(ExtensionArray):
         return method
 
     @staticmethod
-    def _create_comparison_method(op: Callable[..., Any]) -> Callable[..., Any]:
+    def _create_comparison_method(op: Callable[..., Any]) -> "_BinaryOperator":
         """Create an element-wise comparison method from a NumPy comparison ufunc."""
 
         def method(self: "QuantityArray", other: Any) -> Any:
@@ -685,7 +699,7 @@ class QuantityArray(ExtensionArray):
     ) -> Any:
         """Reductions such as ``sum``, ``mean``, ``std`` and ``prod``."""
         count = int(np.sum(~self.isna())) if skipna else len(self)
-        units = _reduction_units(name, self._dtype, count)
+        units = _reduction_units(name, self._units, self._dtype, count)
         result = self._data._reduce(name, skipna=skipna, keepdims=keepdims, **kwargs)
         if units is None:
             # Shape statistics such as skewness have no units, so they are plain
@@ -700,11 +714,12 @@ class QuantityArray(ExtensionArray):
             result = np.nan
         return Quantity(result, units)
 
+    @override
     def _accumulate(
         self, name: str, *, skipna: bool = True, **kwargs: Any
     ) -> "QuantityArray":
         """Cumulative sum, minimum, maximum and (dimensionless) product."""
-        _check_accumulation(name, self._dtype)
+        _check_accumulation(name, self._units, self._dtype)
         result = self._data._accumulate(name, skipna=skipna, **kwargs)
         return type(self)(result, dtype=self.dtype)
 
@@ -719,7 +734,7 @@ class QuantityArray(ExtensionArray):
         **kwargs: Any,
     ) -> Any:
         """Grouped aggregations (``df.groupby(...)[col].sum()`` and so on)."""
-        units = self._dtype.units
+        units = self._units
         if how in ("prod", "cumprod"):
             _check_product(how, self._dtype)
         if how in ("sum", "cumsum") and units.is_absolute_temperature:
@@ -745,28 +760,28 @@ class QuantityArray(ExtensionArray):
     __array_priority__: int = 1000
 
     # Arithmetic operators
-    __add__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.add)
-    __sub__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.sub)
-    __mul__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.mul)
-    __truediv__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.truediv)
+    __add__: ClassVar[_BinaryOperator] = _create_arithmetic_method(operator.add)
+    __sub__: ClassVar[_BinaryOperator] = _create_arithmetic_method(operator.sub)
+    __mul__: ClassVar[_BinaryOperator] = _create_arithmetic_method(operator.mul)
+    __truediv__: ClassVar[_BinaryOperator] = _create_arithmetic_method(operator.truediv)
 
     # Reverse ops
-    __radd__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.add)
-    __rsub__: Callable[[Any, Any], Any] = _create_arithmetic_method(
+    __radd__: ClassVar[_BinaryOperator] = _create_arithmetic_method(operator.add)
+    __rsub__: ClassVar[_BinaryOperator] = _create_arithmetic_method(
         operator.sub, reflected=True
     )
-    __rmul__: Callable[[Any, Any], Any] = _create_arithmetic_method(operator.mul)
-    __rtruediv__: Callable[[Any, Any], Any] = _create_arithmetic_method(
+    __rmul__: ClassVar[_BinaryOperator] = _create_arithmetic_method(operator.mul)
+    __rtruediv__: ClassVar[_BinaryOperator] = _create_arithmetic_method(
         operator.truediv, reflected=True
     )
 
     # Comparisons (element-wise, with unit conversion)
-    __eq__: Callable[[Any, Any], Any] = _create_comparison_method(np.equal)
-    __ne__: Callable[[Any, Any], Any] = _create_comparison_method(np.not_equal)
-    __lt__: Callable[[Any, Any], Any] = _create_comparison_method(np.less)
-    __le__: Callable[[Any, Any], Any] = _create_comparison_method(np.less_equal)
-    __gt__: Callable[[Any, Any], Any] = _create_comparison_method(np.greater)
-    __ge__: Callable[[Any, Any], Any] = _create_comparison_method(np.greater_equal)
+    __eq__: ClassVar[_BinaryOperator] = _create_comparison_method(np.equal)
+    __ne__: ClassVar[_BinaryOperator] = _create_comparison_method(np.not_equal)
+    __lt__: ClassVar[_BinaryOperator] = _create_comparison_method(np.less)
+    __le__: ClassVar[_BinaryOperator] = _create_comparison_method(np.less_equal)
+    __gt__: ClassVar[_BinaryOperator] = _create_comparison_method(np.greater)
+    __ge__: ClassVar[_BinaryOperator] = _create_comparison_method(np.greater_equal)
 
 
 @register_series_accessor("units")
@@ -840,7 +855,7 @@ class UnitsSeriesAccessor:
         return pd.Series(stats, name=series.name, dtype=object)
 
     @property
-    def quantity(self) -> Quantity:
+    def quantity(self) -> Quantity[Vector]:
         """Get the underlying Quantity."""
         if not isinstance(self._obj.array, QuantityArray):
             raise TypeError("Series must contain QuantityArray")
@@ -853,7 +868,7 @@ class UnitsSeriesAccessor:
         Takes the same arguments as :meth:`pandas.Series.rolling`. For example,
         ``series.units.rolling(3).mean()``.
         """
-        return UnitAwareWindow(self._values().rolling(*args, **kwargs), self._obj.dtype)
+        return UnitAwareWindow(self._values().rolling(*args, **kwargs), self._units)
 
     def expanding(self, *args: Any, **kwargs: Any) -> "UnitAwareWindow":
         """
@@ -861,13 +876,16 @@ class UnitsSeriesAccessor:
 
         See :meth:`rolling`.
         """
-        return UnitAwareWindow(
-            self._values().expanding(*args, **kwargs), self._obj.dtype
-        )
+        return UnitAwareWindow(self._values().expanding(*args, **kwargs), self._units)
 
     def ewm(self, *args: Any, **kwargs: Any) -> "UnitAwareWindow":
         """Exponentially weighted window whose results keep their units."""
-        return UnitAwareWindow(self._values().ewm(*args, **kwargs), self._obj.dtype)
+        return UnitAwareWindow(self._values().ewm(*args, **kwargs), self._units)
+
+    @property
+    def _units(self) -> Unit:
+        """The units of the series."""
+        return self._obj.array._units
 
     def _values(self) -> pd.Series:
         """The values as a plain float series, with missing values as NaN."""
@@ -892,9 +910,12 @@ class UnitAwareWindow:
     ``apply``, return plain floats.
     """
 
-    def __init__(self, window: Any, dtype: QuantityDtype) -> None:
+    _window: Any
+    _units: Unit
+
+    def __init__(self, window: Any, units: Unit) -> None:
         self._window = window
-        self._dtype = dtype
+        self._units = units
 
     def __getattr__(self, name: str) -> Any:
         attribute = getattr(self._window, name)
@@ -904,7 +925,7 @@ class UnitAwareWindow:
         units = self._units_for(name)
 
         def method(*args: Any, **kwargs: Any) -> Any:
-            result = attribute(*args, **kwargs)
+            result: Any = attribute(*args, **kwargs)
             if units is None:
                 return result
             return pd.Series(
@@ -916,7 +937,7 @@ class UnitAwareWindow:
         return method
 
     def _units_for(self, name: str) -> Unit | None:
-        units = self._dtype.units
+        units = self._units
         if name in _SAME_UNIT_WINDOW_METHODS:
             if name == "sum" and units.is_absolute_temperature:
                 raise ProhibitedTemperatureOperation()

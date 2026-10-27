@@ -21,6 +21,9 @@
 # SOFTWARE.
 """Tests for the NumPy ``__array_ufunc__`` and ``__array_function__`` protocols."""
 
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 np = pytest.importorskip("numpy")
@@ -37,7 +40,7 @@ from ansys.units.unit import (  # noqa: E402
 )
 
 
-def _same(q: Quantity, values, units: str) -> bool:
+def _same(q: Quantity, values: Any, units: str) -> bool:
     return q.units == Unit(units) and np.allclose(q.value, values)
 
 
@@ -82,7 +85,7 @@ def test_arctan2_requires_matching_units():
 
 
 @pytest.mark.parametrize("func", [np.exp, np.log, np.log10, np.expm1, np.tanh])
-def test_dimensionless_functions(func):
+def test_dimensionless_functions(func: Callable[..., Any]):
     q = Quantity(np.array([1.0, 2.0]), "")
     result = func(q)
     assert result.is_dimensionless
@@ -174,39 +177,42 @@ def test_unsupported_ufunc_raises_type_error():
         np.logaddexp(Quantity(1.0, "m"), Quantity(1.0, "m"))
 
 
-@pytest.mark.parametrize(
-    "operation",
-    [
-        lambda q: np.multiply.reduce(q),  # unsupported reduction
-        lambda q: np.add.outer(q, q),  # unsupported ufunc method
-        lambda q: np.add(q, q, where=np.array([True, False])),  # unsupported kwarg
-        lambda q: np.spacing(q),  # unsupported unary ufunc
-        lambda q: np.prod(q),  # unsupported array function
-        lambda q: np.mean(q.value, out=q),  # quantity passed as ``out``
-    ],
-)
-def test_unsupported_numpy_operations_raise_type_error(operation):
+_UNSUPPORTED_OPERATIONS: list[Callable[[Any], Any]] = [
+    lambda q: np.multiply.reduce(q),  # unsupported reduction
+    lambda q: np.add.outer(q, q),  # unsupported ufunc method
+    lambda q: np.add(q, q, where=np.array([True, False])),  # unsupported kwarg
+    lambda q: np.spacing(q),  # unsupported unary ufunc
+    lambda q: np.prod(q),  # unsupported array function
+    lambda q: np.mean(q.value, out=q),  # quantity passed as ``out``
+]
+
+
+@pytest.mark.parametrize("operation", _UNSUPPORTED_OPERATIONS)
+def test_unsupported_numpy_operations_raise_type_error(
+    operation: Callable[[Any], Any],
+):
     with pytest.raises(TypeError):
         operation(Quantity(np.array([1.0, 2.0]), "m"))
 
 
 _PLAIN = np.array([1.0, 2.0])
 
+_MISPLACED_QUANTITY_OPERATIONS: list[Callable[[Any], Any]] = [
+    lambda q: np.percentile(_PLAIN, q),
+    lambda q: np.diff(_PLAIN, prepend=q),
+    lambda q: np.var(_PLAIN, mean=q),
+    lambda q: np.atleast_1d(q, q),
+    lambda q: np.clip(_PLAIN, q, q),
+    lambda q: np.where(q),
+    lambda q: np.where(q, _PLAIN, _PLAIN),
+    lambda q: np.linspace(0.0, q),
+]
 
-@pytest.mark.parametrize(
-    "operation",
-    [
-        lambda q: np.percentile(_PLAIN, q),
-        lambda q: np.diff(_PLAIN, prepend=q),
-        lambda q: np.var(_PLAIN, mean=q),
-        lambda q: np.atleast_1d(q, q),
-        lambda q: np.clip(_PLAIN, q, q),
-        lambda q: np.where(q),
-        lambda q: np.where(q, _PLAIN, _PLAIN),
-        lambda q: np.linspace(0.0, q),
-    ],
-)
-def test_quantity_in_unsupported_argument_position_raises_type_error(operation):
+
+@pytest.mark.parametrize("operation", _MISPLACED_QUANTITY_OPERATIONS)
+def test_quantity_in_unsupported_argument_position_raises_type_error(
+    operation: Callable[[Any], Any],
+):
     # The quantity isn't in the position whose units define the result.
     with pytest.raises(TypeError):
         operation(Quantity(np.array([1.0, 0.0]), ""))
@@ -259,7 +265,7 @@ def test_reduce_methods():
 
 
 def test_multidimensional_arrays():
-    q = Quantity(np.arange(6.0).reshape(2, 3), "m")
+    q = Quantity([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]], "m")
     assert q.value.shape == (2, 3)
     assert _same(np.sum(q, axis=0), [3.0, 5.0, 7.0], "m")
     assert _same(np.mean(q), 2.5, "m")
@@ -270,7 +276,7 @@ def test_multidimensional_arrays():
 
 
 def test_shape_properties_and_slicing():
-    q = Quantity(np.arange(6.0).reshape(2, 3), "m")
+    q = Quantity([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]], "m")
     assert (q.shape, q.ndim, q.size) == ((2, 3), 2, 6)
     assert Quantity(1.0, "m").shape == ()
     assert _same(q[0], [0.0, 1.0, 2.0], "m")
@@ -404,7 +410,7 @@ def test_plain_arrays_combine_with_quantities():
     assert _same(np.array([2.0, 4.0]) + Quantity(2.0, ""), [4.0, 6.0], "")
     assert np.array_equal(np.array([2.0, 4.0]) < Quantity(3.0, ""), [True, False])
     with pytest.raises(IncorrectUnits):
-        np.array([2.0, 4.0]) + Quantity(2.0, "m")
+        _ = np.array([2.0, 4.0]) + Quantity(2.0, "m")
     with pytest.raises(IncompatibleDimensions):
         np.equal(Quantity(np.array([1.0]), "m"), 1.0)
 
@@ -416,8 +422,8 @@ def test_matmul_and_atleast_1d():
 
 
 def test_matmul_operator():
-    matrix = Quantity(np.array([[1.0, 2.0], [3.0, 4.0]]), "m")
-    vector = Quantity(np.array([1.0, 1.0]), "N")
+    matrix = Quantity([[1.0, 2.0], [3.0, 4.0]], "m")
+    vector = Quantity([1.0, 1.0], "N")
     assert _same(matrix @ vector, [3.0, 7.0], "m N")
     assert _same(matrix @ matrix, [[7.0, 10.0], [15.0, 22.0]], "m^2")
     assert _same(vector @ vector, 2.0, "N^2")
@@ -433,22 +439,22 @@ def test_matmul_operator():
 
 
 def test_matmul_operator_errors():
-    vector = Quantity(np.array([1.0, 2.0]), "m")
+    vector = Quantity([1.0, 2.0], "m")
     with pytest.raises(ProhibitedOffsetUnitOperation):
-        Quantity(np.array([1.0, 2.0]), "C") @ vector
+        _ = Quantity([1.0, 2.0], "C") @ vector
     with pytest.raises(ProhibitedOffsetUnitOperation):
-        vector @ Quantity(np.array([1.0, 2.0]), "F")
+        _ = vector @ Quantity([1.0, 2.0], "F")
     with pytest.raises(ProhibitedOffsetUnitOperation):
-        [1.0, 2.0] @ Quantity(np.array([1.0, 2.0]), "C")
+        _ = [1.0, 2.0] @ Quantity([1.0, 2.0], "C")
     with pytest.raises(ValueError):
-        vector @ Quantity(np.array([1.0, 2.0, 3.0]), "m")  # shape mismatch
+        _ = vector @ Quantity([1.0, 2.0, 3.0], "m")  # shape mismatch
     with pytest.raises(ValueError):
-        Quantity(2.0, "m") @ vector  # scalar operand
+        _ = Quantity(2.0, "m") @ vector  # scalar operand
     for other in ("ab", 2.0, Unit("m"), object()):
         with pytest.raises(TypeError):
-            vector @ other
+            _ = vector @ other
     with pytest.raises(TypeError):
-        "ab" @ vector
+        _ = "ab" @ vector
 
 
 def test_value_preserving_functions():

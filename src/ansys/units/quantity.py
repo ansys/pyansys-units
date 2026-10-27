@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator, Mapping, Sequence
+from collections.abc import Callable, Collection, Iterator, Mapping, Sequence
 import operator
 from typing import (
     TYPE_CHECKING,
@@ -35,8 +35,6 @@ from typing import (
     TypeVar,
     overload,
 )
-
-from typing_extensions import Self
 
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
@@ -78,6 +76,8 @@ except Exception:
 
 DTypeT = TypeVar("DTypeT", bound="np.dtype", covariant=True)
 Vector: TypeAlias = "npt.NDArray[np.floating]"
+# Array values accepted by ``Quantity``: 1-D or 2-D sequences of numbers, or arrays.
+_ArrayInput: TypeAlias = "Sequence[float] | Sequence[Sequence[float]] | Vector"
 
 if TYPE_CHECKING:
     import numpy.typing as npt
@@ -136,7 +136,7 @@ class Quantity(Generic[ValT]):
         @overload
         def __new__(
             cls,
-            value: Sequence[float] | Vector,
+            value: _ArrayInput,
             units: Unit | UnitKey | str | None = None,
         ) -> Quantity[Vector]: ...
 
@@ -150,7 +150,7 @@ class Quantity(Generic[ValT]):
         @overload
         def __new__(
             cls,
-            value: Sequence[float] | Vector,
+            value: _ArrayInput,
             *,
             dimensions: Dimensions,
         ) -> Quantity[Vector]: ...
@@ -166,7 +166,7 @@ class Quantity(Generic[ValT]):
         @overload
         def __new__(
             cls,
-            value: Sequence[float] | Vector,
+            value: _ArrayInput,
             *,
             quantity_table: Mapping[QuantityKey, float],
         ) -> Quantity[Vector]: ...
@@ -189,7 +189,7 @@ class Quantity(Generic[ValT]):
         @overload
         def __new__(
             cls,
-            value: Sequence[float] | Vector,
+            value: _ArrayInput,
             *,
             copy_from: "Quantity",
         ) -> Quantity[Vector]: ...
@@ -200,12 +200,29 @@ class Quantity(Generic[ValT]):
             value: float,
             *,
             copy_from: "Quantity",
+        ) -> Quantity[float]: ...
+
+        # Extra keyword arguments are stored in ``extra_fields``.
+        @overload
+        def __new__(
+            cls,
+            value: _ArrayInput,
+            units: Unit | UnitKey | str | None = None,
+            **extra_fields: Any,
         ) -> Quantity[Vector]: ...
+
+        @overload
+        def __new__(
+            cls,
+            value: float,
+            units: Unit | UnitKey | str | None = None,
+            **extra_fields: Any,
+        ) -> Quantity[float]: ...
 
     # types here are intentionally broad because we need __new__ to handle the overloads
     def __init__(
         self,
-        value: float | Sequence[float] | Vector | None = None,
+        value: float | _ArrayInput | None = None,
         units: Unit | str | None = None,
         *,
         quantity_table: Mapping[QuantityKey, float] | None = None,
@@ -220,7 +237,7 @@ class Quantity(Generic[ValT]):
         ):
             raise ExcessiveParameters()
 
-        self._value = value
+        self._value: float | Vector
         self.unit = units
 
         if copy_from:
@@ -254,16 +271,20 @@ class Quantity(Generic[ValT]):
         if not isinstance(units, Unit):
             units = Unit(units)
 
+        min_value: float | np.floating[Any]
         if isinstance(value, (int, float)):
             min_value = value
-        elif self._value.size == 0:
-            # An empty array has no values below absolute zero.
-            min_value = 0.0
-        elif self._value.ndim != 1:
-            # Multidimensional arrays (and 0-d values) cannot use the builtin min().
-            min_value = self._value.min()
         else:
-            min_value = min(value)
+            # Non-scalar values were converted to an array above.
+            values = cast("Vector", self._value)
+            if values.size == 0:
+                # An empty array has no values below absolute zero.
+                min_value = 0.0
+            elif values.ndim != 1:
+                # Multidimensional arrays (and 0-d values) cannot use the builtin min().
+                min_value = values.min()
+            else:
+                min_value = min(values)
         # Convert min_value to float for comparison to avoid type checker issues
         # Skip conversion for complex numbers to avoid warnings
         min_val_float: float = 0.0
@@ -391,7 +412,7 @@ class Quantity(Generic[ValT]):
     @property
     def value(self) -> ValT:
         """Value in contained units."""
-        return self._value
+        return cast("ValT", self._value)
 
     @property
     def units(self) -> Unit:
@@ -580,7 +601,9 @@ class Quantity(Generic[ValT]):
             item = float(item)
         return Quantity(value=item, units=self.units)
 
-    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+    def __array_ufunc__(
+        self, ufunc: np.ufunc, method: str, *inputs: Any, **kwargs: Any
+    ) -> Any:
         """
         Support NumPy ufuncs with automatic unit handling.
 
@@ -594,7 +617,13 @@ class Quantity(Generic[ValT]):
 
         return _numpy_protocols.array_ufunc(ufunc, method, inputs, kwargs)
 
-    def __array_function__(self, func, types, args, kwargs):
+    def __array_function__(
+        self,
+        func: Callable[..., Any],
+        types: Collection[type],
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+    ) -> Any:
         """
         Support NumPy functions such as ``np.mean`` and ``np.concatenate``.
 
@@ -602,7 +631,7 @@ class Quantity(Generic[ValT]):
         """
         from ansys.units import _numpy_protocols
 
-        return _numpy_protocols.array_function(func, types, args, kwargs)
+        return _numpy_protocols.array_function(func, args, kwargs)
 
     def __str__(self) -> str:
         return f"{self.value} {self.units.name}"
@@ -628,6 +657,11 @@ class Quantity(Generic[ValT]):
     @overload
     def __mul__(
         self: Quantity[Vector], other: "Quantity[Vector] | Unit | float"
+    ) -> "Quantity[Vector]": ...
+
+    @overload
+    def __mul__(
+        self: Quantity[Vector], other: "Sequence[float] | Vector"
     ) -> "Quantity[Vector]": ...
 
     def __mul__(
@@ -659,17 +693,25 @@ class Quantity(Generic[ValT]):
     def __matmul__(
         self: Quantity[Vector], other: "Quantity[Vector] | Sequence[float] | Vector"
     ) -> "Quantity":
-        if not self._is_matmul_operand(other):
+        if _array is None or not self._is_matmul_operand(other):
             return NotImplemented
-        # Delegate to np.matmul so units and offset checks match __array_ufunc__.
-        return _array.matmul(self, other)
+        # Use the np.matmul handler so units and offset checks match __array_ufunc__.
+        from ansys.units import _numpy_protocols
+
+        return _numpy_protocols.array_ufunc(
+            _array.matmul, "__call__", (self, other), {}
+        )
 
     def __rmatmul__(
         self: Quantity[Vector], other: "Sequence[float] | Vector"
     ) -> "Quantity":
-        if not self._is_matmul_operand(other):
+        if _array is None or not self._is_matmul_operand(other):
             return NotImplemented
-        return _array.matmul(other, self)
+        from ansys.units import _numpy_protocols
+
+        return _numpy_protocols.array_ufunc(
+            _array.matmul, "__call__", (other, self), {}
+        )
 
     @staticmethod
     def _is_matmul_operand(other: object) -> bool:
@@ -686,11 +728,16 @@ class Quantity(Generic[ValT]):
     @overload
     def __truediv__(
         self: Quantity[float], other: "Quantity[Vector] | Sequence[float] | Vector"
-    ) -> "Quantity[float]": ...
+    ) -> "Quantity[Vector]": ...
 
     @overload
     def __truediv__(
         self: Quantity[Vector], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[Vector]": ...
+
+    @overload
+    def __truediv__(
+        self: Quantity[Vector], other: "Quantity[Vector] | Sequence[float] | Vector"
     ) -> "Quantity[Vector]": ...
 
     def __truediv__(
@@ -726,11 +773,16 @@ class Quantity(Generic[ValT]):
     @overload
     def __rtruediv__(
         self: Quantity[float], other: "Quantity[Vector] | Sequence[float] | Vector"
-    ) -> "Quantity[float]": ...
+    ) -> "Quantity[Vector]": ...
 
     @overload
     def __rtruediv__(
         self: Quantity[Vector], other: "Quantity[float] | Unit | float"
+    ) -> "Quantity[Vector]": ...
+
+    @overload
+    def __rtruediv__(
+        self: Quantity[Vector], other: "Quantity[Vector] | Sequence[float] | Vector"
     ) -> "Quantity[Vector]": ...
 
     def __rtruediv__(
@@ -792,13 +844,13 @@ class Quantity(Generic[ValT]):
             other, r_add_sub=True, op=lambda a, b: b - a
         )  # op.rsub doesn't exist
 
-    def __neg__(self) -> Self:
-        return Quantity(-self.value, self._unit)
+    def __neg__(self) -> Quantity[ValT]:
+        return cast("Quantity[ValT]", Quantity(-self.value, self._unit))
 
-    def __abs__(self) -> Self:
-        return Quantity(abs(self.value), self._unit)
+    def __abs__(self) -> Quantity[ValT]:
+        return cast("Quantity[ValT]", Quantity(abs(self.value), self._unit))
 
-    def validate_matching_dimensions(self, other):
+    def validate_matching_dimensions(self, other: object) -> None:
         """Validates dimensions of quantities."""
         if isinstance(other, Quantity) and (self.dimensions != other.dimensions):
             raise IncompatibleDimensions(from_unit=self.units, to_unit=other.units)
@@ -810,14 +862,12 @@ class Quantity(Generic[ValT]):
             raise IncompatibleQuantities(self, other)
 
     def _compute_single_value_comparison(
-        self, other: Quantity, op: Callable[[Any, Any], bool]
-    ):
+        self, other: object, op: Callable[[Any, Any], bool]
+    ) -> bool:
         """Compares quantity values."""
-        return (
-            op(get_si_value(self), other)
-            if self.is_dimensionless
-            else op(get_si_value(self), get_si_value(other))
-        )
+        if self.is_dimensionless:
+            return op(get_si_value(self), other)
+        return op(get_si_value(self), get_si_value(cast("Quantity", other)))
 
     def __gt__(self, other: Quantity) -> bool:
         self.validate_matching_dimensions(other)
@@ -835,7 +885,7 @@ class Quantity(Generic[ValT]):
         self.validate_matching_dimensions(other)
         return self._compute_single_value_comparison(other, op=operator.le)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         self.validate_matching_dimensions(other)
         if all(
             (
@@ -862,21 +912,23 @@ class Quantity(Generic[ValT]):
         return False
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, source_type, handler):
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: Any
+    ) -> core_schema.CoreSchema:
         """Define the pydantic core schema for QuantityPydanticAdapter."""
 
-        def validate_quantity_type(obj):
+        def validate_quantity_type(obj: object) -> Quantity:
             if isinstance(obj, cls):
                 return obj
             # Pydantic reports ValueError (not TypeError) as a ValidationError.
             if not isinstance(obj, dict):
                 raise ValueError("Expected a dict or Quantity instance.")
             try:
-                return cls.from_dict(obj)
+                return cls.from_dict(cast("dict[str, Any]", obj))
             except TypeError as error:
                 raise ValueError(str(error)) from error
 
-        def serialize(instance):
+        def serialize(instance: Quantity) -> dict[str, Any]:
             return instance.to_dict()
 
         if _core_schema is None:
@@ -902,7 +954,7 @@ class Quantity(Generic[ValT]):
 def get_si_value(quantity: Quantity[ValT]) -> ValT:
     """Returns a quantity's value in SI units."""
 
-    def _convert(value: float, offset: float, factor: float):
+    def _convert(value: float, offset: float, factor: float) -> float:
         return float((value + offset) * factor)
 
     if isinstance(quantity.value, float):
@@ -912,7 +964,9 @@ def get_si_value(quantity: Quantity[ValT]) -> ValT:
     if _array and isinstance(quantity.value, _array.ndarray):
         offset = quantity.units.si_offset
         factor = quantity.units.si_scaling_factor
-        return _array.asarray((quantity.value + offset) * factor, dtype=float)
+        return cast(
+            "ValT", _array.asarray((quantity.value + offset) * factor, dtype=float)
+        )
     raise ValueError(
         (
             "quantity cannot be converted to a meaningful SI representation. "
@@ -941,7 +995,7 @@ class InsufficientArguments(ValueError):
 class IncompatibleDimensions(ValueError):
     """Raised when dimensions are incompatible."""
 
-    def __init__(self, from_unit, to_unit):
+    def __init__(self, from_unit: Unit, to_unit: Unit):
         super().__init__(
             f"`{from_unit.name}` and `{to_unit.name}` have incompatible dimensions."
         )
@@ -950,14 +1004,14 @@ class IncompatibleDimensions(ValueError):
 class IncompatibleValue(ValueError):
     """Raised when an incompatible value is provided."""
 
-    def __init__(self, value):
+    def __init__(self, value: object):
         super().__init__(f"`{value}` is incompatible with the current quantity object.")
 
 
 class IncompatibleQuantities(ValueError):
     """Raised when quantities are incompatible."""
 
-    def __init__(self, q1, q2):
+    def __init__(self, q1: object, q2: object):
         super().__init__(f"'{q1}' and '{q2}' are incompatible.")
 
 
@@ -971,7 +1025,7 @@ class NumPyRequired(ModuleNotFoundError):
 class DimensionlessArgumentRequired(ValueError):
     """Raised when a NumPy function requires a dimensionless (or angle) argument."""
 
-    def __init__(self, function_name, units, angle=False):
+    def __init__(self, function_name: str, units: Unit, angle: bool = False):
         expected = "dimensionless or angle" if angle else "dimensionless"
         super().__init__(
             f"'{function_name}' requires a {expected} argument, but got '{units.name}'."
@@ -999,26 +1053,37 @@ class InvalidFloatUsage(FloatingPointError):
 class RequiresUniqueDimensions(ValueError):
     """Raised when two units with the same dimensions are added to the chosen units."""
 
-    def __init__(self, unit, other_unit):
+    def __init__(self, unit: Unit, other_unit: Unit):
         super().__init__(
             f"For '{unit.name}' to be added '{other_unit.name}' must be removed."
         )
 
 
-class QuantityConverter(_ci):
+if TYPE_CHECKING:
+    # matplotlib's converter interface has no type information.
+    _ConverterBase = object
+else:
+    _ConverterBase = _ci
+
+
+class QuantityConverter(_ConverterBase):
+    """Convert quantities for plotting with matplotlib."""
+
     @staticmethod
-    def convert(value, unit, axis) -> object:
+    def convert(
+        value: Quantity | Sequence[Quantity], _unit: object, _axis: object
+    ) -> object:
         if isinstance(value, Quantity):
             return value._value
         else:
             return [quantity._value for quantity in value]
 
     @staticmethod
-    def axisinfo(unit, axis) -> object:
-        return _ai(label=unit)
+    def axisinfo(unit: object, _axis: object) -> object:
+        return _ai(label=unit) if _ai else None
 
     @staticmethod
-    def default_units(x, axis) -> object:
+    def default_units(x: Quantity | Sequence[Quantity], _axis: object) -> object:
         "Return the default unit for x or None"
         if isinstance(x, Quantity):
             attr = getattr(x, "unit", None)

@@ -33,6 +33,7 @@ import io
 import os
 import sys
 from types import ModuleType
+from typing import Any, NoReturn
 
 import pytest
 
@@ -42,19 +43,22 @@ import ansys.units.quantity
 
 def _load_copy(module: ModuleType, name: str) -> ModuleType:
     spec = importlib.util.spec_from_file_location(name, module.__file__)
+    assert spec is not None and spec.loader is not None
     copy = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(copy)
     return copy
 
 
 @pytest.fixture
-def quantity_without_optional_dependencies(monkeypatch):
+def quantity_without_optional_dependencies(
+    monkeypatch: pytest.MonkeyPatch,
+) -> ModuleType:
     for blocked in ("numpy", "pydantic_core", "matplotlib.units"):
         monkeypatch.setitem(sys.modules, blocked, None)
     return _load_copy(ansys.units.quantity, "_quantity_without_optional_deps")
 
 
-def test_quantity_without_numpy(quantity_without_optional_dependencies):
+def test_quantity_without_numpy(quantity_without_optional_dependencies: ModuleType):
     module = quantity_without_optional_dependencies
     assert module._array is None
 
@@ -72,14 +76,18 @@ def test_quantity_without_numpy(quantity_without_optional_dependencies):
         module.get_si_value(q)
 
 
-def test_quantity_without_pydantic(quantity_without_optional_dependencies):
+def test_quantity_without_pydantic(
+    quantity_without_optional_dependencies: ModuleType,
+):
     module = quantity_without_optional_dependencies
     assert module._core_schema is None
     with pytest.raises(module.PydanticRequired, match="pip install"):
         module.Quantity.__get_pydantic_core_schema__(module.Quantity, None)
 
 
-def test_quantity_without_matplotlib(quantity_without_optional_dependencies):
+def test_quantity_without_matplotlib(
+    quantity_without_optional_dependencies: ModuleType,
+):
     module = quantity_without_optional_dependencies
     assert module._ai is None
     assert module._ci is object
@@ -87,10 +95,10 @@ def test_quantity_without_matplotlib(quantity_without_optional_dependencies):
     assert list(module._registry) == [module.Quantity]
 
 
-def test_package_init_fallbacks(monkeypatch):
+def test_package_init_fallbacks(monkeypatch: pytest.MonkeyPatch):
     """Missing metadata, a bundled README, and a missing pandas extension."""
 
-    def missing_version(name):
+    def missing_version(name: str) -> NoReturn:
         raise importlib.metadata.PackageNotFoundError(name)
 
     readme = os.path.normpath(
@@ -98,10 +106,10 @@ def test_package_init_fallbacks(monkeypatch):
     )
     real_exists, real_open = os.path.exists, builtins.open
 
-    def fake_exists(path):
+    def fake_exists(path: str) -> bool:
         return True if os.path.normpath(path) == readme else real_exists(path)
 
-    def fake_open(path, *args, **kwargs):
+    def fake_open(path: Any, *args: Any, **kwargs: Any) -> Any:
         if isinstance(path, str) and os.path.normpath(path) == readme:
             return io.StringIO("Bundled README")
         return real_open(path, *args, **kwargs)

@@ -911,7 +911,9 @@ def test_temperature_list():
         ("F", -459.68, -459.67),
     ],
 )
-def test_values_below_absolute_zero_become_temperature_difference(units, below, at):
+def test_values_below_absolute_zero_become_temperature_difference(
+    units: str, below: float, at: float
+):
     assert Quantity(at, units).units == Unit(units)
     assert Quantity(below, units).units == Unit(f"delta_{units}")
     # The lowest value of an array decides, regardless of the array's shape.
@@ -952,7 +954,7 @@ def test_getitem_slicing():
 
 
 @pytest.mark.parametrize("units", ["C", "F"])
-def test_offset_quantity_multiplication_and_division_prohibited(units):
+def test_offset_quantity_multiplication_and_division_prohibited(units: str):
     t = Quantity(10.0, units)
     t_arr = Quantity([10.0, 20.0], units)
     for operation in (
@@ -974,7 +976,7 @@ def test_offset_quantity_multiplication_and_division_prohibited(units):
 
 
 @pytest.mark.parametrize("units", ["K", "R", "delta_C", "delta_F"])
-def test_ratio_scale_temperature_arithmetic_allowed(units):
+def test_ratio_scale_temperature_arithmetic_allowed(units: str):
     t = Quantity(10.0, units)
     assert (t * 2).value == 20.0
     assert (t / 2).value == 5.0

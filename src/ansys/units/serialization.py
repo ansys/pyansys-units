@@ -43,9 +43,9 @@ no registry defines them.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 import math
-from typing import Any
+from typing import Any, cast
 
 from ansys.units.quantity import Quantity
 from ansys.units.unit import Unit
@@ -54,6 +54,12 @@ from ansys.units.unit_registry import UnitRegistry
 _RESERVED_KEYS = frozenset({"value", "units", "unit_definition"})
 
 _application_registry: UnitRegistry | None = None
+
+
+def _check_type(value: object, expected: type, message: str) -> None:
+    """Raise a ``TypeError`` for input, such as loaded data, of the wrong type."""
+    if not isinstance(value, expected):
+        raise TypeError(message)
 
 
 # ---------------------------------------------------------------------------
@@ -86,8 +92,12 @@ def set_application_registry(registry: UnitRegistry | None) -> None:
     >>> q.units == ur.micron
     True
     """
-    if registry is not None and not isinstance(registry, UnitRegistry):
-        raise TypeError("`registry` must be a UnitRegistry instance or None.")
+    if registry is not None:
+        _check_type(
+            registry,
+            UnitRegistry,
+            "`registry` must be a UnitRegistry instance or None.",
+        )
     global _application_registry
     _application_registry = registry
 
@@ -125,8 +135,7 @@ def unit_from_dict(
 
     See :meth:`Unit.from_dict`.
     """
-    if not isinstance(data, Mapping):
-        raise TypeError(f"Expected a mapping, got {type(data).__name__}.")
+    _check_type(data, Mapping, f"Expected a mapping, got {type(data).__name__}.")
     name = data.get("units", "")
     if not isinstance(name, str):
         raise TypeError("`units` must be a string.")
@@ -203,8 +212,7 @@ def _same_definition(first: Unit, second: Unit) -> bool:
 
 
 def _unit_from_definition(name: str, definition: Mapping[str, Any]) -> Unit:
-    if not isinstance(definition, Mapping):
-        raise TypeError("`unit_definition` must be a mapping.")
+    _check_type(definition, Mapping, "`unit_definition` must be a mapping.")
     composition = definition.get("composition", "")
     factor = definition.get("factor")
     if not isinstance(composition, str):
@@ -239,8 +247,9 @@ def quantity_to_dict(quantity: Quantity) -> dict[str, Any]:
             f"Extra fields {sorted(reserved)} use reserved serialization keys."
         )
     value = quantity.value
-    value = value.tolist() if hasattr(value, "tolist") else value
-    return {"value": value, **unit_to_dict(quantity.units), **quantity.extra_fields}
+    tolist = getattr(value, "tolist", None)
+    plain: Any = tolist() if tolist is not None else value
+    return {"value": plain, **unit_to_dict(quantity.units), **quantity.extra_fields}
 
 
 def quantity_from_dict(
@@ -251,15 +260,14 @@ def quantity_from_dict(
 
     See :meth:`Quantity.from_dict`.
     """
-    if not isinstance(data, Mapping):
-        raise TypeError(f"Expected a mapping, got {type(data).__name__}.")
+    _check_type(data, Mapping, f"Expected a mapping, got {type(data).__name__}.")
     if "value" not in data:
         raise ValueError("A serialized quantity requires a `value` key.")
     if _contains_none(data["value"]):
         raise ValueError(
             "A serialized quantity value contains null. NaN and infinity are written "
-            "as null by pydantic's default JSON mode; set "
-            "`ser_json_inf_nan='constants'` in the model config to preserve them."
+            + "as null by pydantic's default JSON mode; set "
+            + "`ser_json_inf_nan='constants'` in the model config to preserve them."
         )
     unit = unit_from_dict(data, registry)
     extra_fields = {key: val for key, val in data.items() if key not in _RESERVED_KEYS}
@@ -270,7 +278,8 @@ def _contains_none(value: Any) -> bool:
     if value is None:
         return True
     if isinstance(value, (list, tuple)):
-        return any(_contains_none(item) for item in value)
+        items = cast("Sequence[Any]", value)
+        return any(_contains_none(item) for item in items)
     return False
 
 
@@ -280,8 +289,7 @@ def quantity_from_string(text: str, registry: UnitRegistry | None = None) -> Qua
 
     See :meth:`Quantity.from_string`.
     """
-    if not isinstance(text, str):
-        raise TypeError(f"Expected a string, got {type(text).__name__}.")
+    _check_type(text, str, f"Expected a string, got {type(text).__name__}.")
     text = text.strip()
     if not text:
         raise ValueError("Cannot parse a quantity from an empty string.")
@@ -343,7 +351,7 @@ class UnresolvableUnit(ValueError):
     def __init__(self, name: str):
         super().__init__(
             f"Unit `{name}` cannot be resolved. Pass the UnitRegistry that defines "
-            "it, or set it with `set_application_registry`."
+            + "it, or set it with `set_application_registry`."
         )
 
 
@@ -353,5 +361,5 @@ class ConflictingUnitDefinition(ValueError):
     def __init__(self, name: str):
         super().__init__(
             f"The serialized definition of `{name}` does not match the unit with "
-            "the same name in the registry."
+            + "the same name in the registry."
         )

@@ -139,7 +139,7 @@ def test_compatibility():
         ("F", -459.67, "delta_F"),
     ],
 )
-def test_absolute_temperature_metadata(name, minimum, delta):
+def test_absolute_temperature_metadata(name: str, minimum: float, delta: str):
     unit = Unit(name)
     assert unit.is_absolute_temperature
     assert unit.min_absolute_value == minimum
@@ -156,7 +156,7 @@ def test_non_absolute_temperature_metadata():
 
 
 def test_to_temperature_difference_falls_back_to_matching_scaling_factor(
-    monkeypatch,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     # A temperature unit without a ``delta_<name>`` counterpart resolves to a
     # configured difference unit with the same scaling factor.
@@ -175,7 +175,9 @@ def test_to_temperature_difference_falls_back_to_matching_scaling_factor(
     assert q.units == delta
 
 
-def test_to_temperature_difference_without_counterpart(monkeypatch):
+def test_to_temperature_difference_without_counterpart(
+    monkeypatch: pytest.MonkeyPatch,
+):
     monkeypatch.setitem(
         _base_units,
         "testtemp",
@@ -203,7 +205,7 @@ def test_to_temperature_difference_without_counterpart(monkeypatch):
         ("W m^-1 C^-1", False),
     ],
 )
-def test_has_offset(name, expected):
+def test_has_offset(name: str, expected: bool):
     assert Unit(name).has_offset is expected
 
 
@@ -224,7 +226,7 @@ def test_arithmetic_never_produces_an_absolute_offset_unit():
 
 
 @pytest.mark.parametrize("name", ["kC", "mF", "kg kC", "uC^-1"])
-def test_prefixed_offset_units_are_rejected(name):
+def test_prefixed_offset_units_are_rejected(name: str):
     with pytest.raises(PrefixedOffsetUnit, match="multiplier prefix"):
         Unit(name)
     with pytest.raises(PrefixedOffsetUnit):

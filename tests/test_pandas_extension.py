@@ -452,6 +452,8 @@ class TestQuantityDtypeDetails:
         dtype = QuantityDtype()
         assert isinstance(dtype, QuantityDtype)
         assert dtype.units is None
+        with pytest.raises(ValueError, match="must have units"):
+            QuantityArray([1.0], dtype=dtype)
 
     def test_dtype_properties(self):
         dtype = QuantityDtype("m")

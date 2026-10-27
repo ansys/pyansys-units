@@ -59,7 +59,7 @@ class VariableDescriptor(Generic[QuantityKindT]):
     dimension: Dimensions
     name: str = field(init=False)
 
-    def __set_name__(self, _, name: str) -> None:
+    def __set_name__(self, _: type, name: str) -> None:
         object.__setattr__(self, "name", _validate_and_transform_variable(name))
 
 

@@ -497,17 +497,17 @@ class TestErrorConditions:
         # meaningless (see ansys.units.unit.ProhibitedOffsetUnitOperation).
         q_mass = Quantity(5, "kg")
         with pytest.raises(ProhibitedOffsetUnitOperation):
-            t1 * q_mass
+            _ = t1 * q_mass
         with pytest.raises(ProhibitedOffsetUnitOperation):
-            t1 * 2
+            _ = t1 * 2
         with pytest.raises(ProhibitedOffsetUnitOperation):
-            t1 * t2
+            _ = t1 * t2
         with pytest.raises(ProhibitedOffsetUnitOperation):
-            t1 / t2
+            _ = t1 / t2
         with pytest.raises(ProhibitedOffsetUnitOperation):
-            t1 / 2
+            _ = t1 / 2
         with pytest.raises(ProhibitedOffsetUnitOperation):
-            t1**2
+            _ = t1**2
 
         # Ratio-scale temperatures (0 offset) and temperature differences are
         # unaffected and continue to support these operations.

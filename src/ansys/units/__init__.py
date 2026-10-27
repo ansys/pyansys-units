@@ -57,8 +57,8 @@ _THIS_DIRNAME = os.path.dirname(__file__)
 _README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"))
 
 if os.path.exists(_README_FILE):
-    with open(_README_FILE, encoding="utf8") as f:
-        __doc__ = f.read()
+    with open(_README_FILE, encoding="utf8") as _readme:
+        __doc__ = _readme.read()
 
 
 __all__ = [

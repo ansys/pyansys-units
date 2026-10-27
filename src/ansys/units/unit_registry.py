@@ -40,7 +40,7 @@ from ansys.units._constants import _derived_units as _CONST_DERIVED_UNITS
 from ansys.units.unit import Unit
 
 if TYPE_CHECKING:
-    from ansys.units.quantity import Quantity  # noqa: F401
+    from ansys.units.quantity import Quantity, _ArrayInput  # noqa: F401
 
 
 class UnitRegistry:
@@ -131,7 +131,7 @@ class UnitRegistry:
                     factor=cu["factor"],
                 )
 
-    def __str__(self):
+    def __str__(self) -> str:
         returned_string = ""
         attrs = self.__dict__
         for key in attrs:
@@ -185,7 +185,7 @@ class UnitRegistry:
 
     def Quantity(
         self,
-        value: "int | float | Sequence[float]",
+        value: "float | _ArrayInput",
         units: "str | Unit",
     ) -> "Quantity":
         """

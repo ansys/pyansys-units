@@ -20,9 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import final
+from typing import Any, final
 
 import pytest
+from typing_extensions import override
 
 from ansys.units import (
     ConversionStrategy,
@@ -135,13 +136,16 @@ def test_conversion_strategy_is_abstract():
     class Delegating(ConversionStrategy):
         """Strategy that calls the abstract base implementations."""
 
-        def to_string(self, variable):
+        @override
+        def to_string(self, variable: Any) -> Any:
             return super().to_string(variable)
 
-        def to_variable_descriptor(self, variable):
+        @override
+        def to_variable_descriptor(self, variable: Any) -> Any:
             return super().to_variable_descriptor(variable)
 
-        def supports(self, variable):
+        @override
+        def supports(self, variable: Any) -> Any:
             return super().supports(variable)
 
     strategy = Delegating()

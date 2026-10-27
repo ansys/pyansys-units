@@ -77,7 +77,7 @@ def _plain(value: Any) -> Any:
     return array
 
 
-def _as_quantity(value: Any) -> Quantity:
+def _as_quantity(value: Any) -> Quantity[Any]:
     return value if isinstance(value, Quantity) else Quantity(_plain(value), "")
 
 
@@ -88,11 +88,12 @@ def _raw(value: Any) -> Any:
 
 def _wrap(value: Any, units: Unit | str) -> Quantity:
     """Build a quantity, turning 0-d NumPy results into Python floats."""
+    result: Any = value
     if isinstance(value, (np.generic, np.ndarray)) and np.ndim(value) == 0:
         item = np.asarray(value).item()
         if isinstance(item, (int, float)):
-            value = float(item)
-    return Quantity(value, units)
+            result = float(item)
+    return Quantity(result, units)
 
 
 def _convert_value(quantity: Quantity, units: Unit) -> Any:
@@ -344,9 +345,7 @@ _COMPARING_FUNCS = _funcs("isclose", "allclose", "array_equal")
 _ATLEAST_FUNCS = _funcs("atleast_1d", "atleast_2d")
 
 
-def array_function(
-    func: Any, types: Sequence[type], args: tuple[Any, ...], kwargs: dict[str, Any]
-) -> Any:
+def array_function(func: Any, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Any:
     """Implement ``Quantity.__array_function__``."""
     handler = _function_handler(func)
     if handler is None or not _no_out(kwargs):

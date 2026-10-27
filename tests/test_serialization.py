@@ -21,10 +21,12 @@
 # SOFTWARE.
 """Tests for dict, JSON (via pydantic), string and pickle serialization."""
 
+from collections.abc import Iterator
 import copy
 import json
 import math
 import pickle
+from typing import Any
 
 import numpy as np
 import pytest
@@ -44,13 +46,13 @@ from ansys.units.serialization import (
 
 
 @pytest.fixture(autouse=True)
-def _reset_application_registry():
+def reset_application_registry() -> Iterator[None]:
     yield
     set_application_registry(None)
 
 
 @pytest.fixture
-def micron_registry():
+def micron_registry() -> UnitRegistry:
     registry = UnitRegistry()
     registry.register_unit(unit="micron", composition="m", factor=1e-6)
     return registry
@@ -91,7 +93,7 @@ def test_to_dict_uses_builtin_types():
 
 
 @pytest.mark.parametrize("quantity", QUANTITIES, ids=str)
-def test_dict_round_trip(quantity):
+def test_dict_round_trip(quantity: Quantity):
     _assert_same(Quantity.from_dict(quantity.to_dict()), quantity)
 
 
@@ -133,7 +135,7 @@ def test_reserved_extra_field_names_are_rejected():
 # ---------------------------------------------------------------------------
 
 
-def test_custom_unit_is_stored_with_its_definition(micron_registry):
+def test_custom_unit_is_stored_with_its_definition(micron_registry: UnitRegistry):
     data = micron_registry.Quantity(3.0, "micron").to_dict()
     assert data == {
         "value": 3.0,
@@ -142,7 +144,7 @@ def test_custom_unit_is_stored_with_its_definition(micron_registry):
     }
 
 
-def test_custom_unit_restored_without_registry(micron_registry):
+def test_custom_unit_restored_without_registry(micron_registry: UnitRegistry):
     original = micron_registry.Quantity(3.0, "micron")
     restored = Quantity.from_dict(original.to_dict())
     assert restored.units.name == "micron"
@@ -150,7 +152,7 @@ def test_custom_unit_restored_without_registry(micron_registry):
     assert restored.to("m").value == pytest.approx(3e-6)
 
 
-def test_custom_unit_resolved_from_registry(micron_registry):
+def test_custom_unit_resolved_from_registry(micron_registry: UnitRegistry):
     restored = Quantity.from_dict(
         {"value": 3.0, "units": "micron"}, registry=micron_registry
     )
@@ -169,13 +171,15 @@ def test_unknown_unit_without_definition_is_unresolvable():
         resolve_unit("micron")
 
 
-def test_definition_used_when_registry_does_not_know_the_unit(micron_registry):
+def test_definition_used_when_registry_does_not_know_the_unit(
+    micron_registry: UnitRegistry,
+):
     data = micron_registry.Quantity(3.0, "micron").to_dict()
     restored = Quantity.from_dict(data, registry=UnitRegistry())
     assert restored.units == micron_registry.micron
 
 
-def test_conflicting_definition_is_rejected(micron_registry):
+def test_conflicting_definition_is_rejected(micron_registry: UnitRegistry):
     other = UnitRegistry()
     other.register_unit(unit="micron", composition="m", factor=2e-6)
     data = micron_registry.Quantity(3.0, "micron").to_dict()
@@ -195,7 +199,9 @@ def test_conflicting_definition_is_rejected(micron_registry):
         ({"composition": "not_a_unit", "factor": 1.0}, ValueError),
     ],
 )
-def test_invalid_unit_definitions_are_rejected(definition, error):
+def test_invalid_unit_definitions_are_rejected(
+    definition: object, error: type[Exception]
+):
     with pytest.raises(error):
         Quantity.from_dict(
             {"value": 1.0, "units": "custom", "unit_definition": definition}
@@ -213,7 +219,7 @@ def test_set_application_registry_validates_type():
 
 
 @pytest.fixture
-def quantity_adapter():
+def quantity_adapter() -> Any:
     pydantic = pytest.importorskip("pydantic")
     # Keep NaN and infinity, which pydantic writes as null by default.
     return pydantic.TypeAdapter(
@@ -222,13 +228,13 @@ def quantity_adapter():
 
 
 @pytest.mark.parametrize("quantity", QUANTITIES, ids=str)
-def test_pydantic_json_round_trip(quantity, quantity_adapter):
+def test_pydantic_json_round_trip(quantity: Quantity, quantity_adapter: Any):
     text = quantity_adapter.dump_json(quantity)
     _assert_same(quantity_adapter.validate_json(text), quantity)
 
 
 @pytest.mark.parametrize("quantity", QUANTITIES, ids=str)
-def test_json_round_trip_without_pydantic(quantity):
+def test_json_round_trip_without_pydantic(quantity: Quantity):
     text = json.dumps(quantity.to_dict())
     _assert_same(Quantity.from_dict(json.loads(text)), quantity)
 
@@ -246,7 +252,7 @@ def test_pydantic_default_json_mode_nan_gives_clear_error():
         Quantity.from_dict({"value": None, "units": "m"})
 
 
-def test_pydantic_model_with_nested_quantities(micron_registry):
+def test_pydantic_model_with_nested_quantities(micron_registry: UnitRegistry):
     pydantic = pytest.importorskip("pydantic")
 
     class Measurement(pydantic.BaseModel):
@@ -285,7 +291,7 @@ def test_pydantic_model_with_nested_quantities(micron_registry):
 
 
 @pytest.mark.parametrize("quantity", QUANTITIES[:-1], ids=str)
-def test_string_round_trip(quantity):
+def test_string_round_trip(quantity: Quantity):
     restored = Quantity.from_string(str(quantity))
     assert restored.units == quantity.units
     assert np.array_equal(restored.value, quantity.value, equal_nan=True)
@@ -301,7 +307,7 @@ def test_string_round_trip(quantity):
         ("[[1 2]\n [3 4]] Pa", [[1.0, 2.0], [3.0, 4.0]], "Pa"),
     ],
 )
-def test_from_string_formats(text, value, units):
+def test_from_string_formats(text: str, value: float | list[Any], units: str):
     restored = Quantity.from_string(text)
     assert restored.units == Unit(units)
     assert np.array_equal(restored.value, value)
@@ -322,7 +328,7 @@ def test_from_string_formats(text, value, units):
         ("5 not_a_unit", ValueError),
     ],
 )
-def test_from_string_errors(text, error):
+def test_from_string_errors(text: object, error: type[Exception]):
     with pytest.raises(error):
         Quantity.from_string(text)
 
@@ -339,7 +345,7 @@ def test_from_string_rejects_summarized_arrays():
 
 
 @pytest.mark.parametrize("quantity", QUANTITIES, ids=str)
-def test_pickle_round_trip(quantity):
+def test_pickle_round_trip(quantity: Quantity):
     _assert_same(pickle.loads(pickle.dumps(quantity)), quantity)
 
 
@@ -347,7 +353,7 @@ def test_units_are_pickled_by_name():
     assert Unit("kg m^-3").__getstate__() == {"units": "kg m^-3"}
 
 
-def test_pickle_custom_units(micron_registry):
+def test_pickle_custom_units(micron_registry: UnitRegistry):
     original = micron_registry.Quantity(3.0, "micron")
     # Without a registry, the stored definition is used.
     restored = pickle.loads(pickle.dumps(original))
@@ -369,7 +375,7 @@ def test_unpickling_legacy_unit_state():
     assert legacy.name == "kg"
 
 
-def test_copies_do_not_depend_on_registries(micron_registry):
+def test_copies_do_not_depend_on_registries(micron_registry: UnitRegistry):
     unit = micron_registry.micron
     for duplicate in (copy.copy(unit), copy.deepcopy(unit)):
         assert duplicate is not unit
@@ -387,7 +393,7 @@ def test_copies_do_not_depend_on_registries(micron_registry):
 # ---------------------------------------------------------------------------
 
 
-def test_pydantic_uses_dict_format(micron_registry):
+def test_pydantic_uses_dict_format(micron_registry: UnitRegistry):
     pydantic = pytest.importorskip("pydantic")
 
     class Model(pydantic.BaseModel):
