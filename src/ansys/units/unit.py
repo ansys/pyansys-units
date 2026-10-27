@@ -27,6 +27,8 @@ import functools
 import os
 from typing import TYPE_CHECKING, Any, overload
 
+from typing_extensions import override
+
 from ansys.units._constants import (
     _base_units,
     _BaseUnitInfo,
@@ -57,6 +59,7 @@ if TYPE_CHECKING:
     import numpy.typing as npt
 
     from ansys.units.quantity import Quantity, ValT, Vector
+    from ansys.units.unit_registry import UnitRegistry
 
 
 @functools.cache
@@ -158,6 +161,7 @@ class Unit:
             for key in config:
                 setattr(self, f"_{key}", config[key])
 
+        _check_offset_unit_prefixes(self.name)
         self._si_units, self._si_scaling_factor, self._si_offset = _si_data(
             units=self.name
         )
@@ -185,37 +189,6 @@ class Unit:
             returned_string += f"{key}: {attrs[key]}\n"
         return returned_string
 
-    def _new_units(self, value, op):
-        """
-        Generate a new units instance depending on mathematical operation.
-
-        Parameters
-        ----------
-        value : int | float | Unit
-            The given operand.
-        op : str
-            '*', '/', '**'.
-
-        Returns
-        -------
-        Unit
-            New unit instance.
-        """
-        new_units = ""
-        if op == "**":
-            for term in self.name.split(" "):
-                multiplier, base, exponent = _filter_unit_term(term)
-                exponent *= value
-                new_units += f"{multiplier}{base}^{exponent} "
-        if op == "/":
-            new_units = self.name
-            for term in value.name.split(" "):
-                multiplier, base, exponent = _filter_unit_term(term)
-                new_units += f" {multiplier}{base}^{exponent * -1}"
-        if op == "*":
-            new_units = f"{self.name} {value.name}"
-        return Unit(_condense(new_units))
-
     def compatible_units(self) -> set[str]:
         """
         Get all units with the same dimensions.
@@ -237,7 +210,9 @@ class Unit:
         compatible_units.discard(self.name)
         return compatible_units
 
-    def _temp_precheck(self, other_unit, op: str = "+") -> tuple["Unit", "Unit"] | None:
+    def _temp_precheck(
+        self, other_unit: "Unit", op: str = "+"
+    ) -> tuple["Unit", "Unit"] | None:
         """
         Validate units for temperature differences.
 
@@ -304,6 +279,65 @@ class Unit:
         return self._si_offset
 
     @property
+    def has_offset(self) -> bool:
+        """
+        True if the unit is a non-multiplicative (offset-based) unit, such as ``C``.
+
+        Offset units inside compound units (for example ``W m^-1 C^-1``) are
+        interpreted as temperature differences and convert without an offset, so
+        such compound units are multiplicative.
+        """
+        return self.si_offset != 0
+
+    @property
+    def is_absolute_temperature(self) -> bool:
+        """True if the unit is an absolute temperature, not a difference."""
+        return self.dimensions == Dimensions({BaseDimensions.TEMPERATURE: 1})
+
+    @property
+    def min_absolute_value(self) -> float | None:
+        """
+        Lowest physically valid value (absolute zero) in this unit.
+
+        ``None`` if the unit is not an absolute temperature. The limit is derived
+        from the unit's SI offset, so it applies to any configured temperature
+        unit without referring to unit names.
+        """
+        if not self.is_absolute_temperature:
+            return None
+        return -self.si_offset
+
+    def to_temperature_difference(self) -> "Unit":
+        """
+        Get the temperature difference unit matching this absolute temperature unit.
+
+        Returns
+        -------
+        Unit
+            Temperature difference unit with the same scaling factor.
+
+        Raises
+        ------
+        ValueError
+            If the unit is not an absolute temperature or has no configured
+            temperature difference counterpart.
+        """
+        if not self.is_absolute_temperature:
+            raise ValueError(f"'{self.name}' is not an absolute temperature unit.")
+        candidate = f"delta_{self.name}"
+        if candidate in _base_units:
+            return Unit(candidate)
+        for name, info in _base_units.items():
+            if (
+                info["type"] == "TEMPERATURE_DIFFERENCE"
+                and info["si_scaling_factor"] == self.si_scaling_factor
+            ):
+                return Unit(name)
+        raise ValueError(
+            f"No temperature difference unit is configured for '{self.name}'."
+        )
+
+    @property
     def dimensions(self) -> Dimensions:
         """The units base dimensions."""
         return self._dimensions
@@ -350,13 +384,16 @@ class Unit:
     def __repr__(self) -> str:
         return f"Unit({self.name!r})"
 
-    def __add__(self, value) -> tuple["Unit", "Unit"]:
+    def __add__(self, value: "Unit") -> tuple["Unit", "Unit"]:
         return self._temp_precheck(value)
 
     def __mul__(self, value: "Unit") -> "Unit":
         if isinstance(value, Unit):
+            offending = self if self.has_offset else value if value.has_offset else None
+            if offending is not None:
+                raise ProhibitedOffsetUnitOperation(offending, "*")
             new_units = f"{self.name} {value.name}"
-            return Unit(_condense(new_units))
+            return _arithmetic_result(new_units)
 
         else:
             return NotImplemented
@@ -383,12 +420,15 @@ class Unit:
     def __truediv__(self, value: Unit) -> Unit:
         if not isinstance(value, Unit):
             return NotImplemented
+        offending = self if self.has_offset else value if value.has_offset else None
+        if offending is not None:
+            raise ProhibitedOffsetUnitOperation(offending, "/")
         new_units = ""
         new_units = self.name
-        for term in value.name.split(" "):
+        for term in value.name.split():
             multiplier, base, exponent = _filter_unit_term(term)
             new_units += f" {multiplier}{base}^{exponent * -1}"
-        return Unit(_condense(new_units))
+        return _arithmetic_result(new_units)
 
     @overload
     def __rtruediv__(
@@ -407,13 +447,15 @@ class Unit:
         return NotImplemented  # other cases should have already handled this so nothing to do
 
     def __pow__(self, value: "Unit" | float) -> "Unit":
+        if self.has_offset:
+            raise ProhibitedOffsetUnitOperation(self, "**")
         new_units = ""
-        for term in self.name.split(" "):
+        for term in self.name.split():
             multiplier, base, exponent = _filter_unit_term(term)
             exponent *= value
             new_units += f"{multiplier}{base}^{exponent} "
 
-        return Unit(_condense(new_units))
+        return _arithmetic_result(new_units)
 
     def __eq__(self, other_unit: object) -> bool:
         if not isinstance(other_unit, Unit) and self.name:
@@ -426,6 +468,64 @@ class Unit:
             ]
             return all(checks)
         return True
+
+    def to_dict(self) -> dict[str, Any]:
+        """
+        Serialize the unit to a dictionary.
+
+        The dictionary contains the unit name under ``"units"``. Custom units that
+        are only defined in a :class:`~ansys.units.UnitRegistry` also include a
+        ``"unit_definition"`` so that they can be restored without that registry.
+
+        Examples
+        --------
+        >>> Unit("kg m^-3").to_dict()
+        {'units': 'kg m^-3'}
+        """
+        from ansys.units import serialization
+
+        return serialization.unit_to_dict(self)
+
+    @classmethod
+    def from_dict(
+        cls, data: Mapping[str, Any], registry: UnitRegistry | None = None
+    ) -> Unit:
+        """
+        Create a unit from a dictionary written by :meth:`to_dict`.
+
+        Parameters
+        ----------
+        data : dict
+            Serialized unit.
+        registry : UnitRegistry, optional
+            Registry used to resolve the unit name. Defaults to the application
+            registry (see :func:`~ansys.units.set_application_registry`).
+        """
+        from ansys.units import serialization
+
+        return serialization.unit_from_dict(data, registry)
+
+    @override
+    def __getstate__(self) -> dict[str, Any]:
+        # Pickle by name so that units are resolved again when unpickled.
+        return self.to_dict()
+
+    def __setstate__(self, state: Mapping[str, Any]) -> None:
+        if "_name" in state:
+            # Pickles written before units were pickled by name.
+            self.__dict__.update(state)
+            return
+        from ansys.units import serialization
+
+        self.__dict__.update(serialization.unit_from_dict(state).__dict__)
+
+    def __copy__(self) -> Unit:
+        new = Unit.__new__(Unit)
+        new.__dict__.update(self.__dict__)
+        return new
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> Unit:
+        return self.__copy__()
 
 
 def _get_config(name: str) -> _BaseUnitInfo | _DerivedUnitInfo | None:
@@ -448,7 +548,7 @@ def _get_config(name: str) -> _BaseUnitInfo | _DerivedUnitInfo | None:
 
 
 def _dim_to_units(
-    system: UnitSystem,
+    system: UnitSystem | None,
     dimensions: Dimensions,
     preferred_units: PreferredUnits | PreferredUnitInput = None,
 ) -> str:
@@ -660,6 +760,48 @@ def _si_data(
     return _condense(si_units), si_scaling_factor, si_offset
 
 
+def _arithmetic_result(units: str) -> Unit:
+    """
+    Build the unit produced by multiplying, dividing, or raising units to a power.
+
+    Operands of these operations are never offset-based units, so any offset unit
+    term they contain (for example ``C`` in ``C^2``) represents a temperature
+    difference. If the terms cancel down to a bare offset unit, return the
+    matching temperature difference unit rather than an absolute temperature.
+    """
+    unit = Unit(_condense(units))
+    if unit.has_offset:
+        return unit.to_temperature_difference()
+    return unit
+
+
+def _check_offset_unit_prefixes(name: str) -> None:
+    """
+    Reject multiplier prefixes on offset-based units.
+
+    A prefix such as ``k`` in ``kC`` would scale the unit while dropping its
+    offset, so the result would be neither a valid absolute temperature nor a
+    temperature difference.
+
+    Parameters
+    ----------
+    name : str
+        Unit string representation of the quantity.
+
+    Raises
+    ------
+    PrefixedOffsetUnit
+        If any term is an offset-based unit with a multiplier prefix.
+    """
+    for term in name.split(" "):
+        if not term:
+            continue
+        multiplier, base, _ = _filter_unit_term(term)
+        base_info = _base_units.get(base)
+        if multiplier and base_info and base_info["si_offset"] != 0:
+            raise PrefixedOffsetUnit(term, base)
+
+
 class InconsistentDimensions(ValueError):
     """Raised when units have inconsistent base dimensions."""
 
@@ -670,7 +812,7 @@ class InconsistentDimensions(ValueError):
 class IncorrectUnits(ValueError):
     """Raised when the specified units are incorrect."""
 
-    def __init__(self, unit1, unit2):
+    def __init__(self, unit1: "Unit", unit2: "Unit"):
         super().__init__(
             f"'{unit1.si_units}' and '{unit2.si_units}' must match for this operation."
         )
@@ -679,14 +821,39 @@ class IncorrectUnits(ValueError):
 class ProhibitedTemperatureOperation(TypeError):
     """Raised when two absolute temperatures are added."""
 
-    def __init__(self):
+    def __init__(self, message: str | None = None):
+        # The optional message lets libraries such as pandas re-raise the error
+        # with extra context, which they do by calling ``type(error)(message)``.
         super().__init__(
-            "In order to add two temperature-based quantities, at least one must be a temperature difference."  # noqa: E501
+            message
+            or "In order to add two temperature-based quantities, at least one must be a temperature difference."  # noqa: E501
+        )
+
+
+class ProhibitedOffsetUnitOperation(TypeError):
+    """Raised when an offset-based unit is used in an invalid operation."""
+
+    def __init__(self, unit: "Unit", op: str):
+        super().__init__(
+            f"'{unit.name}' is a non-multiplicative (offset-based) unit and cannot be used "
+            + f"with the '{op}' operation. Use a ratio-scale unit (for example 'K' or 'R') or "
+            + "a temperature difference unit (for example 'delta_C') instead."
+        )
+
+
+class PrefixedOffsetUnit(ValueError):
+    """Raised when a multiplier prefix is applied to an offset-based unit."""
+
+    def __init__(self, term: str, base: str):
+        super().__init__(
+            f"'{term}' applies a multiplier prefix to the offset-based unit '{base}', "
+            + f"which is not supported. Use 'delta_{base}' for a scaled temperature "
+            + "difference or a ratio-scale unit (for example 'K') instead."
         )
 
 
 class UnknownTableItem(ValueError):
     """Raised when a quantity table item is undefined."""
 
-    def __init__(self, item):
+    def __init__(self, item: str):
         super().__init__(f"`{item}` is not a valid quantity table item.")

@@ -45,7 +45,11 @@ from ansys.units.quantity import (  # InvalidFloatUsage,
     RequiresUniqueDimensions,
     get_si_value,
 )
-from ansys.units.unit import IncorrectUnits, ProhibitedTemperatureOperation
+from ansys.units.unit import (
+    IncorrectUnits,
+    ProhibitedOffsetUnitOperation,
+    ProhibitedTemperatureOperation,
+)
 
 DELTA = 1.0e-5
 
@@ -896,3 +900,131 @@ def test_temperature_list():
     temp = Quantity(value=[1.0, 2.0, 3.0], units="C")
     assert temp.value.tolist() == [1.0, 2.0, 3.0]
     assert temp.units == Unit("C")
+
+
+@pytest.mark.parametrize(
+    "units, below, at",
+    [
+        ("K", -0.5, 0.0),
+        ("R", -0.5, 0.0),
+        ("C", -273.16, -273.15),
+        ("F", -459.68, -459.67),
+    ],
+)
+def test_values_below_absolute_zero_become_temperature_difference(
+    units: str, below: float, at: float
+):
+    assert Quantity(at, units).units == Unit(units)
+    assert Quantity(below, units).units == Unit(f"delta_{units}")
+    # The lowest value of an array decides, regardless of the array's shape.
+    assert Quantity([at, 10.0], units).units == Unit(units)
+    assert Quantity([[10.0], [below]], units).units == Unit(f"delta_{units}")
+
+
+def test_multidimensional_quantity():
+    import numpy as np
+
+    q = Quantity([[1.0, 2.0], [3.0, 4.0]], "cm")
+    assert (q.shape, q.ndim, q.size) == ((2, 2), 2, 4)
+    assert np.allclose(get_si_value(q), [[0.01, 0.02], [0.03, 0.04]])
+    assert np.allclose(q.to("m").value, [[0.01, 0.02], [0.03, 0.04]])
+
+    scalar = Quantity(3.0, "m")
+    assert (scalar.shape, scalar.ndim, scalar.size) == ((), 0, 1)
+    assert Quantity(np.array(3.0), "m").shape == ()
+
+
+def test_vectorised_si_value_with_offset_and_integers():
+    import numpy as np
+
+    assert np.allclose(get_si_value(Quantity([0, 100], "C")), [273.15, 373.15])
+    si = get_si_value(Quantity(np.array([1, 2]), "km"))
+    assert si.dtype == np.float64
+    assert si.tolist() == [1000.0, 2000.0]
+
+
+def test_getitem_slicing():
+    q = Quantity([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], "kg")
+    row = q[1]
+    assert row.units == Unit("kg") and row.value.tolist() == [4.0, 5.0, 6.0]
+    assert q[:, 0].value.tolist() == [1.0, 4.0]
+    element = q[0, 2]
+    assert isinstance(element.value, float) and element.value == 3.0
+    assert Quantity([1.0, 2.0, 3.0], "m")[1:].value.tolist() == [2.0, 3.0]
+
+
+@pytest.mark.parametrize("units", ["C", "F"])
+def test_offset_quantity_multiplication_and_division_prohibited(units: str):
+    t = Quantity(10.0, units)
+    t_arr = Quantity([10.0, 20.0], units)
+    for operation in (
+        lambda: t * 2,
+        lambda: 2 * t,
+        lambda: t / 2,
+        lambda: 2 / t,
+        lambda: t * [1.0, 2.0],
+        lambda: t_arr / [1.0, 2.0],
+        lambda: t * Quantity(1.0, "m"),
+        lambda: Quantity(1.0, "m") * t,
+        lambda: Quantity(1.0, "m") / t,
+        lambda: Quantity(1.0, "m") * Unit(units),
+        lambda: t / Unit("s"),
+        lambda: t**2,
+    ):
+        with pytest.raises(ProhibitedOffsetUnitOperation):
+            operation()
+
+
+@pytest.mark.parametrize("units", ["K", "R", "delta_C", "delta_F"])
+def test_ratio_scale_temperature_arithmetic_allowed(units: str):
+    t = Quantity(10.0, units)
+    assert (t * 2).value == 20.0
+    assert (t / 2).value == 5.0
+    assert (t * Quantity(2.0, "m")).units == Unit(f"{units} m")
+    assert (t**2).units == Unit(f"{units}^2")
+
+
+def test_offset_quantity_addition_and_subtraction_still_supported():
+    t = Quantity(20.0, "C")
+    assert t + Quantity(5.0, "delta_C") == Quantity(25.0, "C")
+    assert (t - Quantity(5.0, "C")).units == Unit("delta_C")
+    assert -t == Quantity(-20.0, "C")
+
+
+def test_quantity_compatible_units():
+    assert Quantity(1, "Pa").compatible_units() == Unit("Pa").compatible_units()
+    assert "bar" in Quantity(1, "Pa").compatible_units()
+
+
+def test_unsupported_operands_raise_type_error():
+    q = Quantity(1.0, "m")
+    with pytest.raises(TypeError):
+        q * object()
+    with pytest.raises(TypeError):
+        q / object()
+
+
+def test_object_array_with_non_numeric_minimum():
+    # The absolute-zero check is skipped when the minimum isn't a number.
+    import numpy as np
+
+    q = Quantity(np.array([None], dtype=object), "m")
+    assert q.units == Unit("m")
+
+
+def test_invalid_float_usage_message():
+    from ansys.units.quantity import InvalidFloatUsage
+
+    error = InvalidFloatUsage()
+    assert isinstance(error, FloatingPointError)
+    assert "dimensionless" in str(error)
+
+
+def test_matplotlib_converter_with_sequences():
+    from ansys.units.quantity import QuantityConverter
+
+    values = [Quantity(1.0, "m"), Quantity(2.0, "m")]
+    assert QuantityConverter.convert(values, None, None) == [1.0, 2.0]
+    assert QuantityConverter.convert(values[0], None, None) == 1.0
+    assert QuantityConverter.default_units(values, None) == "m"
+    assert QuantityConverter.default_units(Quantity(1.0, Unit("kg")), None) == "kg"

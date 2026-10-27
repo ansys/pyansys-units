@@ -15,6 +15,8 @@ code to work with physical quantities.
    strings
    angles
    temperature
+   numpy
+   serialization
    plot
    quantity_dimensions
    variable_descriptor

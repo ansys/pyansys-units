@@ -88,7 +88,7 @@ __all__ = (
 
 {
             NL.join(
-                f'''{key if not iskeyword(key) else key + "_"} = Unit("{
+                f'''{key if not iskeyword(key) else key + "_"}: Unit = Unit("{
                     key
                 }")  #: A predefined unit for a {key}'''
                 for key in all

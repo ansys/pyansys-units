@@ -30,7 +30,20 @@ from typing_extensions import override
 from ansys.units._constants import _base_units, _unit_systems
 from ansys.units._unit_parsing import _units_to_dim
 from ansys.units.base_dimensions import BaseDimensions
-from ansys.units.quantity_tables.keys import *  # noqa: F403
+from ansys.units.quantity_tables.keys import (
+    AngleKey,
+    ChemicalAmountKey,
+    CurrentKey,
+    LengthKey,
+    LightKey,
+    MassKey,
+    SolidAngleKey,
+    Systems,
+    TemperatureDifferenceKey,
+    TemperatureKey,
+    TimeKey,
+    UnitKey,
+)
 
 
 def _resolved_name(unit: UnitKey | str) -> str:
@@ -166,7 +179,7 @@ class UnitSystem:
         for unit_type in BaseDimensions:
             self._set_type(unit_type=unit_type, unit=units[unit_type.name])
 
-    def update(self, base_units: Mapping[BaseDimensions, UnitKey | str]):
+    def update(self, base_units: Mapping[BaseDimensions, UnitKey | str]) -> None:
         """
         Change the units of the unit system.
 
@@ -400,24 +413,24 @@ class UnitSystem:
 class NotBaseUnit(ValueError):
     """Raised when a unit system unit is not a configured base unit."""
 
-    def __init__(self, unit):
+    def __init__(self, unit: str):
         super().__init__(
             f"`{unit}` is not a base unit. To use `{unit}`, add it to the "
-            "`base_units` table within the cfg.yaml file."
+            + "`base_units` table within the cfg.yaml file."
         )
 
 
 class InvalidUnitSystem(ValueError):
     """Raised when a unit system is initialized with an unsupported unit system."""
 
-    def __init__(self, sys):
+    def __init__(self, sys: str):
         super().__init__(f"`{sys}` is not a supported unit system.")
 
 
 class IncorrectUnitType(ValueError):
     """Raised when a unit is provided that does not have a valid type of base unit."""
 
-    def __init__(self, unit, unit_type):
+    def __init__(self, unit: str, unit_type: BaseDimensions):
         super().__init__(
             f"The unit `{unit}` is incompatible with unit system type: `{unit_type.name}`"
         )

@@ -126,7 +126,7 @@ class Dimensions:
     def __hash__(self) -> int:
         return hash(repr(sorted(self._dimensions.items())))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self._dimensions)
 
     def __getitem__(self, key: str) -> float:
