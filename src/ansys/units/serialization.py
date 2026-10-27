@@ -315,15 +315,15 @@ def _parse_array(text: str) -> list[Any]:
         raise ValueError(
             "Cannot parse a summarized array. Use to_dict for large arrays."
         )
-    tokens = text.replace("[", " [ ").replace("]", " ] ").replace(",", " ").split()
+    parts = text.replace("[", " [ ").replace("]", " ] ").replace(",", " ").split()
     stack: list[list[Any]] = []
     result: list[Any] | None = None
-    for token in tokens:
+    for part in parts:
         if result is not None:
             raise ValueError(f"Unexpected content after array in {text!r}.")
-        if token == "[":
+        if part == "[":
             stack.append([])
-        elif token == "]":
+        elif part == "]":
             # The text starts with "[", so the stack is never empty here.
             items = stack.pop()
             if stack:
@@ -332,9 +332,9 @@ def _parse_array(text: str) -> list[Any]:
                 result = items
         else:
             try:
-                stack[-1].append(float(token))
+                stack[-1].append(float(part))
             except ValueError:
-                raise ValueError(f"Cannot parse a number from {token!r}.") from None
+                raise ValueError(f"Cannot parse a number from {part!r}.") from None
     if result is None:
         raise ValueError(f"Unbalanced brackets in {text!r}.")
     return result
