@@ -38,6 +38,7 @@ import pandas as pd
 from pandas.api.extensions import (
     ExtensionArray,
     ExtensionDtype,
+    no_default,
     register_dataframe_accessor,
     register_extension_dtype,
     register_series_accessor,
@@ -62,8 +63,63 @@ DEFAULT_SUBDTYPE = "Float64"
 # Grouped aggregations whose result has the units of the input
 _SAME_UNIT_GROUPBY_OPS = frozenset(
     {"sum", "mean", "median", "min", "max", "first", "last"}
-    | {"cumsum", "cummin", "cummax"}
+    | {"cumsum", "cummin", "cummax", "prod", "cumprod"}
 )
+
+# Reductions whose result has the units of the input
+_SAME_UNIT_REDUCTIONS = frozenset({"sum", "mean", "median", "min", "max"})
+# Reductions of the spread of the values
+_SPREAD_REDUCTIONS = frozenset({"std", "sem", "var"})
+# Dimensionless shape statistics
+_UNITLESS_REDUCTIONS = frozenset({"skew", "kurt"})
+
+
+def _spread_units(name: str, units: Unit) -> Unit:
+    """Units of a standard deviation or variance of values in ``units``."""
+    # The spread of absolute temperatures is a temperature difference.
+    if units.is_absolute_temperature:
+        units = units.to_temperature_difference()
+    return units**2 if name == "var" else units
+
+
+def _check_product(name: str, dtype: "QuantityDtype") -> None:
+    """Products of a varying number of values only work without units."""
+    if dtype.units != Unit(""):
+        raise TypeError(
+            f"Cannot perform {name} with dtype {dtype}: each result would have "
+            "different units. Convert to a dimensionless series first."
+        )
+
+
+def _check_accumulation(name: str, dtype: "QuantityDtype") -> None:
+    if name == "cumprod":
+        _check_product(name, dtype)
+    elif name not in ("cumsum", "cummin", "cummax"):
+        raise TypeError(f"Cannot perform {name} with dtype {dtype}")
+    elif name == "cumsum" and dtype.units.is_absolute_temperature:
+        raise ProhibitedTemperatureOperation()
+
+
+def _reduction_units(name: str, dtype: "QuantityDtype", count: int) -> Unit | None:
+    """
+    Units of the result of a reduction over ``count`` values.
+
+    Returns ``None`` for dimensionless shape statistics and raises an error for
+    reductions that make no sense for the units.
+    """
+    units = dtype.units
+    if name in _SAME_UNIT_REDUCTIONS:
+        if name == "sum" and units.is_absolute_temperature:
+            raise ProhibitedTemperatureOperation()
+        return units
+    if name in _SPREAD_REDUCTIONS:
+        return _spread_units(name, units)
+    if name == "prod":
+        # The product of ``count`` values in ``u`` has units ``u^count``.
+        return units**count
+    if name in _UNITLESS_REDUCTIONS:
+        return None
+    raise TypeError(f"Cannot perform {name} with dtype {dtype}")
 
 
 @register_extension_dtype
@@ -91,7 +147,7 @@ class QuantityDtype(ExtensionDtype):
     subdtype: Any | None = None
     _metadata: tuple[str, ...] = ("units", "subdtype")
     _match: re.Pattern[str] = re.compile(
-        r"quantity\[(?P<units>.+)\](?:\[(?P<subdtype>.+)\])?"
+        r"quantity\[(?P<units>[^\]]*)\](?:\[(?P<subdtype>.+)\])?"
     )
     _cache: dict[tuple[str, Any], "QuantityDtype"] = {}
 
@@ -550,6 +606,23 @@ class QuantityArray(ExtensionArray):
             return np.array([self[i] for i in range(len(self))], dtype=object)
         return np.array(self._data, dtype=dtype, copy=copy)
 
+    def to_numpy(
+        self, dtype: Any = None, copy: bool = False, na_value: Any = no_default
+    ) -> np.ndarray[Any, Any]:
+        """
+        Convert to a NumPy array.
+
+        With a numeric ``dtype``, return the plain values in the array's units, with
+        missing values replaced by ``na_value``. Otherwise return ``Quantity``
+        objects.
+        """
+        if dtype is None or is_object_dtype(dtype):
+            values = np.array([self[i] for i in range(len(self))], dtype=object)
+            if na_value is not no_default:
+                values[np.asarray(self.isna())] = na_value
+            return values
+        return self._data.to_numpy(dtype=dtype, copy=copy, na_value=na_value)
+
     @staticmethod
     def _create_arithmetic_method(
         op: Callable[[Any, Any], Any], reflected: bool = False
@@ -607,49 +680,31 @@ class QuantityArray(ExtensionArray):
 
         return method
 
-    def _reduce(self, name: str, *, skipna: bool = True, **kwargs: Any) -> "Quantity":
-        functions: dict[str, Callable[..., Any]] = {
-            "sum": np.nansum,
-            "mean": np.nanmean,
-            "median": np.nanmedian,
-            "min": np.nanmin,
-            "max": np.nanmax,
-            "std": np.nanstd,
-            "var": np.nanvar,
-        }
-
-        if name not in functions:
-            raise TypeError(f"Cannot perform {name} with dtype {self.dtype}")
-
-        units = self._dtype.units
-        if name == "sum" and units.is_absolute_temperature:
-            raise ProhibitedTemperatureOperation()
-
-        data = np.asarray(self._data)
-
-        # Remove pandas-specific kwargs that NumPy does not support
-        np_kwargs = {k: v for k, v in kwargs.items() if k not in {"min_count"}}
-
-        if skipna:
-            result = functions[name](data, **np_kwargs)
-        else:
-            result = getattr(np, name)(data, **np_kwargs)
-
-        # The spread of absolute temperatures is a temperature difference.
-        if name in ("std", "var") and units.is_absolute_temperature:
-            units = units.to_temperature_difference()
-        if name == "var":
-            units = units**2
+    def _reduce(
+        self, name: str, *, skipna: bool = True, keepdims: bool = False, **kwargs: Any
+    ) -> Any:
+        """Reductions such as ``sum``, ``mean``, ``std`` and ``prod``."""
+        count = int(np.sum(~self.isna())) if skipna else len(self)
+        units = _reduction_units(name, self._dtype, count)
+        result = self._data._reduce(name, skipna=skipna, keepdims=keepdims, **kwargs)
+        if units is None:
+            # Shape statistics such as skewness have no units, so they are plain
+            # floats.
+            if keepdims:
+                return result.to_numpy(dtype="float64", na_value=np.nan)
+            return np.nan if result is pd.NA else result
+        if keepdims:
+            # DataFrame reductions ask for a length-1 array.
+            return type(self)(result, dtype=QuantityDtype(units))
+        if result is pd.NA:
+            result = np.nan
         return Quantity(result, units)
 
     def _accumulate(
         self, name: str, *, skipna: bool = True, **kwargs: Any
     ) -> "QuantityArray":
-        """Cumulative sum, minimum and maximum, keeping the units."""
-        if name not in ("cumsum", "cummin", "cummax"):
-            raise TypeError(f"Cannot perform {name} with dtype {self.dtype}")
-        if name == "cumsum" and self._dtype.units.is_absolute_temperature:
-            raise ProhibitedTemperatureOperation()
+        """Cumulative sum, minimum, maximum and (dimensionless) product."""
+        _check_accumulation(name, self._dtype)
         result = self._data._accumulate(name, skipna=skipna, **kwargs)
         return type(self)(result, dtype=self.dtype)
 
@@ -665,8 +720,8 @@ class QuantityArray(ExtensionArray):
     ) -> Any:
         """Grouped aggregations (``df.groupby(...)[col].sum()`` and so on)."""
         units = self._dtype.units
-        if how in ("prod", "cumprod", "skew", "kurt"):
-            raise TypeError(f"Cannot perform {how} with dtype {self.dtype}")
+        if how in ("prod", "cumprod"):
+            _check_product(how, self._dtype)
         if how in ("sum", "cumsum") and units.is_absolute_temperature:
             raise ProhibitedTemperatureOperation()
 
@@ -680,13 +735,9 @@ class QuantityArray(ExtensionArray):
         )
 
         if how in ("std", "sem", "var"):
-            # The spread of absolute temperatures is a temperature difference.
-            if units.is_absolute_temperature:
-                units = units.to_temperature_difference()
-            if how == "var":
-                units = units**2
+            units = _spread_units(how, units)
         elif how not in _SAME_UNIT_GROUPBY_OPS:
-            # Counts, ranks, and similar results have no units.
+            # Counts, ranks, skewness, and similar results have no units.
             return result
         return type(self)(result, dtype=QuantityDtype(units))
 
@@ -794,6 +845,85 @@ class UnitsSeriesAccessor:
         if not isinstance(self._obj.array, QuantityArray):
             raise TypeError("Series must contain QuantityArray")
         return self._obj.array.quantity
+
+    def rolling(self, *args: Any, **kwargs: Any) -> "UnitAwareWindow":
+        """
+        Rolling window whose results keep their units.
+
+        Takes the same arguments as :meth:`pandas.Series.rolling`. For example,
+        ``series.units.rolling(3).mean()``.
+        """
+        return UnitAwareWindow(self._values().rolling(*args, **kwargs), self._obj.dtype)
+
+    def expanding(self, *args: Any, **kwargs: Any) -> "UnitAwareWindow":
+        """
+        Expanding window whose results keep their units.
+
+        See :meth:`rolling`.
+        """
+        return UnitAwareWindow(
+            self._values().expanding(*args, **kwargs), self._obj.dtype
+        )
+
+    def ewm(self, *args: Any, **kwargs: Any) -> "UnitAwareWindow":
+        """Exponentially weighted window whose results keep their units."""
+        return UnitAwareWindow(self._values().ewm(*args, **kwargs), self._obj.dtype)
+
+    def _values(self) -> pd.Series:
+        """The values as a plain float series, with missing values as NaN."""
+        values = self._obj.array.to_numpy(dtype="float64", na_value=np.nan)
+        return pd.Series(values, index=self._obj.index, name=self._obj.name)
+
+
+# Window methods whose result has the units of the input
+_SAME_UNIT_WINDOW_METHODS = frozenset(
+    {"sum", "mean", "median", "min", "max", "quantile", "first", "last"}
+)
+
+
+class UnitAwareWindow:
+    """
+    Rolling, expanding, or exponentially weighted window that keeps units.
+
+    Returned by ``series.units.rolling()``, ``series.units.expanding()`` and
+    ``series.units.ewm()``. Methods such as ``mean`` and ``max`` return a series in
+    the original units, ``std`` and ``sem`` return the units of a difference, and
+    ``var`` returns squared units. Methods whose units can't be determined, such as
+    ``apply``, return plain floats.
+    """
+
+    def __init__(self, window: Any, dtype: QuantityDtype) -> None:
+        self._window = window
+        self._dtype = dtype
+
+    def __getattr__(self, name: str) -> Any:
+        attribute = getattr(self._window, name)
+        if not callable(attribute):
+            return attribute
+
+        units = self._units_for(name)
+
+        def method(*args: Any, **kwargs: Any) -> Any:
+            result = attribute(*args, **kwargs)
+            if units is None:
+                return result
+            return pd.Series(
+                QuantityArray(result.to_numpy(), dtype=QuantityDtype(units)),
+                index=result.index,
+                name=result.name,
+            )
+
+        return method
+
+    def _units_for(self, name: str) -> Unit | None:
+        units = self._dtype.units
+        if name in _SAME_UNIT_WINDOW_METHODS:
+            if name == "sum" and units.is_absolute_temperature:
+                raise ProhibitedTemperatureOperation()
+            return units
+        if name in _SPREAD_REDUCTIONS:
+            return _spread_units(name, units)
+        return None
 
 
 @register_dataframe_accessor("units")

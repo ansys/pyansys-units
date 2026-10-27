@@ -195,6 +195,28 @@ Reduction Operations
    maximum = series.max()
    spread = series.std()  # in "m"
    variance = series.var()  # in "m^2"
+   error = series.sem()  # in "m"
+   product = series.prod()  # 24.0 in "m^4"
+   series.skew()  # plain float, shape statistics have no units
+   series.kurt()
+
+The units of ``prod()`` depend on the number of values that are multiplied, so
+missing values that are skipped don't count.
+
+DataFrame reductions return one quantity per column, so columns with different units
+can be reduced together:
+
+.. code-block:: python
+
+   df = pd.DataFrame(
+       {
+           "length": pd.Series([1.0, 2.0], dtype="quantity[m]"),
+           "mass": pd.Series([3.0, 4.0], dtype="quantity[kg]"),
+       }
+   )
+
+   df.sum()  # [Quantity(3.0, "m"), Quantity(7.0, "kg")]
+   df.mean()
 
 ``Series.describe()`` converts its results to plain floats, which drops the units.
 Use the ``.units`` accessor to get the same statistics with units:
@@ -219,6 +241,34 @@ Cumulative Operations and Unique Values
    series.round(1)
    abs(series)
 
+A cumulative product of quantities would have different units for each value, so
+``cumprod()`` is only available for dimensionless series:
+
+.. code-block:: python
+
+   ratios = pd.Series([2.0, 3.0, 4.0], dtype="quantity[]")
+   ratios.cumprod()  # [2.0, 6.0, 24.0], dimensionless
+
+Rolling, Expanding, and Exponentially Weighted Windows
+------------------------------------------------------
+
+pandas converts window data to plain floats, so ``series.rolling(2).mean()`` has no
+units. Use the ``.units`` accessor to keep them:
+
+.. code-block:: python
+
+   series = pd.Series([1.0, 2.0, 3.0, 4.0], dtype="quantity[m]")
+
+   series.units.rolling(2).mean()  # [NaN, 1.5, 2.5, 3.5] in "m"
+   series.units.rolling(2).var()  # in "m^2"
+   series.units.expanding().max()  # in "m"
+   series.units.ewm(span=2).mean()  # in "m"
+
+``sum``, ``mean``, ``median``, ``min``, ``max``, ``quantile``, ``first``, and ``last``
+keep the units of the series. ``std`` and ``sem`` are in the units of a difference,
+and ``var`` is in squared units. Results whose units can't be determined, such as
+``count``, ``apply``, and ``corr``, are plain floats.
+
 Grouping
 --------
 
@@ -237,6 +287,9 @@ Grouped aggregations keep the units of the column:
    df.groupby("beam")["load"].mean()
    df.groupby("beam")["load"].std()  # in "kN"
    df.groupby("beam")["load"].var()  # in "kN^2"
+
+Grouped ``prod()`` and ``cumprod()`` are only available for dimensionless columns,
+because each group would otherwise have different units.
 
 Temperatures
 ------------
@@ -296,12 +349,11 @@ Integration with Existing Code
 Limitations
 -----------
 
-- **Products**: ``prod()`` and ``cumprod()`` raise a ``TypeError``, because the units
-  of the result depend on the number of values.
-- **Rolling and expanding windows**: pandas converts window data to plain floats,
-  so results such as ``series.rolling(2).mean()`` have no units.
-- **describe()**: ``Series.describe()`` returns plain floats. Use
-  ``series.units.describe()`` instead.
+- **Products**: ``cumprod()`` and grouped ``prod()`` raise a ``TypeError`` unless the
+  series is dimensionless, because each result would have different units.
+- **Built-in windows and describe()**: ``series.rolling()``, ``series.expanding()``,
+  ``series.ewm()``, and ``series.describe()`` return plain floats. Use the ``.units``
+  versions of these methods to keep units.
 
 Examples
 --------

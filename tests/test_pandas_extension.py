@@ -35,7 +35,10 @@ import pytest
 from ansys.units import Unit
 from ansys.units.extensions.pandas_extension import QuantityArray, QuantityDtype
 from ansys.units.quantity import Quantity, Vector
-from ansys.units.unit import ProhibitedTemperatureOperation
+from ansys.units.unit import (
+    ProhibitedOffsetUnitOperation,
+    ProhibitedTemperatureOperation,
+)
 
 
 class TestQuantityDtype:
@@ -562,8 +565,56 @@ class TestQuantityArrayDetails:
         assert series.median() == Quantity(2.5, "m")
         assert series.var().units == Unit("m^2")
         assert series.std().units == Unit("m")
-        with pytest.raises(TypeError, match="prod"):
-            series.prod()
+        assert series.std(ddof=0).value == pytest.approx(np.std([1, 2, 3, 10]))
+        assert series.sem().units == Unit("m")
+        with pytest.raises(TypeError, match="any"):
+            series.any()
+
+    def test_shape_statistics_have_no_units(self):
+        series = Series([1.0, 2.0, 4.0, 8.0], dtype="quantity[m]")
+        assert series.skew() == pytest.approx(Series([1.0, 2.0, 4.0, 8.0]).skew())
+        assert series.kurt() == pytest.approx(Series([1.0, 2.0, 4.0, 8.0]).kurt())
+        assert np.isnan(Series([1.0, 2.0], dtype="quantity[m]").skew())
+
+    def test_product_units_depend_on_the_number_of_values(self):
+        series = Series([1.0, 2.0, np.nan, 4.0], dtype="quantity[m]")
+        assert series.prod() == Quantity(8.0, "m^3")
+        assert series.prod(skipna=False).units == Unit("m^4")
+        with pytest.raises(ProhibitedOffsetUnitOperation):
+            Series([1.0, 2.0], dtype="quantity[C]").prod()
+
+    def test_cumulative_product_needs_dimensionless_values(self):
+        ratios = Series([2.0, 3.0, 4.0], dtype="quantity[]")
+        assert ratios.dtype == QuantityDtype(Unit(""))
+        assert ratios.prod() == Quantity(24.0, "")
+        assert ratios.cumprod().tolist() == [
+            Quantity(2.0, ""),
+            Quantity(6.0, ""),
+            Quantity(24.0, ""),
+        ]
+        with pytest.raises(TypeError, match="different units"):
+            Series([2.0, 3.0], dtype="quantity[m]").cumprod()
+
+    def test_reductions_of_empty_and_missing_values(self):
+        assert Series([], dtype="quantity[m]").sum() == Quantity(0.0, "m")
+        assert np.isnan(Series([], dtype="quantity[m]").mean().value)
+        result = Series([np.nan], dtype="quantity[m]").sum(min_count=1)
+        assert result.units == Unit("m") and np.isnan(result.value)
+
+    def test_dataframe_reductions_keep_units(self):
+        df = DataFrame(
+            {
+                "L": Series([1.0, 2.0, np.nan], dtype="quantity[m]"),
+                "M": Series([1.0, 2.0, 3.0], dtype="quantity[kg]"),
+            }
+        )
+        assert df.sum().tolist() == [Quantity(3.0, "m"), Quantity(6.0, "kg")]
+        assert df.mean().tolist() == [Quantity(1.5, "m"), Quantity(2.0, "kg")]
+        assert df.max().tolist() == [Quantity(2.0, "m"), Quantity(3.0, "kg")]
+        assert df.std()["M"].units == Unit("kg")
+        # Shape statistics have no units, also with ``keepdims``.
+        skew = df.skew()
+        assert np.isnan(skew["L"]) and skew["M"] == pytest.approx(0.0)
 
     def test_temperature_spread_is_a_difference(self):
         series = Series([10.0, 20.0], dtype="quantity[C]")
@@ -620,6 +671,8 @@ class TestPandasOperations:
         assert series.cummin().dtype == QuantityDtype("m")
         with pytest.raises(TypeError, match="cumprod"):
             series.cumprod()
+        with pytest.raises(TypeError, match="diff"):
+            series.array._accumulate("diff")
 
     def test_unary_operations_and_round(self):
         series = Series([-1.25, 2.5], dtype="quantity[m]")
@@ -658,8 +711,22 @@ class TestPandasOperations:
         assert grouped.count().tolist() == [2, 2]
         # Ranks have no units.
         assert grouped.rank().tolist() == [1.0, 2.0, 1.0, 2.0]
-        with pytest.raises(TypeError, match="prod"):
+        with pytest.raises(TypeError, match="different units"):
             grouped.prod()
+
+    def test_groupby_products_and_shape_statistics(self):
+        df = DataFrame(
+            {
+                "g": [1, 1, 1, 2],
+                "ratio": Series([2.0, 3.0, 4.0, 5.0], dtype="quantity[]"),
+            }
+        )
+        grouped = df.groupby("g")["ratio"]
+        assert grouped.prod().tolist() == [Quantity(24.0, ""), Quantity(5.0, "")]
+        assert grouped.cumprod().tolist()[2] == Quantity(24.0, "")
+        skew = grouped.skew()
+        assert not isinstance(skew.dtype, QuantityDtype)
+        assert skew.iloc[0] == pytest.approx(0.0)
 
     def test_groupby_on_temperatures(self):
         df = DataFrame({"g": [1, 1], "T": Series([10.0, 20.0], dtype="quantity[C]")})
@@ -693,6 +760,47 @@ class TestPandasOperations:
         assert list(stats.columns) == ["L"]
         assert list(stats.index) == ["count", "mean", "std", "min", "12.5%", "max"]
         assert stats.loc["mean", "L"] == Quantity(1.5, "m")
+
+    def test_windows_keep_units(self):
+        series = Series([1.0, 2.0, np.nan, 4.0], dtype="quantity[m]")
+
+        mean = series.units.rolling(2).mean()
+        assert mean.dtype == QuantityDtype("m")
+        assert mean[1] == Quantity(1.5, "m")
+        assert pd.isna(mean[0])
+        assert series.units.rolling(2).std().dtype == QuantityDtype("m")
+        assert series.units.rolling(2, min_periods=1).var().dtype == QuantityDtype(
+            "m^2"
+        )
+        assert series.units.expanding().max().tolist()[-1] == Quantity(4.0, "m")
+        assert series.units.ewm(span=2).mean().dtype == QuantityDtype("m")
+
+        # Results whose units can't be determined are plain floats.
+        counts = series.units.rolling(2, min_periods=1).count()
+        assert counts.tolist() == [1.0, 2.0, 1.0, 1.0]
+        applied = series.units.rolling(2).apply(np.sum, raw=True)
+        assert applied.dtype == np.float64
+        # Window attributes pass through.
+        assert series.units.rolling(3).window == 3
+
+    def test_windows_on_temperatures(self):
+        temperatures = Series([10.0, 20.0, 40.0], dtype="quantity[C]")
+        assert temperatures.units.rolling(2).mean().dtype == QuantityDtype("C")
+        assert temperatures.units.rolling(2).std().dtype == QuantityDtype("delta_C")
+        with pytest.raises(ProhibitedTemperatureOperation):
+            temperatures.units.rolling(2).sum()
+
+    def test_builtin_windows_handle_missing_values(self):
+        series = Series([1.0, 2.0, np.nan, 4.0], dtype="quantity[m]")
+        assert series.rolling(2).mean().tolist()[1] == 1.5
+
+    def test_to_numpy(self):
+        arr = Series([1.0, np.nan], dtype="quantity[m]").array
+        floats = arr.to_numpy(dtype="float64", na_value=np.nan)
+        assert floats[0] == 1.0 and np.isnan(floats[1])
+        objects = arr.to_numpy()
+        assert objects[0] == Quantity(1.0, "m") and pd.isna(objects[1])
+        assert arr.to_numpy(na_value=None)[1] is None
 
 
 class TestAccessorErrors:
