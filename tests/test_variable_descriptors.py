@@ -25,6 +25,7 @@ from typing import final
 import pytest
 
 from ansys.units import (
+    ConversionStrategy,
     Dimensions,
     MappingConversionStrategy,
     QuantityDimensions,
@@ -81,3 +82,69 @@ def test_extend_descriptor_catalog():
 def test_get_custom_descriptor_from_catalog():
     catalog = VariableCatalog()
     assert catalog.VELOCITY_Y.name == "velocity_y"
+
+
+def test_catalog_all_groups_descriptors_by_subcategory():
+    groups = VariableCatalog.all()
+    assert VariableCatalog.PRESSURE in groups["main"]
+    assert set(groups) >= {"main", "fluent", "mesh"}
+    assert all(isinstance(d, VariableDescriptor) for d in groups["fluent"])
+
+
+def test_catalog_add_to_new_subcategory():
+    VariableCatalog.add("TEST_ONLY_SPEED", QuantityDimensions.VELOCITY, "test_only")
+    try:
+        assert VariableCatalog.test_only.TEST_ONLY_SPEED.name == "test_only_speed"
+        assert VariableCatalog.test_only.__doc__.startswith("Dictionary")
+        assert "test_only" in VariableCatalog.all()
+
+        with pytest.raises(ValueError, match="already exists in the 'test_only'"):
+            VariableCatalog.add(
+                "TEST_ONLY_SPEED", QuantityDimensions.VELOCITY, "test_only"
+            )
+    finally:
+        delattr(VariableCatalog, "test_only")
+
+
+def test_catalog_add_validates_name():
+    with pytest.raises(ValueError, match="uppercase"):
+        VariableCatalog.add("lowercase_name", QuantityDimensions.VELOCITY)
+    with pytest.raises(ValueError, match="already exists in the 'main'"):
+        VariableCatalog.add("PRESSURE", QuantityDimensions.PRESSURE)
+
+
+def test_mapping_strategy_passes_through_matching_types():
+    @final
+    class Strategy(MappingConversionStrategy):
+        _mapping = {VariableCatalog.PRESSURE: "p"}
+
+    strategy = Strategy()
+    assert strategy.to_string("already a string") == "already a string"
+    assert strategy.to_string(None) is None
+    assert (
+        strategy.to_variable_descriptor(VariableCatalog.PRESSURE)
+        is VariableCatalog.PRESSURE
+    )
+
+
+def test_conversion_strategy_is_abstract():
+    with pytest.raises(TypeError):
+        ConversionStrategy()
+
+    @final
+    class Delegating(ConversionStrategy):
+        """Strategy that calls the abstract base implementations."""
+
+        def to_string(self, variable):
+            return super().to_string(variable)
+
+        def to_variable_descriptor(self, variable):
+            return super().to_variable_descriptor(variable)
+
+        def supports(self, variable):
+            return super().supports(variable)
+
+    strategy = Delegating()
+    assert strategy.to_string(VariableCatalog.PRESSURE) is None
+    assert strategy.to_variable_descriptor("p") is None
+    assert strategy.supports(VariableCatalog.PRESSURE) is None

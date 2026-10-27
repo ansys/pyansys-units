@@ -116,6 +116,7 @@ class UnitRegistry:
                 if "composition" in cfg:
                     composed = Unit(units=str(cfg["composition"]))
                     obj = Unit(copy_from=composed)
+                    obj._si_scaling_factor *= float(cfg.get("factor", 1))
                     obj._name = unit_name
                     object.__setattr__(self, unit_name, obj)
                 else:

@@ -190,6 +190,28 @@ def test_unsupported_numpy_operations_raise_type_error(operation):
         operation(Quantity(np.array([1.0, 2.0]), "m"))
 
 
+_PLAIN = np.array([1.0, 2.0])
+
+
+@pytest.mark.parametrize(
+    "operation",
+    [
+        lambda q: np.percentile(_PLAIN, q),
+        lambda q: np.diff(_PLAIN, prepend=q),
+        lambda q: np.var(_PLAIN, mean=q),
+        lambda q: np.atleast_1d(q, q),
+        lambda q: np.clip(_PLAIN, q, q),
+        lambda q: np.where(q),
+        lambda q: np.where(q, _PLAIN, _PLAIN),
+        lambda q: np.linspace(0.0, q),
+    ],
+)
+def test_quantity_in_unsupported_argument_position_raises_type_error(operation):
+    # The quantity isn't in the position whose units define the result.
+    with pytest.raises(TypeError):
+        operation(Quantity(np.array([1.0, 0.0]), ""))
+
+
 def test_quantity_divided_by_array():
     result = Quantity(np.array([2.0, 4.0]), "m") / np.array([2.0, 4.0])
     assert _same(result, [1.0, 1.0], "m")

@@ -35,6 +35,7 @@ import pytest
 from ansys.units import Unit
 from ansys.units.extensions.pandas_extension import QuantityArray, QuantityDtype
 from ansys.units.quantity import Quantity, Vector
+from ansys.units.unit import ProhibitedTemperatureOperation
 
 
 class TestQuantityDtype:
@@ -304,12 +305,16 @@ class TestPandasIntegration:
 
     def test_series_operations(self):
         """Test arithmetic operations on Series."""
-        s1: Series[float] = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
-        s2: Series[float] = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        s1: Series = Series([1.0, 2.0, 3.0], dtype="quantity[m]")
+        s2: Series = Series([100.0, 200.0, 300.0], dtype="quantity[cm]")
 
-        # Addition (not yet implemented but structure exists)
-        # result = s1 + s2
-        # assert isinstance(result.dtype, QuantityDtype)
+        result = s1 + s2
+        assert isinstance(result.dtype, QuantityDtype)
+        assert result.dtype.units == Unit("m")
+        assert result.units.quantity.value.tolist() == [2.0, 4.0, 6.0]
+
+        doubled = s1 * 2
+        assert doubled.units.quantity.value.tolist() == [2.0, 4.0, 6.0]
 
     def test_indexing_and_slicing(self):
         """Test indexing operations."""
@@ -431,6 +436,283 @@ class TestDocExamples:
         summary: Any = df.units.summary()
         assert "torque" in summary
         assert "force" in summary
+
+
+class TestQuantityDtypeDetails:
+    """Tests for less common QuantityDtype paths."""
+
+    def test_dtype_from_dtype_returns_same_instance(self):
+        dtype = QuantityDtype("m")
+        assert QuantityDtype(dtype) is dtype
+
+    def test_empty_dtype_for_pickling(self):
+        dtype = QuantityDtype()
+        assert isinstance(dtype, QuantityDtype)
+        assert dtype.units is None
+
+    def test_dtype_properties(self):
+        dtype = QuantityDtype("m")
+        assert dtype._is_numeric is True
+        assert repr(dtype) == "quantity[m]"
+
+    def test_dtype_equality_with_strings_and_other_objects(self):
+        dtype = QuantityDtype("m")
+        assert dtype == "quantity[m]"
+        assert dtype != "not_a_unit_xyz"
+        assert dtype != 5
+
+
+class TestQuantityArrayDetails:
+    """Tests for less common QuantityArray paths."""
+
+    def test_construct_from_quantity_array(self):
+        arr = QuantityArray([1.0, 2.0], dtype="quantity[m]")
+        assert list(QuantityArray(arr).quantity.value) == [1.0, 2.0]
+
+        # Re-wrapping with other units converts the values.
+        in_cm = QuantityArray(arr, dtype="quantity[cm]")
+        assert in_cm.dtype.units == Unit("cm")
+        assert list(in_cm.quantity.value) == [100.0, 200.0]
+
+    def test_construct_without_dtype_or_quantity_raises(self):
+        with pytest.raises(ValueError, match="Must specify dtype"):
+            QuantityArray([1.0, 2.0])
+        with pytest.raises(ValueError, match="Cannot infer dtype"):
+            QuantityArray._from_sequence([1.0, 2.0])
+
+    def test_getitem_missing_value(self):
+        arr = QuantityArray([np.nan, 1.0], dtype="quantity[m]")
+        assert pd.isna(arr[0])
+        assert arr[1] == Quantity(1.0, "m")
+
+    def test_take_with_quantity_fill_value(self):
+        arr = QuantityArray([1.0, 2.0], dtype="quantity[m]")
+        result = arr.take([0, -1], allow_fill=True, fill_value=Quantity(500, "cm"))
+        assert list(result.quantity.value) == [1.0, 5.0]
+
+    def test_deep_copy(self):
+        arr = QuantityArray([1.0, 2.0], dtype="quantity[m]")
+        copied = arr.copy(deep=True)
+        copied[0] = Quantity(9.0, "m")
+        assert arr[0] == Quantity(1.0, "m")
+
+    def test_factorize(self):
+        series = Series(QuantityArray([1.0, 1.0, 2.0], dtype="quantity[m]"))
+        codes, uniques = series.factorize()
+        assert list(codes) == [0, 0, 1]
+        assert uniques.dtype == QuantityDtype("m")
+        assert len(uniques) == 2
+
+    def test_astype(self):
+        arr = QuantityArray([1.0, 2.0], dtype="quantity[m]")
+
+        assert arr.astype(arr.dtype, copy=False) is arr
+        in_cm = arr.astype("quantity[cm]")
+        assert list(in_cm.quantity.value) == [100.0, 200.0]
+
+        as_strings = arr.astype(str)
+        assert list(as_strings) == ["1.0 m", "2.0 m"]
+
+        as_floats = arr.astype("float64")
+        assert list(as_floats) == [1.0, 2.0]
+
+    def test_numpy_conversion(self):
+        arr = QuantityArray([1.0, 2.0], dtype="quantity[m]")
+        as_objects = np.asarray(arr)
+        assert as_objects.dtype == object
+        assert as_objects[0] == Quantity(1.0, "m")
+        assert np.asarray(arr, dtype=float).tolist() == [1.0, 2.0]
+
+    def test_arithmetic(self):
+        a = QuantityArray([1.0, 2.0, 3.0], dtype="quantity[m]")
+        b = QuantityArray([100.0, 200.0, 300.0], dtype="quantity[cm]")
+
+        assert list((a + b).quantity.value) == [2.0, 4.0, 6.0]
+        assert list((a - Quantity(1.0, "m")).quantity.value) == [0.0, 1.0, 2.0]
+        assert list((a * 2).quantity.value) == [2.0, 4.0, 6.0]
+        assert list((2 * a).quantity.value) == [2.0, 4.0, 6.0]
+        assert list((a * np.array([1.0, 2.0, 3.0])).quantity.value) == [1.0, 4.0, 9.0]
+        assert (a / Quantity(1.0, "s")).dtype.units == Unit("m s^-1")
+
+        # Reflected operations keep the operand order.
+        ratio = QuantityArray([1.0, 2.0], dtype=QuantityDtype(Unit("")))
+        assert list((10 - ratio).quantity.value) == [9.0, 8.0]
+        assert list((6 / ratio).quantity.value) == [6.0, 3.0]
+        assert (6 / ratio).dtype == QuantityDtype(Unit(""))
+
+    def test_arithmetic_with_unsupported_operands(self):
+        a = QuantityArray([1.0, 2.0], dtype="quantity[m]")
+        assert a.__add__(Series([1.0, 2.0])) is NotImplemented
+        with pytest.raises(TypeError):
+            a / "x"
+
+    def test_comparisons_are_element_wise(self):
+        a = QuantityArray([1.0, 2.0, 3.0], dtype="quantity[m]")
+        b = QuantityArray([100.0, 250.0, 300.0], dtype="quantity[cm]")
+
+        assert (a == b).tolist() == [True, False, True]
+        assert (a != b).tolist() == [False, True, False]
+        assert (a < Quantity(2.5, "m")).tolist() == [True, True, False]
+        assert (a >= b).tolist() == [True, False, True]
+        assert a.__eq__(Series([1.0, 2.0, 3.0])) is NotImplemented
+
+    def test_reductions(self):
+        series = Series([1.0, 2.0, 3.0, 10.0], dtype="quantity[m]")
+        assert series.sum(skipna=False) == Quantity(16.0, "m")
+        assert series.median() == Quantity(2.5, "m")
+        assert series.var().units == Unit("m^2")
+        assert series.std().units == Unit("m")
+        with pytest.raises(TypeError, match="prod"):
+            series.prod()
+
+    def test_temperature_spread_is_a_difference(self):
+        series = Series([10.0, 20.0], dtype="quantity[C]")
+        assert series.std().units == Unit("delta_C")
+        assert series.var().units == Unit("delta_C^2")
+        assert series.var().value == pytest.approx(50.0)
+        assert series.mean() == Quantity(15.0, "C")
+
+    def test_absolute_temperatures_cannot_be_summed(self):
+        series = Series([10.0, 20.0], dtype="quantity[C]")
+        with pytest.raises(ProhibitedTemperatureOperation):
+            series.sum()
+        with pytest.raises(ProhibitedTemperatureOperation):
+            series.cumsum()
+        deltas = Series([10.0, 20.0], dtype="quantity[delta_C]")
+        assert deltas.sum() == Quantity(30.0, "delta_C")
+
+
+class TestPandasOperations:
+    """Tests for pandas operations on unit-aware Series and DataFrames."""
+
+    def test_copy_and_fillna_do_not_modify_the_original(self):
+        series = Series([1.0, np.nan], dtype="quantity[m]")
+        filled = series.fillna(Quantity(0.0, "m"))
+        assert filled[1] == Quantity(0.0, "m")
+        assert pd.isna(series[1])
+
+        copied = series.copy()
+        copied.iloc[0] = Quantity(9.0, "m")
+        assert series[0] == Quantity(1.0, "m")
+
+        arr = series.array
+        assert arr.copy(deep=False)._data is not arr._data
+
+    def test_unique_values(self):
+        series = Series([1.0, 2.0, 2.0, np.nan], dtype="quantity[m]")
+        uniques = series.unique()
+        assert isinstance(uniques, QuantityArray)
+        assert len(uniques) == 3
+        assert series.nunique() == 2
+        assert series.drop_duplicates().tolist()[:2] == [
+            Quantity(1.0, "m"),
+            Quantity(2.0, "m"),
+        ]
+
+    def test_cumulative_operations(self):
+        series = Series([1.0, 3.0, 2.0], dtype="quantity[m]")
+        assert series.cumsum().tolist() == [
+            Quantity(1.0, "m"),
+            Quantity(4.0, "m"),
+            Quantity(6.0, "m"),
+        ]
+        assert series.cummax().tolist()[-1] == Quantity(3.0, "m")
+        assert series.cummin().dtype == QuantityDtype("m")
+        with pytest.raises(TypeError, match="cumprod"):
+            series.cumprod()
+
+    def test_unary_operations_and_round(self):
+        series = Series([-1.25, 2.5], dtype="quantity[m]")
+        assert (-series).tolist() == [Quantity(1.25, "m"), Quantity(-2.5, "m")]
+        assert (+series).tolist() == series.tolist()
+        assert abs(series).dtype == QuantityDtype("m")
+        assert abs(series).tolist()[0] == Quantity(1.25, "m")
+        assert series.round(1).tolist()[0] == Quantity(-1.2, "m")
+
+    def test_concat_with_compatible_units_converts(self):
+        meters = Series([1.0], dtype="quantity[m]")
+        centimeters = Series([250.0], dtype="quantity[cm]")
+        combined = pd.concat([meters, centimeters], ignore_index=True)
+        assert combined.dtype == QuantityDtype("m")
+        assert combined.tolist() == [Quantity(1.0, "m"), Quantity(2.5, "m")]
+
+    def test_concat_with_incompatible_units_is_object(self):
+        combined = pd.concat(
+            [Series([1.0], dtype="quantity[m]"), Series([2.0], dtype="quantity[kg]")]
+        )
+        assert combined.dtype == object
+
+    def test_groupby_aggregations_keep_units(self):
+        df = DataFrame(
+            {
+                "g": [1, 1, 2, 2],
+                "length": Series([1.0, 3.0, 5.0, 6.0], dtype="quantity[m]"),
+            }
+        )
+        grouped = df.groupby("g")["length"]
+        assert grouped.sum().tolist() == [Quantity(4.0, "m"), Quantity(11.0, "m")]
+        assert grouped.mean().dtype == QuantityDtype("m")
+        assert grouped.var().dtype == QuantityDtype("m^2")
+        assert grouped.std().dtype == QuantityDtype("m")
+        assert grouped.cumsum().tolist()[1] == Quantity(4.0, "m")
+        assert grouped.count().tolist() == [2, 2]
+        # Ranks have no units.
+        assert grouped.rank().tolist() == [1.0, 2.0, 1.0, 2.0]
+        with pytest.raises(TypeError, match="prod"):
+            grouped.prod()
+
+    def test_groupby_on_temperatures(self):
+        df = DataFrame({"g": [1, 1], "T": Series([10.0, 20.0], dtype="quantity[C]")})
+        grouped = df.groupby("g")["T"]
+        assert grouped.mean().tolist() == [Quantity(15.0, "C")]
+        assert grouped.std().dtype == QuantityDtype("delta_C")
+        assert grouped.var().dtype == QuantityDtype("delta_C^2")
+        with pytest.raises(ProhibitedTemperatureOperation):
+            grouped.sum()
+
+    def test_describe_keeps_units(self):
+        series = Series([1.0, 2.0, np.nan, 4.0], dtype="quantity[m]", name="L")
+        stats = series.units.describe()
+        assert stats["count"] == 3
+        assert stats["min"] == Quantity(1.0, "m")
+        assert stats["50%"] == Quantity(2.0, "m")
+        assert stats["max"] == Quantity(4.0, "m")
+        assert stats.name == "L"
+
+        temperatures = Series([10.0, 20.0], dtype="quantity[C]")
+        assert temperatures.units.describe()["std"].units == Unit("delta_C")
+
+    def test_dataframe_describe_keeps_units(self):
+        df = DataFrame(
+            {
+                "L": Series([1.0, 2.0], dtype="quantity[m]"),
+                "n": [1, 2],
+            }
+        )
+        stats = df.units.describe(percentiles=(0.125,))
+        assert list(stats.columns) == ["L"]
+        assert list(stats.index) == ["count", "mean", "std", "min", "12.5%", "max"]
+        assert stats.loc["mean", "L"] == Quantity(1.5, "m")
+
+
+class TestAccessorErrors:
+    """Tests for accessor error handling."""
+
+    def test_accessor_requires_quantity_dtype(self):
+        with pytest.raises(AttributeError, match="QuantityDtype"):
+            Series([1.0, 2.0]).units
+
+    def test_accessor_requires_quantity_array(self):
+        from types import SimpleNamespace
+
+        from ansys.units.extensions.pandas_extension import UnitsSeriesAccessor
+
+        fake_series = SimpleNamespace(dtype=QuantityDtype("m"), array=[1.0, 2.0])
+        accessor = UnitsSeriesAccessor(fake_series)
+        with pytest.raises(TypeError, match="QuantityArray"):
+            accessor.to("cm")
+        with pytest.raises(TypeError, match="QuantityArray"):
+            accessor.quantity
 
 
 if __name__ == "__main__":

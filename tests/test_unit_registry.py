@@ -103,3 +103,45 @@ def test_error_message():
     e1 = UnitNameAlreadyRegistered("kg")
     expected_str = "Unable to register `kg`: a unit with this name already exists."
     assert str(e1) == expected_str
+
+
+def test_additional_units_with_composition_apply_factor():
+    ur = UnitRegistry(config="", other={"kN": {"composition": "N", "factor": 1000}})
+    assert ur.kN.name == "kN"
+    assert ur.kN.si_scaling_factor == 1000
+    assert ur.Quantity(2, "kN").to("N").value == 2000
+
+    # The factor defaults to 1.
+    ur = UnitRegistry(config="", other={"newton_alias": {"composition": "N"}})
+    assert ur.newton_alias.si_scaling_factor == 1
+
+
+def test_additional_units_with_base_unit_config():
+    cfg = {"type": "LENGTH", "si_scaling_factor": 0.001, "si_offset": 0}
+    ur = UnitRegistry(config="", other={"mm": cfg})
+    assert ur.mm.si_scaling_factor == 0.001
+
+
+def test_additional_units_cannot_shadow_registry_attributes():
+    with pytest.raises(UnitNameAlreadyRegistered):
+        UnitRegistry(config="", other={"get_unit": {"composition": "m"}})
+
+
+def test_set_and_iterate_units():
+    ur = UnitRegistry(config="")
+    ur.fps = Unit("ft s^-1")
+    assert ur.fps == Unit("ft s^-1")
+    assert list(ur) == ["fps"]
+
+
+@pytest.mark.parametrize(
+    "kwargs, message",
+    [
+        ({"unit": "  ", "composition": "m", "factor": 1}, "non-empty"),
+        ({"unit": "x", "composition": "m", "factor": float("inf")}, "finite"),
+        ({"unit": "x", "composition": "m", "factor": float("nan")}, "finite"),
+    ],
+)
+def test_register_unit_validates_input(kwargs, message):
+    with pytest.raises(ValueError, match=message):
+        UnitRegistry().register_unit(**kwargs)

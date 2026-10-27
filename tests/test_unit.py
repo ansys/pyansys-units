@@ -470,3 +470,28 @@ def test_tonne_feet_unit():
 
     femto_tonne = Quantity(value=1, units="ftonne")
     assert get_si_value(femto_tonne) == 1e-12
+
+
+def test_unit_repr():
+    assert repr(Unit("kg m^-3")) == "Unit('kg m^-3')"
+
+
+def test_unsupported_reflected_operands():
+    with pytest.raises(TypeError):
+        object() * Unit("m")
+    with pytest.raises(TypeError):
+        object() / Unit("m")
+
+
+def test_dimensionless_unit_arithmetic_names():
+    assert (Unit("") / Unit("")).name == ""
+    assert (Unit("m") / Unit("")).name == "m"
+    assert (Unit("") ** 2).name == ""
+    assert (6 / Quantity(2.0, "")).units.name == ""
+
+
+def test_dim_to_units_defaults_to_si():
+    from ansys.units.unit import _dim_to_units
+
+    dims = Dimensions({BaseDimensions.LENGTH: 1, BaseDimensions.TIME: -1})
+    assert _dim_to_units(system=None, dimensions=dims) == "m s^-1"

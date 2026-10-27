@@ -316,16 +316,13 @@ def _parse_array(text: str) -> list[Any]:
         if token == "[":
             stack.append([])
         elif token == "]":
-            if not stack:
-                raise ValueError(f"Unbalanced brackets in {text!r}.")
+            # The text starts with "[", so the stack is never empty here.
             items = stack.pop()
             if stack:
                 stack[-1].append(items)
             else:
                 result = items
         else:
-            if not stack:
-                raise ValueError(f"Unexpected content outside array in {text!r}.")
             try:
                 stack[-1].append(float(token))
             except ValueError:

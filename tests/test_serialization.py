@@ -100,6 +100,13 @@ def test_unit_dict_round_trip():
         assert Unit.from_dict(Unit(name).to_dict()) == Unit(name)
 
 
+def test_unit_from_dict_validates_input():
+    with pytest.raises(TypeError, match="mapping"):
+        Unit.from_dict(["kg"])
+    with pytest.raises(TypeError, match="string"):
+        Unit.from_dict({"units": 5})
+
+
 def test_from_dict_validates_input():
     with pytest.raises(TypeError):
         Quantity.from_dict([1.0, "m"])
@@ -160,6 +167,12 @@ def test_unknown_unit_without_definition_is_unresolvable():
         Quantity.from_dict({"value": 3.0, "units": "micron"})
     with pytest.raises(UnresolvableUnit):
         resolve_unit("micron")
+
+
+def test_definition_used_when_registry_does_not_know_the_unit(micron_registry):
+    data = micron_registry.Quantity(3.0, "micron").to_dict()
+    restored = Quantity.from_dict(data, registry=UnitRegistry())
+    assert restored.units == micron_registry.micron
 
 
 def test_conflicting_definition_is_rejected(micron_registry):
@@ -305,6 +318,7 @@ def test_from_string_formats(text, value, units):
         ("[1 x] m", ValueError),
         ("[1 ... 9] m", ValueError),
         ("[1] [2] m", ValueError),
+        ("[[1] m", ValueError),
         ("5 not_a_unit", ValueError),
     ],
 )

@@ -297,7 +297,11 @@ print("\nUnits:")
 for col, unit in imperial_df.units.summary().items():
     print(f"  {col}: {unit}")
 
-# Calculate load per unit length (would need arithmetic support)
+# Calculate load per unit length with unit-aware arithmetic
+load_per_length: Series = analysis_df["load"] / analysis_df["length"]
+print("\nLoad per unit length:")
+print(load_per_length)
+
 print("\nAnalysis Summary:")
 print(f"  Total beams analyzed: {len(analysis_df)}")
 print(f"  Average beam length: {analysis_df['length'].mean()}")

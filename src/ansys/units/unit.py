@@ -187,37 +187,6 @@ class Unit:
             returned_string += f"{key}: {attrs[key]}\n"
         return returned_string
 
-    def _new_units(self, value, op):
-        """
-        Generate a new units instance depending on mathematical operation.
-
-        Parameters
-        ----------
-        value : int | float | Unit
-            The given operand.
-        op : str
-            '*', '/', '**'.
-
-        Returns
-        -------
-        Unit
-            New unit instance.
-        """
-        new_units = ""
-        if op == "**":
-            for term in self.name.split(" "):
-                multiplier, base, exponent = _filter_unit_term(term)
-                exponent *= value
-                new_units += f"{multiplier}{base}^{exponent} "
-        if op == "/":
-            new_units = self.name
-            for term in value.name.split(" "):
-                multiplier, base, exponent = _filter_unit_term(term)
-                new_units += f" {multiplier}{base}^{exponent * -1}"
-        if op == "*":
-            new_units = f"{self.name} {value.name}"
-        return Unit(_condense(new_units))
-
     def compatible_units(self) -> set[str]:
         """
         Get all units with the same dimensions.
@@ -452,7 +421,7 @@ class Unit:
             raise ProhibitedOffsetUnitOperation(offending, "/")
         new_units = ""
         new_units = self.name
-        for term in value.name.split(" "):
+        for term in value.name.split():
             multiplier, base, exponent = _filter_unit_term(term)
             new_units += f" {multiplier}{base}^{exponent * -1}"
         return _arithmetic_result(new_units)
@@ -477,7 +446,7 @@ class Unit:
         if self.has_offset:
             raise ProhibitedOffsetUnitOperation(self, "**")
         new_units = ""
-        for term in self.name.split(" "):
+        for term in self.name.split():
             multiplier, base, exponent = _filter_unit_term(term)
             exponent *= value
             new_units += f"{multiplier}{base}^{exponent} "
@@ -847,9 +816,12 @@ class IncorrectUnits(ValueError):
 class ProhibitedTemperatureOperation(TypeError):
     """Raised when two absolute temperatures are added."""
 
-    def __init__(self):
+    def __init__(self, message: str | None = None):
+        # The optional message lets libraries such as pandas re-raise the error
+        # with extra context, which they do by calling ``type(error)(message)``.
         super().__init__(
-            "In order to add two temperature-based quantities, at least one must be a temperature difference."  # noqa: E501
+            message
+            or "In order to add two temperature-based quantities, at least one must be a temperature difference."  # noqa: E501
         )
 
 

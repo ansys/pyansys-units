@@ -987,3 +987,42 @@ def test_offset_quantity_addition_and_subtraction_still_supported():
     assert t + Quantity(5.0, "delta_C") == Quantity(25.0, "C")
     assert (t - Quantity(5.0, "C")).units == Unit("delta_C")
     assert -t == Quantity(-20.0, "C")
+
+
+def test_quantity_compatible_units():
+    assert Quantity(1, "Pa").compatible_units() == Unit("Pa").compatible_units()
+    assert "bar" in Quantity(1, "Pa").compatible_units()
+
+
+def test_unsupported_operands_raise_type_error():
+    q = Quantity(1.0, "m")
+    with pytest.raises(TypeError):
+        q * object()
+    with pytest.raises(TypeError):
+        q / object()
+
+
+def test_object_array_with_non_numeric_minimum():
+    # The absolute-zero check is skipped when the minimum isn't a number.
+    import numpy as np
+
+    q = Quantity(np.array([None], dtype=object), "m")
+    assert q.units == Unit("m")
+
+
+def test_invalid_float_usage_message():
+    from ansys.units.quantity import InvalidFloatUsage
+
+    error = InvalidFloatUsage()
+    assert isinstance(error, FloatingPointError)
+    assert "dimensionless" in str(error)
+
+
+def test_matplotlib_converter_with_sequences():
+    from ansys.units.quantity import QuantityConverter
+
+    values = [Quantity(1.0, "m"), Quantity(2.0, "m")]
+    assert QuantityConverter.convert(values, None, None) == [1.0, 2.0]
+    assert QuantityConverter.convert(values[0], None, None) == 1.0
+    assert QuantityConverter.default_units(values, None) == "m"
+    assert QuantityConverter.default_units(Quantity(1.0, Unit("kg")), None) == "kg"
