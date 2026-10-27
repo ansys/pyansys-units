@@ -81,7 +81,7 @@ Custom units
 ------------
 
 Units are stored by name. Custom units registered with
-:meth:`~ansys.units.UnitRegistry.register_unit` are also stored with their
+``UnitRegistry.register_unit()`` are also stored with their
 definition, so they can be restored without the registry:
 
 .. code:: python
