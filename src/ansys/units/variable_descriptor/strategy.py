@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """
 Defines the ConversionStrategy base class for translating `VariableDescriptor` objects.
 
@@ -39,8 +40,8 @@ class ConversionStrategy(ABC):
     """
     Abstract base class for `VariableDescriptor` conversion strategies.
 
-    This class defines the interface for all conversion strategies. Derived classes
-    must implement the methods defined here to handle the conversion of `VariableDescriptor`
+    This class defines the interface for all conversion strategies. Derived classes must
+    implement the methods defined here to handle the conversion of `VariableDescriptor`
     objects to and from their string representations, as well as to check if a
     `VariableDescriptor` is supported.
     """
@@ -151,8 +152,9 @@ class MappingConversionStrategy(ConversionStrategy, ABC):
         """
         Initialize the MappingConversionStrategy.
 
-        This constructor initializes the reverse mapping attribute to `None`.
-        The reverse mapping is lazily initialized when accessed via the `_reverse_mapping` property.
+        This constructor initializes the reverse mapping attribute to `None`. The
+        reverse mapping is lazily initialized when accessed via the `_reverse_mapping`
+        property.
         """
         self.__reverse_mapping: Mapping[str, VariableDescriptor] | None = None
 

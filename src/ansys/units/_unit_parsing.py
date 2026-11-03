@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,14 +19,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """
 Low-level unit string parsing helpers.
 
 This module is intentionally a leaf module: it only depends on
 ``ansys.units._constants`` and ``ansys.units.base_dimensions``. Both
-``ansys.units.unit`` and ``ansys.units.systems`` depend on it, so keeping it
-free of any dependency on those two modules avoids a circular import between
-them.
+``ansys.units.unit`` and ``ansys.units.systems`` depend on it, so keeping it free of any
+dependency on those two modules avoids a circular import between them.
 """
 
 from __future__ import annotations
