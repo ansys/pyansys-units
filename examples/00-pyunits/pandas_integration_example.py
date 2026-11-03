@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 """
+.. _ref_pandas_integration:
+
 Pandas Integration Example for ansys-units
 ==========================================
 
