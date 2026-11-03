@@ -96,7 +96,7 @@ def test_get_custom_descriptor_from_catalog():
         "VOLUME_FRACTION_SECONDARY_PHASE",
     ],
 )
-def test_cfd_variables_moved_to_main_namespace(name):
+def test_cfd_variables_moved_to_main_namespace(name: str):
     descriptor = getattr(VariableCatalog, name)
     assert isinstance(descriptor, VariableDescriptor)
     assert descriptor.name == name.lower()
@@ -110,7 +110,7 @@ def test_cfd_variables_moved_to_main_namespace(name):
         "PRESSURE_HESSIAN_INDICATOR",
     ],
 )
-def test_removed_fluent_variables_absent(name):
+def test_removed_fluent_variables_absent(name: str):
     assert not hasattr(VariableCatalog, name)
 
 
@@ -123,7 +123,7 @@ def test_removed_fluent_variables_absent(name):
         "MESH_STORED_CELL_PARTITION",
     ],
 )
-def test_mesh_variables_moved_to_main_namespace(name):
+def test_mesh_variables_moved_to_main_namespace(name: str):
     descriptor = getattr(VariableCatalog, name)
     assert isinstance(descriptor, VariableDescriptor)
     assert descriptor.name == name.lower()
