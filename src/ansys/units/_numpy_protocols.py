@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,15 +19,16 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """
 NumPy ``__array_ufunc__`` and ``__array_function__`` support for ``Quantity``.
 
-This module is only imported by ``Quantity`` when NumPy calls one of its
-protocol methods, so NumPy remains an optional dependency.
+This module is only imported by ``Quantity`` when NumPy calls one of its protocol
+methods, so NumPy remains an optional dependency.
 
-Each handler either returns a result, raises an error when the units make the
-operation invalid, or returns ``NotImplemented`` for unsupported functions
-(NumPy then raises a ``TypeError``).
+Each handler either returns a result, raises an error when the units make the operation
+invalid, or returns ``NotImplemented`` for unsupported functions (NumPy then raises a
+``TypeError``).
 """
 
 from __future__ import annotations

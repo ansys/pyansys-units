@@ -628,8 +628,7 @@ class QuantityArray(ExtensionArray):
         Convert to a NumPy array.
 
         With a numeric ``dtype``, return the plain values in the array's units, with
-        missing values replaced by ``na_value``. Otherwise return ``Quantity``
-        objects.
+        missing values replaced by ``na_value``. Otherwise return ``Quantity`` objects.
         """
         if dtype is None or is_object_dtype(dtype):
             values = np.array([self[i] for i in range(len(self))], dtype=object)
@@ -905,10 +904,10 @@ class UnitAwareWindow:
     Rolling, expanding, or exponentially weighted window that keeps units.
 
     Returned by ``series.units.rolling()``, ``series.units.expanding()`` and
-    ``series.units.ewm()``. Methods such as ``mean`` and ``max`` return a series in
-    the original units, ``std`` and ``sem`` return the units of a difference, and
-    ``var`` returns squared units. Methods whose units can't be determined, such as
-    ``apply``, return plain floats.
+    ``series.units.ewm()``. Methods such as ``mean`` and ``max`` return a series in the
+    original units, ``std`` and ``sem`` return the units of a difference, and ``var``
+    returns squared units. Methods whose units can't be determined, such as ``apply``,
+    return plain floats.
     """
 
     _window: Any

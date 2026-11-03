@@ -280,9 +280,9 @@ class Unit:
         """
         True if the unit is a non-multiplicative (offset-based) unit, such as ``C``.
 
-        Offset units inside compound units (for example ``W m^-1 C^-1``) are
-        interpreted as temperature differences and convert without an offset, so
-        such compound units are multiplicative.
+        Offset units inside compound units (for example ``W m^-1 C^-1``) are interpreted
+        as temperature differences and convert without an offset, so such compound units
+        are multiplicative.
         """
         return self.si_offset != 0
 
@@ -296,9 +296,9 @@ class Unit:
         """
         Lowest physically valid value (absolute zero) in this unit.
 
-        ``None`` if the unit is not an absolute temperature. The limit is derived
-        from the unit's SI offset, so it applies to any configured temperature
-        unit without referring to unit names.
+        ``None`` if the unit is not an absolute temperature. The limit is derived from
+        the unit's SI offset, so it applies to any configured temperature unit without
+        referring to unit names.
         """
         if not self.is_absolute_temperature:
             return None
@@ -761,10 +761,10 @@ def _arithmetic_result(units: str) -> Unit:
     """
     Build the unit produced by multiplying, dividing, or raising units to a power.
 
-    Operands of these operations are never offset-based units, so any offset unit
-    term they contain (for example ``C`` in ``C^2``) represents a temperature
-    difference. If the terms cancel down to a bare offset unit, return the
-    matching temperature difference unit rather than an absolute temperature.
+    Operands of these operations are never offset-based units, so any offset unit term
+    they contain (for example ``C`` in ``C^2``) represents a temperature difference. If
+    the terms cancel down to a bare offset unit, return the matching temperature
+    difference unit rather than an absolute temperature.
     """
     unit = Unit(_condense(units))
     if unit.has_offset:
