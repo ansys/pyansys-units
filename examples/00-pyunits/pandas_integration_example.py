@@ -21,7 +21,8 @@
 # SOFTWARE.
 
 """
-Pandas Integration Example for ansys-units ==========================================
+Pandas Integration Example for ansys-units
+==========================================
 
 This example demonstrates how to use ansys-units with pandas DataFrames for unit-aware
 data analysis.
