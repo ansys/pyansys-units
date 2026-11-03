@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides the ``UnitRegistry`` class and instance-scoped unit registration."""
 
 from collections.abc import Generator, Mapping, Sequence
@@ -29,12 +30,8 @@ import weakref
 
 import yaml
 
-from ansys.units._constants import (
-    _BaseUnitInfo,
-)
-from ansys.units._constants import (
-    _DerivedUnitInfo,
-)
+from ansys.units._constants import _BaseUnitInfo
+from ansys.units._constants import _DerivedUnitInfo
 from ansys.units._constants import _aliases as _CONST_ALIASES
 from ansys.units._constants import _base_units as _CONST_BASE_UNITS
 from ansys.units._constants import _derived_units as _CONST_DERIVED_UNITS
