@@ -192,8 +192,7 @@ for category, vars_list in variables.items():
 auto_generated_attributes = "\n".join(attributes)
 
 content = f'''\
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
-
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #

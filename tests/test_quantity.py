@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -842,11 +842,8 @@ def test_incompatible_dimensions_error():
 
 def test_error_messages():
     e1 = ExcessiveParameters()
-    assert (
-        str(e1)
-        == "Quantity only accepts one of the following parameters: \
+    assert str(e1) == "Quantity only accepts one of the following parameters: \
             (units) or (quantity_table) or (dimensions)."
-    )
 
     e2 = IncompatibleDimensions(Unit("mm"), Unit("K"))
     assert str(e2) == "`mm` and `K` have incompatible dimensions."

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -35,11 +35,8 @@ from ansys.units._constants import (
     _multipliers,
     _quantity_units_table,
 )
-from ansys.units._unit_parsing import (
-    _filter_unit_term,
-    _units_to_dim,
-)
 from ansys.units._unit_parsing import UnconfiguredUnit as _UnconfiguredUnit
+from ansys.units._unit_parsing import _filter_unit_term, _units_to_dim
 from ansys.units.base_dimensions import BaseDimensions
 from ansys.units.dimensions import Dimensions
 from ansys.units.preferred_units import (
