@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides the ``Quantity`` class."""
 
 from __future__ import annotations
@@ -372,7 +373,6 @@ class Quantity(Generic[ValT]):
         set
             A set of unit objects.
         """
-
         return self.units.compatible_units()
 
     def convert(
@@ -783,10 +783,8 @@ class ExcessiveParameters(ValueError):
     """Raised when excessive parameters are provided."""
 
     def __init__(self):
-        super().__init__(
-            "Quantity only accepts one of the following parameters: \
-            (units) or (quantity_table) or (dimensions)."
-        )
+        super().__init__("Quantity only accepts one of the following parameters: \
+            (units) or (quantity_table) or (dimensions).")
 
 
 class InsufficientArguments(ValueError):
