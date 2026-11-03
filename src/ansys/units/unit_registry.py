@@ -396,10 +396,10 @@ class UnitRegistry:
         """
         Attach ``candidate`` on this instance under ``name``.
 
-        Built-in collisions always raise. If ``name`` is already registered
-        on this instance with an equivalent effective definition (dimensions,
-        SI scaling factor, and SI offset), this is a no-op that returns the
-        existing unit. Otherwise, a differing definition raises.
+        Built-in collisions always raise. If ``name`` is already registered on this
+        instance with an equivalent effective definition (dimensions, SI scaling factor,
+        and SI offset), this is a no-op that returns the existing unit. Otherwise, a
+        differing definition raises.
         """
         if name in _CONST_BASE_UNITS or name in _CONST_DERIVED_UNITS:
             raise UnitNameAlreadyRegistered(name)
@@ -580,12 +580,12 @@ class UnitNameAlreadyRegistered(ValueError):
     """
     Raised when a unit name conflicts with an existing name.
 
-    This is raised when ``unit`` (or an alias) is a built-in unit name, or
-    when it is already registered on the instance with a *different*
-    effective definition (dimensions, SI scaling factor, or SI offset).
-    Re-registering the same name with an equivalent definition is a no-op and
-    does not raise. Units with different names but equivalent definitions
-    (same composition and factor) are also not detected as conflicts.
+    This is raised when ``unit`` (or an alias) is a built-in unit name, or when it is
+    already registered on the instance with a *different* effective definition
+    (dimensions, SI scaling factor, or SI offset). Re-registering the same name with an
+    equivalent definition is a no-op and does not raise. Units with different names but
+    equivalent definitions (same composition and factor) are also not detected as
+    conflicts.
     """
 
     def __init__(self, name: str):
