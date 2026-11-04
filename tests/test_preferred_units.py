@@ -210,3 +210,12 @@ def test_dimension_only_preferred_unit_labels_stress_and_energy_density_the_same
 
     assert stress.units.name == "MPa"
     assert energy_density.units.name == "MPa"
+
+
+def test_dimensionless_preferred_unit_is_rejected():
+    with pytest.raises(UnconfiguredPreferredUnit):
+        PreferredUnits([""])
+
+
+def test_preferred_units_repr():
+    assert repr(PreferredUnits(["MPa", "J"])) == "PreferredUnits(['MPa', 'J'])"

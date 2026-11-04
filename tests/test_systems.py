@@ -729,3 +729,13 @@ def test_custom_unit_system_velocity_round_trip():
 
     quantity = Quantity(1000, velocity_unit)
     assert quantity.to("m s^-1").value == pytest.approx(1.0)
+
+
+def test_compound_unit_object_is_not_a_base_unit():
+    with pytest.raises(NotBaseUnit):
+        UnitSystem(base_units={BaseDimensions.LENGTH: Unit("m s^-1")})
+
+
+def test_unit_system_is_not_equal_to_other_types():
+    assert UnitSystem() != "SI"
+    assert UnitSystem() != None  # noqa: E711

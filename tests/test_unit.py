@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import re
+
 import pytest
 
 from ansys.units import (
@@ -30,10 +32,13 @@ from ansys.units import (
     UnitRegistry,
     UnitSystem,
 )
+from ansys.units._constants import _base_units
 from ansys.units.quantity import get_si_value
 from ansys.units.unit import (
     InconsistentDimensions,
     IncorrectUnits,
+    PrefixedOffsetUnit,
+    ProhibitedOffsetUnitOperation,
     ProhibitedTemperatureOperation,
     UnconfiguredUnit,
     UnknownTableItem,
@@ -123,6 +128,144 @@ def test_compatibility():
     assert ureg.ft.compatible_units() == length_units
     assert ureg.N.compatible_units() == force_units
     assert ureg.delta_K.compatible_units() == temperature_difference_units
+
+
+@pytest.mark.parametrize(
+    "name, minimum, delta",
+    [
+        ("K", 0.0, "delta_K"),
+        ("R", 0.0, "delta_R"),
+        ("C", -273.15, "delta_C"),
+        ("F", -459.67, "delta_F"),
+    ],
+)
+def test_absolute_temperature_metadata(name: str, minimum: float, delta: str):
+    unit = Unit(name)
+    assert unit.is_absolute_temperature
+    assert unit.min_absolute_value == minimum
+    assert unit.to_temperature_difference().name == delta
+
+
+def test_non_absolute_temperature_metadata():
+    for name in ("m", "delta_C", "K s^-1"):
+        unit = Unit(name)
+        assert not unit.is_absolute_temperature
+        assert unit.min_absolute_value is None
+    with pytest.raises(ValueError):
+        Unit("delta_C").to_temperature_difference()
+
+
+def test_to_temperature_difference_falls_back_to_matching_scaling_factor(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    # A temperature unit without a ``delta_<name>`` counterpart resolves to a
+    # configured difference unit with the same scaling factor.
+    monkeypatch.setitem(
+        _base_units,
+        "testtemp",
+        {"type": "TEMPERATURE", "si_scaling_factor": 1, "si_offset": 10.0},
+    )
+    unit = Unit("testtemp")
+    assert unit.min_absolute_value == -10.0
+    delta = unit.to_temperature_difference()
+    assert delta.dimensions == Dimensions({BaseDimensions.TEMPERATURE_DIFFERENCE: 1})
+    assert delta.si_scaling_factor == 1
+
+    q = Quantity(-20.0, "testtemp")
+    assert q.units == delta
+
+
+def test_to_temperature_difference_without_counterpart(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setitem(
+        _base_units,
+        "testtemp",
+        {"type": "TEMPERATURE", "si_scaling_factor": 0.8, "si_offset": 1.0},
+    )
+    with pytest.raises(ValueError, match="No temperature difference unit"):
+        Unit("testtemp").to_temperature_difference()
+
+
+@pytest.mark.parametrize(
+    "name, expected",
+    [
+        ("C", True),
+        ("F", True),
+        ("K", False),
+        ("R", False),
+        ("kelvin", False),
+        ("delta_C", False),
+        ("delta_F", False),
+        ("m s^-1", False),
+        ("", False),
+        # Offset units in compound units are temperature differences.
+        ("C^2", False),
+        ("kg C", False),
+        ("W m^-1 C^-1", False),
+    ],
+)
+def test_has_offset(name: str, expected: bool):
+    assert Unit(name).has_offset is expected
+
+
+def test_compound_units_with_offset_terms_are_multiplicative():
+    conductivity = Quantity(2.0, "W m^-1 C^-1")
+    assert (conductivity * 2).value == 4.0
+    assert (conductivity * Quantity(3.0, "m")).units == Unit("W C^-1")
+    assert conductivity.to("W m^-1 K^-1").value == 2.0
+    assert Quantity(9.0, "F^-1").to("R^-1").value == pytest.approx(9.0)
+
+
+def test_arithmetic_never_produces_an_absolute_offset_unit():
+    # Cancelling down to a bare offset unit yields the temperature difference.
+    assert (Unit("C^2") ** 0.5).name == "delta_C"
+    assert (Unit("C m") / Unit("m")).name == "delta_C"
+    assert (Unit("F m^-1") * Unit("m")).name == "delta_F"
+    assert (Quantity(4.0, "C^2") ** 0.5).units == Unit("delta_C")
+
+
+@pytest.mark.parametrize("name", ["kC", "mF", "kg kC", "uC^-1"])
+def test_prefixed_offset_units_are_rejected(name: str):
+    with pytest.raises(PrefixedOffsetUnit, match="multiplier prefix"):
+        Unit(name)
+    with pytest.raises(PrefixedOffsetUnit):
+        Quantity(1.0, name)
+
+
+def test_prefixed_difference_and_ratio_units_are_allowed():
+    assert Unit("kK").si_scaling_factor == 1000
+    assert Unit("mdelta_C").si_scaling_factor == pytest.approx(0.001)
+
+
+def test_offset_unit_arithmetic_is_prohibited():
+    C, m = Unit("C"), Unit("m")
+    for operation, op in (
+        (lambda: C * m, "*"),
+        (lambda: m * C, "*"),
+        (lambda: C / m, "/"),
+        (lambda: m / C, "/"),
+        (lambda: C**2, "**"),
+        (lambda: Unit("F") ** -1, "**"),
+    ):
+        with pytest.raises(ProhibitedOffsetUnitOperation, match=re.escape(f"'{op}'")):
+            operation()
+
+    # Constructing a quantity from a value and an offset unit is still allowed.
+    assert 5 * C == Quantity(5, "C")
+
+
+def test_ratio_scale_and_difference_units_allow_arithmetic():
+    assert Unit("K") * Unit("m") == Unit("K m")
+    assert Unit("R") / Unit("s") == Unit("R s^-1")
+    assert Unit("K") ** 2 == Unit("K^2")
+    assert Unit("delta_C") / Unit("m") == Unit("delta_C m^-1")
+
+
+def test_prohibited_offset_unit_operation_error():
+    error = ProhibitedOffsetUnitOperation(Unit("C"), "*")
+    assert isinstance(error, TypeError)
+    assert "'C'" in str(error) and "'*'" in str(error)
 
 
 def test_units_from_dimensions():
@@ -329,3 +472,28 @@ def test_tonne_feet_unit():
 
     femto_tonne = Quantity(value=1, units="ftonne")
     assert get_si_value(femto_tonne) == 1e-12
+
+
+def test_unit_repr():
+    assert repr(Unit("kg m^-3")) == "Unit('kg m^-3')"
+
+
+def test_unsupported_reflected_operands():
+    with pytest.raises(TypeError):
+        object() * Unit("m")
+    with pytest.raises(TypeError):
+        object() / Unit("m")
+
+
+def test_dimensionless_unit_arithmetic_names():
+    assert (Unit("") / Unit("")).name == ""
+    assert (Unit("m") / Unit("")).name == "m"
+    assert (Unit("") ** 2).name == ""
+    assert (6 / Quantity(2.0, "")).units.name == ""
+
+
+def test_dim_to_units_defaults_to_si():
+    from ansys.units.unit import _dim_to_units
+
+    dims = Dimensions({BaseDimensions.LENGTH: 1, BaseDimensions.TIME: -1})
+    assert _dim_to_units(system=None, dimensions=dims) == "m s^-1"

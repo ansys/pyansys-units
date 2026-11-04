@@ -17,3 +17,4 @@ This section describes the public classes, functions, and attributes in the PyAn
     unit_registry
     quantity_dimensions
     variable_descriptor
+    serialization
