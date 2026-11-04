@@ -304,7 +304,7 @@ _descriptions: dict[str, str] = {
     "HELICITY": "In particle physics, the projection of a particle's spin onto its direction of motion.",
     "HYDRODYNAMICAL_HELICITY": "In fluid dynamics, a measure of the knottedness and/or linkage of the vortex lines of a flow.",
     "MAGNETIC_HELICITY": "In plasma physics and magnetohydrodynamics, a measure of the twist, linkage, and writhe of magnetic field lines within a volume.",
-    "LAMBDA_2_CRITERION": "Vortex identification criterion based on the second eigenvalue of S^2 + Omega^2.",
+    "LAMBDA_2_CRITERION": "The lambda 2 criterion, which concerns the definition of the scalar lambda2 and how turbulent structures can be visualized by proper iso-surfaces of lambda2 (like for the Q criterion).",
     "TOTAL_ENTHALPY_DEVIATION": "Deviation of total enthalpy from a reference value.",
     "MASS_IMBALANCE": "Residual mass source indicating continuity error in a solution.",
     "VELOCITY_ANGLE": "Angle of the velocity vector relative to a reference direction.",
