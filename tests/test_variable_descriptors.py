@@ -152,3 +152,49 @@ def test_conversion_strategy_is_abstract():
     assert strategy.to_string(VariableCatalog.PRESSURE) is None
     assert strategy.to_variable_descriptor("p") is None
     assert strategy.supports(VariableCatalog.PRESSURE) is None
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "HELICITY",
+        "LAMBDA_2_CRITERION",
+        "TOTAL_ENTHALPY_DEVIATION",
+        "MASS_IMBALANCE",
+        "VELOCITY_ANGLE",
+        "DVELOCITY_DX",
+        "VOLUME_FRACTION_PRIMARY_PHASE",
+        "VOLUME_FRACTION_SECONDARY_PHASE",
+    ],
+)
+def test_cfd_variables_moved_to_main_namespace(name):
+    descriptor = getattr(VariableCatalog, name)
+    assert isinstance(descriptor, VariableDescriptor)
+    assert descriptor.name == name.lower()
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "DENSITY_ALL",
+        "Y_PLUS_BASED_HEAT_TRANSFER_COEFFICIENT",
+        "PRESSURE_HESSIAN_INDICATOR",
+    ],
+)
+def test_removed_fluent_variables_absent(name):
+    assert not hasattr(VariableCatalog, name)
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "MESH_CELL_VOLUME",
+        "MESH_ELEMENT_WALL_DISTANCE",
+        "MESH_FACE_AREA_MAGNITUDE",
+        "MESH_STORED_CELL_PARTITION",
+    ],
+)
+def test_mesh_variables_moved_to_main_namespace(name):
+    descriptor = getattr(VariableCatalog, name)
+    assert isinstance(descriptor, VariableDescriptor)
+    assert descriptor.name == name.lower()
