@@ -38,7 +38,7 @@ import black
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from _descriptions import _descriptions
+from _descriptions import _descriptions  # pyright: ignore[reportImplicitRelativeImport]
 
 src = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(src))
