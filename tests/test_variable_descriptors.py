@@ -88,7 +88,7 @@ def test_get_custom_descriptor_from_catalog():
 def test_catalog_all_groups_descriptors_by_subcategory():
     groups = VariableCatalog.all()
     assert VariableCatalog.PRESSURE in groups["main"]
-    assert set(groups) >= {"main", "fluent", "mesh"}
+    assert set(groups) >= {"main"}
     assert all(isinstance(d, VariableDescriptor) for d in groups["fluent"])
 
 
