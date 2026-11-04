@@ -584,6 +584,16 @@ def test_register_unit_alias_collides_with_builtin_raises():
         ur.register_unit(unit="furlong", composition="m", factor=201.168, aliases=["m"])
 
 
+@pytest.mark.parametrize("alias", ["", "   "])
+def test_register_unit_empty_alias_raises(alias: str):
+    """Test that an empty or blank alias is rejected."""
+    ur = UnitRegistry()
+    with pytest.raises(ValueError, match="`aliases` entries must be non-empty"):
+        ur.register_unit(
+            unit="furlong", composition="m", factor=201.168, aliases=[alias]
+        )
+
+
 def test_register_unit_alias_conflicting_definition_raises():
     """Test that an alias already registered with a different definition raises."""
     ur = UnitRegistry()
