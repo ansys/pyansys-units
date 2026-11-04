@@ -8,4 +8,6 @@ statistics = True
 
 per-file-ignores =
     "scripts/generate_*.py": E122
+    scripts/_descriptions.py:E501
+    src/ansys/units/variable_descriptor/_generated_variable_descriptor.py:E501
     tests/test_quantity.py:E501

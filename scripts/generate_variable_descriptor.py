@@ -34,6 +34,10 @@ import sys
 
 import black
 
+sys.path.insert(0, str(Path(__file__).parent))
+
+from _descriptions import _descriptions
+
 src = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(src))
 
@@ -55,9 +59,15 @@ _D = QuantityDimensions
 # Additional top-level catalog variables for general CFD quantities that are
 # not derived from QuantityDimensions introspection.
 additional_variables: list[tuple[str, str]] = [
-    # Helicity density is the dot product of velocity and vorticity, so it has
-    # the dimension of velocity times vorticity (L T^-2).
-    ("HELICITY", "_D.ACCELERATION"),
+    # Particle-physics helicity: projection of spin onto the momentum direction,
+    # quantized in units of the reduced Planck constant (angular momentum).
+    ("HELICITY", "_D.ANGULAR_MOMENTUM"),
+    # Hydrodynamical (kinetic) helicity density is the dot product of velocity
+    # and vorticity, so it has the dimension of velocity times vorticity (L T^-2).
+    ("HYDRODYNAMICAL_HELICITY", "_D.ACCELERATION"),
+    # Magnetic helicity density is the dot product of the magnetic vector
+    # potential and the magnetic flux density (A . B).
+    ("MAGNETIC_HELICITY", "_D.MAGNETIC_VECTOR_POTENTIAL * _D.MAGNETIC_INDUCTION"),
     # The lambda-2 criterion is the second eigenvalue of S^2 + Omega^2, where
     # the strain-rate and vorticity tensors have dimension T^-1, giving T^-2.
     ("LAMBDA_2_CRITERION", "_D.TIME**-2"),
@@ -118,6 +128,14 @@ additional_variables: list[tuple[str, str]] = [
 ]
 
 
+def _describe(var_name: str) -> str:
+    """Return the user-facing description for a catalog variable name."""
+    description = _descriptions.get(var_name)
+    if description is None:
+        description = var_name.replace("_", " ").capitalize() + "."
+    return description
+
+
 def _dimension_to_string(dimension: Dimensions) -> str:
     """Convert a Dimension object to its string representation."""
     return re.sub(
@@ -142,6 +160,7 @@ def _generate_main_variables() -> str:
             else "ScalarVariableDescriptor"
         )
         lines.append(f"    {attr_name} = {kind}(Dimensions({dim_str}))")
+        lines.append(f'    """{_describe(attr_name)}"""\n')
 
     return "\n".join(lines)
 
@@ -156,6 +175,7 @@ def _generate_additional_variables(variables_list: list[tuple[str, str]]) -> str
             else "ScalarVariableDescriptor"
         )
         lines.append(f"    {var_name} = {kind}({dimension})")
+        lines.append(f'    """{_describe(var_name)}"""\n')
 
     return "\n".join(lines)
 
