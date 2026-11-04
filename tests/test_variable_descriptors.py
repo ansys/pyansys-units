@@ -177,12 +177,24 @@ def test_cfd_variables_moved_to_main_namespace(name: str):
     "name",
     [
         "DENSITY_ALL",
-        "Y_PLUS_BASED_HEAT_TRANSFER_COEFFICIENT",
-        "PRESSURE_HESSIAN_INDICATOR",
     ],
 )
 def test_removed_fluent_variables_absent(name: str):
     assert not hasattr(VariableCatalog, name)
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "MIXTURE_DENSITY",
+        "Y_PLUS_BASED_HEAT_TRANSFER_COEFFICIENT",
+        "PRESSURE_HESSIAN_INDICATOR",
+    ],
+)
+def test_fluid_variables_present(name: str):
+    descriptor = getattr(VariableCatalog, name)
+    assert isinstance(descriptor, VariableDescriptor)
+    assert descriptor.name == name.lower()
 
 
 @pytest.mark.parametrize(
