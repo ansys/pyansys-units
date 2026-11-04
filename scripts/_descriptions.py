@@ -303,7 +303,7 @@ _descriptions: dict[str, str] = {
     # Additional top-level catalog variables
     "HELICITY": "In particle physics, the projection of a particle's spin onto its direction of motion.",
     "HYDRODYNAMICAL_HELICITY": "Fluid-dynamics (kinetic) helicity density: the dot product of velocity and vorticity, measuring the linkage and knottedness of vortex lines.",
-    "MAGNETIC_HELICITY": "Magnetohydrodynamic magnetic helicity density: the dot product of the magnetic vector potential and the magnetic flux density, measuring the linkage of magnetic field lines.",
+    "MAGNETIC_HELICITY": "In plasma physics and magnetohydrodynamics, a measure of the twist, linkage, and writhe of magnetic field lines within a volume.",
     "LAMBDA_2_CRITERION": "Vortex identification criterion based on the second eigenvalue of S^2 + Omega^2.",
     "TOTAL_ENTHALPY_DEVIATION": "Deviation of total enthalpy from a reference value.",
     "MASS_IMBALANCE": "Residual mass source indicating continuity error in a solution.",
