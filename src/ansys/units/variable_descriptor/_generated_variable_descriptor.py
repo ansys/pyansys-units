@@ -176,7 +176,8 @@ class VariableCatalog(VariableCatalogBase):
     """Maximum compressive stress a material can withstand before failure."""
 
     CONVECTIVE_COURANT_NUMBER = ScalarVariableDescriptor(Dimensions({}))
-    """Ratio of flow distance to cell size over a time step, indicating numerical stability."""
+    """Ratio of flow distance to cell size over a time step, indicating numerical
+    stability."""
 
     CORROSION_RESISTANCE = ScalarVariableDescriptor(Dimensions({}))
     """Ability of a material to resist degradation by chemical reaction."""
@@ -254,7 +255,8 @@ class VariableCatalog(VariableCatalogBase):
     ELECTRICAL_IMPEDANCE = ScalarVariableDescriptor(
         Dimensions({_B.MASS: 1.0, _B.LENGTH: 2.0, _B.TIME: -3.0, _B.CURRENT: -2.0})
     )
-    """Opposition of a circuit to alternating current, including resistance and reactance."""
+    """Opposition of a circuit to alternating current, including resistance and
+    reactance."""
 
     ELECTRICAL_INDUCTANCE = ScalarVariableDescriptor(
         Dimensions({_B.MASS: 1.0, _B.LENGTH: 2.0, _B.TIME: -2.0, _B.CURRENT: -2.0})
@@ -309,7 +311,8 @@ class VariableCatalog(VariableCatalogBase):
     """Change in a material's refractive index caused by an electric field."""
 
     EMISSIVITY = ScalarVariableDescriptor(Dimensions({}))
-    """Effectiveness of a surface in emitting thermal radiation relative to a blackbody."""
+    """Effectiveness of a surface in emitting thermal radiation relative to a
+    blackbody."""
 
     ENERGY = ScalarVariableDescriptor(
         Dimensions({_B.LENGTH: 2.0, _B.MASS: 1.0, _B.TIME: -2.0})
@@ -1227,18 +1230,23 @@ class VariableCatalog(VariableCatalogBase):
     """Heat transfer coefficient derived from the wall y-plus value."""
 
     HELICITY = ScalarVariableDescriptor(_D.ANGULAR_MOMENTUM)
-    """Particle-physics helicity: the projection of a particle's spin onto its direction of motion (not the fluid-dynamics quantity)."""
+    """Particle-physics helicity: the projection of a particle's spin onto its direction
+    of motion (not the fluid-dynamics quantity)."""
 
     HYDRODYNAMICAL_HELICITY = ScalarVariableDescriptor(_D.ACCELERATION)
-    """Fluid-dynamics (kinetic) helicity density: the dot product of velocity and vorticity, measuring the linkage and knottedness of vortex lines."""
+    """Fluid-dynamics (kinetic) helicity density: the dot product of velocity and
+    vorticity, measuring the linkage and knottedness of vortex lines."""
 
     MAGNETIC_HELICITY = ScalarVariableDescriptor(
         _D.MAGNETIC_VECTOR_POTENTIAL * _D.MAGNETIC_INDUCTION
     )
-    """Magnetohydrodynamic magnetic helicity density: the dot product of the magnetic vector potential and the magnetic flux density, measuring the linkage of magnetic field lines."""
+    """Magnetohydrodynamic magnetic helicity density: the dot product of the magnetic
+    vector potential and the magnetic flux density, measuring the linkage of magnetic
+    field lines."""
 
     LAMBDA_2_CRITERION = ScalarVariableDescriptor(_D.TIME**-2)
-    """Vortex identification criterion based on the second eigenvalue of S^2 + Omega^2."""
+    """Vortex identification criterion based on the second eigenvalue of S^2 +
+    Omega^2."""
 
     TOTAL_ENTHALPY_DEVIATION = ScalarVariableDescriptor(_D.SPECIFIC_ENTHALPY)
     """Deviation of total enthalpy from a reference value."""
@@ -1256,13 +1264,13 @@ class VariableCatalog(VariableCatalogBase):
     """Magnitude of the velocity derivative with respect to x."""
 
     DVELOCITY_DX_X = ScalarVariableDescriptor(_D.TIME**-1)
-    """x-component of the velocity derivative with respect to x."""
+    """X-component of the velocity derivative with respect to x."""
 
     DVELOCITY_DX_Y = ScalarVariableDescriptor(_D.TIME**-1)
-    """y-component of the velocity derivative with respect to x."""
+    """Y-component of the velocity derivative with respect to x."""
 
     DVELOCITY_DX_Z = ScalarVariableDescriptor(_D.TIME**-1)
-    """z-component of the velocity derivative with respect to x."""
+    """Z-component of the velocity derivative with respect to x."""
 
     DVELOCITY_DY = ScalarVariableDescriptor(_D.TIME**-1)
     """Spatial derivative of velocity with respect to the y-coordinate."""
@@ -1271,13 +1279,13 @@ class VariableCatalog(VariableCatalogBase):
     """Magnitude of the velocity derivative with respect to y."""
 
     DVELOCITY_DY_X = ScalarVariableDescriptor(_D.TIME**-1)
-    """x-component of the velocity derivative with respect to y."""
+    """X-component of the velocity derivative with respect to y."""
 
     DVELOCITY_DY_Y = ScalarVariableDescriptor(_D.TIME**-1)
-    """y-component of the velocity derivative with respect to y."""
+    """Y-component of the velocity derivative with respect to y."""
 
     DVELOCITY_DY_Z = ScalarVariableDescriptor(_D.TIME**-1)
-    """z-component of the velocity derivative with respect to y."""
+    """Z-component of the velocity derivative with respect to y."""
 
     DVELOCITY_DZ = ScalarVariableDescriptor(_D.TIME**-1)
     """Spatial derivative of velocity with respect to the z-coordinate."""
@@ -1286,13 +1294,13 @@ class VariableCatalog(VariableCatalogBase):
     """Magnitude of the velocity derivative with respect to z."""
 
     DVELOCITY_DZ_X = ScalarVariableDescriptor(_D.TIME**-1)
-    """x-component of the velocity derivative with respect to z."""
+    """X-component of the velocity derivative with respect to z."""
 
     DVELOCITY_DZ_Y = ScalarVariableDescriptor(_D.TIME**-1)
-    """y-component of the velocity derivative with respect to z."""
+    """Y-component of the velocity derivative with respect to z."""
 
     DVELOCITY_DZ_Z = ScalarVariableDescriptor(_D.TIME**-1)
-    """z-component of the velocity derivative with respect to z."""
+    """Z-component of the velocity derivative with respect to z."""
 
     VOLUME_FRACTION_PRIMARY_PHASE = ScalarVariableDescriptor(_D.VOLUME_FRACTION)
     """Volume fraction occupied by the primary phase."""
@@ -1355,13 +1363,13 @@ class VariableCatalog(VariableCatalogBase):
     """Smoothed refinement level across neighboring cells."""
 
     MESH_X_FACE_AREA = ScalarVariableDescriptor(_D.AREA)
-    """x-component of a mesh face area vector."""
+    """X-component of a mesh face area vector."""
 
     MESH_Y_FACE_AREA = ScalarVariableDescriptor(_D.AREA)
-    """y-component of a mesh face area vector."""
+    """Y-component of a mesh face area vector."""
 
     MESH_Z_FACE_AREA = ScalarVariableDescriptor(_D.AREA)
-    """z-component of a mesh face area vector."""
+    """Z-component of a mesh face area vector."""
 
     MESH_ACTIVE_CELL_PARTITION = ScalarVariableDescriptor(Dimensions())
     """Active partition index assigned to a mesh cell."""

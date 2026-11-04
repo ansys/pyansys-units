@@ -2,6 +2,7 @@
 # requires-python = ">=3.12"
 # dependencies = [
 #     "black",
+#     "docformatter==1.7.8",
 #     "PyYAML",
 #     "typing-extensions>=4.5.0",
 # ]
@@ -30,6 +31,7 @@
 import inspect
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 import black
@@ -238,4 +240,24 @@ variable_descriptor_file.write_text(
         content,
         mode=black.Mode(),
     )
+)
+
+# Format docstrings with docformatter so the generated file stays stable under
+# the docformatter pre-commit hook. Settings mirror [tool.docformatter] in
+# pyproject.toml. A non-zero exit code means docstrings were reformatted, which
+# is expected here, so the return code is intentionally ignored.
+subprocess.run(
+    [
+        sys.executable,
+        "-m",
+        "docformatter",
+        "--in-place",
+        "--pre-summary-newline",
+        "--wrap-summaries",
+        "88",
+        "--wrap-descriptions",
+        "88",
+        str(variable_descriptor_file),
+    ],
+    check=False,
 )
