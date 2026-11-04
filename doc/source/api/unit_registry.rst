@@ -10,6 +10,8 @@ Unit registry
    :undoc-members:
    :exclude-members:
 
+.. autofunction:: ansys.units.unit_registry.load_custom_units
+
 .. autoexception:: ansys.units.unit_registry.UnitNameAlreadyRegistered
    :show-inheritance:
 

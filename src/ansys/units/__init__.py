@@ -46,7 +46,7 @@ from ansys.units.serialization import (
 )
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
-from ansys.units.unit_registry import UnitRegistry
+from ansys.units.unit_registry import UnitRegistry, load_custom_units
 from ansys.units.variable_descriptor import (
     ConversionStrategy,
     MappingConversionStrategy,
@@ -70,6 +70,7 @@ __all__ = [
     "UnitSystem",
     "Unit",
     "UnitRegistry",
+    "load_custom_units",
     "QuantityDimensions",
     "PreferredUnits",
     "PreferredUnitAlreadyRegistered",
