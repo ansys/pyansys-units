@@ -302,7 +302,7 @@ _descriptions: dict[str, str] = {
     "YOUNG_MODULUS": "Measure of a material's stiffness under tensile or compressive load.",
     # Additional top-level catalog variables
     "HELICITY": "In particle physics, the projection of a particle's spin onto its direction of motion.",
-    "HYDRODYNAMICAL_HELICITY": "Fluid-dynamics (kinetic) helicity density: the dot product of velocity and vorticity, measuring the linkage and knottedness of vortex lines.",
+    "HYDRODYNAMICAL_HELICITY": "In fluid dynamics, a measure of the knottedness and/or linkage of the vortex lines of a flow.",
     "MAGNETIC_HELICITY": "In plasma physics and magnetohydrodynamics, a measure of the twist, linkage, and writhe of magnetic field lines within a volume.",
     "LAMBDA_2_CRITERION": "Vortex identification criterion based on the second eigenvalue of S^2 + Omega^2.",
     "TOTAL_ENTHALPY_DEVIATION": "Deviation of total enthalpy from a reference value.",
