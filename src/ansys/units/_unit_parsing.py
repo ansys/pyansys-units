@@ -159,5 +159,5 @@ def _units_to_dim(
 class UnconfiguredUnit(ValueError):
     """Raised when the specified unit is unconfigured."""
 
-    def __init__(self, unit):
+    def __init__(self, unit: str):
         super().__init__(f"`{unit}` is an unconfigured unit.")

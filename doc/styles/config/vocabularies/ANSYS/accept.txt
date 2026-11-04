@@ -12,6 +12,7 @@ substrings
 poppler
 Matplotlib
 NumPy
+Pydantic
 subpackage
 hashable
 subclassing

@@ -13,6 +13,12 @@ Unit
 .. autoexception:: ansys.units.unit.ProhibitedTemperatureOperation
    :show-inheritance:
 
+.. autoexception:: ansys.units.unit.ProhibitedOffsetUnitOperation
+   :show-inheritance:
+
+.. autoexception:: ansys.units.unit.PrefixedOffsetUnit
+   :show-inheritance:
+
 .. autoexception:: ansys.units.unit.IncorrectUnits
    :show-inheritance:
 
