@@ -1230,23 +1230,23 @@ class VariableCatalog(VariableCatalogBase):
     """Heat transfer coefficient derived from the wall y-plus value."""
 
     HELICITY = ScalarVariableDescriptor(_D.ANGULAR_MOMENTUM)
-    """Particle-physics helicity: the projection of a particle's spin onto its direction
-    of motion (not the fluid-dynamics quantity)."""
+    """In particle physics, the projection of a particle's spin onto its direction of
+    motion."""
 
     HYDRODYNAMICAL_HELICITY = ScalarVariableDescriptor(_D.ACCELERATION)
-    """Fluid-dynamics (kinetic) helicity density: the dot product of velocity and
-    vorticity, measuring the linkage and knottedness of vortex lines."""
+    """In fluid dynamics, a measure of the knottedness and/or linkage of the vortex
+    lines of a flow."""
 
     MAGNETIC_HELICITY = ScalarVariableDescriptor(
         _D.MAGNETIC_VECTOR_POTENTIAL * _D.MAGNETIC_INDUCTION
     )
-    """Magnetohydrodynamic magnetic helicity density: the dot product of the magnetic
-    vector potential and the magnetic flux density, measuring the linkage of magnetic
-    field lines."""
+    """In plasma physics and magnetohydrodynamics, a measure of the twist, linkage, and
+    writhe of magnetic field lines within a volume."""
 
     LAMBDA_2_CRITERION = ScalarVariableDescriptor(_D.TIME**-2)
-    """Vortex identification criterion based on the second eigenvalue of S^2 +
-    Omega^2."""
+    """The lambda 2 criterion, which concerns the definition of the scalar lambda2 and
+    how turbulent structures can be visualized by proper iso-surfaces of lambda2 (like
+    for the Q criterion)."""
 
     TOTAL_ENTHALPY_DEVIATION = ScalarVariableDescriptor(_D.SPECIFIC_ENTHALPY)
     """Deviation of total enthalpy from a reference value."""
