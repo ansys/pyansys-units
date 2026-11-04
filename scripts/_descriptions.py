@@ -301,7 +301,7 @@ _descriptions: dict[str, str] = {
     "YIELD_STRENGTH": "Stress at which a material begins to deform plastically.",
     "YOUNG_MODULUS": "Measure of a material's stiffness under tensile or compressive load.",
     # Additional top-level catalog variables
-    "HELICITY": "Particle-physics helicity: the projection of a particle's spin onto its direction of motion (not the fluid-dynamics quantity).",
+    "HELICITY": "In particle physics, the projection of a particle's spin onto its direction of motion.",
     "HYDRODYNAMICAL_HELICITY": "Fluid-dynamics (kinetic) helicity density: the dot product of velocity and vorticity, measuring the linkage and knottedness of vortex lines.",
     "MAGNETIC_HELICITY": "Magnetohydrodynamic magnetic helicity density: the dot product of the magnetic vector potential and the magnetic flux density, measuring the linkage of magnetic field lines.",
     "LAMBDA_2_CRITERION": "Vortex identification criterion based on the second eigenvalue of S^2 + Omega^2.",
