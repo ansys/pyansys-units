@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """
 .. _ref_basic_usage:
 
@@ -226,16 +227,9 @@ dims = BaseDimensions
 sys = UnitSystem(base_units={dims.MASS: "slug", dims.LENGTH: "ft"}, system="SI")
 sys
 """
-MASS: slug
-LENGTH: ft
-TIME: s
-TEMPERATURE: K
-TEMPERATURE_DIFFERENCE: delta_K
-ANGLE: radian
-CHEMICAL_AMOUNT: mol
-LIGHT: cd
-CURRENT: A
-SOLID_ANGLE: sr
+MASS: slug LENGTH: ft TIME: s TEMPERATURE: K TEMPERATURE_DIFFERENCE: delta_K ANGLE:
+
+radian CHEMICAL_AMOUNT: mol LIGHT: cd CURRENT: A SOLID_ANGLE: sr.
 """
 
 # Predefined unit systems
@@ -243,36 +237,20 @@ SOLID_ANGLE: sr
 cgs = UnitSystem(system="CGS")
 cgs
 """
-MASS: g
-LENGTH: cm
-TIME: s
-TEMPERATURE: K
-TEMPERATURE_DIFFERENCE: delta_K
-ANGLE: radian
-CHEMICAL_AMOUNT: mol
-LIGHT: cd
-CURRENT: A
-SOLID_ANGLE: sr
-"""
+MASS: g LENGTH: cm TIME: s TEMPERATURE: K TEMPERATURE_DIFFERENCE: delta_K ANGLE:
 
+radian CHEMICAL_AMOUNT: mol LIGHT: cd CURRENT: A SOLID_ANGLE: sr.
+"""
 
 # Copy from a preexisting unit system
 
 cgs_copy = UnitSystem(copy_from=cgs)
 cgs_copy
 """
-MASS: g
-LENGTH: cm
-TIME: s
-TEMPERATURE: K
-TEMPERATURE_DIFFERENCE: delta_K
-ANGLE: radian
-CHEMICAL_AMOUNT: mol
-LIGHT: cd
-CURRENT: A
-SOLID_ANGLE: sr
-"""
+MASS: g LENGTH: cm TIME: s TEMPERATURE: K TEMPERATURE_DIFFERENCE: delta_K ANGLE:
 
+radian CHEMICAL_AMOUNT: mol LIGHT: cd CURRENT: A SOLID_ANGLE: sr.
+"""
 
 # Combinations of these
 
@@ -282,18 +260,10 @@ cgs_modified = UnitSystem(
 )
 cgs_modified
 """
-MASS: slug
-LENGTH: ft
-TIME: s
-TEMPERATURE: K
-TEMPERATURE_DIFFERENCE: delta_K
-ANGLE: degree
-CHEMICAL_AMOUNT: mol
-LIGHT: cd
-CURRENT: A
-SOLID_ANGLE: sr
-"""
+MASS: slug LENGTH: ft TIME: s TEMPERATURE: K TEMPERATURE_DIFFERENCE: delta_K ANGLE:
 
+degree CHEMICAL_AMOUNT: mol LIGHT: cd CURRENT: A SOLID_ANGLE: sr.
+"""
 
 ###############################################################################
 # Create a unit system independently

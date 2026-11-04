@@ -30,7 +30,7 @@ dependencies = [
 doc = [
     "ansys-sphinx-theme==1.9.0",
     "pdf2image==1.17.0",
-    "quarto-cli==1.10.18",
+    "quarto-cli==1.10.19",
     "matplotlib==3.10.9",
     "numpydoc==1.11.0",
     "Sphinx==7.4.7",
@@ -45,7 +45,7 @@ tests = [
     "pandas-stubs>=2",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
-    "pytest-mock==3.15.1",
+    "pytest-mock==3.17.0",
     "pint==0.24.4"
 ]
 additional = [
@@ -67,9 +67,9 @@ ci_types = [
     "pydantic_core>=2.33.2",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
-    "pytest-mock==3.15.1",
+    "pytest-mock==3.17.0",
     "pint==0.24.4",
-    "black==26.5.1"
+    "black==26.10.1"
 ]
 
 [project.urls]
