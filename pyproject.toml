@@ -8,7 +8,7 @@ name = "ansys-units"
 version = "0.16.dev0"
 description = "Pythonic interface for units, unit systems, and unit conversions."
 readme = "README.rst"
-requires-python = ">=3.10,<3.15"
+requires-python = ">=3.12,<3.15"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}]
@@ -40,8 +40,7 @@ doc = [
 ]
 tests = [
     "numpy>=1.24,<3",
-    "pandas>=3.0.0; python_version >= '3.11'",
-    "pandas>=2.2,<3.0; python_version < '3.11'",
+    "pandas>=3.0.0",
     "pandas-stubs>=2",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
@@ -50,8 +49,7 @@ tests = [
 ]
 additional = [
     "numpy>=1.24,<3",
-    "pandas>=3.0.0; python_version >= '3.11'",
-    "pandas>=2.2,<3.0; python_version < '3.11'",
+    "pandas>=3.0.0",
     "pandas-stubs>=2",
     "pydantic>=2.11.7",
     "pydantic_core>=2.33.2"
@@ -60,8 +58,7 @@ additional = [
 ci_types = [
     "basedpyright",
     "matplotlib==3.10.9",
-    "pandas>=3.0.0; python_version >= '3.11'",
-    "pandas>=2.2,<3.0; python_version < '3.11'",
+    "pandas>=3.0.0",
     "pandas-stubs>=2",
     "pydantic>=2.11.7",
     "pydantic_core>=2.33.2",
