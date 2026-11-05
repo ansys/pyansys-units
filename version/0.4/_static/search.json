@@ -1,0 +1,737 @@
+[
+    {
+        "objectID": "api/config",
+        "href": "api/config.html#configuration-of-quantity-data",
+        "title": "Configuration of quantity data",
+        "section": "Configuration of quantity data",
+        "text": "The cfg.yaml file contains these tables predefining quantity data:\ndimension_order\nmultipliers\nunit_systems\nbase_units\nderived_units\napi_quantity_map\nTo use custom data, such as units, unit systems, and multipliers, or to update, add,\nor remove any predefined quantity data, you must manually modify the cfg.yaml file.\nConfiguration of quantity data\ncfg.yaml\ndimension_order\nmultipliers\nunit_systems\nbase_units\nderived_units\napi_quantity_map\ncfg.yaml"
+    },
+    {
+        "objectID": "getting_started/faq",
+        "href": "getting_started/faq.html#frequently-asked-questions",
+        "title": "Frequently asked questions",
+        "section": "Frequently asked questions",
+        "text": "Frequently asked questions"
+    },
+    {
+        "objectID": "getting_started/faq",
+        "href": "getting_started/faq.html#what-is-pyansys-units",
+        "title": "Frequently asked questions > What is PyAnsys Units?",
+        "section": "What is PyAnsys Units?",
+        "text": "PyAnsys units is a Python package that allows you to introduce the concept of\nphysical quantities into your Python environment. You can define your own units,\nunit systems and quantities and work with them in a natural way using arithmetic\noperations and conversions.\nWhat is PyAnsys Units?"
+    },
+    {
+        "objectID": "getting_started/faq",
+        "href": "getting_started/faq.html#what-unit-systems-are-provided-by-default",
+        "title": "Frequently asked questions > What unit systems are provided by default?",
+        "section": "What unit systems are provided by default?",
+        "text": "PyAnsys Units provides the following unit systems by default:\nInternational System of Units (SI)\nCentimetre gram second (CGS)\nBritish Technical (BT)\nBritish technical units define the mass units as the slug, length units as\nft and time units of s, which leads to pound-force, lbf, being the\nforce units. You can introduce your own unit systems either dynamically at run\ntime or by providing a custom configuration file.\nPyAnsys Units defines a unit system as a unique selection of base units. For\ninstance, the SI unit system is a unique choice of units for the default base\nunits.\nWhat unit systems are provided by default?\nslug\nft\ns\nlbf"
+    },
+    {
+        "objectID": "getting_started/faq",
+        "href": "getting_started/faq.html#how-is-pyansys-units-different-from-pint",
+        "title": "Frequently asked questions > How is PyAnsys Units different from pint?",
+        "section": "How is PyAnsys Units different from pint?",
+        "text": "In contrast to pint, the UnitRegistry is only a container of the configured\nUnit objects. The registry does not contain additional information. Notably\nthe UnitSystem is a standalone class. When creating a Unit using\nDimensions it requires a unit system parameter to be passed in for non-SI\nunits.\nEquivalent units are also handled differently. Any two Unit objects that\nhave the same dimensions, SI offset, and SI scaling factor are evaluated as\nequal.\nPyAnsys Units treats all angles as dimensional units. With this behavior the\nconversion from rad/s to Hz is not allowed.\nHow is PyAnsys Units different from pint?\nUnitRegistry\nUnit\nUnitSystem\nUnit\nDimensions\nUnit"
+    },
+    {
+        "objectID": "user_guide/temperature",
+        "href": "user_guide/temperature.html#temperature-and-temperature-difference",
+        "title": "Temperature and temperature difference",
+        "section": "Temperature and temperature difference",
+        "text": "PyAnsys Units supports temperature units in kelvin (K), celsius (C), rankine (R)\nand fahrenheit (F).\nFor each temperature unit, there is a corresponding temperature difference unit\nwhich is prefixed with delta_. In order to add two temperature-based quantities,\nat least one must be a temperature difference. If one temperature is subtracted\nfrom another, the result is a temperature difference.\nAny temperature values below absolute zero are instantiated as temperature\ndifference.\nTemperature and temperature difference\ndelta_"
+    },
+    {
+        "objectID": "examples/00-pyunits/index",
+        "href": "examples/00-pyunits/index.html#pyansys-units-examples",
+        "title": "PyAnsys Units Examples",
+        "section": "PyAnsys Units Examples",
+        "text": "PyAnsys Units provides many features, including creating quantities, accessing\ndifferent quantity properties, performing arithmetic operations, performing unit\nconversions, creating unit systems, and applying unit systems to quantities.\nsphx_glr_examples_00-pyunits_basic_usage.py\nPyAnsys Units Examples"
+    },
+    {
+        "objectID": "user_guide/plot",
+        "href": "user_guide/plot.html#plotting-with-matplotlib",
+        "title": "Plotting with Matplotlib",
+        "section": "Plotting with Matplotlib",
+        "text": "PyAnsys Units provides a simple interface to plot quantities using Matplotlib.\nPlotting with Matplotlib"
+    },
+    {
+        "objectID": "user_guide/plot",
+        "href": "user_guide/plot.html#basic-usage",
+        "title": "Plotting with Matplotlib > Basic usage",
+        "section": "Basic usage",
+        "text": "The following example demonstrates how to plot data using lists.\nBasic usage"
+    },
+    {
+        "objectID": "user_guide/plot",
+        "href": "user_guide/plot.html#using-numpy-arrays",
+        "title": "Plotting with Matplotlib > Using NumPy arrays",
+        "section": "Using NumPy arrays",
+        "text": "The following example demonstrates how to plot data using NumPy arrays.\nUsing NumPy arrays"
+    },
+    {
+        "objectID": "user_guide/plot",
+        "href": "user_guide/plot.html#using-numpy-arrays-and-no-units",
+        "title": "Plotting with Matplotlib > Using NumPy arrays and no units",
+        "section": "Using NumPy arrays and no units",
+        "text": "The following example demonstrates how to plot data without units.\nUsing NumPy arrays and no units"
+    },
+    {
+        "objectID": "examples/sg_execution_times",
+        "href": "examples/sg_execution_times.html#computation-times",
+        "title": "Computation times",
+        "section": "Computation times",
+        "text": "00:00.000 total execution time for 0 files from examples:\nExample\nTime\nMem (MB)\nN/A\nN/A\nN/A\nComputation times"
+    },
+    {
+        "objectID": "sg_execution_times",
+        "href": "sg_execution_times.html#computation-times",
+        "title": "Computation times",
+        "section": "Computation times",
+        "text": "00:00.010 total execution time for 1 file from all galleries:\nExample\nTime\nMem (MB)\nsphx_glr_examples_00-pyunits_basic_usage.py (../../examples/00-pyunits/basic_usage.py)\n00:00.010\n0.0\nComputation times\n../../examples/00-pyunits/basic_usage.py"
+    },
+    {
+        "objectID": "user_guide/strings",
+        "href": "user_guide/strings.html#unit-string-format",
+        "title": "Unit string format",
+        "section": "Unit string format",
+        "text": "PyAnsys Units supports specifying units as strings for many input parameters and\ncan also provide string representations of units. The basic form of a unit\nstring follows this convention:\nwhere\nmultiplier prefix is optional and must be one of the prefixes defined on\npackage initialization such as k, M or c.\nunit must be one of the base or derived units as defined in the\nUnitRegistry.\nexponent is optional and must be preceded by the caret ^ symbol followed\nby the numerical exponent.\nMore complex unit strings can be built up by concatenation of these basic strings\nwith spaces in between. Spaces between the substrings indicate that the units\nare multiplied together. Some examples are as follows:\nYou can inspect the unit tests and documentation examples to see more usage of\nunit strings.\nUnit string format\nmultiplier prefix\nk\nM\nc\nunit\nUnitRegistry\nexponent\n^"
+    },
+    {
+        "objectID": "api/index",
+        "href": "api/index.html#api-reference",
+        "title": "API reference",
+        "section": "API reference",
+        "text": "This section describes the public classes, functions, and attributes in the PyAnsys Units API.\nAPI reference"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#unit",
+        "title": "Unit",
+        "section": "Unit",
+        "text": "Bases: object\nA class containing the string name and dimensions of a unit.\nName of the unit or string chain of combined units\ndictionary of unit properties\nAn instance of the Dimensions class.\nDefine the unit system for base units of dimension,\ndefault is SI.\nA dictionary of api table keys from the cfg.yaml and exponent values.\nA previous instance of Unit.\nThe unit string.\nThe unit string in SI units.\nThe scaling factor used to convert to SI units.\nThe offset used to convert to SI units.\nThen units base dimensions.\nGet all units with the same dimensions.\nA set of unit objects.\nConvert a unit into the unit system.\nUnit system to convert to.\nUnit object converted into the unit system.\nThen units base dimensions.\nThe unit string.\nThe offset used to convert to SI units.\nThe scaling factor used to convert to SI units.\nThe unit string in SI units.\nBases: TypeError\nRaised when two absolute temperatures are added.\nBases: ValueError\nRaised when the specified units are incorrect.\nBases: ValueError\nRaised when units have inconsistent base dimensions.\nBases: ValueError\nRaised when the specified unit is unconfigured.\nBases: ValueError\nRaised when a quantity table item is undefined.\nUnit\nobject\nname\nsi_units\nsi_scaling_factor\nsi_offset\ndimensions\nset\nUnitSystem\nUnit\nTypeError\nValueError\nValueError\nValueError\nValueError"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.Unit",
+        "title": "Unit > Unit > Unit",
+        "section": "Unit > Unit",
+        "text": "class ansys.units.unit.Unit(units: str | None = None, config: dict | None = None, dimensions: Dimensions | None = None, system: UnitSystem | str | None = None, table: dict | None = None, copy_from: Unit | None = None)\n\nBases: object\n\nA class containing the string name and dimensions of a unit.\n\nParameters\n\nunits: str, optional\n\nName of the unit or string chain of combined units\n\nconfig: dict, optional\n\ndictionary of unit properties\n\ndimensions: Dimensions, optional\n\nAn instance of the Dimensions class.\n\nsystem: str, optional\n\nDefine the unit system for base units of dimension,\ndefault is SI.\n\ntable: dict, optional\n\nA dictionary of api table keys from the cfg.yaml and exponent values.\n\ncopy_from: Unit, optional\n\nA previous instance of Unit.\n\nAttributes\n\nname\n\nThe unit string.\n\nsi_units\n\nThe unit string in SI units.\n\nsi_scaling_factor\n\nThe scaling factor used to convert to SI units.\n\nsi_offset\n\nThe offset used to convert to SI units.\n\ndimensions\n\nThen units base dimensions.\n\nExamples\n\n>>> from ansys.units import Unit, Quantity\n>>> fps = Unit(\"ft s^-1\")\n>>> fps.name\n'ft s^-1'\n>>> fps.dimensions\n{'LENGTH': 1.0, 'TIME': -1.0}\n>>> speed = Quantity(value=5, units=fps)\n>>> speed\nQuantity (5.0, \"ft s^-1\")\n\n!! processed by numpydoc !!\n\n\n\ncompatible_units() -> set[str]\n\nGet all units with the same dimensions.\n\nReturns\n\nset\n\nA set of unit objects.\n\n!! processed by numpydoc !!\n\n\n\nconvert(system: UnitSystem) -> Unit\n\nConvert a unit into the unit system.\n\nParameters\n\nsystem\n\nUnitSystem\n\nUnit system to convert to.\n\nReturns\n\nUnit\n\nUnit object converted into the unit system.\n\nExamples\n\n>>> ur = UnitRegistry()\n>>> speed_si = Unit(units= ur.m / ur.s)\n>>> bt = UnitSystem(system=\"BT\")\n>>> speed_bt = speed_si.convert(bt)\n\n!! processed by numpydoc !!\n\n\n\nproperty dimensions: Dimensions\n\nThen units base dimensions.\n\n!! processed by numpydoc !!\n\n\n\nproperty name: str\n\nThe unit string.\n\n!! processed by numpydoc !!\n\n\n\nproperty si_offset: float\n\nThe offset used to convert to SI units.\n\n!! processed by numpydoc !!\n\n\n\nproperty si_scaling_factor: float\n\nThe scaling factor used to convert to SI units.\n\n!! processed by numpydoc !!\n\n\n\nproperty si_units: str\n\nThe unit string in SI units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.Unit.compatible_units",
+        "title": "Unit > Unit > compatible_units",
+        "section": "Unit > compatible_units",
+        "text": "compatible_units() -> set[str]\n\nGet all units with the same dimensions.\n\nReturns\n\nset\n\nA set of unit objects.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.Unit.convert",
+        "title": "Unit > Unit > convert",
+        "section": "Unit > convert",
+        "text": "convert(system: UnitSystem) -> Unit\n\nConvert a unit into the unit system.\n\nParameters\n\nsystem\n\nUnitSystem\n\nUnit system to convert to.\n\nReturns\n\nUnit\n\nUnit object converted into the unit system.\n\nExamples\n\n>>> ur = UnitRegistry()\n>>> speed_si = Unit(units= ur.m / ur.s)\n>>> bt = UnitSystem(system=\"BT\")\n>>> speed_bt = speed_si.convert(bt)\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.Unit.dimensions",
+        "title": "Unit > Unit > dimensions",
+        "section": "Unit > dimensions",
+        "text": "property dimensions: Dimensions\n\nThen units base dimensions.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.Unit.name",
+        "title": "Unit > Unit > name",
+        "section": "Unit > name",
+        "text": "property name: str\n\nThe unit string.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.Unit.si_offset",
+        "title": "Unit > Unit > si_offset",
+        "section": "Unit > si_offset",
+        "text": "property si_offset: float\n\nThe offset used to convert to SI units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.Unit.si_scaling_factor",
+        "title": "Unit > Unit > si_scaling_factor",
+        "section": "Unit > si_scaling_factor",
+        "text": "property si_scaling_factor: float\n\nThe scaling factor used to convert to SI units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.Unit.si_units",
+        "title": "Unit > Unit > si_units",
+        "section": "Unit > si_units",
+        "text": "property si_units: str\n\nThe unit string in SI units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.ProhibitedTemperatureOperation",
+        "title": "Unit > Unit > ProhibitedTemperatureOperation",
+        "section": "Unit > ProhibitedTemperatureOperation",
+        "text": "exception ansys.units.unit.ProhibitedTemperatureOperation\n\nBases: TypeError\n\nRaised when two absolute temperatures are added.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.IncorrectUnits",
+        "title": "Unit > Unit > IncorrectUnits",
+        "section": "Unit > IncorrectUnits",
+        "text": "exception ansys.units.unit.IncorrectUnits(unit1, unit2)\n\nBases: ValueError\n\nRaised when the specified units are incorrect.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.InconsistentDimensions",
+        "title": "Unit > Unit > InconsistentDimensions",
+        "section": "Unit > InconsistentDimensions",
+        "text": "exception ansys.units.unit.InconsistentDimensions\n\nBases: ValueError\n\nRaised when units have inconsistent base dimensions.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.UnconfiguredUnit",
+        "title": "Unit > Unit > UnconfiguredUnit",
+        "section": "Unit > UnconfiguredUnit",
+        "text": "exception ansys.units.unit.UnconfiguredUnit(unit)\n\nBases: ValueError\n\nRaised when the specified unit is unconfigured.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit",
+        "href": "api/unit.html#ansys.units.unit.UnknownTableItem",
+        "title": "Unit > Unit > UnknownTableItem",
+        "section": "Unit > UnknownTableItem",
+        "text": "exception ansys.units.unit.UnknownTableItem(item)\n\nBases: ValueError\n\nRaised when a quantity table item is undefined.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#quantity",
+        "title": "Quantity",
+        "section": "Quantity",
+        "text": "Bases: object\nA class representing a physical quantity’s value and associated units.\nA Quantity object can be instantiated from a NumPy array or list only if the\nNumPy package is installed.\nThe value argument is not required when using copy_from. A value can be given\nto override the value from the copy.\nImplicit conversion from Quantity to float is only allowed if the operand is\nof quantity type angle or dimensionless.\nReal value of the quantity.\nInitializes the quantity’s units using a string or Unit instance.\nInitializes the quantity’s units using the quantity table.\nInitializes the quantity’s units in SI using a Dimensions instance.\nAn existing Quantity instance.\nValue in contained units.\nThe quantity’s units.\nThe quantity’s dimensions.\nTrue if the quantity is dimensionless.\nGet all units with the same dimensions.\nA set of unit objects.\nConvert a quantity into the unit system.\nUnit system to convert to.\nQuantity object converted into the unit system.\nThe quantity’s dimensions.\nTrue if the quantity is dimensionless.\nAdd or remove preferred units.\nQuantities are automatically converted to preferred units when the\nquantity is initialized. Conversion is always carried out if the base\nunits are consistent with the preferred units.\nEach preferred unit must have unique dimensions. To override units with\nthe same dimensions, the original must first be removed.\nA list of units to be added or removed.\nSpecify if the units should be removed.\nPerform quantity conversions.\nDesired unit to convert to.\nQuantity instance in the desired units.\nThe quantity’s units.\nValidates dimensions of quantities.\nValue in contained units.\nReturns a quantity’s value in SI units.\nBases: ValueError\nRaised when excessive parameters are provided.\nBases: ValueError\nRaised when dimensions are incompatible.\nBases: ValueError\nRaised when quantities are incompatible.\nBases: ValueError\nRaised when an incompatible value is provided.\nBases: ValueError\nRaised when insufficient arguments are provided.\nBases: FloatingPointError\nRaised when float is unsupported for given type of quantity.\nBases: ModuleNotFoundError\nRaised when NumPy is unavailable.\nBases: ValueError\nRaised when two units with the same dimensions are added to the chosen units.\nQuantity\nobject\nNumPy\ncopy_from\npython:int\npython:float\npython:list\nnp.array\npython:str\nUnit\noptional\nUnit\npython:dict\npython:str\npython:int\noptional\nDimensions\noptional\nDimensions\nQuantity\noptional\nQuantity\nvalue\nunits\ndimensions\nis_dimensionless\nset\nUnitSystem\nQuantity\npython:list\nUnit\npython:str\nQuantity\nValueError\nValueError\nValueError\nValueError\nValueError\nFloatingPointError\nModuleNotFoundError\nValueError"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity",
+        "title": "Quantity > Quantity > Quantity",
+        "section": "Quantity > Quantity",
+        "text": "class ansys.units.quantity.Quantity(value: int | float | None = None, units: Unit | str | None = None, quantity_table: dict | None = None, dimensions: Dimensions | None = None, copy_from: Quantity | None = None)\n\nBases: object\n\nA class representing a physical quantity’s value and associated units.\n\nA Quantity object can be instantiated from a NumPy array or list only if the\nNumPy package is installed.\n\nThe value argument is not required when using copy_from. A value can be given\nto override the value from the copy.\n\nImplicit conversion from Quantity to float is only allowed if the operand is\nof quantity type angle or dimensionless.\n\nParameters\n\nvalue\n\npython:int, python:float, python:list, np.array\n\nReal value of the quantity.\n\nunits\n\npython:str, Unit, optional\n\nInitializes the quantity’s units using a string or Unit instance.\n\nquantity_table\n\npython:dict[python:str, python:int], optional\n\nInitializes the quantity’s units using the quantity table.\n\ndimensions\n\nDimensions, optional\n\nInitializes the quantity’s units in SI using a Dimensions instance.\n\ncopy_from\n\nQuantity, optional\n\nAn existing Quantity instance.\n\nAttributes\n\nvalue\n\nValue in contained units.\n\nunits\n\nThe quantity’s units.\n\ndimensions\n\nThe quantity’s dimensions.\n\nis_dimensionless\n\nTrue if the quantity is dimensionless.\n\n!! processed by numpydoc !!\n\n\n\ncompatible_units() -> set[str]\n\nGet all units with the same dimensions.\n\nReturns\n\nset\n\nA set of unit objects.\n\n!! processed by numpydoc !!\n\n\n\nconvert(system: UnitSystem) -> Quantity\n\nConvert a quantity into the unit system.\n\nParameters\n\nsystem\n\nUnitSystem\n\nUnit system to convert to.\n\nReturns\n\nQuantity\n\nQuantity object converted into the unit system.\n\nExamples\n\n>>> ur = UnitRegistry()\n>>> speed_si = Quantity(value=5, units= ur.m / ur.s)\n>>> bt = UnitSystem(system=\"BT\")\n>>> speed_bt = speed_si.convert(bt)\n\n!! processed by numpydoc !!\n\n\n\nproperty dimensions\n\nThe quantity’s dimensions.\n\n!! processed by numpydoc !!\n\n\n\nproperty is_dimensionless\n\nTrue if the quantity is dimensionless.\n\n!! processed by numpydoc !!\n\n\n\nclassmethod preferred_units(units: list[Unit | str], remove: bool = False) -> None\n\nAdd or remove preferred units.\n\nQuantities are automatically converted to preferred units when the\nquantity is initialized. Conversion is always carried out if the base\nunits are consistent with the preferred units.\n\nEach preferred unit must have unique dimensions. To override units with\nthe same dimensions, the original must first be removed.\n\nParameters\n\nunits\n\npython:list\n\nA list of units to be added or removed.\n\nremove\n\nbool\n\nSpecify if the units should be removed.\n\n!! processed by numpydoc !!\n\n\n\nto(to_units: Unit | str) -> Quantity\n\nPerform quantity conversions.\n\nParameters\n\nto_units\n\nUnit or python:str\n\nDesired unit to convert to.\n\nReturns\n\nQuantity\n\nQuantity instance in the desired units.\n\nExamples\n\n>>> speed_si = Quantity(value=5, units=\"m s^-1\")\n>>> speed_bt = speed_si.to(\"ft s^-1\")\n\n!! processed by numpydoc !!\n\n\n\nproperty units: Unit\n\nThe quantity’s units.\n\n!! processed by numpydoc !!\n\n\n\nvalidate_matching_dimensions(other)\n\nValidates dimensions of quantities.\n\n!! processed by numpydoc !!\n\n\n\nproperty value\n\nValue in contained units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.compatible_units",
+        "title": "Quantity > Quantity > compatible_units",
+        "section": "Quantity > compatible_units",
+        "text": "compatible_units() -> set[str]\n\nGet all units with the same dimensions.\n\nReturns\n\nset\n\nA set of unit objects.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.convert",
+        "title": "Quantity > Quantity > convert",
+        "section": "Quantity > convert",
+        "text": "convert(system: UnitSystem) -> Quantity\n\nConvert a quantity into the unit system.\n\nParameters\n\nsystem\n\nUnitSystem\n\nUnit system to convert to.\n\nReturns\n\nQuantity\n\nQuantity object converted into the unit system.\n\nExamples\n\n>>> ur = UnitRegistry()\n>>> speed_si = Quantity(value=5, units= ur.m / ur.s)\n>>> bt = UnitSystem(system=\"BT\")\n>>> speed_bt = speed_si.convert(bt)\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.dimensions",
+        "title": "Quantity > Quantity > dimensions",
+        "section": "Quantity > dimensions",
+        "text": "property dimensions\n\nThe quantity’s dimensions.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.is_dimensionless",
+        "title": "Quantity > Quantity > is_dimensionless",
+        "section": "Quantity > is_dimensionless",
+        "text": "property is_dimensionless\n\nTrue if the quantity is dimensionless.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.preferred_units",
+        "title": "Quantity > Quantity > preferred_units",
+        "section": "Quantity > preferred_units",
+        "text": "classmethod preferred_units(units: list[Unit | str], remove: bool = False) -> None\n\nAdd or remove preferred units.\n\nQuantities are automatically converted to preferred units when the\nquantity is initialized. Conversion is always carried out if the base\nunits are consistent with the preferred units.\n\nEach preferred unit must have unique dimensions. To override units with\nthe same dimensions, the original must first be removed.\n\nParameters\n\nunits\n\npython:list\n\nA list of units to be added or removed.\n\nremove\n\nbool\n\nSpecify if the units should be removed.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.to",
+        "title": "Quantity > Quantity > to",
+        "section": "Quantity > to",
+        "text": "to(to_units: Unit | str) -> Quantity\n\nPerform quantity conversions.\n\nParameters\n\nto_units\n\nUnit or python:str\n\nDesired unit to convert to.\n\nReturns\n\nQuantity\n\nQuantity instance in the desired units.\n\nExamples\n\n>>> speed_si = Quantity(value=5, units=\"m s^-1\")\n>>> speed_bt = speed_si.to(\"ft s^-1\")\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.units",
+        "title": "Quantity > Quantity > units",
+        "section": "Quantity > units",
+        "text": "property units: Unit\n\nThe quantity’s units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.validate_matching_dimensions",
+        "title": "Quantity > Quantity > validate_matching_dimensions",
+        "section": "Quantity > validate_matching_dimensions",
+        "text": "validate_matching_dimensions(other)\n\nValidates dimensions of quantities.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.Quantity.value",
+        "title": "Quantity > Quantity > value",
+        "section": "Quantity > value",
+        "text": "property value\n\nValue in contained units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.get_si_value",
+        "title": "Quantity > Quantity > get_si_value",
+        "section": "Quantity > get_si_value",
+        "text": "ansys.units.quantity.get_si_value(quantity: Quantity) -> float\n\nReturns a quantity’s value in SI units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.ExcessiveParameters",
+        "title": "Quantity > Quantity > ExcessiveParameters",
+        "section": "Quantity > ExcessiveParameters",
+        "text": "exception ansys.units.quantity.ExcessiveParameters\n\nBases: ValueError\n\nRaised when excessive parameters are provided.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.IncompatibleDimensions",
+        "title": "Quantity > Quantity > IncompatibleDimensions",
+        "section": "Quantity > IncompatibleDimensions",
+        "text": "exception ansys.units.quantity.IncompatibleDimensions(from_unit, to_unit)\n\nBases: ValueError\n\nRaised when dimensions are incompatible.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.IncompatibleQuantities",
+        "title": "Quantity > Quantity > IncompatibleQuantities",
+        "section": "Quantity > IncompatibleQuantities",
+        "text": "exception ansys.units.quantity.IncompatibleQuantities(q1, q2)\n\nBases: ValueError\n\nRaised when quantities are incompatible.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.IncompatibleValue",
+        "title": "Quantity > Quantity > IncompatibleValue",
+        "section": "Quantity > IncompatibleValue",
+        "text": "exception ansys.units.quantity.IncompatibleValue(value)\n\nBases: ValueError\n\nRaised when an incompatible value is provided.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.InsufficientArguments",
+        "title": "Quantity > Quantity > InsufficientArguments",
+        "section": "Quantity > InsufficientArguments",
+        "text": "exception ansys.units.quantity.InsufficientArguments\n\nBases: ValueError\n\nRaised when insufficient arguments are provided.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.InvalidFloatUsage",
+        "title": "Quantity > Quantity > InvalidFloatUsage",
+        "section": "Quantity > InvalidFloatUsage",
+        "text": "exception ansys.units.quantity.InvalidFloatUsage\n\nBases: FloatingPointError\n\nRaised when float is unsupported for given type of quantity.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.NumPyRequired",
+        "title": "Quantity > Quantity > NumPyRequired",
+        "section": "Quantity > NumPyRequired",
+        "text": "exception ansys.units.quantity.NumPyRequired\n\nBases: ModuleNotFoundError\n\nRaised when NumPy is unavailable.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/quantity",
+        "href": "api/quantity.html#ansys.units.quantity.RequiresUniqueDimensions",
+        "title": "Quantity > Quantity > RequiresUniqueDimensions",
+        "section": "Quantity > RequiresUniqueDimensions",
+        "text": "exception ansys.units.quantity.RequiresUniqueDimensions(unit, other_unit)\n\nBases: ValueError\n\nRaised when two units with the same dimensions are added to the chosen units.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#unit-systems",
+        "title": "Unit systems",
+        "section": "Unit systems",
+        "text": "Bases: object\nA class representing base units for a unit system.\nPredefined unit systems work automatically and are configured when the\npackage is initialized, whereas you can add user-defined systems at any time.\nUnits mapped to base dimensions types.\nPredefined unit system.\nMake a copy of a unit system.\nMass unit of the unit system.\nLength unit of the unit system.\nTime unit of the unit system.\nTemperature unit of the unit system.\nTemperature unit of the unit system.\nAngle unit of the unit system.\nChemical Amount unit of the unit system.\nLight unit of the unit system.\nCurrent unit of the unit system.\nSolid Angle unit of the unit system.\nAngle unit of the unit system.\nChemical Amount unit of the unit system.\nCurrent unit of the unit system.\nLength unit of the unit system.\nLight unit of the unit system.\nMass unit of the unit system.\nSolid Angle unit of the unit system.\nTemperature unit of the unit system.\nTemperature unit of the unit system.\nTime unit of the unit system.\nChange the units of the unit system.\nUnits mapped to base dimensions types.\nBases: ValueError\nRaised when a unit is provided that does not have a valid type of base unit.\nBases: ValueError\nRaised when a unit system is initialized with an unsupported unit system.\nBases: ValueError\nRaised when a unit system unit is not a configured base unit.\nUnit systems\nobject\nMASS\nLENGTH\nTIME\nTEMPERATURE\nTEMPERATURE_DIFFERENCE\nANGLE\nCHEMICAL_AMOUNT\nLIGHT\nCURRENT\nSOLID_ANGLE\nValueError\nValueError\nValueError"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem",
+        "title": "Unit systems > Unit systems > UnitSystem",
+        "section": "Unit systems > UnitSystem",
+        "text": "class ansys.units.systems.UnitSystem(base_units: dict[BaseDimensions, any] | None = None, system: str | None = None, copy_from: UnitSystem | None = None)\n\nBases: object\n\nA class representing base units for a unit system.\n\nPredefined unit systems work automatically and are configured when the\npackage is initialized, whereas you can add user-defined systems at any time.\n\nParameters\n\nbase_units: dict, optional\n\nUnits mapped to base dimensions types.\n\nunit_sys: str, Unit, optional\n\nPredefined unit system.\n\ncopy_from: UnitSystem, optional\n\nMake a copy of a unit system.\n\nAttributes\n\nMASS\n\nMass unit of the unit system.\n\nLENGTH\n\nLength unit of the unit system.\n\nTIME\n\nTime unit of the unit system.\n\nTEMPERATURE\n\nTemperature unit of the unit system.\n\nTEMPERATURE_DIFFERENCE\n\nTemperature unit of the unit system.\n\nANGLE\n\nAngle unit of the unit system.\n\nCHEMICAL_AMOUNT\n\nChemical Amount unit of the unit system.\n\nLIGHT\n\nLight unit of the unit system.\n\nCURRENT\n\nCurrent unit of the unit system.\n\nSOLID_ANGLE\n\nSolid Angle unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty ANGLE\n\nAngle unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty CHEMICAL_AMOUNT\n\nChemical Amount unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty CURRENT\n\nCurrent unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty LENGTH\n\nLength unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty LIGHT\n\nLight unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty MASS\n\nMass unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty SOLID_ANGLE\n\nSolid Angle unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty TEMPERATURE\n\nTemperature unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty TEMPERATURE_DIFFERENCE\n\nTemperature unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nproperty TIME\n\nTime unit of the unit system.\n\n!! processed by numpydoc !!\n\n\n\nupdate(base_units: dict[slice(<enum 'BaseDimensions'>, <built-in function any>, None)])\n\nChange the units of the unit system.\n\nParameters\n\nbase_units: dict\n\nUnits mapped to base dimensions types.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.ANGLE",
+        "title": "Unit systems > Unit systems > ANGLE",
+        "section": "Unit systems > ANGLE",
+        "text": "property ANGLE\n\nAngle unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.CHEMICAL_AMOUNT",
+        "title": "Unit systems > Unit systems > CHEMICAL_AMOUNT",
+        "section": "Unit systems > CHEMICAL_AMOUNT",
+        "text": "property CHEMICAL_AMOUNT\n\nChemical Amount unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.CURRENT",
+        "title": "Unit systems > Unit systems > CURRENT",
+        "section": "Unit systems > CURRENT",
+        "text": "property CURRENT\n\nCurrent unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.LENGTH",
+        "title": "Unit systems > Unit systems > LENGTH",
+        "section": "Unit systems > LENGTH",
+        "text": "property LENGTH\n\nLength unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.LIGHT",
+        "title": "Unit systems > Unit systems > LIGHT",
+        "section": "Unit systems > LIGHT",
+        "text": "property LIGHT\n\nLight unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.MASS",
+        "title": "Unit systems > Unit systems > MASS",
+        "section": "Unit systems > MASS",
+        "text": "property MASS\n\nMass unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.SOLID_ANGLE",
+        "title": "Unit systems > Unit systems > SOLID_ANGLE",
+        "section": "Unit systems > SOLID_ANGLE",
+        "text": "property SOLID_ANGLE\n\nSolid Angle unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.TEMPERATURE",
+        "title": "Unit systems > Unit systems > TEMPERATURE",
+        "section": "Unit systems > TEMPERATURE",
+        "text": "property TEMPERATURE\n\nTemperature unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.TEMPERATURE_DIFFERENCE",
+        "title": "Unit systems > Unit systems > TEMPERATURE_DIFFERENCE",
+        "section": "Unit systems > TEMPERATURE_DIFFERENCE",
+        "text": "property TEMPERATURE_DIFFERENCE\n\nTemperature unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.TIME",
+        "title": "Unit systems > Unit systems > TIME",
+        "section": "Unit systems > TIME",
+        "text": "property TIME\n\nTime unit of the unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.UnitSystem.update",
+        "title": "Unit systems > Unit systems > update",
+        "section": "Unit systems > update",
+        "text": "update(base_units: dict[slice(<enum 'BaseDimensions'>, <built-in function any>, None)])\n\nChange the units of the unit system.\n\nParameters\n\nbase_units: dict\n\nUnits mapped to base dimensions types.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.IncorrectUnitType",
+        "title": "Unit systems > Unit systems > IncorrectUnitType",
+        "section": "Unit systems > IncorrectUnitType",
+        "text": "exception ansys.units.systems.IncorrectUnitType(unit, unit_type)\n\nBases: ValueError\n\nRaised when a unit is provided that does not have a valid type of base unit.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.InvalidUnitSystem",
+        "title": "Unit systems > Unit systems > InvalidUnitSystem",
+        "section": "Unit systems > InvalidUnitSystem",
+        "text": "exception ansys.units.systems.InvalidUnitSystem(sys)\n\nBases: ValueError\n\nRaised when a unit system is initialized with an unsupported unit system.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/systems",
+        "href": "api/systems.html#ansys.units.systems.NotBaseUnit",
+        "title": "Unit systems > Unit systems > NotBaseUnit",
+        "section": "Unit systems > NotBaseUnit",
+        "text": "exception ansys.units.systems.NotBaseUnit(unit)\n\nBases: ValueError\n\nRaised when a unit system unit is not a configured base unit.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "examples/index",
+        "href": "examples/index.html#examples",
+        "title": "Examples",
+        "section": "Examples",
+        "text": "End-to-end examples show how you can use PyAnsys Units. If the ansys-units\npackage is installed on your machine, you can download these\nexamples as Python files or Jupyter notebooks and run them locally.\nExamples\nansys-units"
+    },
+    {
+        "objectID": "examples/index",
+        "href": "examples/index.html#pyansys-units-examples",
+        "title": "Examples > PyAnsys Units Examples",
+        "section": "PyAnsys Units Examples",
+        "text": "PyAnsys Units provides many features, including creating quantities, accessing\ndifferent quantity properties, performing arithmetic operations, performing unit\nconversions, creating unit systems, and applying unit systems to quantities.\nsphx_glr_examples_00-pyunits_basic_usage.py\nGallery generated by Sphinx-Gallery\nPyAnsys Units Examples"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#pyansys-units-basics",
+        "title": "PyAnsys Units basics",
+        "section": "PyAnsys Units basics",
+        "text": "PyAnsys Units provides a Pythonic interface for units, unit systems, and unit conversions.\nIts features enable seamless setup and usage of physical quantities.\nThis example shows you how to perform these tasks:\nCreate quantities (unit strings, dimensions, and quantity tables).\nAccess different quantity properties.\nPerform arithmetic operations.\nPerform unit conversions.\nCreate unit systems (custom and predefined).\nApply unit systems to quantities.\nPyAnsys Units basics"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#perform-required-imports",
+        "title": "PyAnsys Units basics > Perform required imports",
+        "section": "Perform required imports",
+        "text": "Import the ansys.units package.\nPerform required imports\nansys.units"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#create-quantities",
+        "title": "PyAnsys Units basics > Create quantities",
+        "section": "Create quantities",
+        "text": "You can instantiate quantities using one of three methods:\n- Unit strings : str, Unit\n- Dimensions : Dimensions\n- Quantity table : dict\nCreate quantities"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#specify-quantity-properties",
+        "title": "PyAnsys Units basics > Specify quantity properties",
+        "section": "Specify quantity properties",
+        "text": "For a quantity, you specify six properties:\nSpecify quantity properties"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#perform-arithmetic-operations",
+        "title": "PyAnsys Units basics > Perform arithmetic operations",
+        "section": "Perform arithmetic operations",
+        "text": "You can perform all mathematical operations on a quantity.\nPerform arithmetic operations"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#perform-conversions",
+        "title": "PyAnsys Units basics > Perform conversions",
+        "section": "Perform conversions",
+        "text": "To check the compatible units use the ‘compatible_units’ method.\nPerform conversions"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#instantiate-unit-systems",
+        "title": "PyAnsys Units basics > Instantiate unit systems",
+        "section": "Instantiate unit systems",
+        "text": "You can instantiate unit systems using a few methods:\nCustom units\nPredefined unit systems\nCopy from a preexisting unit system\nCombinations of these\nInstantiate unit systems"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#create-a-unit-system-independently",
+        "title": "PyAnsys Units basics > Create a unit system independently",
+        "section": "Create a unit system independently",
+        "text": "You can create a unit system independently and apply it to quantities.\nCreate a unit system independently"
+    },
+    {
+        "objectID": "examples/00-pyunits/basic_usage",
+        "href": "examples/00-pyunits/basic_usage.html#using-preferred-units",
+        "title": "PyAnsys Units basics > Using preferred units",
+        "section": "Using preferred units",
+        "text": "Specify a list of units that quantities will automatically convert to.\nTotal running time of the script: (0 minutes 0.010 seconds)\nDownload Jupyter notebook: basic_usage.ipynb\nDownload Python source code: basic_usage.py\nDownload zipped: basic_usage.zip\nGallery generated by Sphinx-Gallery\nUsing preferred units\nDownload Jupyter notebook: basic_usage.ipynb\nDownload Python source code: basic_usage.py\nDownload zipped: basic_usage.zip"
+    },
+    {
+        "objectID": "user_guide/index",
+        "href": "user_guide/index.html#user-guide",
+        "title": "User guide",
+        "section": "User guide",
+        "text": "Anyone who wants to use PyAnsys Units can import its Python modules and develop Python\ncode to work with physical quantities.\nUser guide"
+    },
+    {
+        "objectID": "user_guide/quantity",
+        "href": "user_guide/quantity.html#defining-a-quantity",
+        "title": "Defining a quantity",
+        "section": "Defining a quantity",
+        "text": "Import Quantity from the ansys.units package and instantiate a\nQuantity object, providing a numerical value and a unit string:\nYou can also provide a Unit object (rather than a unit string) as a\nconstruction argument. Alternatively, you can instantiate a Quantity\nobject by multiplying a Unit object by a value:\nWith NumPy installed, you can instantiate a Quantity using either\na list of floats or a NumPy array:\nAll Quantity objects work intuitively with arithmetic operators:\nAdditions and subtractions involving Quantity objects retain the units\nof the first operand:\nThis formula defines the conversion of Quantity objects between different units:\nwhere f_{new} is a scaling factor and c_{new} is an offset to convert\nfrom SI units to the requested units.\nTo define a new unit system or create custom quantities, you can manually update the\ncfg.yaml file with your desired settings. Once saved, these changes are reflected\nthe next time the ansys.units package is initialized.\nDefining a quantity\nQuantity\nansys.units\nQuantity\nUnit\nQuantity\nUnit\nNumPy\nQuantity\nNumPy\nQuantity\nQuantity\nQuantity\ncfg.yaml\nansys.units"
+    },
+    {
+        "objectID": "user_guide/angles",
+        "href": "user_guide/angles.html#angles",
+        "title": "Angles",
+        "section": "Angles",
+        "text": "PyAnsys Units treats angles as non-dimensional unit quantity by default but it\nsupports configuration of angle quantities as dimension.\nAngle quantity units such as degree, radian and solid angle can be treated as dimension.\nYou can set the environment variable PYANSYS_UNITS_ANGLE_AS_DIMENSION to treat angle quantity\nunits as dimension.\nAngles\nPYANSYS_UNITS_ANGLE_AS_DIMENSION"
+    },
+    {
+        "objectID": "user_guide/angles",
+        "href": "user_guide/angles.html#angle-as-non-dimension",
+        "title": "Angles > Angle as non-dimension",
+        "section": "Angle as non-dimension",
+        "text": "Angle as non-dimension"
+    },
+    {
+        "objectID": "user_guide/angles",
+        "href": "user_guide/angles.html#angle-as-dimension",
+        "title": "Angles > Angle as dimension",
+        "section": "Angle as dimension",
+        "text": "Angle as dimension"
+    },
+    {
+        "objectID": "api/unit_registry",
+        "href": "api/unit_registry.html#unit-registry",
+        "title": "Unit registry",
+        "section": "Unit registry",
+        "text": "Bases: object\nA representation of valid Unit instances.\nAll base and derived units loaded from the configuration file, cfg.yaml,\non package initialization are provided by default.\nPath of a YAML configuration file, which can be a custom file, and\ndefaults to the provided file, cfg.yaml. Custom configuration files\nmust match the format of the default configuration file.\nDictionary for additional units.\nBases: ValueError\nRaised when a unit has previously been registered.\nUnit registry\nobject\nUnit\nYAML\ncfg.yaml\nValueError"
+    },
+    {
+        "objectID": "api/unit_registry",
+        "href": "api/unit_registry.html#ansys.units.unit_registry.UnitRegistry",
+        "title": "Unit registry > Unit registry > UnitRegistry",
+        "section": "Unit registry > UnitRegistry",
+        "text": "class ansys.units.unit_registry.UnitRegistry(config='cfg.yaml', other: dict | None = None)\n\nBases: object\n\nA representation of valid Unit instances.\n\nAll base and derived units loaded from the configuration file, cfg.yaml,\non package initialization are provided by default.\n\nParameters\n\nconfig: str, optional\n\nPath of a YAML configuration file, which can be a custom file, and\ndefaults to the provided file, cfg.yaml. Custom configuration files\nmust match the format of the default configuration file.\n\nother: dict, optional\n\nDictionary for additional units.\n\nExamples\n\n>>> from ansys.units import UnitRegistry, Unit\n>>> ureg = UnitRegistry()\n>>> assert ureg.kg == Unit(units=\"kg\")\n>>> fps = Unit(\"ft s^-1\")\n>>> ureg.foot_per_sec = fps\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/unit_registry",
+        "href": "api/unit_registry.html#ansys.units.unit_registry.UnitAlreadyRegistered",
+        "title": "Unit registry > Unit registry > UnitAlreadyRegistered",
+        "section": "Unit registry > UnitAlreadyRegistered",
+        "text": "exception ansys.units.unit_registry.UnitAlreadyRegistered(name: str)\n\nBases: ValueError\n\nRaised when a unit has previously been registered.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "contributing",
+        "href": "contributing.html#contribute",
+        "title": "Contribute",
+        "section": "Contribute",
+        "text": "Overall guidance on contributing to a PyAnsys library appears in the\nContributing topic in\nthe PyAnsys Developer’s Guide. Ensure that you are thoroughly familiar with\nthis guide before attempting to contribute to PyAnsys Units.\nThe following contribution information is specific to PyAnsys Units.\nContribute"
+    },
+    {
+        "objectID": "contributing",
+        "href": "contributing.html#clone-and-install",
+        "title": "Contribute > Clone and install",
+        "section": "Clone and install",
+        "text": "Clone and install the latest PyAnsys Units release in development mode with\nthese commands:\nClone and install"
+    },
+    {
+        "objectID": "contributing",
+        "href": "contributing.html#build-documentation",
+        "title": "Contribute > Build documentation",
+        "section": "Build documentation",
+        "text": "Build the PyAnsys Units documentation locally by running these commands in the\nroot directory of the repository:\nBuild documentation"
+    },
+    {
+        "objectID": "contributing",
+        "href": "contributing.html#windows",
+        "title": "Contribute > Windows",
+        "section": "Windows",
+        "text": "Download Release-24.08.0-0.zip.\nUnzip Release-24.08.0-0.zip.\nAdd <path to..>/Release-24.08.0-0/poppler-24.08.0/Library/bin to PATH.\nExecute the following commands:\nWindows"
+    },
+    {
+        "objectID": "contributing",
+        "href": "contributing.html#linux",
+        "title": "Contribute > Linux",
+        "section": "Linux",
+        "text": "After the build completes, the HTML documentation is located in the\n_builds/html directory. You can load the index.html file in this\ndirectory into a web browser.\nYou can clear all HTML files from the _builds/html directory with\nthis command:\nLinux\n_builds/html\nindex.html\n_builds/html"
+    },
+    {
+        "objectID": "contributing",
+        "href": "contributing.html#post-issues",
+        "title": "Contribute > Post issues",
+        "section": "Post issues",
+        "text": "Use the PyAnsys Units Issues page to\nreport bugs and request new features.\nPost issues"
+    },
+    {
+        "objectID": "contributing",
+        "href": "contributing.html#adhere-to-code-style",
+        "title": "Contribute > Adhere to code style",
+        "section": "Adhere to code style",
+        "text": "PyAnsys Units is compliant with the PyAnsys coding style. It uses\npre-commit to check the code style. You can install\nand activate this tool with these commands:\nYou can then directly execute pre-commit with this command:\nAdhere to code style\npre-commit"
+    },
+    {
+        "objectID": "index",
+        "href": "index.html#pyansys-units-documentation-040",
+        "title": "PyAnsys Units documentation 0.4.0",
+        "section": "PyAnsys Units documentation 0.4.0",
+        "text": "PyAnsys Units documentation 0.4.0"
+    },
+    {
+        "objectID": "index",
+        "href": "index.html#overview",
+        "title": "PyAnsys Units documentation 0.4.0 > Overview",
+        "section": "Overview",
+        "text": "PyAnsys Units provides a Pythonic interface for units, unit systems, and unit\nconversions. Its features enable seamless setup and usage of physical\nquantities, enabling you to perform these tasks:\nInstantiate physical quantities from a unit string, list of dimensions, or\nquantity table.\nPerform unit conversions and arithmetic operations between quantity objects or\nreal values.\nCreate custom units and unit systems.\nOverview"
+    },
+    {
+        "objectID": "index",
+        "href": "index.html#documentation-and-issues",
+        "title": "PyAnsys Units documentation 0.4.0 > Documentation and issues",
+        "section": "Documentation and issues",
+        "text": "Documentation for the latest stable release of PyAnsys Units is hosted at PyAnsys Units documentation.\nIn the upper right corner of the documentation’s title bar, there is an option for\nswitching from viewing the documentation for the latest stable release to viewing\nthe documentation for the development version or previously released versions.\nOn the PyAnsys Units Issues page, you can\ncreate issues to report bugs, and request new features. On the PyAnsys Units Discussions page or the Discussions\npage on the Ansys Developer portal, you can post questions, share ideas, and get community feedback.\nTo reach the project support team, email pyansys.core@ansys.com.\nDocumentation and issues"
+    },
+    {
+        "objectID": "index",
+        "href": "index.html#license",
+        "title": "PyAnsys Units documentation 0.4.0 > License",
+        "section": "License",
+        "text": "PyAnsys Units is licensed under the MIT license. For more information, see the\nLICENSE file.\nLicense"
+    },
+    {
+        "objectID": "index",
+        "href": "index.html#project-index",
+        "title": "PyAnsys Units documentation 0.4.0 > Project index",
+        "section": "Project index",
+        "text": "genindex\nProject index"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#getting-started",
+        "title": "Getting started",
+        "section": "Getting started",
+        "text": "PyAnsys Units provides a Pythonic interface for units, unit systems, and unit\nconversions. Once imported the package is initialized with units and unit\nsystems for you to use, and is fully customizable if something you need is not\npresent.\nGetting started"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#basic-usage",
+        "title": "Getting started > Basic usage",
+        "section": "Basic usage",
+        "text": "PyAnsys Units supports defining quantities and their units in a intuitive way.\nStart by importing the ansys.units package:\nYou can instantiate quantities with one of four methods:\nYou can instantiate unit systems with one of two methods:\nBasic usage\nansys.units"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#examples",
+        "title": "Getting started > Examples",
+        "section": "Examples",
+        "text": "Perform arithmetic operations:\nDirectly convert values to another set of units:\nUse a custom unit system to perform conversions:\nExamples"
+    },
+    {
+        "objectID": "examples/00-pyunits/sg_execution_times",
+        "href": "examples/00-pyunits/sg_execution_times.html#computation-times",
+        "title": "Computation times",
+        "section": "Computation times",
+        "text": "00:00.010 total execution time for 1 file from examples/00-pyunits:\nExample\nTime\nMem (MB)\nsphx_glr_examples_00-pyunits_basic_usage.py (basic_usage.py)\n00:00.010\n0.0\nComputation times\nbasic_usage.py"
+    },
+    {
+        "objectID": "api/dimensions",
+        "href": "api/dimensions.html#dimensions",
+        "title": "Dimensions",
+        "section": "Dimensions",
+        "text": "Bases: object\nA representation of an arbitrary number of dimensions, where each dimension is a\npair consisting of a base dimension and exponent.\nA dictionary of BaseDimensions and exponent is required\nfor a non-dimensionless object.\nIf any keys are duplicated in copy_from and dimensions then the\nassociated values from dimensions are used.\nDictionary of {BaseDimensions: exponent, …}.\nThe unit system for the dimensions.\nA previous instance of Dimensions.\nBases: ValueError\nRaised on initialization if a dimension is not of type BaseDimensions.\nDimensions\nobject\nBaseDimensions\ncopy_from\ndimensions\ndimensions\npython:dict\noptional\nBaseDimensions\nUnitSystem\noptional\nDimensions\noptional\nValueError\nBaseDimensions"
+    },
+    {
+        "objectID": "api/dimensions",
+        "href": "api/dimensions.html#ansys.units.dimensions.Dimensions",
+        "title": "Dimensions > Dimensions > Dimensions",
+        "section": "Dimensions > Dimensions",
+        "text": "class ansys.units.dimensions.Dimensions(dimensions: dict[BaseDimensions, int | float] | None = None, copy_from: Dimensions | None = None)\n\nBases: object\n\nA representation of an arbitrary number of dimensions, where each dimension is a\npair consisting of a base dimension and exponent.\n\nA dictionary of BaseDimensions and exponent is required\nfor a non-dimensionless object.\n\nIf any keys are duplicated in copy_from and dimensions then the\nassociated values from dimensions are used.\n\nParameters\n\ndimensions\n\npython:dict, optional\n\nDictionary of {BaseDimensions: exponent, …}.\n\nsystem\n\nUnitSystem, optional\n\nThe unit system for the dimensions.\n\ncopy_from\n\nDimensions, optional\n\nA previous instance of Dimensions.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "api/dimensions",
+        "href": "api/dimensions.html#ansys.units.dimensions.IncorrectDimensions",
+        "title": "Dimensions > Dimensions > IncorrectDimensions",
+        "section": "Dimensions > IncorrectDimensions",
+        "text": "exception ansys.units.dimensions.IncorrectDimensions\n\nBases: ValueError\n\nRaised on initialization if a dimension is not of type BaseDimensions.\n\n!! processed by numpydoc !!"
+    },
+    {
+        "objectID": "getting_started/installation",
+        "href": "getting_started/installation.html#installation",
+        "title": "Installation",
+        "section": "Installation",
+        "text": "The ansys-units package supports Python 3.10 through Python 3.13 on Windows\nand Linux.\nInstallation\nansys-units"
+    },
+    {
+        "objectID": "getting_started/installation",
+        "href": "getting_started/installation.html#install-the-package",
+        "title": "Installation > Install the package",
+        "section": "Install the package",
+        "text": "Install the latest release from PyPI\nwith this command:\nIf you plan on doing local development of PyAnsys Units with Git, install the latest\nrelease with these commands:\nInstall the package"
+    }
+]
