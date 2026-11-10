@@ -20,6 +20,7 @@ code to work with physical quantities.
    plot
    quantity_dimensions
    variable_descriptor
+   expressions
    register_unit
    unit_systems
    pandas_integration
