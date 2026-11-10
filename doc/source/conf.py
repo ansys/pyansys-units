@@ -4,6 +4,9 @@ from datetime import datetime
 import os
 
 from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
+from docutils import nodes
+from sphinx import addnodes
+from sphinx.application import Sphinx
 from sphinx_gallery.sorting import FileNameSortKey
 
 from ansys.units import __version__
@@ -127,3 +130,26 @@ source_suffix = ".rst"
 
 # The master toctree document.
 master_doc = "index"
+
+
+def _qualify_units_quantity(app: Sphinx, doctree: nodes.document) -> None:
+    """
+    Point unqualified ``Quantity`` references outside ``ansys.expressions`` at
+    ``ansys.units.quantity.Quantity``.
+
+    ``ansys.expressions`` also documents a ``Quantity`` expression node, so Sphinx's
+    fuzzy lookup of unqualified ``Quantity`` references (for example in signatures)
+    would otherwise be ambiguous.
+    """
+    for node in doctree.findall(addnodes.pending_xref):
+        if (
+            node.get("refdomain") == "py"
+            and node.get("reftarget") == "Quantity"
+            and not (node.get("py:module") or "").startswith("ansys.expressions")
+        ):
+            node["reftarget"] = "ansys.units.quantity.Quantity"
+
+
+def setup(app: Sphinx) -> None:
+    """Register project-specific Sphinx event handlers."""
+    app.connect("doctree-read", _qualify_units_quantity)
