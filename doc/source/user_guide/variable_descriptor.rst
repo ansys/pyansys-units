@@ -3,7 +3,7 @@
 Variable Descriptors
 ====================
 
-The ``ansys.units.variable_descriptor`` subpackage defines interfaces and implementations for representing physical quantities in a product-agnostic, unit-aware way. These descriptors serve as the foundation for communicating quantity metadata across Ansys systems and external APIs.
+The ``ansys.variable_descriptor`` package defines interfaces and implementations for representing physical quantities in a product-agnostic, unit-aware way. These descriptors serve as the foundation for communicating quantity metadata across Ansys systems and external APIs. It builds on ``ansys.units`` and is installed with the ``ansys-units`` distribution.
 
 Overview
 --------
@@ -16,7 +16,7 @@ A **VariableDescriptor** encapsulates information about a physical quantity, suc
 
 These descriptors are immutable and hashable, making them suitable as keys in mappings and registries.
 
-The subpackage also defines **conversion strategies** that translate between ``VariableDescriptor`` objects and external string representations (such as Fluent variable names).
+The package also defines **conversion strategies** that translate between ``VariableDescriptor`` objects and external string representations (such as the variable names used by a particular solver or file format).
 
 Main Classes
 ------------
@@ -24,7 +24,7 @@ Main Classes
 QuantityKind
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.variable_descriptor.QuantityKind
+.. autoclass:: ansys.variable_descriptor.variable_descriptor.QuantityKind
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,7 +32,7 @@ QuantityKind
 VariableDescriptor
 ~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor
+.. autoclass:: ansys.variable_descriptor.variable_descriptor.VariableDescriptor
    :members:
    :undoc-members:
    :show-inheritance:
@@ -40,12 +40,12 @@ VariableDescriptor
 Represents a single named physical quantity, including its dimensional signature.
 The kind of quantity (scalar or vector) is indicated by the ``QuantityKind`` enumeration.
 
-.. data:: ansys.units.variable_descriptor.ScalarVariableDescriptor
+.. data:: ansys.variable_descriptor.ScalarVariableDescriptor
    :no-index:
 
    A type alias for scalar variable descriptors.
 
-.. data:: ansys.units.variable_descriptor.VectorVariableDescriptor
+.. data:: ansys.variable_descriptor.VectorVariableDescriptor
    :no-index:
 
    A type alias for vector variable descriptors.
@@ -53,7 +53,7 @@ The kind of quantity (scalar or vector) is indicated by the ``QuantityKind`` enu
 VariableCatalog
 ~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor._generated_variable_descriptor.VariableCatalog
+.. autoclass:: ansys.variable_descriptor._generated_variable_descriptor.VariableCatalog
    :members:
    :undoc-members:
    :show-inheritance:
@@ -63,7 +63,7 @@ A registry of predefined ``VariableDescriptor`` instances for commonly used quan
 ConversionStrategy
 ~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.strategy.ConversionStrategy
+.. autoclass:: ansys.variable_descriptor.strategy.ConversionStrategy
    :members:
    :undoc-members:
    :show-inheritance:
@@ -73,29 +73,36 @@ An abstract base class for strategies that convert ``VariableDescriptor`` object
 MappingConversionStrategy
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.units.variable_descriptor.strategy.MappingConversionStrategy
+.. autoclass:: ansys.variable_descriptor.strategy.MappingConversionStrategy
    :members:
    :undoc-members:
    :show-inheritance:
 
-A reusable base class for implementing conversion strategies based on a simple mapping dictionary. Useful for integrating with systems like Fluent, CFX, or external APIs.
+A reusable base class for implementing conversion strategies based on a simple mapping dictionary. Useful for integrating with simulation products, file formats, or external APIs.
 
 Example
 -------
 
-This example demonstrates converting a descriptor to a Fluent-style variable name using a custom strategy.
+This example demonstrates converting descriptors to and from a custom naming scheme by subclassing ``MappingConversionStrategy``.
 
 .. code-block:: python
 
-    from ansys.units.variable_descriptor import VariableCatalog
-    from ansys.fluent.core.variable_strategies import FluentSVarNamingStrategy
+    from ansys.variable_descriptor import MappingConversionStrategy, VariableCatalog
 
-    descriptor = VariableCatalog.VELOCITY
-    strategy = FluentSVarNamingStrategy()
 
-    print(strategy.to_string(descriptor))  # for example, "SV_VELOCITY"
+    class MyNamingStrategy(MappingConversionStrategy):
+        _mapping = {
+            VariableCatalog.PRESSURE: "p",
+            VariableCatalog.VELOCITY: "U",
+        }
 
-You can also define your own mappings for custom naming schemes by subclassing ``MappingConversionStrategy``.
+
+    strategy = MyNamingStrategy()
+
+    print(strategy.to_string(VariableCatalog.VELOCITY))  # "U"
+    print(strategy.to_variable_descriptor("p") == VariableCatalog.PRESSURE)  # True
+
+Applications that need different behavior can subclass ``ConversionStrategy`` directly.
 
 Use Cases
 ---------

@@ -25,11 +25,10 @@ from typing import Any, final
 import pytest
 from typing_extensions import override
 
-from ansys.units import (
+from ansys.units import Dimensions, QuantityDimensions
+from ansys.variable_descriptor import (
     ConversionStrategy,
-    Dimensions,
     MappingConversionStrategy,
-    QuantityDimensions,
     VariableCatalog,
     VariableDescriptor,
 )
@@ -179,7 +178,7 @@ def test_cfd_variables_moved_to_main_namespace(name: str):
         "DENSITY_ALL",
     ],
 )
-def test_removed_fluent_variables_absent(name: str):
+def test_removed_variables_absent(name: str):
     assert not hasattr(VariableCatalog, name)
 
 

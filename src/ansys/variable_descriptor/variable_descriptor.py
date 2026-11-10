@@ -119,14 +119,14 @@ class VariableCatalogBase:
     def all(cls) -> dict[str, list[VariableDescriptor]]:
         """
         Return all defined
-        :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor`
+        :class:`~ansys.variable_descriptor.variable_descriptor.VariableDescriptor`
         objects, organized by subcategory.
 
         Returns
         -------
         dict[str, list[VariableDescriptor]]
             A dictionary where keys are subcategory names (or "main" for the top-level catalog)
-            and values are lists of :class:`~ansys.units.variable_descriptor.variable_descriptor.VariableDescriptor` instances.
+            and values are lists of :class:`~ansys.variable_descriptor.variable_descriptor.VariableDescriptor` instances.
         """  # noqa: E501
         result = {"main": []}
 

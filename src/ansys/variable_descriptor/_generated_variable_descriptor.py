@@ -26,7 +26,7 @@ from typing_extensions import final
 from ansys.units.base_dimensions import BaseDimensions as _B
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_dimensions import QuantityDimensions as _D
-from ansys.units.variable_descriptor.variable_descriptor import (
+from ansys.variable_descriptor.variable_descriptor import (
     ScalarVariableDescriptor,
     VariableCatalogBase,
     VectorVariableDescriptor,

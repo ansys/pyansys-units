@@ -4,7 +4,7 @@
 Variable descriptor
 ===================
 
-.. automodule:: ansys.units.variable_descriptor
+.. automodule:: ansys.variable_descriptor
    :members:
    :undoc-members:
    :show-inheritance:

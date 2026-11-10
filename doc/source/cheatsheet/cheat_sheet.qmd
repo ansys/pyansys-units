@@ -420,8 +420,8 @@ qd.PRESSURE == qd.FORCE / qd.AREA  # True
 ### Variable descriptors
 
 ```{python}
-from ansys.units import MappingConversionStrategy
-from ansys.units import VariableCatalog
+from ansys.variable_descriptor import MappingConversionStrategy
+from ansys.variable_descriptor import VariableCatalog
 
 p = VariableCatalog.PRESSURE
 p.name  # "pressure"

@@ -21,38 +21,12 @@
 # SOFTWARE.
 
 """
-Package initialization for ansys.units.variable_descriptor.
+Product-agnostic, unit-aware expression trees.
 
-Exports the VariableCatalog catalog and core interfaces for working with
-physical quantities in a product-agnostic way.
-
-Example
--------
-
-.. code-block:: python
-
-    from ansys.units.variable_descriptor import VariableCatalog
-    from ansys.fluent.core.variable_strategies import FluentSVarNamingStrategy
-
-    quantity = VariableCatalog.PRESSURE
-    strategy = FluentSVarNamingStrategy()
-
-    print(strategy.to_string(quantity))
+This package may depend on :mod:`ansys.variable_descriptor` and :mod:`ansys.units`, but
+neither of those packages may depend on it.
 """
 
-from ._generated_variable_descriptor import VariableCatalog
-from .strategy import ConversionStrategy, MappingConversionStrategy
-from .variable_descriptor import (
-    ScalarVariableDescriptor,
-    VariableDescriptor,
-    VectorVariableDescriptor,
-)
+from ansys.units import __version__ as __version__
 
-__all__ = [
-    "VariableDescriptor",
-    "ScalarVariableDescriptor",
-    "VectorVariableDescriptor",
-    "VariableCatalog",
-    "ConversionStrategy",
-    "MappingConversionStrategy",
-]
+__all__: list[str] = []

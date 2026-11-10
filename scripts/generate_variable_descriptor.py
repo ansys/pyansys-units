@@ -48,11 +48,7 @@ from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_dimensions import QuantityDimensions
 
 variable_descriptor_file = (
-    src
-    / "ansys"
-    / "units"
-    / "variable_descriptor"
-    / "_generated_variable_descriptor.py"
+    src / "ansys" / "variable_descriptor" / "_generated_variable_descriptor.py"
 )
 
 # Define the custom variables structure
@@ -220,7 +216,7 @@ from typing_extensions import final
 from ansys.units.base_dimensions import BaseDimensions as _B
 from ansys.units.dimensions import Dimensions
 from ansys.units.quantity_dimensions import QuantityDimensions as _D
-from ansys.units.variable_descriptor.variable_descriptor import (
+from ansys.variable_descriptor.variable_descriptor import (
     ScalarVariableDescriptor,
     VariableCatalogBase,
     VectorVariableDescriptor,

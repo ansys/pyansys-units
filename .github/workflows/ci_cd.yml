@@ -23,7 +23,7 @@ env:
   MAIN_PYTHON_VERSION: "3.12"
   DOCUMENTATION_CNAME: "units.docs.pyansys.com"
   LIBRARY_NAME: "ansys-units"
-  LIBRARY_NAMESPACE: "ansys.units"
+  LIBRARY_NAMESPACES: "ansys.units ansys.variable_descriptor ansys.expressions"
 
 jobs:
   code-style:
@@ -71,25 +71,37 @@ jobs:
 
       - name: "Require 100% type hint coverage"
         run: |
-          basedpyright --verifytypes "$LIBRARY_NAMESPACE" --ignoreexternal --outputjson > verifytypes.json || true
           python - <<'EOF'
           import json
+          import os
+          import subprocess
           import sys
 
-          with open("verifytypes.json", encoding="utf-8") as file:
-              report = json.load(file)["typeCompleteness"]
-          score = report["completenessScore"] * 100
-          counts = report["exportedSymbolCounts"]
-          print(
-              f"Type hint coverage: {score:.2f}% "
-              f"({counts['withKnownType']} known, {counts['withAmbiguousType']} ambiguous, "
-              f"{counts['withUnknownType']} unknown exported symbols)"
-          )
-          if score < 100:
-              for symbol in report["symbols"]:
-                  if not symbol["isTypeKnown"] or symbol["isTypeAmbiguous"]:
-                      messages = [d["message"].splitlines()[0] for d in symbol["diagnostics"]]
-                      print(f"::error::{symbol['name']}: {'; '.join(messages) or 'type is not known'}")
+          failed = False
+          for namespace in os.environ["LIBRARY_NAMESPACES"].split():
+              result = subprocess.run(
+                  ["basedpyright", "--verifytypes", namespace, "--ignoreexternal", "--outputjson"],
+                  capture_output=True,
+                  text=True,
+              )
+              report = json.loads(result.stdout)["typeCompleteness"]
+              counts = report["exportedSymbolCounts"]
+              if not any(counts.values()):
+                  print(f"{namespace} has no exported symbols yet; skipping.")
+                  continue
+              score = report["completenessScore"] * 100
+              print(
+                  f"{namespace} type hint coverage: {score:.2f}% "
+                  f"({counts['withKnownType']} known, {counts['withAmbiguousType']} ambiguous, "
+                  f"{counts['withUnknownType']} unknown exported symbols)"
+              )
+              if score < 100:
+                  failed = True
+                  for symbol in report["symbols"]:
+                      if not symbol["isTypeKnown"] or symbol["isTypeAmbiguous"]:
+                          messages = [d["message"].splitlines()[0] for d in symbol["diagnostics"]]
+                          print(f"::error::{symbol['name']}: {'; '.join(messages) or 'type is not known'}")
+          if failed:
               sys.exit("Type hint coverage must be 100%.")
           EOF
 

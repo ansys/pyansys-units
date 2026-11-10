@@ -25,11 +25,12 @@ import numpy as np
 import numpy.typing as npt
 from typing_extensions import assert_type
 
-from ansys.units import Quantity, Unit, VariableCatalog
+from ansys.units import Quantity, Unit
 from ansys.units.common import kg, m
 from ansys.units.unit import IncorrectUnits
-from ansys.units.variable_descriptor import (
+from ansys.variable_descriptor import (
     ScalarVariableDescriptor,
+    VariableCatalog,
     VectorVariableDescriptor,
 )
 

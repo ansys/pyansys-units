@@ -93,8 +93,17 @@ repos:
       - id: check-generated-files
         name: Check generated files are up-to-date
         entry: |
-          git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py src/ansys/units/quantity_dimensions.py src/ansys/units/variable_descriptor/variable_descriptor.py
+          git diff --exit-code src/ansys/units/common.py src/ansys/units/quantity_tables/keys.py src/ansys/units/quantity_dimensions.py src/ansys/variable_descriptor/_generated_variable_descriptor.py
         language: system
-        files: ^src/ansys/units/(common\.py|quantity_tables/keys\.py|quantity_dimensions\.py|variable_descriptor/variable_descriptor\.py)$
+        files: ^src/ansys/(units/(common\.py|quantity_tables/keys\.py|quantity_dimensions\.py)|variable_descriptor/_generated_variable_descriptor\.py)$
+        pass_filenames: false
+        always_run: false
+
+      # Enforces the one-way dependency expressions -> variable_descriptor -> units.
+      - id: import-linter
+        name: Check package layering
+        entry: uv run --with import-linter==2.15 lint-imports
+        language: system
+        files: ^(src/ansys/.*\.py|pyproject\.toml)$
         pass_filenames: false
         always_run: false

@@ -1214,7 +1214,7 @@
                 }
             }
         ],
-        "./src/ansys/units/variable_descriptor/variable_descriptor.py": [
+        "./src/ansys/variable_descriptor/variable_descriptor.py": [
             {
                 "code": "reportImplicitStringConcatenation",
                 "range": {

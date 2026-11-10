@@ -33,7 +33,7 @@ import types
 
 from typing_extensions import override
 
-from ansys.units.variable_descriptor.variable_descriptor import VariableDescriptor
+from ansys.variable_descriptor.variable_descriptor import VariableDescriptor
 
 
 class ConversionStrategy(ABC):
