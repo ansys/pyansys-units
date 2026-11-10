@@ -27,7 +27,7 @@ These tests use a small, made-up dialect and must not import anything product-sp
 """
 
 from enum import Enum
-from typing import final
+from typing import Any, final
 
 import pytest
 from typing_extensions import override
@@ -400,8 +400,9 @@ def test_reflected_operators_and_comparisons(b: ExpressionBuilder):
 def test_invalid_operands_and_locations(b: ExpressionBuilder):
     from ansys.expressions import LocationList
 
+    invalid_operand: Any = "x"
     with pytest.raises(ExpressionBuildError, match="as an expression"):
-        _ = b.literal(1) + "x"  # pyright: ignore[reportOperatorIssue]
+        _ = b.literal(1) + invalid_operand
     with pytest.raises(ExpressionBuildError, match="non-empty strings"):
         LocationList(("",))
     with pytest.raises(ExpressionBuildError, match="as a LocationList"):
