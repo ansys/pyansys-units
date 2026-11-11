@@ -23,7 +23,7 @@ env:
   MAIN_PYTHON_VERSION: "3.12"
   DOCUMENTATION_CNAME: "units.docs.pyansys.com"
   LIBRARY_NAME: "ansys-units"
-  LIBRARY_NAMESPACES: "ansys.units"
+  LIBRARY_NAMESPACE: "ansys.units"
 
 jobs:
   code-style:
