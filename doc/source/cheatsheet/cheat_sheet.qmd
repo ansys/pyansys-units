@@ -417,25 +417,6 @@ qd = QuantityDimensions
 qd.PRESSURE == qd.FORCE / qd.AREA  # True
 ```
 
-### Variable descriptors
-
-```{python}
-from ansys.variable_descriptor import MappingConversionStrategy
-from ansys.variable_descriptor import VariableCatalog
-
-p = VariableCatalog.PRESSURE
-p.name  # "pressure"
-p.dimension  # {"MASS": 1.0, "LENGTH": -1.0, ...}
-
-
-class MyNames(MappingConversionStrategy):
-    _mapping = {VariableCatalog.PRESSURE: "p"}
-
-
-MyNames().to_string(p)  # "p"
-MyNames().to_variable_descriptor("p") == p  # True
-```
-
 ### Common errors
 
 ```{python}

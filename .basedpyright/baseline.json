@@ -1214,48 +1214,6 @@
                 }
             }
         ],
-        "./src/ansys/variable_descriptor/variable_descriptor.py": [
-            {
-                "code": "reportImplicitStringConcatenation",
-                "range": {
-                    "startColumn": 12,
-                    "endColumn": 42,
-                    "lineCount": 2
-                }
-            },
-            {
-                "code": "reportUnknownVariableType",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 14,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnusedVariable",
-                "range": {
-                    "startColumn": 24,
-                    "endColumn": 25,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnknownVariableType",
-                "range": {
-                    "startColumn": 15,
-                    "endColumn": 21,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportImplicitStringConcatenation",
-                "range": {
-                    "startColumn": 16,
-                    "endColumn": 55,
-                    "lineCount": 2
-                }
-            }
-        ],
         "./tests/lib_compare/test_angle_units.py": [
             {
                 "code": "reportImplicitRelativeImport",
@@ -3292,32 +3250,6 @@
                 "range": {
                     "startColumn": 17,
                     "endColumn": 24,
-                    "lineCount": 1
-                }
-            }
-        ],
-        "./tests/test_variable_descriptors.py": [
-            {
-                "code": "reportAttributeAccessIssue",
-                "range": {
-                    "startColumn": 31,
-                    "endColumn": 40,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportAttributeAccessIssue",
-                "range": {
-                    "startColumn": 31,
-                    "endColumn": 40,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportAbstractUsage",
-                "range": {
-                    "startColumn": 8,
-                    "endColumn": 28,
                     "lineCount": 1
                 }
             }
