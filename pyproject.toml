@@ -1,8 +1,9 @@
 [build-system]
-requires = ["hatchling>=1.27"]
-build-backend = "hatchling.build"
+requires = ["flit_core >=3.2,<5"]
+build-backend = "flit_core.buildapi"
 
 [project]
+# Check https://flit.readthedocs.io/en/latest/pyproject_toml.html for all available sections
 name = "ansys-units"
 version = "0.17.dev0"
 description = "Pythonic interface for units, unit systems, and unit conversions."
@@ -74,10 +75,8 @@ Issues = "https://github.com/ansys/pyansys-units/issues"
 Documentation = "https://units.docs.pyansys.com/"
 Releases = "https://github.com/ansys/pyansys-units/releases"
 
-[tool.hatch.build.targets.wheel]
-# Shipped as part of the ``ansys`` namespace package.
-only-include = ["src/ansys/units"]
-sources = ["src"]
+[tool.flit.module]
+name = "ansys.units"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
