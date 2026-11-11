@@ -25,13 +25,9 @@ import numpy as np
 import numpy.typing as npt
 from typing_extensions import assert_type
 
-from ansys.units import Quantity, Unit, VariableCatalog
+from ansys.units import Quantity, Unit
 from ansys.units.common import kg, m
 from ansys.units.unit import IncorrectUnits
-from ansys.units.variable_descriptor import (
-    ScalarVariableDescriptor,
-    VectorVariableDescriptor,
-)
 
 assert_type(kg, Unit)
 assert_type(Quantity([1, 2, 3], "m"), Quantity[npt.NDArray[np.floating]])
@@ -75,6 +71,3 @@ assert_type([1.0, 2.0, 3.0] * m, Quantity[npt.NDArray[np.floating]])
 
 assert_type(1.225 * kg / m**3, Quantity[float])
 assert_type(1.225 * kg / m**3 * [1, 2, 3] * m, Quantity[npt.NDArray[np.floating]])
-
-assert_type(VariableCatalog.ABSOLUTE_PRESSURE, ScalarVariableDescriptor)
-assert_type(VariableCatalog.VELOCITY, VectorVariableDescriptor)

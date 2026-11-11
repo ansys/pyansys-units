@@ -25,7 +25,7 @@
 import importlib.metadata
 
 try:
-    __version__ = importlib.metadata.version(__name__.replace(".", "-"))
+    __version__ = importlib.metadata.version("ansys-units")
 except importlib.metadata.PackageNotFoundError:
     __version__ = "script-running"  # should never hit this unless you're running the generation scripts
 
@@ -47,12 +47,6 @@ from ansys.units.serialization import (
 from ansys.units.systems import UnitSystem
 from ansys.units.unit import Unit
 from ansys.units.unit_registry import UnitRegistry, load_custom_units
-from ansys.units.variable_descriptor import (
-    ConversionStrategy,
-    MappingConversionStrategy,
-    VariableCatalog,
-    VariableDescriptor,
-)
 
 _THIS_DIRNAME = os.path.dirname(__file__)
 _README_FILE = os.path.normpath(os.path.join(_THIS_DIRNAME, "docs", "README.rst"))
@@ -75,10 +69,6 @@ __all__ = [
     "PreferredUnits",
     "PreferredUnitAlreadyRegistered",
     "UnconfiguredPreferredUnit",
-    "VariableDescriptor",
-    "VariableCatalog",
-    "ConversionStrategy",
-    "MappingConversionStrategy",
     "get_application_registry",
     "set_application_registry",
 ]

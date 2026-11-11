@@ -59,4 +59,4 @@ Use Cases
 
 - Validating consistency of physical equations and formulas
 - Enabling unit-aware computation and conversions
-- Providing structure to variable descriptors and unit systems
+- Providing structure to unit systems
