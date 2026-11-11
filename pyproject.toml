@@ -78,7 +78,6 @@ Releases = "https://github.com/ansys/pyansys-units/releases"
 # Each top-level package is shipped as part of the ``ansys`` namespace package.
 only-include = [
     "src/ansys/units",
-    "src/ansys/variable_descriptor",
     "src/ansys/expressions",
 ]
 sources = ["src"]
@@ -86,7 +85,6 @@ sources = ["src"]
 [tool.importlinter]
 root_packages = [
     "ansys.units",
-    "ansys.variable_descriptor",
     "ansys.expressions",
 ]
 
@@ -95,13 +93,12 @@ name = "Packages only depend on lower layers"
 type = "layers"
 layers = [
     "ansys.expressions",
-    "ansys.variable_descriptor",
     "ansys.units",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-v --cov=ansys.units --cov=ansys.variable_descriptor --cov=ansys.expressions --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term --durations 0 --show-capture=all"
+addopts = "-v --cov=ansys.units --cov=ansys.expressions --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term --durations 0 --show-capture=all"
 markers = [
     "developer_only: tests that must not run on github"
 ]
@@ -128,7 +125,7 @@ wrap-summaries = 88
 
 
 [tool.coverage.run]
-source = ["ansys.units", "ansys.variable_descriptor", "ansys.expressions"]
+source = ["ansys.units", "ansys.expressions"]
 
 
 [tool.coverage.report]

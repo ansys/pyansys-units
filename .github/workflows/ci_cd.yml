@@ -23,7 +23,7 @@ env:
   MAIN_PYTHON_VERSION: "3.12"
   DOCUMENTATION_CNAME: "units.docs.pyansys.com"
   LIBRARY_NAME: "ansys-units"
-  LIBRARY_NAMESPACES: "ansys.units ansys.variable_descriptor ansys.expressions"
+  LIBRARY_NAMESPACES: "ansys.units ansys.expressions"
 
 jobs:
   code-style:

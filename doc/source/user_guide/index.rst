@@ -19,7 +19,6 @@ code to work with physical quantities.
    serialization
    plot
    quantity_dimensions
-   variable_descriptor
    expressions
    register_unit
    unit_systems

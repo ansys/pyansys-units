@@ -36,9 +36,7 @@ def test_pkg_version():
     assert __version__ == read_version
 
 
-@pytest.mark.parametrize(
-    "package", ["ansys.units", "ansys.variable_descriptor", "ansys.expressions"]
-)
+@pytest.mark.parametrize("package", ["ansys.units", "ansys.expressions"])
 def test_top_level_packages_share_distribution_version(package: str):
     module = importlib.import_module(package)
     assert module.__version__ == importlib.metadata.version("ansys-units")
