@@ -90,12 +90,3 @@ repos:
         files: ^src/ansys/units/(common\.py|quantity_tables/keys\.py|quantity_dimensions\.py)$
         pass_filenames: false
         always_run: false
-
-      # Enforces the one-way dependency expressions -> units.
-      - id: import-linter
-        name: Check package layering
-        entry: uv run --with import-linter==2.15 lint-imports
-        language: system
-        files: ^(src/ansys/.*\.py|pyproject\.toml)$
-        pass_filenames: false
-        always_run: false

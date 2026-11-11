@@ -20,10 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import importlib
 import importlib.metadata
-
-import pytest
 
 from ansys.units import __version__
 
@@ -34,22 +31,3 @@ def test_pkg_version():
     read_version = importlib.metadata.version("ansys-units")
 
     assert __version__ == read_version
-
-
-@pytest.mark.parametrize("package", ["ansys.units", "ansys.expressions"])
-def test_top_level_packages_share_distribution_version(package: str):
-    module = importlib.import_module(package)
-    assert module.__version__ == importlib.metadata.version("ansys-units")
-
-
-def test_units_does_not_expose_higher_layers():
-    import ansys.units
-
-    for name in (
-        "VariableCatalog",
-        "VariableDescriptor",
-        "ConversionStrategy",
-        "MappingConversionStrategy",
-        "variable_descriptor",
-    ):
-        assert not hasattr(ansys.units, name)

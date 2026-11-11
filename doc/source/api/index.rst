@@ -16,5 +16,4 @@ This section describes the public classes, functions, and attributes in the PyAn
     unit
     unit_registry
     quantity_dimensions
-    expressions
     serialization
